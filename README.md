@@ -1,0 +1,91 @@
+# substack-cli
+
+TypeScript CLI scaffold for turning local Markdown into Substack draft content and driving the authenticated Substack editor through Browserbase, Playwright, and Stagehand.
+
+## Current Status
+
+Implemented:
+
+- Markdown front matter parsing.
+- Markdown to HTML conversion.
+- Tiptap/ProseMirror JSON generation.
+- Custom placeholder nodes for `{{paywall}}` and `{{subscribe: Label}}`.
+- Dry-run inspection commands.
+- Local non-secret config and Browserbase session metadata storage under `.substack-cli/`.
+- Browser workflow skeleton for draft creation, publish confirmation, and manual login sessions.
+
+Not yet fully validated against a live Substack editor session:
+
+- Stagehand navigation from publication home/dashboard to the text post editor.
+- Paste-based body insertion in Substack's live editor.
+- Final publish and schedule button flows.
+
+## Setup
+
+```powershell
+npm install
+npm run build
+npm test
+```
+
+Create a local `.env` from `.env.example`:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Set:
+
+- `BROWSERBASE_API_KEY`
+- `BROWSERBASE_PROJECT_ID`
+- `SUBSTACK_PUBLICATION_URL`
+- `SUBSTACK_EMAIL` and `SUBSTACK_PASSWORD` only if you want `auth login --auto-login`
+
+## Commands
+
+```powershell
+node dist\cli.js inspect examples\basic.md
+node dist\cli.js draft examples\basic.md --dry-run
+node dist\cli.js config set-publication https://example.substack.com
+node dist\cli.js config set-runtime local
+node dist\cli.js auth status
+node dist\cli.js auth login --wait-seconds 120
+node dist\cli.js auth login --auto-login --wait-seconds 120
+node dist\cli.js auth login --auto-login --pause-before-password --wait-seconds 300
+```
+
+Capture and compare parser fixtures:
+
+```powershell
+node dist\cli.js schema capture examples\basic.md --out fixtures\prosemirror\basic.json
+node dist\cli.js schema validate fixtures\prosemirror\basic.json
+node dist\cli.js schema compare examples\basic.md fixtures\prosemirror\basic.json
+```
+
+Publishing and scheduling require explicit confirmation:
+
+```powershell
+node dist\cli.js publish examples\basic.md --dry-run
+node dist\cli.js publish examples\basic.md --yes
+node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --yes
+```
+
+## Markdown Markers
+
+Use front matter for metadata:
+
+```markdown
+---
+title: "Example post"
+subtitle: "Generated from Markdown"
+tags: [example, markdown]
+audience: everyone
+---
+```
+
+Supported custom markers:
+
+```markdown
+{{paywall}}
+{{subscribe: Subscribe for future posts}}
+```

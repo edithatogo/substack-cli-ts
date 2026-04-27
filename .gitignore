@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+.substack-cli/
+playwright-report/
+test-results/
+traces/
+*.log
+!fixtures/**/*.json

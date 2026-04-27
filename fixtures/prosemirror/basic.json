@@ -1,0 +1,98 @@
+{
+  "generatedAt": "2026-04-27T12:59:01.841Z",
+  "sourceFile": "examples\\basic.md",
+  "mode": "draft",
+  "metadata": {
+    "title": "Example Substack Draft",
+    "subtitle": "Generated from local Markdown",
+    "tags": [
+      "example",
+      "markdown"
+    ],
+    "audience": "everyone"
+  },
+  "html": "<h1>Example Substack Draft</h1>\n<p>This is a local Markdown draft with <strong>bold text</strong> and a <a href=\"https://substack.com\">link</a>.</p>\n<div data-substack-cli-node=\"paywall\"></div>\n<div data-substack-cli-node=\"subscribe-widget\" data-label=\"Subscribe for future posts\"></div>",
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Example Substack Draft"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "This is a local Markdown draft with "
+          },
+          {
+            "type": "text",
+            "text": "bold text",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " and a "
+          },
+          {
+            "type": "text",
+            "text": "link",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://substack.com",
+                  "target": "_blank",
+                  "rel": "noopener noreferrer nofollow",
+                  "class": null,
+                  "title": null
+                }
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "."
+          }
+        ]
+      },
+      {
+        "type": "paywallDivider"
+      },
+      {
+        "type": "subscribeWidget",
+        "attrs": {
+          "label": "Subscribe for future posts"
+        }
+      }
+    ]
+  },
+  "summary": {
+    "valid": true,
+    "nodeTypes": [
+      "doc",
+      "heading",
+      "paragraph",
+      "paywallDivider",
+      "subscribeWidget",
+      "text"
+    ],
+    "markTypes": [
+      "bold",
+      "link"
+    ]
+  }
+}
