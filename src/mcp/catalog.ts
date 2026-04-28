@@ -14,6 +14,7 @@ import {
   writeDraftCaptureFixture,
 } from "../browser/draft-capture.js";
 import { inferDraftContract } from "../browser/draft-contract.js";
+import { buildDraftContractMatrix } from "../browser/draft-contract-matrix.js";
 import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
@@ -258,6 +259,44 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(report),
             "Draft contract inference completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "capture",
+    name: "api.draft.contract.matrix",
+    description:
+      "Merge multiple draft capture artifacts into one inferred contract matrix.",
+    cliCommand: "api draft contract-matrix <files...>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.draft.contract.matrix",
+        {
+          description:
+            "Merge multiple draft capture artifacts into one inferred contract matrix.",
+          inputSchema: {
+            files: z.array(z.string().min(1)).min(1),
+          },
+          annotations: {
+            title: "Draft Contract Matrix",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ files }) => {
+          const inputs = await Promise.all(
+            files.map(async (sourceFile) => ({
+              sourceFile,
+              review: await reviewDraftCaptureArtifact(sourceFile),
+            })),
+          );
+          const report = buildDraftContractMatrix(inputs);
+          return jsonResult(
+            toJsonRecord(report),
+            "Draft contract matrix completed.",
           );
         },
       );
