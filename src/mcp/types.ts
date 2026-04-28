@@ -11,6 +11,14 @@ export interface McpToolSurface {
   redacted: boolean;
 }
 
+export interface McpResourceSurface {
+  name: string;
+  description: string;
+  uri: string;
+  mimeType: string;
+  redacted: boolean;
+}
+
 export interface McpSurfaceGroup {
   name: McpToolGroup;
   description: string;
@@ -23,6 +31,7 @@ export interface McpSurfaceManifest {
   transport: "stdio";
   status: McpSurfaceStatus;
   groups: McpSurfaceGroup[];
+  resources: McpResourceSurface[];
   note: string;
 }
 

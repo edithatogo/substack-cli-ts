@@ -33,8 +33,9 @@ Expose the existing CLI capabilities through MCP so other local tools and agents
 - Added to the roadmap as the tail track.
 - Defined an initial redacted MCP surface manifest with `mcp surface`.
 - Implemented a stdio MCP server with redacted read, review, and capture tools.
+- Added read-only MCP resources for the manifest and redacted summary.
 
 ## Remaining Work
 
-- Consider whether to add resources or prompts later, or keep the tool surface intentionally narrow.
+- Consider whether to add prompts later, or keep the surface intentionally narrow around tools and read-only resources.
 - Keep MCP output aligned with the CLI summaries used by the existing tracks.

@@ -8,6 +8,7 @@ describe("buildMcpSurfaceManifest", () => {
     const toolNames = manifest.groups.flatMap((group) =>
       group.tools.map((tool) => tool.name),
     );
+    const resourceNames = manifest.resources.map((resource) => resource.name);
 
     assert.equal(manifest.name, "substack-cli");
     assert.equal(manifest.transport, "stdio");
@@ -15,10 +16,13 @@ describe("buildMcpSurfaceManifest", () => {
     assert.ok(toolNames.includes("api.inventory"));
     assert.ok(toolNames.includes("trace.review"));
     assert.ok(toolNames.includes("policy"));
+    assert.ok(resourceNames.includes("mcp.surface"));
+    assert.ok(resourceNames.includes("mcp.summary"));
     assert.ok(
       manifest.groups.every((group) =>
         group.tools.every((tool) => tool.redacted),
       ),
     );
+    assert.ok(manifest.resources.every((resource) => resource.redacted));
   });
 });
