@@ -1,5 +1,12 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 
+interface SubstackImageAttributes {
+  src: string | null;
+  alt: string | null;
+  title: string | null;
+  caption: string | null;
+}
+
 export const PaywallDivider = Node.create({
   name: "paywallDivider",
   group: "block",
@@ -54,6 +61,58 @@ export const SubscribeWidget = Node.create({
   },
 });
 
+export const SubstackImage = Node.create({
+  name: "image",
+  group: "block",
+  atom: true,
+
+  addAttributes() {
+    return {
+      src: {
+        default: null,
+        parseHTML: (element: HTMLElement) => element.getAttribute("src"),
+        renderHTML: (attributes: SubstackImageAttributes) => ({
+          src: normalizeAttribute(attributes.src),
+        }),
+      },
+      alt: {
+        default: null,
+        parseHTML: (element: HTMLElement) => element.getAttribute("alt"),
+        renderHTML: (attributes: SubstackImageAttributes) => ({
+          alt: normalizeAttribute(attributes.alt),
+        }),
+      },
+      title: {
+        default: null,
+        parseHTML: (element: HTMLElement) => element.getAttribute("title"),
+        renderHTML: (attributes: SubstackImageAttributes) => ({
+          title: normalizeAttribute(attributes.title),
+        }),
+      },
+      caption: {
+        default: null,
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-caption"),
+        renderHTML: (attributes: SubstackImageAttributes) => ({
+          "data-caption": normalizeAttribute(attributes.caption),
+        }),
+      },
+    };
+  },
+
+  parseHTML() {
+    return [{ tag: "img[src]" }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return ["img", mergeAttributes(HTMLAttributes)];
+  },
+});
+
 export function getTiptapExtensions() {
-  return [PaywallDivider, SubscribeWidget];
+  return [PaywallDivider, SubscribeWidget, SubstackImage];
+}
+
+function normalizeAttribute(value: string | null): string | undefined {
+  return value ?? undefined;
 }

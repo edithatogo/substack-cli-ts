@@ -49,6 +49,7 @@ import {
   compareFixture,
   validateSchemaFile,
 } from "./schema/fixtures.js";
+import { summarizeMediaManifest } from "./parser/media.js";
 import { redact, redactUrl } from "./util/redact.js";
 
 const program = new Command();
@@ -274,6 +275,27 @@ api
     const prepared = await preparePost(file, { mode: "draft" });
     const payload = buildSubstackDraftPayload(prepared.post);
     console.log(JSON.stringify(payload, null, 2));
+  });
+
+api
+  .command("media")
+  .description("Inspect the parsed media manifest for a Markdown file.")
+  .argument("<file>", "Markdown file to inspect")
+  .action(async (file: string) => {
+    const prepared = await preparePost(file, { mode: "draft" });
+    console.log(
+      JSON.stringify(
+        {
+          filePath: prepared.post.filePath,
+          media: {
+            ...prepared.post.media,
+            assets: summarizeMediaManifest(prepared.post.media),
+          },
+        },
+        null,
+        2,
+      ),
+    );
   });
 
 api

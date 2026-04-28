@@ -4,6 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { marked } from "marked";
 import { parseFrontmatter } from "./frontmatter.js";
 import { getTiptapExtensions } from "./extensions.js";
+import { buildMediaManifest } from "./media.js";
 import { validateProseMirrorDocument } from "./schema.js";
 import type { ParsedPost, ProseMirrorNode } from "../types.js";
 
@@ -20,6 +21,7 @@ export async function parseMarkdownString(
   const normalized = normalizeSubstackShortcodes(body);
   const html = String(await marked.parse(normalized, { gfm: true }));
   const document = htmlToProseMirrorJson(html);
+  const media = buildMediaManifest(document, filePath);
 
   return {
     filePath,
@@ -27,6 +29,7 @@ export async function parseMarkdownString(
     markdown: body,
     html,
     document,
+    media,
   };
 }
 

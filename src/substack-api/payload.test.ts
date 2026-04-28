@@ -70,6 +70,12 @@ const value = 1;
           markdown: "",
           html: "",
           document,
+          media: {
+            assets: [],
+            localCount: 0,
+            remoteCount: 0,
+            dataCount: 0,
+          },
         }),
       /Unsupported Substack payload content/,
     );

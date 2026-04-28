@@ -54,6 +54,7 @@ node dist\cli.js doctor
 node dist\cli.js api auth status --source local-profile
 node dist\cli.js api inventory --source local-profile --post-limit 10
 node dist\cli.js api payload examples\basic.md
+node dist\cli.js api media examples\media.md
 node dist\cli.js api draft create examples\basic.md
 node dist\cli.js api draft mappings
 node dist\cli.js api draft link examples\basic.md --draft-id 123
@@ -92,6 +93,13 @@ audience: everyone
 section: original-essays
 comments: enabled
 ---
+```
+
+Media examples:
+
+```markdown
+![Remote alt](https://example.com/image.png "Remote caption")
+![Local alt](./assets/local-image.png "Local caption")
 ```
 
 Supported custom markers:

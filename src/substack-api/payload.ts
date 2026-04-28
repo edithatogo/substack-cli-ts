@@ -34,6 +34,7 @@ const SUPPORTED_NODE_TYPES = new Set([
   "hardBreak",
   "heading",
   "horizontalRule",
+  "image",
   "listItem",
   "orderedList",
   "paragraph",

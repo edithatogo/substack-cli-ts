@@ -15,7 +15,7 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 07. API Read Model                        | In progress | Maps user, publication, sections, and bounded recent posts; drafts and pagination remain.                |
 | 08. API Draft Write Model                 | In progress | No-network draft write planning is implemented; live create/update waits on endpoint confirmation.       |
 | 09. API Content Payload Compatibility     | In progress | API payload builder and unsupported-node preflight are implemented; captured draft comparison remains.   |
-| 10. API Media Upload                      | Proposed    | Upload local/remote images and preserve captions/alt text.                                               |
+| 10. API Media Upload                      | In progress | Media parsing and inspection are implemented; live upload transport remains pending.                     |
 | 11. API Prepublish, Publish, and Schedule | Proposed    | Add gated prepublish, publish, and schedule flows after draft writes are reliable.                       |
 | 12. Transport Selection and Fallback      | Proposed    | Let the CLI choose browser, API, or automatic fallback transports.                                       |
 | 13. Dependency and Discovery Register     | Active      | Track missed work, open questions, and newly identified interdependencies.                               |

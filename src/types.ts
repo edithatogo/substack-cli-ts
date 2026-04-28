@@ -25,12 +25,29 @@ export interface ProseMirrorNode {
   marks?: ProseMirrorMark[] | undefined;
 }
 
+export interface MediaAsset {
+  kind: "local" | "remote" | "data";
+  source: string;
+  resolvedSource?: string | undefined;
+  alt?: string | undefined;
+  title?: string | undefined;
+  caption?: string | undefined;
+}
+
+export interface MediaManifest {
+  assets: MediaAsset[];
+  localCount: number;
+  remoteCount: number;
+  dataCount: number;
+}
+
 export interface ParsedPost {
   filePath: string;
   metadata: PostMetadata;
   markdown: string;
   html: string;
   document: ProseMirrorNode;
+  media: MediaManifest;
 }
 
 export interface PreparedPost {
