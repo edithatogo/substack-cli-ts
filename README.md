@@ -47,6 +47,8 @@ Set:
 
 ```powershell
 node dist\cli.js inspect examples\basic.md
+node dist\cli.js prepublish examples\basic.md
+node dist\cli.js prepublish examples\basic.md --mode schedule --at 2026-05-01T09:00:00Z
 node dist\cli.js draft examples\basic.md --dry-run
 node dist\cli.js draft examples\basic.md --transport auto
 node dist\cli.js config set-publication https://example.substack.com
@@ -80,6 +82,7 @@ node dist\cli.js schema compare examples\basic.md fixtures\prosemirror\basic.jso
 Publishing and scheduling require explicit confirmation:
 
 ```powershell
+node dist\cli.js prepublish examples\basic.md
 node dist\cli.js publish examples\basic.md --dry-run
 node dist\cli.js publish examples\basic.md --transport browser --yes
 node dist\cli.js publish examples\basic.md --yes

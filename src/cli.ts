@@ -35,6 +35,7 @@ import {
   runBrowserWorkflow,
 } from "./publish/browser-workflow.js";
 import { runDoctor } from "./doctor/doctor.js";
+import { prepublishPost } from "./publish/prepublish.js";
 import { preparePost } from "./publish/prepare.js";
 import { resolveTransport } from "./publish/transport.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
@@ -93,6 +94,42 @@ program
       process.exitCode = 1;
     }
   });
+
+program
+  .command("prepublish")
+  .description(
+    "Validate the final publish or schedule payload without opening the browser.",
+  )
+  .argument("<file>", "Markdown file to validate")
+  .option("--mode <mode>", "publish or schedule", "publish")
+  .option("--at <iso-date>", "ISO timestamp for scheduled publication")
+  .action(
+    async (
+      file: string,
+      options: {
+        mode: "publish" | "schedule";
+        at?: string;
+      },
+    ) => {
+      const prepared = await preparePost(
+        file,
+        options.at
+          ? {
+              mode: options.mode,
+              scheduleAt: options.at,
+            }
+          : {
+              mode: options.mode,
+            },
+      );
+      const report = prepublishPost(prepared);
+      console.log(JSON.stringify(report, null, 2));
+
+      if (report.status === "blocked") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 program
   .command("draft")
