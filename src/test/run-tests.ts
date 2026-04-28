@@ -6,6 +6,7 @@ import "../schema/fixtures.test.js";
 import "../parser/media.test.js";
 import "../publish/browser-workflow.test.js";
 import "../publish/prepublish.test.js";
+import "../publish/workflow-trace.test.js";
 import "../publish/transport.test.js";
 import "../substack-api/draft-mappings.test.js";
 import "../substack-api/draft-write.test.js";

@@ -38,6 +38,10 @@ import { runDoctor } from "./doctor/doctor.js";
 import { prepublishPost } from "./publish/prepublish.js";
 import { preparePost } from "./publish/prepare.js";
 import { resolveTransport } from "./publish/transport.js";
+import {
+  reviewWorkflowTraceArtifact,
+  summarizeWorkflowTrace,
+} from "./publish/workflow-trace.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
   resolveApiAuthMaterial,
@@ -130,6 +134,19 @@ program
       }
     },
   );
+
+const trace = program
+  .command("trace")
+  .description("Review stored browser workflow trace artifacts.");
+
+trace
+  .command("review")
+  .description("Review a saved browser workflow trace artifact.")
+  .argument("<file>", "Workflow trace JSON file to review")
+  .action(async (file: string) => {
+    const review = await reviewWorkflowTraceArtifact(file);
+    console.log(JSON.stringify(summarizeWorkflowTrace(review), null, 2));
+  });
 
 program
   .command("draft")
@@ -229,6 +246,11 @@ program
   .option(
     "--experimental-inject-state",
     "Use experimental editor-state injection",
+    false,
+  )
+  .option(
+    "--review-only",
+    "Stop at the schedule review screen without clicking Schedule",
     false,
   )
   .option("--transport <transport>", "browser, api, or auto", "auto")

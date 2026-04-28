@@ -268,7 +268,7 @@ async function createDraftInBrowser(
     60000,
   );
 
-  if (shouldOpenPublishReview(options)) {
+  if (prepared.mode === "publish" && shouldOpenPublishReview(options)) {
     return {
       status: "publish-review-opened",
       mode: prepared.mode,
