@@ -32,6 +32,7 @@ import { preparePost } from "./publish/prepare.js";
 import {
   resolveApiAuthMaterial,
   summarizeApiAuthMaterial,
+  validateApiAuthMaterial,
   type ApiAuthSource,
 } from "./substack-api/auth.js";
 import {
@@ -236,17 +237,23 @@ apiAuth
     "Extract local or environment cookie material and print a redacted summary.",
   )
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    const summary = summarizeApiAuthMaterial(material);
+  .option("--no-validate", "Skip read-only Substack validation probes")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource; validate: boolean }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const summary = summarizeApiAuthMaterial(material);
+      const validation = options.validate
+        ? await validateApiAuthMaterial(material)
+        : null;
 
-    console.log(JSON.stringify(summary, null, 2));
+      console.log(JSON.stringify({ ...summary, validation }, null, 2));
 
-    if (!summary.hasLikelySessionCookie) {
-      process.exitCode = 1;
-    }
-  });
+      if (!summary.hasLikelySessionCookie || validation?.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 const config = program
   .command("config")

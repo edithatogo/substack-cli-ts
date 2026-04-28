@@ -35,8 +35,9 @@ Create a safe authentication layer for internal API probes without committing or
 - Added local browser profile cookie extraction through Playwright persistent context.
 - Added `substack-cli api auth status --source auto|env|local-profile`.
 - Added redacted cookie summaries and session-cookie detection tests.
+- Added read-only validation through `/api/v1/handle/options` and `/api/v1/user/{handle}/public_profile`.
 
 ## Remaining Work
 
-- Add a read-only current-user/publication validation request once the endpoint is confirmed in Track 07.
 - Improve expired-cookie detection after real endpoint responses are mapped.
+- Decide whether Track 07 should use the `jakub-k-slys/substack-api` endpoint model directly or implement a smaller local read model.

@@ -4,6 +4,8 @@ import {
   materialFromCookieHeader,
   materialFromCookies,
   summarizeApiAuthMaterial,
+  validateApiAuthMaterial,
+  type FetchLike,
 } from "./auth.js";
 
 describe("API auth material", () => {
@@ -57,4 +59,79 @@ describe("API auth material", () => {
     assert.equal(material.cookies.length, 1);
     assert.equal(material.cookies[0]?.name, "connect.sid");
   });
+
+  it("validates a session with handle options and public profile probes", async () => {
+    const material = materialFromCookieHeader(
+      "substack.sid=fake-long-secret-value",
+      "https://rareinsights.substack.com",
+      "env",
+    );
+    const validation = await validateApiAuthMaterial(
+      material,
+      fakeFetch({
+        "https://substack.com/api/v1/handle/options": {
+          potentialHandles: [
+            { id: "rareinsights", handle: "rareinsights", type: "existing" },
+          ],
+        },
+        "https://substack.com/api/v1/user/rareinsights/public_profile": {
+          id: 123,
+          name: "Example",
+          handle: "rareinsights",
+          publicationUsers: [
+            {
+              role: "admin",
+              publication: {
+                id: 456,
+                name: "Rare Insights",
+                subdomain: "rareinsights",
+              },
+            },
+          ],
+        },
+      }),
+    );
+
+    assert.equal(validation.status, "ok");
+    assert.equal(validation.handle, "rareinsights");
+    assert.deepEqual(validation.publication, {
+      id: 456,
+      name: "Rare Insights",
+      subdomain: "rareinsights",
+      role: "admin",
+    });
+  });
+
+  it("classifies forbidden validation responses", async () => {
+    const material = materialFromCookieHeader(
+      "substack.sid=fake-long-secret-value",
+      "https://rareinsights.substack.com",
+      "env",
+    );
+    const validation = await validateApiAuthMaterial(material, () =>
+      Promise.resolve(response(403, { error: "forbidden" })),
+    );
+
+    assert.equal(validation.status, "forbidden");
+  });
 });
+
+function fakeFetch(routes: Record<string, unknown>): FetchLike {
+  return (input) => {
+    if (!(input in routes)) {
+      return Promise.resolve(response(404, { error: "not found" }));
+    }
+
+    return Promise.resolve(response(200, routes[input]));
+  };
+}
+
+function response(
+  status: number,
+  body: unknown,
+): Awaited<ReturnType<FetchLike>> {
+  return {
+    status,
+    text: () => Promise.resolve(JSON.stringify(body)),
+  };
+}

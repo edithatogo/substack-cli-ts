@@ -1,4 +1,5 @@
 import type { Cookie } from "playwright-core";
+import { z } from "zod";
 import { createLocalBrowserSession } from "../browser/local-browser.js";
 import {
   requirePublicationUrl,
@@ -35,11 +36,71 @@ export interface ApiAuthStatus {
   cookies: ApiCookieSummary[];
 }
 
+export type ApiAuthValidationStatus =
+  | "ok"
+  | "unauthenticated"
+  | "forbidden"
+  | "not-found"
+  | "schema-drift"
+  | "network-error";
+
+export interface ApiAuthValidation {
+  status: ApiAuthValidationStatus;
+  handle?: string | undefined;
+  userId?: number | undefined;
+  name?: string | undefined;
+  publication?:
+    | {
+        id: number;
+        name: string;
+        subdomain: string;
+        role?: string | undefined;
+      }
+    | undefined;
+  checkedEndpoints: string[];
+  message: string;
+}
+
 const LIKELY_SESSION_COOKIE_NAMES = new Set([
   "connect.sid",
   "substack.sid",
   "substack_session",
 ]);
+
+const HandleOptionsSchema = z.object({
+  potentialHandles: z.array(
+    z.object({
+      id: z.string(),
+      handle: z.string(),
+      type: z.string(),
+    }),
+  ),
+});
+
+const PublicProfileSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  handle: z.string(),
+  publicationUsers: z
+    .array(
+      z.object({
+        role: z.string().optional(),
+        publication: z.object({
+          id: z.number(),
+          name: z.string(),
+          subdomain: z.string(),
+        }),
+      }),
+    )
+    .optional(),
+});
+
+export type FetchLike = (
+  input: string,
+  init?: {
+    headers?: Record<string, string>;
+  },
+) => Promise<Pick<Response, "status" | "text">>;
 
 export async function resolveApiAuthMaterial(
   config: EffectiveConfig,
@@ -67,10 +128,15 @@ export async function extractApiAuthFromLocalProfile(
   const session = await createLocalBrowserSession();
 
   try {
-    await session.page.goto(publicationUrl, {
-      waitUntil: "domcontentloaded",
-      timeout: 60000,
-    });
+    try {
+      await session.page.goto(publicationUrl, {
+        waitUntil: "domcontentloaded",
+        timeout: 60000,
+      });
+    } catch {
+      // The persistent profile can still expose stored cookies even if a
+      // transient navigation failure occurs.
+    }
 
     const cookies = await session.context.cookies([
       "https://substack.com",
@@ -92,6 +158,94 @@ export function summarizeApiAuthMaterial(
     cookieCount: material.cookies.length,
     hasLikelySessionCookie: material.hasLikelySessionCookie,
     cookies: material.cookies,
+  };
+}
+
+export async function validateApiAuthMaterial(
+  material: ApiAuthMaterial,
+  fetchImpl: FetchLike = fetch,
+): Promise<ApiAuthValidation> {
+  const handleOptionsEndpoint = "https://substack.com/api/v1/handle/options";
+  const checkedEndpoints = [handleOptionsEndpoint];
+  const headers = apiHeaders(material);
+
+  const handleResponse = await requestJson(
+    fetchImpl,
+    handleOptionsEndpoint,
+    headers,
+  );
+  if (handleResponse.status !== 200) {
+    return validationFailure(handleResponse.status, checkedEndpoints);
+  }
+
+  const handleOptions = HandleOptionsSchema.safeParse(handleResponse.body);
+  if (!handleOptions.success) {
+    return {
+      status: "schema-drift",
+      checkedEndpoints,
+      message: "The handle options response did not match the expected shape.",
+    };
+  }
+
+  const handle =
+    handleOptions.data.potentialHandles.find(
+      (candidate) => candidate.type === "existing",
+    )?.handle ?? handleOptions.data.potentialHandles[0]?.handle;
+
+  if (!handle) {
+    return {
+      status: "schema-drift",
+      checkedEndpoints,
+      message: "The authenticated session returned no usable Substack handle.",
+    };
+  }
+
+  const profileEndpoint = `https://substack.com/api/v1/user/${encodeURIComponent(handle)}/public_profile`;
+  checkedEndpoints.push(profileEndpoint);
+
+  const profileResponse = await requestJson(
+    fetchImpl,
+    profileEndpoint,
+    headers,
+  );
+  if (profileResponse.status !== 200) {
+    return validationFailure(profileResponse.status, checkedEndpoints);
+  }
+
+  const profile = PublicProfileSchema.safeParse(profileResponse.body);
+  if (!profile.success) {
+    return {
+      status: "schema-drift",
+      checkedEndpoints,
+      handle,
+      message: "The public profile response did not match the expected shape.",
+    };
+  }
+
+  const publicationSubdomain = new URL(material.publicationUrl).host.split(
+    ".",
+  )[0];
+  const publicationUser = profile.data.publicationUsers?.find(
+    (candidate) => candidate.publication.subdomain === publicationSubdomain,
+  );
+
+  return {
+    status: "ok",
+    checkedEndpoints,
+    handle: profile.data.handle,
+    userId: profile.data.id,
+    name: profile.data.name,
+    publication: publicationUser
+      ? {
+          id: publicationUser.publication.id,
+          name: publicationUser.publication.name,
+          subdomain: publicationUser.publication.subdomain,
+          role: publicationUser.role,
+        }
+      : undefined,
+    message: publicationUser
+      ? "Authenticated session validated against the configured publication."
+      : "Authenticated session is valid, but the configured publication was not found in the profile publication list.",
   };
 }
 
@@ -182,5 +336,81 @@ function summarizeCookie(cookie: Cookie): ApiCookieSummary {
     httpOnly: cookie.httpOnly,
     sameSite: cookie.sameSite,
     value: redact(cookie.value),
+  };
+}
+
+function apiHeaders(material: ApiAuthMaterial): Record<string, string> {
+  const publicationUrl = new URL(material.publicationUrl);
+
+  return {
+    accept: "application/json",
+    cookie: material.cookieHeader,
+    referer: material.publicationUrl,
+    origin: publicationUrl.origin,
+    "user-agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome Safari/537.36",
+  };
+}
+
+async function requestJson(
+  fetchImpl: FetchLike,
+  url: string,
+  headers: Record<string, string>,
+): Promise<{ status: number; body: unknown }> {
+  try {
+    const response = await fetchImpl(url, { headers });
+    const text = await response.text();
+
+    try {
+      return { status: response.status, body: JSON.parse(text) as unknown };
+    } catch {
+      return { status: response.status, body: null };
+    }
+  } catch {
+    return { status: 0, body: null };
+  }
+}
+
+function validationFailure(
+  status: number,
+  checkedEndpoints: string[],
+): ApiAuthValidation {
+  if (status === 401) {
+    return {
+      status: "unauthenticated",
+      checkedEndpoints,
+      message: "Substack rejected the session as unauthenticated.",
+    };
+  }
+
+  if (status === 403) {
+    return {
+      status: "forbidden",
+      checkedEndpoints,
+      message: "Substack rejected the session with a forbidden response.",
+    };
+  }
+
+  if (status === 404) {
+    return {
+      status: "not-found",
+      checkedEndpoints,
+      message: "The expected read-only validation endpoint was not found.",
+    };
+  }
+
+  if (status === 0) {
+    return {
+      status: "network-error",
+      checkedEndpoints,
+      message:
+        "The read-only validation request failed before receiving a response.",
+    };
+  }
+
+  return {
+    status: "schema-drift",
+    checkedEndpoints,
+    message: `Unexpected validation response status: ${status}.`,
   };
 }

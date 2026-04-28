@@ -17,7 +17,7 @@ export async function createLocalBrowserSession(): Promise<LocalBrowserSession> 
     {
       executablePath: getChromePath(),
       headless: false,
-      args: ["--no-first-run", "--no-default-browser-check"],
+      args: ["--no-first-run", "--no-default-browser-check", "--disable-quic"],
     },
   );
   const page = await context.newPage();
