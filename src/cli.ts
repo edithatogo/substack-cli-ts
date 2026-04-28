@@ -14,6 +14,7 @@ import { captureLocalDiagnostics } from "./browser/diagnostics.js";
 import {
   compareDraftCaptureArtifacts,
   observeDraftTraffic,
+  writeDraftCaptureFixture,
 } from "./browser/draft-capture.js";
 import {
   configFilePath,
@@ -446,6 +447,29 @@ apiDraft
     if (!comparison.equal) {
       process.exitCode = 1;
     }
+  });
+
+apiDraft
+  .command("fixture")
+  .description(
+    "Write a normalized draft capture fixture from a saved artifact.",
+  )
+  .argument("<file>", "Draft capture JSON file to normalize")
+  .requiredOption("--out <file>", "Fixture JSON output path")
+  .action(async (file: string, options: { out: string }) => {
+    const review = await writeDraftCaptureFixture(file, options.out);
+
+    console.log(
+      JSON.stringify(
+        {
+          status: "fixture-written",
+          outputFile: options.out,
+          summary: review,
+        },
+        null,
+        2,
+      ),
+    );
   });
 
 apiDraft

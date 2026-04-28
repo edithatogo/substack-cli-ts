@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { draftCaptureDir } from "../config/paths.js";
 import { redactUrl } from "../util/redact.js";
 import type { Page } from "playwright-core";
@@ -108,6 +108,25 @@ const DraftCaptureArtifactSchema = z.object({
   responses: z.array(DraftResponseSchema),
 });
 
+const DraftCaptureReviewRequestSchema = DraftRequestSchema.extend({
+  bodyKeys: z.array(z.string()),
+});
+
+const DraftCaptureReviewResponseSchema = DraftResponseSchema.extend({
+  topLevelKeys: z.array(z.string()),
+});
+
+const DraftCaptureReviewSchema = z.object({
+  capturedAt: z.string().datetime(),
+  publicationUrl: z.string().url(),
+  pageUrl: z.string().min(1),
+  requestCount: z.number().int().nonnegative(),
+  responseCount: z.number().int().nonnegative(),
+  requestEndpoints: z.array(DraftCaptureReviewRequestSchema),
+  responseEndpoints: z.array(DraftCaptureReviewResponseSchema),
+  note: z.string().min(1),
+});
+
 const DRAFT_ENDPOINT = /\/api\/v1\/(?:drafts|posts)(?:\/|$)/i;
 
 export async function observeDraftTraffic(
@@ -210,33 +229,7 @@ export async function observeDraftTraffic(
 export async function reviewDraftCaptureArtifact(
   artifactFile: string,
 ): Promise<DraftCaptureReview> {
-  const artifact = await readDraftCaptureArtifact(artifactFile);
-
-  return {
-    capturedAt: artifact.capturedAt,
-    publicationUrl: artifact.publicationUrl,
-    pageUrl: artifact.pageUrl,
-    requestCount: artifact.requests.length,
-    responseCount: artifact.responses.length,
-    requestEndpoints: artifact.requests.map((request) => ({
-      method: request.method,
-      url: request.url,
-      bodyKind: request.bodyKind,
-      bodyLength: request.bodyLength,
-      bodyKeys: request.bodyKeys ?? [],
-    })),
-    responseEndpoints: artifact.responses.map((response) => ({
-      status: response.status,
-      url: response.url,
-      bodyKind: response.bodyKind,
-      bodyLength: response.bodyLength,
-      topLevelKeys: response.topLevelKeys ?? [],
-      id: response.id,
-      slug: response.slug,
-      draftUrl: response.draftUrl,
-    })),
-    note: "Use this summary to identify the draft create/update/fetch shape from a manually captured browser session.",
-  };
+  return loadDraftCaptureReview(artifactFile);
 }
 
 export async function compareDraftCaptureArtifacts(
@@ -263,6 +256,16 @@ export async function compareDraftCaptureArtifacts(
   };
 }
 
+export async function writeDraftCaptureFixture(
+  inputFile: string,
+  outputFile: string,
+): Promise<DraftCaptureReview> {
+  const review = await loadDraftCaptureReview(inputFile);
+  await mkdir(dirname(outputFile), { recursive: true });
+  await writeFile(outputFile, `${JSON.stringify(review, null, 2)}\n`, "utf8");
+  return review;
+}
+
 function classifyBody(body: string): "json" | "text" | "empty" {
   if (!body) {
     return "empty";
@@ -276,9 +279,43 @@ function classifyBody(body: string): "json" | "text" | "empty" {
   }
 }
 
-async function readDraftCaptureArtifact(artifactFile: string) {
+async function loadDraftCaptureReview(
+  artifactFile: string,
+): Promise<DraftCaptureReview> {
   const raw = await readFile(artifactFile, "utf8");
-  return DraftCaptureArtifactSchema.parse(JSON.parse(raw));
+  const json = JSON.parse(raw) as unknown;
+
+  if (isDraftCaptureReview(json)) {
+    return DraftCaptureReviewSchema.parse(json);
+  }
+
+  const artifact = DraftCaptureArtifactSchema.parse(json);
+
+  return {
+    capturedAt: artifact.capturedAt,
+    publicationUrl: artifact.publicationUrl,
+    pageUrl: artifact.pageUrl,
+    requestCount: artifact.requests.length,
+    responseCount: artifact.responses.length,
+    requestEndpoints: artifact.requests.map((request) => ({
+      method: request.method,
+      url: request.url,
+      bodyKind: request.bodyKind,
+      bodyLength: request.bodyLength,
+      bodyKeys: request.bodyKeys ?? [],
+    })),
+    responseEndpoints: artifact.responses.map((response) => ({
+      status: response.status,
+      url: response.url,
+      bodyKind: response.bodyKind,
+      bodyLength: response.bodyLength,
+      topLevelKeys: response.topLevelKeys ?? [],
+      id: response.id,
+      slug: response.slug,
+      draftUrl: response.draftUrl,
+    })),
+    note: "Use this summary to identify the draft create/update/fetch shape from a manually captured browser session.",
+  } satisfies DraftCaptureReview;
 }
 
 function comparableReview(review: DraftCaptureReview): unknown {
@@ -301,6 +338,20 @@ function diffComparableReview(expected: unknown, actual: unknown): string[] {
   }
 
   return ["Draft capture shape differs between expected and actual artifacts."];
+}
+
+function isDraftCaptureReview(value: unknown): value is DraftCaptureReview {
+  return (
+    isRecord(value) &&
+    "requestEndpoints" in value &&
+    "responseEndpoints" in value &&
+    "requestCount" in value &&
+    "responseCount" in value
+  );
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function stableStringify(value: unknown): string {
