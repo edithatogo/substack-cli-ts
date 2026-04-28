@@ -11,7 +11,7 @@
     "dev": "npm run build -- --watch",
     "inspect": "npm run build && node dist/cli.js inspect",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --configLoader native",
     "test:mutation": "stryker run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

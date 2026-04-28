@@ -32,6 +32,7 @@ import {
 } from "./publish/browser-workflow.js";
 import { runDoctor } from "./doctor/doctor.js";
 import { preparePost } from "./publish/prepare.js";
+import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
   resolveApiAuthMaterial,
   summarizeApiAuthMaterial,
@@ -416,6 +417,15 @@ apiDraft
       }
     },
   );
+
+apiDraft
+  .command("review")
+  .description("Review a saved draft capture artifact and print a summary.")
+  .argument("<file>", "Draft capture JSON file to review")
+  .action(async (file: string) => {
+    const review = await reviewDraftCaptureArtifact(file);
+    console.log(JSON.stringify(review, null, 2));
+  });
 
 apiDraft
   .command("link")

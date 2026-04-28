@@ -1,8 +1,9 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { draftCaptureDir } from "../config/paths.js";
 import { redactUrl } from "../util/redact.js";
 import type { Page } from "playwright-core";
+import { z } from "zod";
 
 export interface DraftCaptureOptions {
   timeoutMs: number;
@@ -46,6 +47,59 @@ export interface DraftCaptureSummary {
   matchedCount: number;
   note: string;
 }
+
+export interface DraftCaptureReview {
+  capturedAt: string;
+  publicationUrl: string;
+  pageUrl: string;
+  requestCount: number;
+  responseCount: number;
+  requestEndpoints: Array<{
+    method: string;
+    url: string;
+    bodyKind: DraftRequestCapture["bodyKind"];
+    bodyLength: number;
+    bodyKeys: string[];
+  }>;
+  responseEndpoints: Array<{
+    status: number;
+    url: string;
+    bodyKind: DraftResponseCapture["bodyKind"];
+    bodyLength: number;
+    topLevelKeys: string[];
+    id?: string | number | undefined;
+    slug?: string | undefined;
+    draftUrl?: string | undefined;
+  }>;
+  note: string;
+}
+
+const DraftRequestSchema = z.object({
+  url: z.string().min(1),
+  method: z.string().min(1),
+  bodyKind: z.union([z.literal("json"), z.literal("text"), z.literal("empty")]),
+  bodyLength: z.number().int().nonnegative(),
+  bodyKeys: z.array(z.string()).optional(),
+});
+
+const DraftResponseSchema = z.object({
+  url: z.string().min(1),
+  status: z.number().int().nonnegative(),
+  bodyKind: z.union([z.literal("json"), z.literal("text"), z.literal("empty")]),
+  bodyLength: z.number().int().nonnegative(),
+  topLevelKeys: z.array(z.string()).optional(),
+  id: z.union([z.string(), z.number()]).optional(),
+  slug: z.string().optional(),
+  draftUrl: z.string().optional(),
+});
+
+const DraftCaptureArtifactSchema = z.object({
+  capturedAt: z.string().datetime(),
+  publicationUrl: z.string().url(),
+  pageUrl: z.string().min(1),
+  requests: z.array(DraftRequestSchema),
+  responses: z.array(DraftResponseSchema),
+});
 
 const DRAFT_ENDPOINT = /\/api\/v1\/(?:drafts|posts)(?:\/|$)/i;
 
@@ -143,6 +197,39 @@ export async function observeDraftTraffic(
     responseCount: artifact.responses.length,
     matchedCount: artifact.requests.length + artifact.responses.length,
     note: "Use the open browser window to create and save a draft; the capture file is written to local ignored state.",
+  };
+}
+
+export async function reviewDraftCaptureArtifact(
+  artifactFile: string,
+): Promise<DraftCaptureReview> {
+  const raw = await readFile(artifactFile, "utf8");
+  const artifact = DraftCaptureArtifactSchema.parse(JSON.parse(raw));
+
+  return {
+    capturedAt: artifact.capturedAt,
+    publicationUrl: artifact.publicationUrl,
+    pageUrl: artifact.pageUrl,
+    requestCount: artifact.requests.length,
+    responseCount: artifact.responses.length,
+    requestEndpoints: artifact.requests.map((request) => ({
+      method: request.method,
+      url: request.url,
+      bodyKind: request.bodyKind,
+      bodyLength: request.bodyLength,
+      bodyKeys: request.bodyKeys ?? [],
+    })),
+    responseEndpoints: artifact.responses.map((response) => ({
+      status: response.status,
+      url: response.url,
+      bodyKind: response.bodyKind,
+      bodyLength: response.bodyLength,
+      topLevelKeys: response.topLevelKeys ?? [],
+      id: response.id,
+      slug: response.slug,
+      draftUrl: response.draftUrl,
+    })),
+    note: "Use this summary to identify the draft create/update/fetch shape from a manually captured browser session.",
   };
 }
 
