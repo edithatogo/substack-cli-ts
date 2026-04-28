@@ -91,3 +91,15 @@ Develop the CLI in four phases. Each phase should end with a working milestone, 
 - Add structured logs with secret redaction for every command.
 - Prefer dry-run support for potentially destructive publishing actions.
 - Treat undocumented direct API calls as research fixtures only, not the default product path.
+
+## Active Conductor Tracks
+
+Detailed track files live under `tracks/`:
+
+- `tracks/01-editor-schema-mapping.md`
+- `tracks/02-content-feature-parity.md`
+- `tracks/03-draft-publish-schedule.md`
+- `tracks/04-browser-runtime-hardening.md`
+- `tracks/05-external-project-research.md`
+
+Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, and systematic external project research remain open track work.
