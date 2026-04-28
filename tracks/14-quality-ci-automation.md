@@ -14,6 +14,7 @@ Keep the project safe to change as browser automation, internal API calls, and c
 - Stryker mutation testing as an opt-in local command, initially scoped to fast pure logic modules. On this Windows environment it produced a valid report above the configured break threshold but exited nonzero during child-process cleanup, so it is not part of CI yet.
 - GitHub Actions CI for install, format, lint, typecheck, coverage tests, production audit, and secret pattern scan.
 - Cross-platform secret scan script shared between local and CI checks.
+- Dedicated GitHub Actions mutation-testing job that uploads the report artifact.
 - Renovate configuration for dependency update PRs.
 - ADRs under `docs/decisions/`.
 - `doctor` command for local configuration, transport, browser profile, and ignored-file diagnostics.
@@ -38,4 +39,4 @@ This is currently a single-package CLI. npm scripts and GitHub Actions are enoug
 4. Add deeper `doctor` checks for API transport probes after Track 06 exists.
 5. Add a license/dependency policy check if the project becomes distributable.
 6. Expand mutation targets once slow/browser-adjacent modules have isolated unit seams.
-7. Add a dedicated mutation-testing CI job once the Windows cleanup issue is either fixed or isolated.
+7. Add a CI gating policy for mutation score once the Linux job has been observed stable for a few runs.
