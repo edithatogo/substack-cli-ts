@@ -11,7 +11,10 @@ import { performSubstackLogin } from "./auth/substack-login.js";
 import { createLocalBrowserSession } from "./browser/local-browser.js";
 import { createStagehandSession } from "./browser/stagehand.js";
 import { captureLocalDiagnostics } from "./browser/diagnostics.js";
-import { observeDraftTraffic } from "./browser/draft-capture.js";
+import {
+  compareDraftCaptureArtifacts,
+  observeDraftTraffic,
+} from "./browser/draft-capture.js";
 import {
   configFilePath,
   draftMappingsFilePath,
@@ -425,6 +428,24 @@ apiDraft
   .action(async (file: string) => {
     const review = await reviewDraftCaptureArtifact(file);
     console.log(JSON.stringify(review, null, 2));
+  });
+
+apiDraft
+  .command("compare")
+  .description("Compare two saved draft capture artifacts.")
+  .argument("<expected-file>", "Expected draft capture JSON file")
+  .argument("<actual-file>", "Actual draft capture JSON file")
+  .action(async (expectedFile: string, actualFile: string) => {
+    const comparison = await compareDraftCaptureArtifacts(
+      expectedFile,
+      actualFile,
+    );
+
+    console.log(JSON.stringify(comparison, null, 2));
+
+    if (!comparison.equal) {
+      process.exitCode = 1;
+    }
   });
 
 apiDraft

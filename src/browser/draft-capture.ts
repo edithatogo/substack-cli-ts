@@ -74,6 +74,13 @@ export interface DraftCaptureReview {
   note: string;
 }
 
+export interface DraftCaptureComparison {
+  equal: boolean;
+  expected: DraftCaptureReview;
+  actual: DraftCaptureReview;
+  differences: string[];
+}
+
 const DraftRequestSchema = z.object({
   url: z.string().min(1),
   method: z.string().min(1),
@@ -203,8 +210,7 @@ export async function observeDraftTraffic(
 export async function reviewDraftCaptureArtifact(
   artifactFile: string,
 ): Promise<DraftCaptureReview> {
-  const raw = await readFile(artifactFile, "utf8");
-  const artifact = DraftCaptureArtifactSchema.parse(JSON.parse(raw));
+  const artifact = await readDraftCaptureArtifact(artifactFile);
 
   return {
     capturedAt: artifact.capturedAt,
@@ -233,6 +239,30 @@ export async function reviewDraftCaptureArtifact(
   };
 }
 
+export async function compareDraftCaptureArtifacts(
+  expectedFile: string,
+  actualFile: string,
+): Promise<DraftCaptureComparison> {
+  const [expected, actual] = await Promise.all([
+    reviewDraftCaptureArtifact(expectedFile),
+    reviewDraftCaptureArtifact(actualFile),
+  ]);
+
+  const expectedComparable = comparableReview(expected);
+  const actualComparable = comparableReview(actual);
+  const differences = diffComparableReview(
+    expectedComparable,
+    actualComparable,
+  );
+
+  return {
+    equal: differences.length === 0,
+    expected,
+    actual,
+    differences,
+  };
+}
+
 function classifyBody(body: string): "json" | "text" | "empty" {
   if (!body) {
     return "empty";
@@ -244,6 +274,53 @@ function classifyBody(body: string): "json" | "text" | "empty" {
   } catch {
     return "text";
   }
+}
+
+async function readDraftCaptureArtifact(artifactFile: string) {
+  const raw = await readFile(artifactFile, "utf8");
+  return DraftCaptureArtifactSchema.parse(JSON.parse(raw));
+}
+
+function comparableReview(review: DraftCaptureReview): unknown {
+  return {
+    publicationUrl: review.publicationUrl,
+    pageUrl: review.pageUrl,
+    requestCount: review.requestCount,
+    responseCount: review.responseCount,
+    requestEndpoints: review.requestEndpoints,
+    responseEndpoints: review.responseEndpoints,
+  };
+}
+
+function diffComparableReview(expected: unknown, actual: unknown): string[] {
+  const expectedJson = stableStringify(expected);
+  const actualJson = stableStringify(actual);
+
+  if (expectedJson === actualJson) {
+    return [];
+  }
+
+  return ["Draft capture shape differs between expected and actual artifacts."];
+}
+
+function stableStringify(value: unknown): string {
+  return JSON.stringify(sortValue(value));
+}
+
+function sortValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(sortValue);
+  }
+
+  if (typeof value === "object" && value !== null) {
+    return Object.fromEntries(
+      Object.entries(value)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, nested]) => [key, sortValue(nested)]),
+    );
+  }
+
+  return value;
 }
 
 function summarizeBodyKeys(body: string): string[] | undefined {
