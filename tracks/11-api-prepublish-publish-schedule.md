@@ -39,6 +39,7 @@ Add final publishing operations only after draft writes and payload validation a
 - `--trace-out` can write a local JSON workflow artifact for review-only publish traces.
 - `trace review <file>` summarizes a saved workflow artifact without exposing browser session URLs.
 - `trace compare <expected-file> <actual-file>` compares saved workflow artifacts locally.
+- `trace fixture <file> --out <file>` writes a normalized local fixture for review artifacts.
 - Publish and schedule still use the browser workflow and remain confirmation-gated.
 
 ## Remaining Work
@@ -49,3 +50,4 @@ Add final publishing operations only after draft writes and payload validation a
 - Use `--trace-out` to persist the review-only publish trace and compare it later.
 - Use `trace review` to compare review-only, schedule-review, and publish-click artifacts locally.
 - Use `trace compare` to diff saved workflow artifacts and confirm the final action path.
+- Use `trace fixture` to normalize a review artifact before storing or comparing it.

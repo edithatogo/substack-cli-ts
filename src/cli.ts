@@ -42,6 +42,7 @@ import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
   summarizeWorkflowTrace,
+  writeWorkflowTraceFixture,
 } from "./publish/workflow-trace.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
@@ -164,6 +165,26 @@ trace
     if (!comparison.equal) {
       process.exitCode = 1;
     }
+  });
+
+trace
+  .command("fixture")
+  .description("Write a normalized browser workflow trace fixture.")
+  .argument("<file>", "Workflow trace JSON file to normalize")
+  .requiredOption("--out <file>", "Fixture JSON output path")
+  .action(async (file: string, options: { out: string }) => {
+    const fixture = await writeWorkflowTraceFixture(file, options.out);
+    console.log(
+      JSON.stringify(
+        {
+          status: "fixture-written",
+          outputFile: options.out,
+          summary: summarizeWorkflowTrace(fixture),
+        },
+        null,
+        2,
+      ),
+    );
   });
 
 program

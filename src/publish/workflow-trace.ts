@@ -1,4 +1,5 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 import { z } from "zod";
 import type { BrowserWorkflowResult } from "./browser-workflow.js";
 
@@ -70,35 +71,52 @@ const BrowserWorkflowResultSchema = z.object({
   trace: z.array(WorkflowStepSchema),
 });
 
+const WorkflowTraceReviewSchema = z.object({
+  status: z.union([
+    z.literal("draft-created"),
+    z.literal("schedule-review-opened"),
+    z.literal("publish-review-opened"),
+    z.literal("publish-clicked"),
+  ]),
+  mode: z.union([
+    z.literal("draft"),
+    z.literal("publish"),
+    z.literal("schedule"),
+  ]),
+  title: z.string().min(1),
+  currentUrl: z.string().min(1),
+  finalUrl: z.string().min(1),
+  finalState: z.string().min(1),
+  scheduleAt: z.string().optional(),
+  editorTextLength: z.number().int().nonnegative().optional(),
+  transportRequested: z.union([
+    z.literal("browser"),
+    z.literal("api"),
+    z.literal("auto"),
+  ]),
+  transportSelected: z.literal("browser"),
+  fallbackReason: z.string().optional(),
+  traceCount: z.number().int().nonnegative(),
+  stepNames: z.array(z.string()),
+  failedStepNames: z.array(z.string()),
+  browserSessionPresent: z.boolean(),
+  note: z.string().min(1),
+});
+
 export async function reviewWorkflowTraceArtifact(
   filePath: string,
 ): Promise<WorkflowTraceReview> {
-  const raw = await readFile(filePath, "utf8");
-  const artifact = BrowserWorkflowResultSchema.parse(JSON.parse(raw));
+  return loadWorkflowTraceReview(filePath);
+}
 
-  return {
-    status: artifact.status,
-    mode: artifact.mode,
-    title: artifact.title,
-    currentUrl: artifact.currentUrl,
-    finalUrl: artifact.finalUrl,
-    finalState: artifact.finalState,
-    scheduleAt: artifact.scheduleAt,
-    editorTextLength: artifact.editorTextLength,
-    transportRequested: artifact.transport.requested,
-    transportSelected: artifact.transport.selected,
-    fallbackReason: artifact.transport.fallbackReason,
-    traceCount: artifact.trace.length,
-    stepNames: artifact.trace.map((step) => step.name),
-    failedStepNames: artifact.trace
-      .filter((step) => step.status === "error")
-      .map((step) => step.name),
-    browserSessionPresent:
-      Boolean(artifact.browserbaseSessionId) ||
-      Boolean(artifact.browserbaseSessionUrl) ||
-      Boolean(artifact.browserbaseDebugUrl),
-    note: "Use this summary to compare review-only, schedule-review, and publish-click traces without exposing session URLs.",
-  };
+export async function writeWorkflowTraceFixture(
+  inputFile: string,
+  outputFile: string,
+): Promise<WorkflowTraceReview> {
+  const review = await loadWorkflowTraceReview(inputFile);
+  await mkdir(dirname(outputFile), { recursive: true });
+  await writeFile(outputFile, `${JSON.stringify(review, null, 2)}\n`, "utf8");
+  return review;
 }
 
 export async function compareWorkflowTraceArtifacts(
@@ -140,6 +158,44 @@ export function summarizeWorkflowTrace(review: WorkflowTraceReview): unknown {
     failedStepNames: review.failedStepNames,
     browserSessionPresent: review.browserSessionPresent,
     note: review.note,
+  };
+}
+
+async function loadWorkflowTraceReview(
+  filePath: string,
+): Promise<WorkflowTraceReview> {
+  const raw = await readFile(filePath, "utf8");
+  const json = JSON.parse(raw) as unknown;
+  const review = WorkflowTraceReviewSchema.safeParse(json);
+
+  if (review.success) {
+    return review.data;
+  }
+
+  const artifact = BrowserWorkflowResultSchema.parse(json);
+
+  return {
+    status: artifact.status,
+    mode: artifact.mode,
+    title: artifact.title,
+    currentUrl: artifact.currentUrl,
+    finalUrl: artifact.finalUrl,
+    finalState: artifact.finalState,
+    scheduleAt: artifact.scheduleAt,
+    editorTextLength: artifact.editorTextLength,
+    transportRequested: artifact.transport.requested,
+    transportSelected: artifact.transport.selected,
+    fallbackReason: artifact.transport.fallbackReason,
+    traceCount: artifact.trace.length,
+    stepNames: artifact.trace.map((step) => step.name),
+    failedStepNames: artifact.trace
+      .filter((step) => step.status === "error")
+      .map((step) => step.name),
+    browserSessionPresent:
+      Boolean(artifact.browserbaseSessionId) ||
+      Boolean(artifact.browserbaseSessionUrl) ||
+      Boolean(artifact.browserbaseDebugUrl),
+    note: "Use this summary to compare review-only, schedule-review, and publish-click traces without exposing session URLs.",
   };
 }
 

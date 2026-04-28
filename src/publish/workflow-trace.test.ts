@@ -6,6 +6,7 @@ import { describe, it } from "vitest";
 import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
+  writeWorkflowTraceFixture,
 } from "./workflow-trace.js";
 
 describe("reviewWorkflowTraceArtifact", () => {
@@ -135,6 +136,48 @@ describe("reviewWorkflowTraceArtifact", () => {
           difference.startsWith("title:"),
         ),
       );
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
+  it("writes and rereads a normalized workflow trace fixture", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-trace-"));
+    const sourceFile = join(temp, "source.json");
+    const fixtureFile = join(temp, "fixture.json");
+
+    await writeFile(
+      sourceFile,
+      JSON.stringify(
+        {
+          status: "publish-review-opened",
+          mode: "publish",
+          title: "Fixture Title",
+          currentUrl: "https://rareinsights.substack.com/publish/post/123",
+          finalUrl: "https://rareinsights.substack.com/publish/post/123",
+          finalState: "publish-review-opened",
+          transport: {
+            requested: "auto",
+            selected: "browser",
+          },
+          browserbaseSessionId: "session-123",
+          browserbaseSessionUrl: "https://browserbase.example/session/123",
+          browserbaseDebugUrl: "https://browserbase.example/debug/123",
+          trace: [],
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+
+    try {
+      const fixture = await writeWorkflowTraceFixture(sourceFile, fixtureFile);
+      const reread = await reviewWorkflowTraceArtifact(fixtureFile);
+
+      assert.equal(fixture.title, "Fixture Title");
+      assert.equal(reread.finalState, "publish-review-opened");
+      assert.equal(reread.browserSessionPresent, true);
     } finally {
       await rm(temp, { recursive: true, force: true });
     }
