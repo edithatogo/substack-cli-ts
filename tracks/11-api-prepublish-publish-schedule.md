@@ -34,9 +34,11 @@ Add final publishing operations only after draft writes and payload validation a
 - Added `prepublish <file>` to validate the final publish or schedule payload without opening the browser.
 - Prepublish reports payload compatibility, resolved title, and the final payload shape for browser execution.
 - `publish` and `schedule` now run the same prepublish validation before opening the browser.
+- `publish --review-only` stops at the final confirmation screen without clicking Publish.
 - Publish and schedule still use the browser workflow and remain confirmation-gated.
 
 ## Remaining Work
 
 - Map the live publish confirmation screen and final schedule controls in a controlled test publication.
 - Capture the returned post URL and final state after a successful live publish or schedule run.
+- Add a controlled review-only publish trace that can be used before the final click.

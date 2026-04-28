@@ -28,7 +28,11 @@ export interface WorkflowStep {
 }
 
 export interface BrowserWorkflowResult {
-  status: "draft-created" | "schedule-review-opened" | "publish-clicked";
+  status:
+    | "draft-created"
+    | "schedule-review-opened"
+    | "publish-review-opened"
+    | "publish-clicked";
   mode: PreparedPost["mode"];
   title: string;
   transport: {
@@ -57,9 +61,16 @@ export class BrowserWorkflowError extends Error {
 export interface BrowserWorkflowOptions {
   dryRun?: boolean;
   yes?: boolean;
+  reviewOnly?: boolean;
   experimentalInjectState?: boolean;
   sessionId?: string | undefined;
   transport?: TransportPreference | undefined;
+}
+
+export function shouldOpenPublishReview(
+  options: BrowserWorkflowOptions,
+): boolean {
+  return options.reviewOnly === true;
 }
 
 export async function runBrowserWorkflow(
@@ -249,6 +260,19 @@ async function createDraftInBrowser(
     "Click Continue to review the post publishing settings.",
     60000,
   );
+
+  if (shouldOpenPublishReview(options)) {
+    return {
+      status: "publish-review-opened",
+      mode: prepared.mode,
+      title,
+      transport,
+      browserbaseSessionId: session.browserbaseSessionId,
+      browserbaseSessionUrl: session.browserbaseSessionUrl,
+      browserbaseDebugUrl: session.browserbaseDebugUrl,
+      trace,
+    };
+  }
 
   if (prepared.mode === "schedule") {
     await observedAct(

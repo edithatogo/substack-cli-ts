@@ -179,6 +179,11 @@ program
     "Use experimental editor-state injection",
     false,
   )
+  .option(
+    "--review-only",
+    "Stop at the publish review screen without clicking Publish",
+    false,
+  )
   .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
     async (
@@ -186,6 +191,7 @@ program
       options: {
         dryRun: boolean;
         yes: boolean;
+        reviewOnly: boolean;
         sessionId?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
