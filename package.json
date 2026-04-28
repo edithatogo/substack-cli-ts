@@ -18,6 +18,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "scan:secrets": "node scripts/secret-scan.mjs",
     "quality": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:coverage",
     "audit:prod": "npm audit --omit=dev"
   },

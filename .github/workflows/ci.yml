@@ -34,8 +34,4 @@ jobs:
         run: npm run audit:prod
 
       - name: Secret Pattern Scan
-        run: |
-          if grep -RInE 'bb_live|SUBSTACK_PASSWORD=.+|connect\.sid=.*s%3A|BROWSERBASE_API_KEY=bb_' --exclude=ci.yml --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.substack-cli .; then
-            echo "Potential secret pattern found"
-            exit 1
-          fi
+        run: npm run scan:secrets
