@@ -44,6 +44,10 @@ import {
   summarizeWorkflowTrace,
   writeWorkflowTraceFixture,
 } from "./publish/workflow-trace.js";
+import {
+  evaluateDistributionPolicy,
+  summarizeDistributionPolicy,
+} from "./policy/distribution.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
   resolveApiAuthMaterial,
@@ -97,6 +101,18 @@ program
     console.log(JSON.stringify(report, null, 2));
 
     if (report.status === "error") {
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command("policy")
+  .description("Review the repository distribution and dependency policy.")
+  .action(async () => {
+    const report = await evaluateDistributionPolicy();
+    console.log(JSON.stringify(summarizeDistributionPolicy(report), null, 2));
+
+    if (report.status === "error" || report.status === "warn") {
       process.exitCode = 1;
     }
   });

@@ -54,6 +54,7 @@ node dist\cli.js draft examples\basic.md --transport auto
 node dist\cli.js config set-publication https://example.substack.com
 node dist\cli.js config set-runtime local
 node dist\cli.js doctor
+node dist\cli.js policy
 node dist\cli.js api auth status --source local-profile
 node dist\cli.js api inventory --source local-profile --post-limit 10
 node dist\cli.js api payload examples\basic.md
