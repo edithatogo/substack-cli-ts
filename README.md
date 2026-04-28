@@ -26,6 +26,7 @@ Not yet fully validated against a live Substack editor session:
 npm install
 npm run build
 npm test
+npm run quality
 ```
 
 Create a local `.env` from `.env.example`:
@@ -48,6 +49,7 @@ node dist\cli.js inspect examples\basic.md
 node dist\cli.js draft examples\basic.md --dry-run
 node dist\cli.js config set-publication https://example.substack.com
 node dist\cli.js config set-runtime local
+node dist\cli.js doctor
 node dist\cli.js auth status
 node dist\cli.js auth login --wait-seconds 120
 node dist\cli.js auth login --auto-login --wait-seconds 120

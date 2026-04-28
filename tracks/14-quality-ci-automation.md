@@ -15,6 +15,7 @@ Keep the project safe to change as browser automation, internal API calls, and c
 - GitHub Actions CI for install, format, lint, typecheck, coverage tests, production audit, and secret pattern scan.
 - Renovate configuration for dependency update PRs.
 - ADRs under `docs/decisions/`.
+- `doctor` command for local configuration, transport, browser profile, and ignored-file diagnostics.
 
 ## Not Added Yet
 
@@ -33,6 +34,6 @@ This is currently a single-package CLI. npm scripts and GitHub Actions are enoug
 1. Raise coverage thresholds as Track 06-12 implementation expands.
 2. Add mocked API integration tests for the internal adapter.
 3. Add Playwright E2E tests against a controlled test publication, excluded from default CI.
-4. Add a `doctor` command for local environment validation.
+4. Add deeper `doctor` checks for API transport probes after Track 06 exists.
 5. Add a license/dependency policy check if the project becomes distributable.
 6. Expand mutation targets once slow/browser-adjacent modules have isolated unit seams.

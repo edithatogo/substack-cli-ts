@@ -27,6 +27,7 @@ import {
   printPreparedPost,
   runBrowserWorkflow,
 } from "./publish/browser-workflow.js";
+import { runDoctor } from "./doctor/doctor.js";
 import { preparePost } from "./publish/prepare.js";
 import {
   captureFixture,
@@ -53,6 +54,20 @@ program
   .action(async (file: string) => {
     const prepared = await preparePost(file, { mode: "draft" });
     printPreparedPost(prepared);
+  });
+
+program
+  .command("doctor")
+  .description(
+    "Check local configuration, transport readiness, and ignored runtime files.",
+  )
+  .action(async () => {
+    const report = await runDoctor();
+    console.log(JSON.stringify(report, null, 2));
+
+    if (report.status === "error") {
+      process.exitCode = 1;
+    }
   });
 
 program

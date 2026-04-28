@@ -1,0 +1,163 @@
+import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { describe, it } from "vitest";
+import {
+  checkPublication,
+  checkSubstackCredentials,
+  checkTransport,
+  runDoctor,
+  summarizeStatus,
+  type DoctorCheck,
+  type DoctorStatus,
+} from "./doctor.js";
+import { updateConfig, type EffectiveConfig } from "../config/store.js";
+
+describe("summarizeStatus", () => {
+  it.each([
+    ["ok", [{ name: "a", status: "ok", message: "ok" }]],
+    ["warn", [{ name: "a", status: "warn", message: "warn" }]],
+    ["error", [{ name: "a", status: "error", message: "error" }]],
+    [
+      "error",
+      [
+        { name: "a", status: "ok", message: "ok" },
+        { name: "b", status: "warn", message: "warn" },
+        { name: "c", status: "error", message: "error" },
+      ],
+    ],
+    [
+      "warn",
+      [
+        { name: "a", status: "ok", message: "ok" },
+        { name: "b", status: "warn", message: "warn" },
+      ],
+    ],
+  ] satisfies Array<[DoctorStatus, DoctorCheck[]]>)(
+    "returns %s",
+    (expected, checks) => {
+      assert.equal(summarizeStatus(checks), expected);
+    },
+  );
+});
+
+describe("doctor checks", () => {
+  it("reports publication configuration without exposing the full URL", () => {
+    const check = checkPublication(
+      config({ publicationUrl: "https://example.substack.com" }),
+    );
+
+    assert.equal(check.status, "ok");
+    assert.deepEqual(check.details, { host: "example.substack.com" });
+  });
+
+  it("requires publication configuration", () => {
+    const check = checkPublication(config({ publicationUrl: undefined }));
+
+    assert.equal(check.status, "error");
+  });
+
+  it("requires Browserbase variables when Browserbase runtime is selected", () => {
+    const check = checkTransport(config({ browserRuntime: "browserbase" }));
+
+    assert.equal(check.status, "error");
+    assert.match(check.message, /BROWSERBASE_API_KEY/);
+  });
+
+  it("warns for Camoufox because it is not validated", () => {
+    const check = checkTransport(config({ browserRuntime: "camoufox" }));
+
+    assert.equal(check.status, "warn");
+  });
+
+  it("reports local runtime as ready", () => {
+    const check = checkTransport(config({ browserRuntime: "local" }));
+
+    assert.equal(check.status, "ok");
+  });
+
+  it("detects partial Substack credential configuration", () => {
+    const check = checkSubstackCredentials(config({ substackEmail: "a@b.co" }));
+
+    assert.equal(check.status, "warn");
+    assert.deepEqual(check.details, {
+      emailConfigured: true,
+      passwordConfigured: false,
+    });
+  });
+
+  it("runs the offline doctor against an isolated state directory", async () => {
+    await withTempState(async () => {
+      await updateConfig({
+        publicationUrl: "https://example.substack.com",
+        browserRuntime: "local",
+      });
+
+      const report = await runDoctor();
+
+      assert.equal(report.status, "warn");
+      assert.deepEqual(
+        report.checks.map((check) => check.name),
+        [
+          "publication",
+          "transport",
+          "substack-login",
+          "browserbase-session",
+          "local-browser-profile",
+          "gitignore",
+        ],
+      );
+      assert.equal(
+        report.checks.find((check) => check.name === "publication")?.status,
+        "ok",
+      );
+    });
+  });
+});
+
+function config(patch: Partial<EffectiveConfig>): EffectiveConfig {
+  return {
+    browserRuntime: "local",
+    defaultMode: "draft",
+    stagehandModel: "openai/gpt-5",
+    ...patch,
+  };
+}
+
+async function withTempState(run: () => Promise<void>): Promise<void> {
+  const previousStateDir = process.env.SUBSTACK_CLI_STATE_DIR;
+  const previousPublicationUrl = process.env.SUBSTACK_PUBLICATION_URL;
+  const previousEmail = process.env.SUBSTACK_EMAIL;
+  const previousPassword = process.env.SUBSTACK_PASSWORD;
+  const previousBrowserbaseApiKey = process.env.BROWSERBASE_API_KEY;
+  const previousBrowserbaseProjectId = process.env.BROWSERBASE_PROJECT_ID;
+  const temp = await mkdtemp(join(tmpdir(), "substack-cli-doctor-"));
+
+  try {
+    process.env.SUBSTACK_CLI_STATE_DIR = join(temp, ".substack-cli");
+    delete process.env.SUBSTACK_PUBLICATION_URL;
+    delete process.env.SUBSTACK_EMAIL;
+    delete process.env.SUBSTACK_PASSWORD;
+    delete process.env.BROWSERBASE_API_KEY;
+    delete process.env.BROWSERBASE_PROJECT_ID;
+    await run();
+  } finally {
+    restoreEnv("SUBSTACK_CLI_STATE_DIR", previousStateDir);
+    restoreEnv("SUBSTACK_PUBLICATION_URL", previousPublicationUrl);
+    restoreEnv("SUBSTACK_EMAIL", previousEmail);
+    restoreEnv("SUBSTACK_PASSWORD", previousPassword);
+    restoreEnv("BROWSERBASE_API_KEY", previousBrowserbaseApiKey);
+    restoreEnv("BROWSERBASE_PROJECT_ID", previousBrowserbaseProjectId);
+    await rm(temp, { recursive: true, force: true });
+  }
+}
+
+function restoreEnv(name: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[name];
+    return;
+  }
+
+  process.env[name] = value;
+}
