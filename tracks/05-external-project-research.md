@@ -12,6 +12,10 @@ Use existing Substack and editor automation projects to identify hidden feature 
 - `publish-substack-article` style workflows: browser automation using HTML clipboard paste into Substack's Tiptap editor.
 - Tiptap and ProseMirror projects: schema, serialization, and editor behavior references.
 
+## Reviewed Matrix
+
+See `research/substack-project-matrix.md` for the current comparison of listed GitHub projects, Substack docs, and third-party API references.
+
 ## Research Questions
 
 1. Which post metadata fields are commonly exposed by unofficial clients and should be supported locally?
@@ -22,7 +26,7 @@ Use existing Substack and editor automation projects to identify hidden feature 
 
 ## Next Tasks
 
-1. Review source and docs for the initial leads and record feature inventory in this file.
+1. Review source and docs for the initial leads and record feature inventory in this file. Done for the first matrix pass; continue with source-level review for the most relevant projects.
 2. Convert useful findings into issues or tasks under tracks 01-04.
 3. Add attribution links in `README.md` for design references where appropriate.
 4. Avoid importing code from incompatible licenses or unstable endpoint wrappers.
