@@ -90,6 +90,7 @@ node dist\cli.js publish examples\basic.md --yes
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --yes
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --transport auto --yes
 node dist\cli.js trace review .substack-cli\publish-traces\review.json
+node dist\cli.js trace compare .substack-cli\publish-traces\review.json .substack-cli\publish-traces\publish.json
 ```
 
 Publish and schedule commands run the same prepublish validation first and stop early if the payload is not compatible. Use `--trace-out` to capture a local JSON review artifact for later comparison.

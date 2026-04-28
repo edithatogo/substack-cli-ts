@@ -19,6 +19,13 @@ export interface WorkflowTraceReview {
   note: string;
 }
 
+export interface WorkflowTraceComparison {
+  equal: boolean;
+  expected: WorkflowTraceReview;
+  actual: WorkflowTraceReview;
+  differences: string[];
+}
+
 const WorkflowStepSchema = z.object({
   name: z.string().min(1),
   status: z.union([z.literal("ok"), z.literal("error")]),
@@ -88,6 +95,25 @@ export async function reviewWorkflowTraceArtifact(
   };
 }
 
+export async function compareWorkflowTraceArtifacts(
+  expectedFile: string,
+  actualFile: string,
+): Promise<WorkflowTraceComparison> {
+  const [expected, actual] = await Promise.all([
+    reviewWorkflowTraceArtifact(expectedFile),
+    reviewWorkflowTraceArtifact(actualFile),
+  ]);
+
+  const differences = diffWorkflowTraceReviews(expected, actual);
+
+  return {
+    equal: differences.length === 0,
+    expected,
+    actual,
+    differences,
+  };
+}
+
 export function summarizeWorkflowTrace(review: WorkflowTraceReview): unknown {
   return {
     status: review.status,
@@ -107,4 +133,118 @@ export function summarizeWorkflowTrace(review: WorkflowTraceReview): unknown {
     browserSessionPresent: review.browserSessionPresent,
     note: review.note,
   };
+}
+
+function diffWorkflowTraceReviews(
+  expected: WorkflowTraceReview,
+  actual: WorkflowTraceReview,
+): string[] {
+  const differences: string[] = [];
+
+  compareField(differences, "status", expected.status, actual.status);
+  compareField(differences, "mode", expected.mode, actual.mode);
+  compareField(differences, "title", expected.title, actual.title);
+  compareField(
+    differences,
+    "currentUrl",
+    expected.currentUrl,
+    actual.currentUrl,
+  );
+  compareField(
+    differences,
+    "scheduleAt",
+    expected.scheduleAt,
+    actual.scheduleAt,
+  );
+  compareField(
+    differences,
+    "editorTextLength",
+    expected.editorTextLength,
+    actual.editorTextLength,
+  );
+  compareField(
+    differences,
+    "transport.requested",
+    expected.transportRequested,
+    actual.transportRequested,
+  );
+  compareField(
+    differences,
+    "transport.selected",
+    expected.transportSelected,
+    actual.transportSelected,
+  );
+  compareField(
+    differences,
+    "transport.fallbackReason",
+    expected.fallbackReason,
+    actual.fallbackReason,
+  );
+  compareField(
+    differences,
+    "traceCount",
+    expected.traceCount,
+    actual.traceCount,
+  );
+  compareField(differences, "stepNames", expected.stepNames, actual.stepNames);
+  compareField(
+    differences,
+    "failedStepNames",
+    expected.failedStepNames,
+    actual.failedStepNames,
+  );
+  compareField(
+    differences,
+    "browserSessionPresent",
+    expected.browserSessionPresent,
+    actual.browserSessionPresent,
+  );
+
+  return differences;
+}
+
+function compareField(
+  differences: string[],
+  name: string,
+  expected: unknown,
+  actual: unknown,
+): void {
+  if (stableStringify(expected) !== stableStringify(actual)) {
+    differences.push(
+      `${name}: ${stableValue(expected)} != ${stableValue(actual)}`,
+    );
+  }
+}
+
+function stableStringify(value: unknown): string {
+  const serialized = stringifyMaybe(value);
+  return serialized === undefined ? "undefined" : serialized;
+}
+
+function stringifyMaybe(value: unknown): string | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return JSON.stringify(sortValue(value));
+}
+
+function sortValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(sortValue);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, child]) => [key, sortValue(child)]),
+    );
+  }
+
+  return value;
+}
+
+function stableValue(value: unknown): string {
+  return stableStringify(value);
 }

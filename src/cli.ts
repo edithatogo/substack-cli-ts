@@ -39,6 +39,7 @@ import { prepublishPost } from "./publish/prepublish.js";
 import { preparePost } from "./publish/prepare.js";
 import { resolveTransport } from "./publish/transport.js";
 import {
+  compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
   summarizeWorkflowTrace,
 } from "./publish/workflow-trace.js";
@@ -146,6 +147,23 @@ trace
   .action(async (file: string) => {
     const review = await reviewWorkflowTraceArtifact(file);
     console.log(JSON.stringify(summarizeWorkflowTrace(review), null, 2));
+  });
+
+trace
+  .command("compare")
+  .description("Compare two saved browser workflow trace artifacts.")
+  .argument("<expected-file>", "Expected workflow trace JSON file")
+  .argument("<actual-file>", "Actual workflow trace JSON file")
+  .action(async (expectedFile: string, actualFile: string) => {
+    const comparison = await compareWorkflowTraceArtifacts(
+      expectedFile,
+      actualFile,
+    );
+    console.log(JSON.stringify(comparison, null, 2));
+
+    if (!comparison.equal) {
+      process.exitCode = 1;
+    }
   });
 
 program

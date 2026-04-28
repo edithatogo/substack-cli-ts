@@ -3,7 +3,10 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
-import { reviewWorkflowTraceArtifact } from "./workflow-trace.js";
+import {
+  compareWorkflowTraceArtifacts,
+  reviewWorkflowTraceArtifact,
+} from "./workflow-trace.js";
 
 describe("reviewWorkflowTraceArtifact", () => {
   it("summarizes a stored workflow trace artifact", async () => {
@@ -52,6 +55,80 @@ describe("reviewWorkflowTraceArtifact", () => {
       assert.deepEqual(review.stepNames, ["open-publish-settings"]);
       assert.equal(review.browserSessionPresent, true);
       assert.match(review.note, /without exposing session URLs/i);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
+  it("compares two stored workflow trace artifacts", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-trace-"));
+    const expectedFile = join(temp, "expected.json");
+    const actualFile = join(temp, "actual.json");
+
+    await writeFile(
+      expectedFile,
+      JSON.stringify(
+        {
+          status: "publish-review-opened",
+          mode: "publish",
+          title: "Expected Title",
+          currentUrl: "https://rareinsights.substack.com/publish/post/123",
+          transport: {
+            requested: "auto",
+            selected: "browser",
+          },
+          trace: [],
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+
+    await writeFile(
+      actualFile,
+      JSON.stringify(
+        {
+          status: "publish-clicked",
+          mode: "publish",
+          title: "Actual Title",
+          currentUrl: "https://rareinsights.substack.com/publish/post/456",
+          transport: {
+            requested: "browser",
+            selected: "browser",
+          },
+          trace: [
+            {
+              name: "click-final-publish",
+              status: "ok",
+              startedAt: "2026-04-28T00:00:00.000Z",
+              endedAt: "2026-04-28T00:00:01.000Z",
+            },
+          ],
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+
+    try {
+      const comparison = await compareWorkflowTraceArtifacts(
+        expectedFile,
+        actualFile,
+      );
+
+      assert.equal(comparison.equal, false);
+      assert.ok(
+        comparison.differences.some((difference) =>
+          difference.startsWith("status:"),
+        ),
+      );
+      assert.ok(
+        comparison.differences.some((difference) =>
+          difference.startsWith("title:"),
+        ),
+      );
     } finally {
       await rm(temp, { recursive: true, force: true });
     }
