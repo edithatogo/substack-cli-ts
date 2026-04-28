@@ -22,6 +22,7 @@ Keep the project safe to change as browser automation, internal API calls, and c
 ## Not Added Yet
 
 - Monorepo orchestration: Nx, Turborepo, Moon, Rush, Bazel, Lage.
+- Package manager migration: pnpm.
 - Alternative runtimes: Bun, Deno.
 - Deployment CD: Argo CD, Northflank, Harness, Buildkite, Dagger.
 - Mandatory mutation testing in CI.
@@ -40,3 +41,4 @@ This is currently a single-package CLI. npm scripts and GitHub Actions are enoug
 5. Add a license/dependency policy check if the project becomes distributable.
 6. Expand mutation targets once slow/browser-adjacent modules have isolated unit seams.
 7. Add a CI gating policy for mutation score once the Linux job has been observed stable for a few runs.
+8. Revisit `pnpm` if the repository becomes a multi-package workspace or dependency install speed becomes a real bottleneck.
