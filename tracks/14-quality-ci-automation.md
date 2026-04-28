@@ -15,6 +15,7 @@ Keep the project safe to change as browser automation, internal API calls, and c
 - GitHub Actions CI for install, format, lint, typecheck, coverage tests, production audit, and secret pattern scan.
 - Cross-platform secret scan script shared between local and CI checks.
 - Dedicated GitHub Actions mutation-testing job that uploads the report artifact.
+- Mocked internal API integration tests for auth, read-model, and shared client helpers.
 - Renovate configuration for dependency update PRs.
 - ADRs under `docs/decisions/`.
 - `doctor` command for local configuration, transport, browser profile, and ignored-file diagnostics.
@@ -35,10 +36,9 @@ This is currently a single-package CLI. npm scripts and GitHub Actions are enoug
 ## Next Tasks
 
 1. Raise coverage thresholds as Track 06-12 implementation expands.
-2. Add mocked API integration tests for the internal adapter.
-3. Add Playwright E2E tests against a controlled test publication, excluded from default CI.
-4. Add deeper `doctor` checks for API transport probes after Track 06 exists.
-5. Add a license/dependency policy check if the project becomes distributable.
-6. Expand mutation targets once slow/browser-adjacent modules have isolated unit seams.
-7. Add a CI gating policy for mutation score once the Linux job has been observed stable for a few runs.
-8. Revisit `pnpm` if the repository becomes a multi-package workspace or dependency install speed becomes a real bottleneck.
+2. Add Playwright E2E tests against a controlled test publication, excluded from default CI.
+3. Add deeper `doctor` checks for API transport probes after Track 06 exists.
+4. Add a license/dependency policy check if the project becomes distributable.
+5. Expand mutation targets once slow/browser-adjacent modules have isolated unit seams.
+6. Add a CI gating policy for mutation score once the Linux job has been observed stable for a few runs.
+7. Revisit `pnpm` if the repository becomes a multi-package workspace or dependency install speed becomes a real bottleneck.

@@ -9,5 +9,6 @@ import "../publish/prepublish.test.js";
 import "../publish/workflow-trace.test.js";
 import "../publish/transport.test.js";
 import "../substack-api/draft-mappings.test.js";
+import "../substack-api/client.test.js";
 import "../substack-api/draft-write.test.js";
 import "../substack-api/payload.test.js";
