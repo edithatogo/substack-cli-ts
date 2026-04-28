@@ -37,6 +37,8 @@ export interface BrowserWorkflowResult {
   mode: PreparedPost["mode"];
   title: string;
   currentUrl: string;
+  finalUrl: string;
+  finalState: string;
   transport: {
     requested: TransportPreference;
     selected: "browser";
@@ -251,6 +253,8 @@ async function createDraftInBrowser(
       mode: prepared.mode,
       title,
       currentUrl,
+      finalUrl: currentUrl,
+      finalState: "draft-created",
       transport,
       editorTextLength: editorText.length,
       browserbaseSessionId: session.browserbaseSessionId,
@@ -269,11 +273,14 @@ async function createDraftInBrowser(
   );
 
   if (prepared.mode === "publish" && shouldOpenPublishReview(options)) {
+    const finalUrl = session.page.url();
     return {
       status: "publish-review-opened",
       mode: prepared.mode,
       title,
-      currentUrl: session.page.url(),
+      currentUrl: finalUrl,
+      finalUrl,
+      finalState: "publish-review-opened",
       transport,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
@@ -291,12 +298,15 @@ async function createDraftInBrowser(
       60000,
     );
 
+    const finalUrl = session.page.url();
     return {
       status: "schedule-review-opened",
       mode: prepared.mode,
       scheduleAt: prepared.scheduleAt,
       title,
-      currentUrl: session.page.url(),
+      currentUrl: finalUrl,
+      finalUrl,
+      finalState: "schedule-review-opened",
       transport,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
@@ -313,11 +323,14 @@ async function createDraftInBrowser(
     60000,
   );
 
+  const finalUrl = session.page.url();
   return {
     status: "publish-clicked",
     mode: prepared.mode,
     title,
-    currentUrl: session.page.url(),
+    currentUrl: finalUrl,
+    finalUrl,
+    finalState: "publish-clicked",
     transport,
     browserbaseSessionId: session.browserbaseSessionId,
     browserbaseSessionUrl: session.browserbaseSessionUrl,

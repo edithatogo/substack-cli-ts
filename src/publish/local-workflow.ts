@@ -54,6 +54,8 @@ export async function runLocalDraftWorkflow(
       mode: prepared.mode,
       title,
       currentUrl: browser.page.url(),
+      finalUrl: browser.page.url(),
+      finalState: "draft-created",
       transport,
       editorTextLength: editorText.length,
       trace,

@@ -21,6 +21,8 @@ describe("reviewWorkflowTraceArtifact", () => {
           mode: "publish",
           title: "Review Title",
           currentUrl: "https://rareinsights.substack.com/publish/post/123",
+          finalUrl: "https://rareinsights.substack.com/publish/post/123",
+          finalState: "publish-review-opened",
           transport: {
             requested: "auto",
             selected: "browser",
@@ -73,6 +75,8 @@ describe("reviewWorkflowTraceArtifact", () => {
           mode: "publish",
           title: "Expected Title",
           currentUrl: "https://rareinsights.substack.com/publish/post/123",
+          finalUrl: "https://rareinsights.substack.com/publish/post/123",
+          finalState: "publish-review-opened",
           transport: {
             requested: "auto",
             selected: "browser",
@@ -93,6 +97,8 @@ describe("reviewWorkflowTraceArtifact", () => {
           mode: "publish",
           title: "Actual Title",
           currentUrl: "https://rareinsights.substack.com/publish/post/456",
+          finalUrl: "https://rareinsights.substack.com/publish/post/456",
+          finalState: "publish-clicked",
           transport: {
             requested: "browser",
             selected: "browser",

@@ -7,6 +7,8 @@ export interface WorkflowTraceReview {
   mode: BrowserWorkflowResult["mode"];
   title: string;
   currentUrl: string;
+  finalUrl: string;
+  finalState: string;
   scheduleAt?: string | undefined;
   editorTextLength?: number | undefined;
   transportRequested: BrowserWorkflowResult["transport"]["requested"];
@@ -49,6 +51,8 @@ const BrowserWorkflowResultSchema = z.object({
   ]),
   title: z.string().min(1),
   currentUrl: z.string().min(1),
+  finalUrl: z.string().min(1),
+  finalState: z.string().min(1),
   scheduleAt: z.string().optional(),
   editorTextLength: z.number().int().nonnegative().optional(),
   transport: z.object({
@@ -77,6 +81,8 @@ export async function reviewWorkflowTraceArtifact(
     mode: artifact.mode,
     title: artifact.title,
     currentUrl: artifact.currentUrl,
+    finalUrl: artifact.finalUrl,
+    finalState: artifact.finalState,
     scheduleAt: artifact.scheduleAt,
     editorTextLength: artifact.editorTextLength,
     transportRequested: artifact.transport.requested,
@@ -120,6 +126,8 @@ export function summarizeWorkflowTrace(review: WorkflowTraceReview): unknown {
     mode: review.mode,
     title: review.title,
     currentUrl: review.currentUrl,
+    finalUrl: review.finalUrl,
+    finalState: review.finalState,
     scheduleAt: review.scheduleAt,
     editorTextLength: review.editorTextLength,
     transport: {
@@ -149,6 +157,13 @@ function diffWorkflowTraceReviews(
     "currentUrl",
     expected.currentUrl,
     actual.currentUrl,
+  );
+  compareField(differences, "finalUrl", expected.finalUrl, actual.finalUrl);
+  compareField(
+    differences,
+    "finalState",
+    expected.finalState,
+    actual.finalState,
   );
   compareField(
     differences,

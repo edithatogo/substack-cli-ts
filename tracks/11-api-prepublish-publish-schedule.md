@@ -35,7 +35,7 @@ Add final publishing operations only after draft writes and payload validation a
 - Prepublish reports payload compatibility, resolved title, and the final payload shape for browser execution.
 - `publish` and `schedule` now run the same prepublish validation before opening the browser.
 - `publish --review-only` stops at the final confirmation screen without clicking Publish.
-- Review and publish checkpoints now report the current page URL for controlled publication mapping.
+- Review and publish checkpoints now report the current page URL and explicit final URL/state for controlled publication mapping.
 - `--trace-out` can write a local JSON workflow artifact for review-only publish traces.
 - `trace review <file>` summarizes a saved workflow artifact without exposing browser session URLs.
 - `trace compare <expected-file> <actual-file>` compares saved workflow artifacts locally.
