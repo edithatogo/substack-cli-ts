@@ -4,6 +4,8 @@
 
 Develop the CLI in four phases. Each phase should end with a working milestone, tests for the implemented behavior, and updated usage notes. The default path is draft-first and dry-run-friendly; publishing requires explicit confirmation.
 
+For implementation details, see `docs/workflows/cli.md` and `docs/workflows/mcp.md`.
+
 ## Phase 1: Scaffolding and Identity Management
 
 ### Milestone 1.1: TypeScript CLI Foundation
