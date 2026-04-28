@@ -34,12 +34,13 @@ When new work is found:
 
 ## Open Discoveries
 
-| ID   | Discovery                                                                                                | Source                        | Depends On    | Blocks              | Status |
-| ---- | -------------------------------------------------------------------------------------------------------- | ----------------------------- | ------------- | ------------------- | ------ |
-| D001 | Determine whether schedule is available through a stable internal endpoint or must remain browser-only.  | Research matrix               | Tracks 07, 08 | Track 11            | Open   |
-| D002 | Decide whether subscriber/analytics export belongs in this CLI or a separate read/export command group.  | User goal: information in/out | Track 07      | Future export track | Open   |
-| D003 | Determine how to safely persist source-file-to-draft mappings without leaking private titles or content. | Draft update requirement      | Tracks 08, 12 | Track 08            | Open   |
-| D004 | Identify license constraints before porting behavior from any open-source project.                       | GitHub research               | None          | All adapter tracks  | Open   |
+| ID   | Discovery                                                                                                 | Source                        | Depends On    | Blocks              | Status |
+| ---- | --------------------------------------------------------------------------------------------------------- | ----------------------------- | ------------- | ------------------- | ------ |
+| D001 | Determine whether schedule is available through a stable internal endpoint or must remain browser-only.   | Research matrix               | Tracks 07, 08 | Track 11            | Open   |
+| D002 | Decide whether subscriber/analytics export belongs in this CLI or a separate read/export command group.   | User goal: information in/out | Track 07      | Future export track | Open   |
+| D003 | Determine how to safely persist source-file-to-draft mappings without leaking private titles or content.  | Draft update requirement      | Tracks 08, 12 | Track 08            | Open   |
+| D004 | Identify license constraints before porting behavior from any open-source project.                        | GitHub research               | None          | All adapter tracks  | Open   |
+| D005 | Confirm the safest read-only endpoint for validating current user and publication from extracted cookies. | Track 06 implementation       | Track 06      | Track 07            | Open   |
 
 ## Additional Improvements To Consider
 

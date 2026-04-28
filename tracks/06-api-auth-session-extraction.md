@@ -25,6 +25,18 @@ Create a safe authentication layer for internal API probes without committing or
 
 ## Acceptance Criteria
 
-- `substack-cli api auth status` reports authenticated user/publication context without exposing secrets.
+- `substack-cli api auth status` reports local or environment cookie context without exposing secrets.
 - Missing, expired, or mismatched sessions fail with actionable recovery steps.
 - Unit tests cover redaction and session validation failure modes.
+
+## Current Progress
+
+- Added `SUBSTACK_COOKIE` as an ignored environment option.
+- Added local browser profile cookie extraction through Playwright persistent context.
+- Added `substack-cli api auth status --source auto|env|local-profile`.
+- Added redacted cookie summaries and session-cookie detection tests.
+
+## Remaining Work
+
+- Add a read-only current-user/publication validation request once the endpoint is confirmed in Track 07.
+- Improve expired-cookie detection after real endpoint responses are mapped.

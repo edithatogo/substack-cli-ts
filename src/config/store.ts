@@ -20,6 +20,7 @@ export interface EffectiveConfig extends AppConfig {
   stagehandModel: string;
   substackEmail?: string | undefined;
   substackPassword?: string | undefined;
+  substackCookie?: string | undefined;
 }
 
 export async function loadConfig(): Promise<AppConfig> {
@@ -68,6 +69,7 @@ export async function loadEffectiveConfig(): Promise<EffectiveConfig> {
     stagehandModel: env.STAGEHAND_MODEL,
     substackEmail: env.SUBSTACK_EMAIL,
     substackPassword: env.SUBSTACK_PASSWORD,
+    substackCookie: env.SUBSTACK_COOKIE,
   };
 }
 

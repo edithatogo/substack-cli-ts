@@ -4,6 +4,7 @@ import { chromium, type BrowserContext, type Page } from "playwright-core";
 import { localBrowserProfileDir } from "../config/paths.js";
 
 export interface LocalBrowserSession {
+  context: BrowserContext;
   page: Page;
   close: () => Promise<void>;
 }
@@ -22,6 +23,7 @@ export async function createLocalBrowserSession(): Promise<LocalBrowserSession> 
   const page = await context.newPage();
 
   return {
+    context,
     page,
     close: () => closeLocalBrowser(context),
   };

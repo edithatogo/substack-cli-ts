@@ -30,6 +30,11 @@ import {
 import { runDoctor } from "./doctor/doctor.js";
 import { preparePost } from "./publish/prepare.js";
 import {
+  resolveApiAuthMaterial,
+  summarizeApiAuthMaterial,
+  type ApiAuthSource,
+} from "./substack-api/auth.js";
+import {
   captureFixture,
   compareFixture,
   validateSchemaFile,
@@ -213,6 +218,32 @@ schema
     console.log(JSON.stringify(result, null, 2));
 
     if (!result.equal) {
+      process.exitCode = 1;
+    }
+  });
+
+const api = program
+  .command("api")
+  .description("Read-only internal API probes and future API transport tools.");
+
+const apiAuth = api
+  .command("auth")
+  .description("Inspect API authentication material without exposing secrets.");
+
+apiAuth
+  .command("status")
+  .description(
+    "Extract local or environment cookie material and print a redacted summary.",
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const summary = summarizeApiAuthMaterial(material);
+
+    console.log(JSON.stringify(summary, null, 2));
+
+    if (!summary.hasLikelySessionCookie) {
       process.exitCode = 1;
     }
   });

@@ -125,7 +125,11 @@ export function checkSubstackCredentials(config: EffectiveConfig): DoctorCheck {
       name: "substack-login",
       status: "ok",
       message: "Substack login variables are configured.",
-      details: { emailConfigured: true, passwordConfigured: true },
+      details: {
+        emailConfigured: true,
+        passwordConfigured: true,
+        cookieConfigured: Boolean(config.substackCookie),
+      },
     };
   }
 
@@ -135,7 +139,11 @@ export function checkSubstackCredentials(config: EffectiveConfig): DoctorCheck {
       status: "warn",
       message:
         "Substack login variables are partially configured. Set both SUBSTACK_EMAIL and SUBSTACK_PASSWORD for local auto-login.",
-      details: { emailConfigured: hasEmail, passwordConfigured: hasPassword },
+      details: {
+        emailConfigured: hasEmail,
+        passwordConfigured: hasPassword,
+        cookieConfigured: Boolean(config.substackCookie),
+      },
     };
   }
 
@@ -144,7 +152,11 @@ export function checkSubstackCredentials(config: EffectiveConfig): DoctorCheck {
     status: "warn",
     message:
       "Substack login variables are not configured. Manual local login can still be used.",
-    details: { emailConfigured: false, passwordConfigured: false },
+    details: {
+      emailConfigured: false,
+      passwordConfigured: false,
+      cookieConfigured: Boolean(config.substackCookie),
+    },
   };
 }
 

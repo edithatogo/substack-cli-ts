@@ -41,6 +41,7 @@ Set:
 - `BROWSERBASE_PROJECT_ID`
 - `SUBSTACK_PUBLICATION_URL`
 - `SUBSTACK_EMAIL` and `SUBSTACK_PASSWORD` only if you want `auth login --auto-login`
+- `SUBSTACK_COOKIE` only if you want to test the internal API adapter without reading the local browser profile
 
 ## Commands
 
@@ -50,6 +51,7 @@ node dist\cli.js draft examples\basic.md --dry-run
 node dist\cli.js config set-publication https://example.substack.com
 node dist\cli.js config set-runtime local
 node dist\cli.js doctor
+node dist\cli.js api auth status --source local-profile
 node dist\cli.js auth status
 node dist\cli.js auth login --wait-seconds 120
 node dist\cli.js auth login --auto-login --wait-seconds 120

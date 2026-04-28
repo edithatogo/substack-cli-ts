@@ -84,6 +84,7 @@ describe("doctor checks", () => {
     assert.deepEqual(check.details, {
       emailConfigured: true,
       passwordConfigured: false,
+      cookieConfigured: false,
     });
   });
 
