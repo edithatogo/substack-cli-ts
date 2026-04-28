@@ -54,6 +54,7 @@ node dist\cli.js doctor
 node dist\cli.js api auth status --source local-profile
 node dist\cli.js api inventory --source local-profile --post-limit 10
 node dist\cli.js api payload examples\basic.md
+node dist\cli.js api draft create examples\basic.md
 node dist\cli.js auth status
 node dist\cli.js auth login --wait-seconds 120
 node dist\cli.js auth login --auto-login --wait-seconds 120

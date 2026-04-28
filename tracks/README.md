@@ -13,7 +13,7 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 05. External Project Research             | Planned     | Initial scan identified projects and feature ideas to review systematically.                             |
 | 06. API Auth and Session Extraction       | In progress | Cookie extraction and read-only auth validation work against local browser profile sessions.             |
 | 07. API Read Model                        | In progress | Maps user, publication, sections, and bounded recent posts; drafts and pagination remain.                |
-| 08. API Draft Write Model                 | Proposed    | Create/update/fetch drafts and handle duplicate detection.                                               |
+| 08. API Draft Write Model                 | In progress | No-network draft write planning is implemented; live create/update waits on endpoint confirmation.       |
 | 09. API Content Payload Compatibility     | In progress | API payload builder and unsupported-node preflight are implemented; captured draft comparison remains.   |
 | 10. API Media Upload                      | Proposed    | Upload local/remote images and preserve captions/alt text.                                               |
 | 11. API Prepublish, Publish, and Schedule | Proposed    | Add gated prepublish, publish, and schedule flows after draft writes are reliable.                       |

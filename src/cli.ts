@@ -35,6 +35,7 @@ import {
   validateApiAuthMaterial,
   type ApiAuthSource,
 } from "./substack-api/auth.js";
+import { planCreateDraft } from "./substack-api/draft-write.js";
 import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import { readApiInventory } from "./substack-api/read-model.js";
 import {
@@ -296,6 +297,37 @@ api
       }
     },
   );
+
+const apiDraft = api
+  .command("draft")
+  .description("Plan future internal API draft create/update operations.");
+
+apiDraft
+  .command("create")
+  .description(
+    "Build and validate a draft creation request without publishing content.",
+  )
+  .argument("<file>", "Markdown file to convert")
+  .option(
+    "--live",
+    "Attempt the live write request after endpoint contract confirmation",
+    false,
+  )
+  .action(async (file: string, options: { live: boolean }) => {
+    if (options.live) {
+      throw new Error(
+        "Live API draft creation is not enabled until the draft endpoint contract is confirmed.",
+      );
+    }
+
+    const effective = await loadEffectiveConfig();
+    const prepared = await preparePost(file, { mode: "draft" });
+    const plan = planCreateDraft(
+      prepared.post,
+      requirePublicationUrl(effective),
+    );
+    console.log(JSON.stringify(plan, null, 2));
+  });
 
 const config = program
   .command("config")
