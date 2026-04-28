@@ -27,3 +27,16 @@ Translate the existing Markdown/Tiptap pipeline into the payload shape expected 
 - Fixture tests validate generated payloads without network access.
 - Unsupported content fails before any write request.
 - Browser and API transports share the same parsed source model.
+
+## Current Progress
+
+- Added an API payload builder that reuses the existing parsed Markdown/Tiptap source model.
+- Added metadata fields for `section`, `sectionId`, and `comments`.
+- Added compatibility validation for supported ProseMirror nodes and marks before any write request.
+- Added `substack-cli api payload <file>` for local payload inspection without network access.
+
+## Remaining Work
+
+- Compare captured Substack draft bodies against the generated payload shape.
+- Add image/embed/caption compatibility after media upload mapping exists.
+- Expand unsupported fallback documentation once draft write probes identify exact endpoint requirements.

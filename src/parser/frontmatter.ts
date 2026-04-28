@@ -7,6 +7,9 @@ const MetadataSchema = z.object({
   slug: z.string().optional(),
   tags: z.union([z.array(z.string()), z.string()]).optional(),
   audience: z.enum(["everyone", "free", "paid", "founding"]).optional(),
+  section: z.string().optional(),
+  sectionId: z.coerce.number().int().positive().optional(),
+  comments: z.enum(["enabled", "disabled", "paid", "free"]).optional(),
   scheduleAt: z.string().optional(),
 });
 
@@ -43,6 +46,9 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
       slug: parsed.slug,
       tags,
       audience: parsed.audience,
+      section: parsed.section,
+      sectionId: parsed.sectionId,
+      comments: parsed.comments,
       scheduleAt: parsed.scheduleAt,
     },
     body: markdown.slice(match[0].length),

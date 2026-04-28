@@ -35,6 +35,7 @@ import {
   validateApiAuthMaterial,
   type ApiAuthSource,
 } from "./substack-api/auth.js";
+import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import { readApiInventory } from "./substack-api/read-model.js";
 import {
   captureFixture,
@@ -255,6 +256,18 @@ apiAuth
       }
     },
   );
+
+api
+  .command("payload")
+  .description(
+    "Build the write-compatible Substack draft payload for a Markdown file.",
+  )
+  .argument("<file>", "Markdown file to convert")
+  .action(async (file: string) => {
+    const prepared = await preparePost(file, { mode: "draft" });
+    const payload = buildSubstackDraftPayload(prepared.post);
+    console.log(JSON.stringify(payload, null, 2));
+  });
 
 api
   .command("inventory")

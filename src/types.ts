@@ -6,6 +6,9 @@ export interface PostMetadata {
   slug?: string | undefined;
   tags: string[];
   audience?: "everyone" | "free" | "paid" | "founding" | undefined;
+  section?: string | undefined;
+  sectionId?: number | undefined;
+  comments?: "enabled" | "disabled" | "paid" | "free" | undefined;
   scheduleAt?: string | undefined;
 }
 
