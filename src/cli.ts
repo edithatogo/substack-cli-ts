@@ -8,8 +8,10 @@ import {
   saveSession,
 } from "./auth/session-store.js";
 import { performSubstackLogin } from "./auth/substack-login.js";
+import { createLocalBrowserSession } from "./browser/local-browser.js";
 import { createStagehandSession } from "./browser/stagehand.js";
 import { captureLocalDiagnostics } from "./browser/diagnostics.js";
+import { observeDraftTraffic } from "./browser/draft-capture.js";
 import {
   configFilePath,
   draftMappingsFilePath,
@@ -375,6 +377,45 @@ apiDraft
       ),
     );
   });
+
+apiDraft
+  .command("observe")
+  .description(
+    "Watch local browser traffic while manually creating or saving a draft.",
+  )
+  .argument(
+    "[url]",
+    "Publication URL to open before observation, defaults to the configured publication",
+  )
+  .option(
+    "--timeout-seconds <seconds>",
+    "How long to observe network traffic before stopping",
+    parseInteger,
+    180,
+  )
+  .action(
+    async (
+      url: string | undefined,
+      options: {
+        timeoutSeconds: number;
+      },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = url ?? requirePublicationUrl(effective);
+      const browser = await createLocalBrowserSession();
+
+      try {
+        const summary = await observeDraftTraffic(browser.page, {
+          timeoutMs: options.timeoutSeconds * 1000,
+          publicationUrl,
+        });
+
+        console.log(JSON.stringify(summary, null, 2));
+      } finally {
+        await browser.close();
+      }
+    },
+  );
 
 apiDraft
   .command("link")

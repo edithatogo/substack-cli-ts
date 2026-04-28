@@ -36,6 +36,7 @@ Support internal API draft creation and update without touching final publish co
 - Emits the intended draft endpoint, payload, draft URL, and duplicate key without exposing cookies.
 - Added local draft mappings under `.substack-cli/draft-mappings.json` for source-file to draft ID tracking.
 - Added `api draft mappings` and `api draft link <file> --draft-id <id>` for duplicate/update planning.
+- Added `api draft observe` to watch local browser traffic and write a redacted draft-save capture artifact.
 - `--live` is intentionally blocked until the draft endpoint contract is confirmed from a captured user-owned draft save.
 
 ## Remaining Work

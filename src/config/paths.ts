@@ -23,6 +23,10 @@ export function draftMappingsFilePath(): string {
   return join(stateDir(), "draft-mappings.json");
 }
 
+export function draftCaptureDir(): string {
+  return join(stateDir(), "draft-captures");
+}
+
 export function cacheDir(): string {
   return join(stateDir(), "stagehand-cache");
 }
