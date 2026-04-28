@@ -101,5 +101,6 @@ Detailed track files live under `tracks/`:
 - `tracks/03-draft-publish-schedule.md`
 - `tracks/04-browser-runtime-hardening.md`
 - `tracks/05-external-project-research.md`
+- `tracks/06-typescript-internal-api-adapter.md`
 
-Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, and systematic external project research remain open track work.
+Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, systematic external project research, and the proposed TypeScript internal API adapter remain open track work.

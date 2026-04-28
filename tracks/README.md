@@ -11,6 +11,7 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 03. Draft, Publish, and Schedule | In progress | Local draft creation is validated; publish and schedule are scaffolded but not validated. |
 | 04. Browser Runtime Hardening | In progress | Local Chrome profile works with manual CAPTCHA; Browserbase and Stagehand remain scaffolded. |
 | 05. External Project Research | Planned | Initial scan identified projects and feature ideas to review systematically. |
+| 06. TypeScript Internal API Adapter | Proposed | Add a ma2za-style TypeScript adapter beside the browser workflow and evaluate it safely. |
 
 ## Operating Rules
 
