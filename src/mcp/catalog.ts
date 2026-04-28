@@ -21,6 +21,7 @@ import {
 import { preparePost } from "../publish/prepare.js";
 import { buildDraftDuplicateLookupReport } from "../substack-api/draft-lookup.js";
 import { loadDraftMappings } from "../substack-api/draft-mappings.js";
+import { buildDraftSectionResolutionReport } from "../substack-api/draft-section.js";
 import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
@@ -385,6 +386,54 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(report),
             "Draft duplicate lookup completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "capture",
+    name: "api.draft.section",
+    description:
+      "Resolve a draft section against the current read-only inventory.",
+    cliCommand: "api draft section <file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.draft.section",
+        {
+          description:
+            "Resolve a draft section against the current read-only inventory.",
+          inputSchema: FileArg,
+          annotations: {
+            title: "Draft Section Resolution",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ file }) => {
+          const config = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(config, "auto");
+          const inventory = await readApiInventory(material, fetch, {
+            postLimit: 10,
+          });
+
+          if (inventory.status !== "ok") {
+            return jsonResult(
+              toJsonRecord(inventory),
+              "Draft section resolution could not run.",
+            );
+          }
+
+          const prepared = await preparePost(String(file), { mode: "draft" });
+          const report = buildDraftSectionResolutionReport({
+            post: prepared.post,
+            inventory,
+          });
+
+          return jsonResult(
+            toJsonRecord(report),
+            "Draft section resolution completed.",
           );
         },
       );

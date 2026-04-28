@@ -23,6 +23,7 @@ import {
   writeDraftContractMatrixFixture,
 } from "./browser/draft-contract-matrix.js";
 import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
+import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
 import {
   configFilePath,
   draftMappingsFilePath,
@@ -787,6 +788,35 @@ apiDraft
       console.log(JSON.stringify(report, null, 2));
     },
   );
+
+apiDraft
+  .command("section")
+  .description(
+    "Resolve a draft section against the current read-only inventory.",
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .argument("<file>", "Markdown file to inspect")
+  .action(async (file: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const prepared = await preparePost(file, { mode: "draft" });
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const inventory = await readApiInventory(material, fetch, {
+      postLimit: 10,
+    });
+
+    if (inventory.status !== "ok") {
+      console.log(JSON.stringify(inventory, null, 2));
+      process.exitCode = 1;
+      return;
+    }
+
+    const report = buildDraftSectionResolutionReport({
+      post: prepared.post,
+      inventory,
+    });
+
+    console.log(JSON.stringify(report, null, 2));
+  });
 
 const config = program
   .command("config")

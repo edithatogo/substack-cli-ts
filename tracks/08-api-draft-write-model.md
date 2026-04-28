@@ -43,6 +43,7 @@ Support internal API draft creation and update without touching final publish co
 - Added `api draft contract-matrix --out <file>` to persist a normalized matrix fixture.
 - Added `api draft contract-matrix-compare <expected-file> <actual-file>` to compare matrix fixtures locally.
 - Added `api draft duplicates <file>` to look up likely duplicates from the read-only inventory and local mappings.
+- Added `api draft section <file>` to resolve draft section metadata against the current read-only inventory.
 - Added `api draft compare <expected-file> <actual-file>` to diff normalized capture fixtures locally.
 - Added `api draft fixture <file> --out <file>` to write a normalized draft capture baseline.
 - `--live` is intentionally blocked until the draft endpoint contract is confirmed from a captured user-owned draft save.
@@ -55,5 +56,6 @@ Support internal API draft creation and update without touching final publish co
 - Use `api draft contract-matrix --out` to persist a normalized contract matrix fixture once a stable set of captures exists.
 - Use `api draft contract-matrix-compare` to compare matrix fixtures once they stabilize.
 - Use `api draft duplicates` to match a prepared draft against the read inventory and stored mappings.
+- Use `api draft section` to resolve draft section metadata before planning a draft write.
 - Capture a stable local baseline with `api draft fixture` and compare it with `api draft compare` once a user-owned draft trace is available.
 - Add explicit live write execution behind a separate confirmation flag once endpoint compatibility is proven.

@@ -22,4 +22,5 @@ import "../substack-api/draft-mappings.test.js";
 import "../substack-api/client.test.js";
 import "../substack-api/draft-write.test.js";
 import "../substack-api/draft-lookup.test.js";
+import "../substack-api/draft-section.test.js";
 import "../substack-api/payload.test.js";
