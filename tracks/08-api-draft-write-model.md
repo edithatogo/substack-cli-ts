@@ -34,10 +34,12 @@ Support internal API draft creation and update without touching final publish co
 - Added `substack-cli api draft create <file>` as a no-network draft write plan.
 - Reuses the Track 09 payload preflight, so unsupported content fails before any write path.
 - Emits the intended draft endpoint, payload, draft URL, and duplicate key without exposing cookies.
+- Added local draft mappings under `.substack-cli/draft-mappings.json` for source-file to draft ID tracking.
+- Added `api draft mappings` and `api draft link <file> --draft-id <id>` for duplicate/update planning.
 - `--live` is intentionally blocked until the draft endpoint contract is confirmed from a captured user-owned draft save.
 
 ## Remaining Work
 
 - Confirm the exact create/update/fetch draft endpoints and request bodies from a live draft save.
-- Add duplicate draft lookup using stored mappings plus title/slug matching.
+- Add duplicate draft lookup by title/slug against remote draft inventory after draft read endpoints are known.
 - Add explicit live write execution behind a separate confirmation flag once endpoint compatibility is proven.

@@ -12,6 +12,7 @@ import { createStagehandSession } from "./browser/stagehand.js";
 import { captureLocalDiagnostics } from "./browser/diagnostics.js";
 import {
   configFilePath,
+  draftMappingsFilePath,
   localBrowserProfileDir,
   sessionFilePath,
   stateDir,
@@ -35,6 +36,11 @@ import {
   validateApiAuthMaterial,
   type ApiAuthSource,
 } from "./substack-api/auth.js";
+import {
+  findDraftMapping,
+  loadDraftMappings,
+  saveDraftMapping,
+} from "./substack-api/draft-mappings.js";
 import { planCreateDraft } from "./substack-api/draft-write.js";
 import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import { readApiInventory } from "./substack-api/read-model.js";
@@ -321,13 +327,68 @@ apiDraft
     }
 
     const effective = await loadEffectiveConfig();
+    const publicationUrl = requirePublicationUrl(effective);
     const prepared = await preparePost(file, { mode: "draft" });
-    const plan = planCreateDraft(
-      prepared.post,
-      requirePublicationUrl(effective),
+    const existingDraft = await findDraftMapping(
+      prepared.post.filePath,
+      publicationUrl,
     );
+    const plan = planCreateDraft(prepared.post, publicationUrl, existingDraft);
     console.log(JSON.stringify(plan, null, 2));
   });
+
+apiDraft
+  .command("mappings")
+  .description("List local source-file to Substack draft mappings.")
+  .action(async () => {
+    const mappings = await loadDraftMappings();
+    console.log(
+      JSON.stringify(
+        {
+          mappingsFile: draftMappingsFilePath(),
+          mappings,
+        },
+        null,
+        2,
+      ),
+    );
+  });
+
+apiDraft
+  .command("link")
+  .description("Record a local source-file to Substack draft mapping.")
+  .argument("<file>", "Markdown source file")
+  .requiredOption("--draft-id <id>", "Substack draft ID")
+  .option("--draft-url <url>", "Substack draft editor URL")
+  .option("--title <title>", "Draft title to store")
+  .option("--slug <slug>", "Draft slug to store")
+  .action(
+    async (
+      file: string,
+      options: {
+        draftId: string;
+        draftUrl?: string;
+        title?: string;
+        slug?: string;
+      },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const prepared = await preparePost(file, { mode: "draft" });
+      const mapping = await saveDraftMapping({
+        sourceFile: prepared.post.filePath,
+        publicationUrl: requirePublicationUrl(effective),
+        draftId: options.draftId,
+        draftUrl: options.draftUrl,
+        title:
+          options.title ??
+          planCreateDraft(prepared.post, requirePublicationUrl(effective))
+            .payload.title,
+        slug: options.slug ?? prepared.post.metadata.slug,
+      });
+
+      console.log(JSON.stringify(mapping, null, 2));
+    },
+  );
 
 const config = program
   .command("config")
@@ -349,6 +410,7 @@ config
           stateDir: stateDir(),
           configFile: configFilePath(),
           sessionFile: sessionFilePath(),
+          draftMappingsFile: draftMappingsFilePath(),
           localBrowserProfileDir: localBrowserProfileDir(),
           local,
           effective: {

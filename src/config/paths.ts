@@ -19,6 +19,10 @@ export function sessionFilePath(): string {
   return join(stateDir(), "session.json");
 }
 
+export function draftMappingsFilePath(): string {
+  return join(stateDir(), "draft-mappings.json");
+}
+
 export function cacheDir(): string {
   return join(stateDir(), "stagehand-cache");
 }

@@ -1,9 +1,11 @@
 import { buildSubstackDraftPayload } from "./payload.js";
+import type { DraftMapping } from "./draft-mappings.js";
 import type { ParsedPost } from "../types.js";
 
 export interface DraftWritePlan {
   status: "planned";
-  method: "POST";
+  operation: "create" | "update";
+  method: "POST" | "PUT";
   endpoint: string;
   draftUrl: string;
   payload: ReturnType<typeof buildSubstackDraftPayload>;
@@ -12,20 +14,36 @@ export interface DraftWritePlan {
     slug?: string | undefined;
     sourceFile: string;
   };
+  existingDraft?: DraftMapping | undefined;
   message: string;
 }
 
 export function planCreateDraft(
   post: ParsedPost,
   publicationUrl: string,
+  existingDraft?: DraftMapping | null,
 ): DraftWritePlan {
   const payload = buildSubstackDraftPayload(post);
-  const endpoint = new URL("/api/v1/drafts", publicationUrl).toString();
-  const draftUrl = new URL("/publish/post", publicationUrl).toString();
+  const draftId = existingDraft?.draftId;
+  const endpoint = new URL(
+    draftId
+      ? `/api/v1/drafts/${encodeURIComponent(draftId)}`
+      : "/api/v1/drafts",
+    publicationUrl,
+  ).toString();
+  const draftUrl =
+    existingDraft?.draftUrl ??
+    new URL(
+      draftId
+        ? `/publish/post/${encodeURIComponent(draftId)}`
+        : "/publish/post",
+      publicationUrl,
+    ).toString();
 
   return {
     status: "planned",
-    method: "POST",
+    operation: draftId ? "update" : "create",
+    method: draftId ? "PUT" : "POST",
     endpoint,
     draftUrl,
     payload,
@@ -34,6 +52,7 @@ export function planCreateDraft(
       slug: payload.slug,
       sourceFile: post.filePath,
     },
+    existingDraft: existingDraft ?? undefined,
     message:
       "Draft write plan built locally. Live API creation is disabled until the endpoint contract is confirmed.",
   };
