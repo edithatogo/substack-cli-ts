@@ -49,6 +49,7 @@ import {
   summarizeDistributionPolicy,
 } from "./policy/distribution.js";
 import { buildMcpSurfaceManifest, summarizeMcpSurface } from "./mcp/surface.js";
+import { runMcpServer } from "./mcp/server.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
   resolveApiAuthMaterial,
@@ -120,14 +121,21 @@ program
 
 const mcp = program
   .command("mcp")
-  .description("Inspect the planned MCP surface for redacted CLI summaries.");
+  .description("Inspect or run the MCP surface for redacted CLI summaries.");
 
 mcp
   .command("surface")
-  .description("Print the planned MCP surface manifest.")
+  .description("Print the MCP surface manifest.")
   .action(() => {
     const manifest = buildMcpSurfaceManifest();
     console.log(JSON.stringify(summarizeMcpSurface(manifest), null, 2));
+  });
+
+mcp
+  .command("serve")
+  .description("Run the MCP server over stdio.")
+  .action(async () => {
+    await runMcpServer();
   });
 
 program
