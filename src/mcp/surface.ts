@@ -1,1 +1,5 @@
-export { buildMcpSurfaceManifest, summarizeMcpSurface } from "./manifest.js";
+export {
+  buildMcpSummaryResource,
+  buildMcpSurfaceManifest,
+  summarizeMcpSurface,
+} from "./manifest.js";

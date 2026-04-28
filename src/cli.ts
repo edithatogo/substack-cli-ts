@@ -48,7 +48,11 @@ import {
   evaluateDistributionPolicy,
   summarizeDistributionPolicy,
 } from "./policy/distribution.js";
-import { buildMcpSurfaceManifest, summarizeMcpSurface } from "./mcp/surface.js";
+import {
+  buildMcpSummaryResource,
+  buildMcpSurfaceManifest,
+  summarizeMcpSurface,
+} from "./mcp/surface.js";
 import { runMcpServer } from "./mcp/server.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
@@ -129,6 +133,13 @@ mcp
   .action(() => {
     const manifest = buildMcpSurfaceManifest();
     console.log(JSON.stringify(summarizeMcpSurface(manifest), null, 2));
+  });
+
+mcp
+  .command("summary")
+  .description("Print the redacted MCP summary resource.")
+  .action(() => {
+    console.log(JSON.stringify(buildMcpSummaryResource(), null, 2));
   });
 
 mcp

@@ -56,6 +56,7 @@ node dist\cli.js config set-runtime local
 node dist\cli.js doctor
 node dist\cli.js policy
 node dist\cli.js mcp surface
+node dist\cli.js mcp summary
 node dist\cli.js mcp serve
 node dist\cli.js api auth status --source local-profile
 node dist\cli.js api inventory --source local-profile --post-limit 10
