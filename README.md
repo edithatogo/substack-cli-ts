@@ -90,6 +90,8 @@ node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --yes
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --transport auto --yes
 ```
 
+Publish and schedule commands run the same prepublish validation first and stop early if the payload is not compatible.
+
 ## Markdown Markers
 
 Use front matter for metadata:

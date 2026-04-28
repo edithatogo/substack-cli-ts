@@ -33,6 +33,7 @@ Add final publishing operations only after draft writes and payload validation a
 
 - Added `prepublish <file>` to validate the final publish or schedule payload without opening the browser.
 - Prepublish reports payload compatibility, resolved title, and the final payload shape for browser execution.
+- `publish` and `schedule` now run the same prepublish validation before opening the browser.
 - Publish and schedule still use the browser workflow and remain confirmation-gated.
 
 ## Remaining Work

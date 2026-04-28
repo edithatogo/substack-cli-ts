@@ -193,6 +193,12 @@ program
     ) => {
       resolveTransport(options.transport);
       const prepared = await preparePost(file, { mode: "publish" });
+      const report = prepublishPost(prepared);
+      if (report.status === "blocked") {
+        console.log(JSON.stringify(report, null, 2));
+        process.exitCode = 1;
+        return;
+      }
       await runBrowserWorkflow(prepared, options);
     },
   );
@@ -232,6 +238,12 @@ program
         mode: "schedule",
         scheduleAt: options.at,
       });
+      const report = prepublishPost(prepared);
+      if (report.status === "blocked") {
+        console.log(JSON.stringify(report, null, 2));
+        process.exitCode = 1;
+        return;
+      }
       await runBrowserWorkflow(prepared, options);
     },
   );
