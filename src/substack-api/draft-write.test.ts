@@ -27,6 +27,7 @@ Hello world.
     assert.equal(plan.payload.title, "Planned Draft");
     assert.equal(plan.duplicateKey.slug, "planned-draft");
     assert.equal(plan.duplicateKey.sourceFile, "planned.md");
+    assert.equal(plan.sectionResolutionApplied, false);
   });
 
   it("plans an update when a stored mapping already exists", async () => {
@@ -58,5 +59,52 @@ Hello world.
       plan.draftUrl,
       "https://rareinsights.substack.com/publish/post/123",
     );
+  });
+
+  it("applies a resolved section to the planned payload", async () => {
+    const post = await parseMarkdownString(
+      `---
+title: "Section Draft"
+section: news
+---
+Hello world.
+`,
+      "section.md",
+    );
+
+    const plan = planCreateDraft(
+      post,
+      "https://rareinsights.substack.com/",
+      null,
+      {
+        status: "resolved",
+        sourceFile: "section.md",
+        publicationUrl: "https://rareinsights.substack.com/",
+        requestedSection: "news",
+        requestedSectionId: undefined,
+        resolvedSection: {
+          id: 42,
+          name: "News",
+          slug: "news",
+          score: 100,
+          reasons: ["Section slug matches the requested section exactly."],
+        },
+        candidateCount: 1,
+        candidates: [
+          {
+            id: 42,
+            name: "News",
+            slug: "news",
+            score: 100,
+            reasons: ["Section slug matches the requested section exactly."],
+          },
+        ],
+        note: "test",
+      },
+    );
+
+    assert.equal(plan.sectionResolutionApplied, true);
+    assert.equal(plan.resolvedSectionId, 42);
+    assert.equal(plan.payload.sectionId, 42);
   });
 });

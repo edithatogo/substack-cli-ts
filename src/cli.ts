@@ -533,28 +533,50 @@ apiDraft
     "Build and validate a draft creation request without publishing content.",
   )
   .argument("<file>", "Markdown file to convert")
+  .option("--source <source>", "none, auto, env, or local-profile", "none")
   .option(
     "--live",
     "Attempt the live write request after endpoint contract confirmation",
     false,
   )
-  .action(async (file: string, options: { live: boolean }) => {
-    if (options.live) {
-      throw new Error(
-        "Live API draft creation is not enabled until the draft endpoint contract is confirmed.",
-      );
-    }
+  .action(
+    async (
+      file: string,
+      options: { live: boolean; source: "none" | ApiAuthSource },
+    ) => {
+      if (options.live) {
+        throw new Error(
+          "Live API draft creation is not enabled until the draft endpoint contract is confirmed.",
+        );
+      }
 
-    const effective = await loadEffectiveConfig();
-    const publicationUrl = requirePublicationUrl(effective);
-    const prepared = await preparePost(file, { mode: "draft" });
-    const existingDraft = await findDraftMapping(
-      prepared.post.filePath,
-      publicationUrl,
-    );
-    const plan = planCreateDraft(prepared.post, publicationUrl, existingDraft);
-    console.log(JSON.stringify(plan, null, 2));
-  });
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const prepared = await preparePost(file, { mode: "draft" });
+      const existingDraft = await findDraftMapping(
+        prepared.post.filePath,
+        publicationUrl,
+      );
+      const sectionResolution =
+        options.source === "none"
+          ? null
+          : buildDraftSectionResolutionReport({
+              post: prepared.post,
+              inventory: await readApiInventory(
+                await resolveApiAuthMaterial(effective, options.source),
+                fetch,
+                { postLimit: 10 },
+              ),
+            });
+      const plan = planCreateDraft(
+        prepared.post,
+        publicationUrl,
+        existingDraft,
+        sectionResolution,
+      );
+      console.log(JSON.stringify(plan, null, 2));
+    },
+  );
 
 apiDraft
   .command("inspect")

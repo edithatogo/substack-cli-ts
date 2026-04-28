@@ -1,5 +1,6 @@
 import { buildSubstackDraftPayload } from "./payload.js";
 import type { DraftMapping } from "./draft-mappings.js";
+import type { DraftSectionResolutionReport } from "./draft-section.js";
 import type { ParsedPost } from "../types.js";
 
 export interface DraftWritePlan {
@@ -9,6 +10,8 @@ export interface DraftWritePlan {
   endpoint: string;
   draftUrl: string;
   payload: ReturnType<typeof buildSubstackDraftPayload>;
+  sectionResolutionApplied: boolean;
+  resolvedSectionId?: number | undefined;
   duplicateKey: {
     title: string;
     slug?: string | undefined;
@@ -22,8 +25,10 @@ export function planCreateDraft(
   post: ParsedPost,
   publicationUrl: string,
   existingDraft?: DraftMapping | null,
+  sectionResolution?: DraftSectionResolutionReport | null,
 ): DraftWritePlan {
-  const payload = buildSubstackDraftPayload(post);
+  const plannedPost = applyResolvedSectionId(post, sectionResolution);
+  const payload = buildSubstackDraftPayload(plannedPost);
   const draftId = existingDraft?.draftId;
   const endpoint = new URL(
     draftId
@@ -47,6 +52,8 @@ export function planCreateDraft(
     endpoint,
     draftUrl,
     payload,
+    sectionResolutionApplied: plannedPost !== post,
+    resolvedSectionId: plannedPost.metadata.sectionId,
     duplicateKey: {
       title: payload.title,
       slug: payload.slug,
@@ -55,5 +62,25 @@ export function planCreateDraft(
     existingDraft: existingDraft ?? undefined,
     message:
       "Draft write plan built locally. Live API creation is disabled until the endpoint contract is confirmed.",
+  };
+}
+
+function applyResolvedSectionId(
+  post: ParsedPost,
+  sectionResolution: DraftSectionResolutionReport | null | undefined,
+): ParsedPost {
+  if (
+    sectionResolution?.status !== "resolved" ||
+    post.metadata.sectionId !== undefined
+  ) {
+    return post;
+  }
+
+  return {
+    ...post,
+    metadata: {
+      ...post.metadata,
+      sectionId: sectionResolution.resolvedSection?.id,
+    },
   };
 }
