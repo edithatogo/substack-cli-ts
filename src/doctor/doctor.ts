@@ -40,6 +40,7 @@ export async function runDoctor(): Promise<DoctorReport> {
     checkPublication(config),
     checkTransport(config),
     checkSubstackCredentials(config),
+    await checkApiReadiness(config),
     await checkSession(),
     await checkLocalProfile(),
     await checkGitignore(),
@@ -156,6 +157,44 @@ export function checkSubstackCredentials(config: EffectiveConfig): DoctorCheck {
       emailConfigured: false,
       passwordConfigured: false,
       cookieConfigured: Boolean(config.substackCookie),
+    },
+  };
+}
+
+async function checkApiReadiness(
+  config: EffectiveConfig,
+): Promise<DoctorCheck> {
+  const hasCookie = Boolean(config.substackCookie);
+  const hasLocalProfile = await exists(localBrowserProfileDir());
+
+  if (hasCookie || hasLocalProfile) {
+    return {
+      name: "api-readiness",
+      status: "ok",
+      message: "Read-only API probes have a usable local auth source.",
+      details: {
+        authSource: hasCookie ? "env" : "local-profile",
+        probeEndpoints: [
+          "https://substack.com/api/v1/handle/options",
+          "https://substack.com/api/v1/user/{handle}/public_profile",
+          "/api/v1/publication",
+        ],
+      },
+    };
+  }
+
+  return {
+    name: "api-readiness",
+    status: "warn",
+    message:
+      "No local auth source is ready for read-only API probes. Configure SUBSTACK_COOKIE or create a logged-in local browser profile.",
+    details: {
+      authSource: "none",
+      probeEndpoints: [
+        "https://substack.com/api/v1/handle/options",
+        "https://substack.com/api/v1/user/{handle}/public_profile",
+        "/api/v1/publication",
+      ],
     },
   };
 }

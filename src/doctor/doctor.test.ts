@@ -77,6 +77,20 @@ describe("doctor checks", () => {
     assert.equal(check.status, "ok");
   });
 
+  it("warns when no local API probe auth source is available", async () => {
+    await withTempState(async () => {
+      const check = await runDoctor();
+      const apiReadiness = check.checks.find(
+        (item) => item.name === "api-readiness",
+      );
+
+      assert.ok(apiReadiness);
+      assert.equal(apiReadiness.status, "warn");
+      const message = apiReadiness.message;
+      assert.match(message, /read-only API probes/i);
+    });
+  });
+
   it("detects partial Substack credential configuration", () => {
     const check = checkSubstackCredentials(config({ substackEmail: "a@b.co" }));
 
@@ -104,6 +118,7 @@ describe("doctor checks", () => {
           "publication",
           "transport",
           "substack-login",
+          "api-readiness",
           "browserbase-session",
           "local-browser-profile",
           "gitignore",
