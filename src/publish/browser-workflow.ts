@@ -35,6 +35,7 @@ export interface BrowserWorkflowResult {
     | "publish-clicked";
   mode: PreparedPost["mode"];
   title: string;
+  currentUrl: string;
   transport: {
     requested: TransportPreference;
     selected: "browser";
@@ -238,12 +239,14 @@ async function createDraftInBrowser(
     const text = await getEditorText(session.page);
     return { text, length: text.length };
   });
+  const currentUrl = session.page.url();
 
   if (prepared.mode === "draft") {
     return {
       status: "draft-created",
       mode: prepared.mode,
       title,
+      currentUrl,
       transport,
       editorTextLength: editorText.length,
       browserbaseSessionId: session.browserbaseSessionId,
@@ -266,6 +269,7 @@ async function createDraftInBrowser(
       status: "publish-review-opened",
       mode: prepared.mode,
       title,
+      currentUrl: session.page.url(),
       transport,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
@@ -288,6 +292,7 @@ async function createDraftInBrowser(
       mode: prepared.mode,
       scheduleAt: prepared.scheduleAt,
       title,
+      currentUrl: session.page.url(),
       transport,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
@@ -308,6 +313,7 @@ async function createDraftInBrowser(
     status: "publish-clicked",
     mode: prepared.mode,
     title,
+    currentUrl: session.page.url(),
     transport,
     browserbaseSessionId: session.browserbaseSessionId,
     browserbaseSessionUrl: session.browserbaseSessionUrl,

@@ -35,6 +35,7 @@ Add final publishing operations only after draft writes and payload validation a
 - Prepublish reports payload compatibility, resolved title, and the final payload shape for browser execution.
 - `publish` and `schedule` now run the same prepublish validation before opening the browser.
 - `publish --review-only` stops at the final confirmation screen without clicking Publish.
+- Review and publish checkpoints now report the current page URL for controlled publication mapping.
 - Publish and schedule still use the browser workflow and remain confirmation-gated.
 
 ## Remaining Work

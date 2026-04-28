@@ -234,6 +234,7 @@ program
         at: string;
         dryRun: boolean;
         yes: boolean;
+        reviewOnly: boolean;
         sessionId?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
