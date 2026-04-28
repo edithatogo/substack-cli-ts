@@ -52,4 +52,4 @@ The external projects suggest these feature tracks should be explicit:
 
 If the objective is simply the best practical way to move information in and out of Substack, run a small evaluation of `ma2za/python-substack` and `jakub-k-slys/substack-api` before expanding this custom CLI. If they work against the target account today, they may cover more of the read/write surface faster than browser automation. Keep this CLI as the safer browser-editor fallback for draft creation and for cases where direct internal endpoints fail.
 
-Implementation note: track this as `tracks/06-typescript-internal-api-adapter.md`, a TypeScript adapter inspired by the ma2za feature surface but isolated from the existing browser workflow behind a `--transport api` style boundary.
+Implementation note: the TypeScript internal API adapter is now split across tracks 06-12, with ongoing dependency discovery in `tracks/13-dependency-and-discovery-register.md`.

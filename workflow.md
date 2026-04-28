@@ -101,6 +101,13 @@ Detailed track files live under `tracks/`:
 - `tracks/03-draft-publish-schedule.md`
 - `tracks/04-browser-runtime-hardening.md`
 - `tracks/05-external-project-research.md`
-- `tracks/06-typescript-internal-api-adapter.md`
+- `tracks/06-api-auth-session-extraction.md`
+- `tracks/07-api-read-model.md`
+- `tracks/08-api-draft-write-model.md`
+- `tracks/09-api-content-payload-compatibility.md`
+- `tracks/10-api-media-upload.md`
+- `tracks/11-api-prepublish-publish-schedule.md`
+- `tracks/12-transport-selection-fallback.md`
+- `tracks/13-dependency-and-discovery-register.md`
 
-Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, systematic external project research, and the proposed TypeScript internal API adapter remain open track work.
+Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, systematic external project research, and the TypeScript internal API adapter tracks remain open work.
