@@ -38,6 +38,7 @@ Expose the existing CLI capabilities through MCP so other local tools and agents
 - Added `api draft contract-matrix-compare` as a redacted matrix fixture comparison helper.
 - Added `api draft duplicates` as a redacted duplicate lookup helper over the read inventory and local mappings.
 - Added `api draft section` as a redacted section resolution helper over the read inventory.
+- Added `api draft inspect` as a redacted composite draft inspection helper.
 - Implemented a stdio MCP server with redacted read, review, and capture tools.
 - Added read-only MCP resources for the manifest and redacted summary.
 - Added redacted MCP prompts for surface overview and workflow review guidance.

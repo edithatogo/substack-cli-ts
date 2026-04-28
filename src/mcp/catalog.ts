@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { loadEffectiveConfig } from "../config/store.js";
+import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import {
   resolveApiAuthMaterial,
   summarizeApiAuthMaterial,
@@ -20,6 +20,7 @@ import {
 } from "../browser/draft-contract-matrix.js";
 import { preparePost } from "../publish/prepare.js";
 import { buildDraftDuplicateLookupReport } from "../substack-api/draft-lookup.js";
+import { buildDraftInspectionReport } from "../substack-api/draft-inspect.js";
 import { loadDraftMappings } from "../substack-api/draft-mappings.js";
 import { buildDraftSectionResolutionReport } from "../substack-api/draft-section.js";
 import {
@@ -434,6 +435,59 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(report),
             "Draft section resolution completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "capture",
+    name: "api.draft.inspect",
+    description:
+      "Bundle payload compatibility, section resolution, duplicate lookup, and draft planning.",
+    cliCommand: "api draft inspect <file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.draft.inspect",
+        {
+          description:
+            "Bundle payload compatibility, section resolution, duplicate lookup, and draft planning.",
+          inputSchema: FileArg,
+          annotations: {
+            title: "Draft Inspection",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ file }) => {
+          const config = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(config, "auto");
+          const inventory = await readApiInventory(material, fetch, {
+            postLimit: 10,
+          });
+          const mappings = await loadDraftMappings();
+          const prepared = await preparePost(String(file), { mode: "draft" });
+          const publicationUrl = requirePublicationUrl(config);
+          const existingDraft =
+            mappings.find(
+              (mapping) =>
+                mapping.sourceFile === prepared.post.filePath &&
+                mapping.publicationUrl === publicationUrl,
+            ) ?? null;
+          const report = buildDraftInspectionReport({
+            post: prepared.post,
+            publicationUrl,
+            inventory,
+            mappings,
+            existingDraft,
+          });
+
+          return jsonResult(
+            toJsonRecord(report),
+            report.status === "ready"
+              ? "Draft inspection completed."
+              : "Draft inspection completed with warnings.",
           );
         },
       );

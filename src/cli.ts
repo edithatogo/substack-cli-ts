@@ -23,6 +23,7 @@ import {
   writeDraftContractMatrixFixture,
 } from "./browser/draft-contract-matrix.js";
 import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
+import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
 import {
   configFilePath,
@@ -553,6 +554,41 @@ apiDraft
     );
     const plan = planCreateDraft(prepared.post, publicationUrl, existingDraft);
     console.log(JSON.stringify(plan, null, 2));
+  });
+
+apiDraft
+  .command("inspect")
+  .description(
+    "Bundle payload compatibility, section resolution, duplicate lookup, and draft planning.",
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .argument("<file>", "Markdown file to inspect")
+  .action(async (file: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const publicationUrl = requirePublicationUrl(effective);
+    const prepared = await preparePost(file, { mode: "draft" });
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const inventory = await readApiInventory(material, fetch, {
+      postLimit: 10,
+    });
+    const mappings = await loadDraftMappings();
+    const existingDraft = await findDraftMapping(
+      prepared.post.filePath,
+      publicationUrl,
+    );
+
+    const report = buildDraftInspectionReport({
+      post: prepared.post,
+      publicationUrl,
+      inventory,
+      mappings,
+      existingDraft,
+    });
+
+    console.log(JSON.stringify(report, null, 2));
+    if (report.status !== "ready") {
+      process.exitCode = 1;
+    }
   });
 
 apiDraft
