@@ -18,6 +18,9 @@ import {
   buildDraftContractMatrix,
   compareDraftContractMatrixArtifacts,
 } from "../browser/draft-contract-matrix.js";
+import { preparePost } from "../publish/prepare.js";
+import { buildDraftDuplicateLookupReport } from "../substack-api/draft-lookup.js";
+import { loadDraftMappings } from "../substack-api/draft-mappings.js";
 import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
@@ -332,6 +335,56 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(comparison),
             "Draft contract matrix comparison completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "capture",
+    name: "api.draft.duplicates",
+    description:
+      "Look up likely duplicate drafts using the read-only inventory and local mappings.",
+    cliCommand: "api draft duplicates <file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.draft.duplicates",
+        {
+          description:
+            "Look up likely duplicate drafts using the read-only inventory and local mappings.",
+          inputSchema: FileArg,
+          annotations: {
+            title: "Draft Duplicate Lookup",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ file }) => {
+          const config = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(config, "auto");
+          const inventory = await readApiInventory(material, fetch, {
+            postLimit: 10,
+          });
+
+          if (inventory.status !== "ok") {
+            return jsonResult(
+              toJsonRecord(inventory),
+              "Draft duplicate lookup could not run.",
+            );
+          }
+
+          const prepared = await preparePost(String(file), { mode: "draft" });
+          const mappings = await loadDraftMappings();
+          const report = buildDraftDuplicateLookupReport({
+            post: prepared.post,
+            inventory,
+            mappings,
+          });
+
+          return jsonResult(
+            toJsonRecord(report),
+            "Draft duplicate lookup completed.",
           );
         },
       );

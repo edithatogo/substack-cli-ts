@@ -22,6 +22,7 @@ import {
   compareDraftContractMatrixArtifacts,
   writeDraftContractMatrixFixture,
 } from "./browser/draft-contract-matrix.js";
+import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
 import {
   configFilePath,
   draftMappingsFilePath,
@@ -742,6 +743,48 @@ apiDraft
       });
 
       console.log(JSON.stringify(mapping, null, 2));
+    },
+  );
+
+apiDraft
+  .command("duplicates")
+  .description(
+    "Look up likely duplicate drafts using the read-only inventory and local mappings.",
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option(
+    "--post-limit <limit>",
+    "Maximum number of recent posts to inspect",
+    parseInteger,
+    10,
+  )
+  .argument("<file>", "Markdown file to inspect")
+  .action(
+    async (
+      file: string,
+      options: { source: "auto" | ApiAuthSource; postLimit: number },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const prepared = await preparePost(file, { mode: "draft" });
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const inventory = await readApiInventory(material, fetch, {
+        postLimit: options.postLimit,
+      });
+
+      if (inventory.status !== "ok") {
+        console.log(JSON.stringify(inventory, null, 2));
+        process.exitCode = 1;
+        return;
+      }
+
+      const mappings = await loadDraftMappings();
+      const report = buildDraftDuplicateLookupReport({
+        post: prepared.post,
+        inventory,
+        mappings,
+      });
+
+      console.log(JSON.stringify(report, null, 2));
     },
   );
 
