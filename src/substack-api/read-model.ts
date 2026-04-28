@@ -34,12 +34,39 @@ export interface ConfiguredPublicationSummary {
   paymentsState?: string | null | undefined;
 }
 
+export interface SectionSummary {
+  id: number;
+  publicationId: number;
+  name: string;
+  slug: string;
+  description?: string | null | undefined;
+  isPodcast?: boolean | undefined;
+}
+
+export interface PostSummary {
+  id: number;
+  publicationId?: number | undefined;
+  title: string;
+  slug?: string | undefined;
+  postDate?: string | null | undefined;
+  type?: string | undefined;
+  audience?: string | null | undefined;
+  canonicalUrl?: string | null | undefined;
+  sectionId?: number | null | undefined;
+}
+
 export interface ApiReadInventory {
   status: ApiReadStatus;
   endpoints: string[];
   user?: UserSummary | undefined;
   configuredPublication?: ConfiguredPublicationSummary | undefined;
+  sections?: SectionSummary[] | undefined;
+  posts?: PostSummary[] | undefined;
   message: string;
+}
+
+export interface ReadInventoryOptions {
+  postLimit?: number | undefined;
 }
 
 const PublicProfileSchema = z.object({
@@ -73,6 +100,27 @@ const PublicationSchema = z.object({
   payments_state: z.string().nullable().optional(),
 });
 
+const SectionSchema = z.object({
+  id: z.number(),
+  publication_id: z.number(),
+  name: z.string(),
+  description: z.string().nullable().optional(),
+  slug: z.string(),
+  is_podcast: z.boolean().optional(),
+});
+
+const PostSchema = z.object({
+  id: z.number(),
+  publication_id: z.number().optional(),
+  title: z.string(),
+  slug: z.string().optional(),
+  post_date: z.string().nullable().optional(),
+  type: z.string().optional(),
+  audience: z.string().nullable().optional(),
+  canonical_url: z.string().nullable().optional(),
+  section_id: z.number().nullable().optional(),
+});
+
 const HandleOptionsSchema = z.object({
   potentialHandles: z.array(
     z.object({
@@ -85,6 +133,7 @@ const HandleOptionsSchema = z.object({
 export async function readApiInventory(
   material: ApiAuthMaterial,
   fetchImpl: FetchLike = fetch,
+  options: ReadInventoryOptions = {},
 ): Promise<ApiReadInventory> {
   const headers = apiHeaders(material);
   const endpoints: string[] = [];
@@ -193,8 +242,79 @@ export async function readApiInventory(
       authorId: publication.data.author_id,
       paymentsState: publication.data.payments_state,
     },
+    sections: await readSections(material, fetchImpl, headers, endpoints),
+    posts: await readPosts(
+      material,
+      fetchImpl,
+      headers,
+      endpoints,
+      options.postLimit ?? 10,
+    ),
     message: "Read-only API inventory completed.",
   };
+}
+
+async function readSections(
+  material: ApiAuthMaterial,
+  fetchImpl: FetchLike,
+  headers: Record<string, string>,
+  endpoints: string[],
+): Promise<SectionSummary[]> {
+  const endpoint = new URL(
+    "/api/v1/publication/sections",
+    material.publicationUrl,
+  ).toString();
+  endpoints.push(endpoint);
+  const response = await requestJson(fetchImpl, endpoint, headers);
+  if (response.status !== 200) {
+    return [];
+  }
+
+  const parsed = z.array(SectionSchema).safeParse(response.body);
+  if (!parsed.success) {
+    return [];
+  }
+
+  return parsed.data.map((section) => ({
+    id: section.id,
+    publicationId: section.publication_id,
+    name: section.name,
+    slug: section.slug,
+    description: section.description,
+    isPodcast: section.is_podcast,
+  }));
+}
+
+async function readPosts(
+  material: ApiAuthMaterial,
+  fetchImpl: FetchLike,
+  headers: Record<string, string>,
+  endpoints: string[],
+  limit: number,
+): Promise<PostSummary[]> {
+  const endpoint = new URL("/api/v1/posts", material.publicationUrl).toString();
+  endpoints.push(endpoint);
+  const response = await requestJson(fetchImpl, endpoint, headers);
+  if (response.status !== 200) {
+    return [];
+  }
+
+  const parsed = z.array(PostSchema).safeParse(response.body);
+  if (!parsed.success) {
+    return [];
+  }
+
+  return parsed.data.slice(0, limit).map((post) => ({
+    id: post.id,
+    publicationId: post.publication_id,
+    title: post.title,
+    slug: post.slug,
+    postDate: post.post_date,
+    type: post.type,
+    audience: post.audience,
+    canonicalUrl: post.canonical_url,
+    sectionId: post.section_id,
+  }));
 }
 
 function failureInventory(

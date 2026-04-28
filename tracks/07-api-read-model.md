@@ -29,12 +29,11 @@ Map the read-side Substack entities needed for export, diagnostics, and safe wri
 ## Current Progress
 
 - Added `substack-cli api inventory --source auto|env|local-profile`.
-- Added typed read model for authenticated handle/profile, publication list, and configured publication.
+- Added typed read model for authenticated handle/profile, publication list, configured publication, sections, and recent posts.
 - Added shared API response classification for unauthenticated, forbidden, not found, schema drift, and network failures.
 
 ## Remaining Work
 
-- Add sections inventory.
 - Add draft inventory after identifying stable read-only draft endpoints.
-- Add published post inventory and pagination.
+- Add published post pagination beyond the current bounded recent-post inventory.
 - Add redirects/custom-domain handling.

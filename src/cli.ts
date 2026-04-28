@@ -262,17 +262,27 @@ api
     "Read user and publication inventory through read-only API probes.",
   )
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    const inventory = await readApiInventory(material);
+  .option(
+    "--post-limit <limit>",
+    "Maximum number of recent posts to include",
+    parseInteger,
+    10,
+  )
+  .action(
+    async (options: { source: "auto" | ApiAuthSource; postLimit: number }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const inventory = await readApiInventory(material, fetch, {
+        postLimit: options.postLimit,
+      });
 
-    console.log(JSON.stringify(inventory, null, 2));
+      console.log(JSON.stringify(inventory, null, 2));
 
-    if (inventory.status !== "ok") {
-      process.exitCode = 1;
-    }
-  });
+      if (inventory.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 const config = program
   .command("config")

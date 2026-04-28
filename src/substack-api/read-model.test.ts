@@ -48,6 +48,36 @@ describe("readApiInventory", () => {
               payments_state: "disabled",
             },
           ],
+          [
+            "https://rareinsights.substack.com/api/v1/publication/sections",
+            [
+              {
+                id: 1,
+                publication_id: 456,
+                name: "Main",
+                slug: "main",
+                description: null,
+                is_podcast: false,
+              },
+            ],
+          ],
+          [
+            "https://rareinsights.substack.com/api/v1/posts",
+            [
+              {
+                id: 10,
+                publication_id: 456,
+                title: "Recent Post",
+                slug: "recent-post",
+                post_date: "2026-04-01T00:00:00.000Z",
+                type: "newsletter",
+                audience: "everyone",
+                canonical_url:
+                  "https://rareinsights.substack.com/p/recent-post",
+                section_id: 1,
+              },
+            ],
+          ],
         ]),
       ),
     );
@@ -56,6 +86,8 @@ describe("readApiInventory", () => {
     assert.equal(inventory.user?.handle, "rareinsights");
     assert.equal(inventory.user.publications[0]?.role, "admin");
     assert.equal(inventory.configuredPublication?.id, 456);
+    assert.equal(inventory.sections?.[0]?.slug, "main");
+    assert.equal(inventory.posts?.[0]?.slug, "recent-post");
   });
 
   it("classifies read failures", async () => {
