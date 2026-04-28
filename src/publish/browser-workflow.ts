@@ -1,3 +1,4 @@
+import { writeFile } from "node:fs/promises";
 import type { PreparedPost } from "../types.js";
 import {
   loadSession,
@@ -63,6 +64,7 @@ export interface BrowserWorkflowOptions {
   dryRun?: boolean;
   yes?: boolean;
   reviewOnly?: boolean;
+  traceOut?: string | undefined;
   experimentalInjectState?: boolean;
   sessionId?: string | undefined;
   transport?: TransportPreference | undefined;
@@ -97,6 +99,7 @@ export async function runBrowserWorkflow(
 
   if (config.browserRuntime === "local") {
     const result = await runLocalDraftWorkflow(prepared, config, transport);
+    await maybeWriteTrace(result, options.traceOut);
     console.log(JSON.stringify(result, null, 2));
     return;
   }
@@ -128,6 +131,7 @@ export async function runBrowserWorkflow(
         options,
         transport,
       );
+      await maybeWriteTrace(result, options.traceOut);
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
       if (error instanceof BrowserWorkflowError) {
@@ -430,4 +434,15 @@ function countDocumentNodes(node: PreparedPost["post"]["document"]): number {
       0,
     )
   );
+}
+
+async function maybeWriteTrace(
+  result: BrowserWorkflowResult,
+  traceOut: string | undefined,
+): Promise<void> {
+  if (!traceOut) {
+    return;
+  }
+
+  await writeFile(traceOut, `${JSON.stringify(result, null, 2)}\n`, "utf8");
 }

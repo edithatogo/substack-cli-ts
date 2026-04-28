@@ -141,6 +141,7 @@ program
     false,
   )
   .option("--session-id <id>", "Browserbase session ID to resume")
+  .option("--trace-out <file>", "Write the workflow result JSON to a file")
   .option(
     "--experimental-inject-state",
     "Use experimental editor-state injection",
@@ -153,6 +154,7 @@ program
       options: {
         dryRun: boolean;
         sessionId?: string;
+        traceOut?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },
@@ -174,6 +176,7 @@ program
   )
   .option("--yes", "Confirm publishing without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
+  .option("--trace-out <file>", "Write the workflow result JSON to a file")
   .option(
     "--experimental-inject-state",
     "Use experimental editor-state injection",
@@ -193,6 +196,7 @@ program
         yes: boolean;
         reviewOnly: boolean;
         sessionId?: string;
+        traceOut?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },
@@ -221,6 +225,7 @@ program
   )
   .option("--yes", "Confirm scheduling without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
+  .option("--trace-out <file>", "Write the workflow result JSON to a file")
   .option(
     "--experimental-inject-state",
     "Use experimental editor-state injection",
@@ -236,6 +241,7 @@ program
         yes: boolean;
         reviewOnly: boolean;
         sessionId?: string;
+        traceOut?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },

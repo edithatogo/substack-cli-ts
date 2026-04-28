@@ -84,14 +84,14 @@ Publishing and scheduling require explicit confirmation:
 ```powershell
 node dist\cli.js prepublish examples\basic.md
 node dist\cli.js publish examples\basic.md --dry-run
-node dist\cli.js publish examples\basic.md --review-only --yes
+node dist\cli.js publish examples\basic.md --review-only --yes --trace-out .substack-cli\publish-traces\review.json
 node dist\cli.js publish examples\basic.md --transport browser --yes
 node dist\cli.js publish examples\basic.md --yes
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --yes
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --transport auto --yes
 ```
 
-Publish and schedule commands run the same prepublish validation first and stop early if the payload is not compatible.
+Publish and schedule commands run the same prepublish validation first and stop early if the payload is not compatible. Use `--trace-out` to capture a local JSON review artifact for later comparison.
 
 ## Markdown Markers
 
