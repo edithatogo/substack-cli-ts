@@ -15,6 +15,7 @@ import {
 } from "../browser/stagehand.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import { runLocalDraftWorkflow } from "./local-workflow.js";
+import { resolveTransport, type TransportPreference } from "./transport.js";
 import { resolvePostTitle } from "./title.js";
 
 export interface WorkflowStep {
@@ -30,6 +31,11 @@ export interface BrowserWorkflowResult {
   status: "draft-created" | "schedule-review-opened" | "publish-clicked";
   mode: PreparedPost["mode"];
   title: string;
+  transport: {
+    requested: TransportPreference;
+    selected: "browser";
+    fallbackReason?: string | undefined;
+  };
   scheduleAt?: string | undefined;
   editorTextLength?: number | undefined;
   browserbaseSessionId?: string | undefined;
@@ -53,6 +59,7 @@ export interface BrowserWorkflowOptions {
   yes?: boolean;
   experimentalInjectState?: boolean;
   sessionId?: string | undefined;
+  transport?: TransportPreference | undefined;
 }
 
 export async function runBrowserWorkflow(
@@ -74,9 +81,10 @@ export async function runBrowserWorkflow(
   }
 
   const config = await loadEffectiveConfig();
+  const transport = resolveTransport(options.transport ?? "auto");
 
   if (config.browserRuntime === "local") {
-    const result = await runLocalDraftWorkflow(prepared, config);
+    const result = await runLocalDraftWorkflow(prepared, config, transport);
     console.log(JSON.stringify(result, null, 2));
     return;
   }
@@ -102,7 +110,12 @@ export async function runBrowserWorkflow(
     }
 
     try {
-      const result = await createDraftInBrowser(session, prepared, options);
+      const result = await createDraftInBrowser(
+        session,
+        prepared,
+        options,
+        transport,
+      );
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
       if (error instanceof BrowserWorkflowError) {
@@ -133,6 +146,7 @@ async function createDraftInBrowser(
   session: StagehandSession,
   prepared: PreparedPost,
   options: BrowserWorkflowOptions,
+  transport: ReturnType<typeof resolveTransport>,
 ): Promise<BrowserWorkflowResult> {
   const title = resolvePostTitle(prepared.post);
   const publicationUrl = requirePublicationUrl(await loadEffectiveConfig());
@@ -219,6 +233,7 @@ async function createDraftInBrowser(
       status: "draft-created",
       mode: prepared.mode,
       title,
+      transport,
       editorTextLength: editorText.length,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
@@ -249,6 +264,7 @@ async function createDraftInBrowser(
       mode: prepared.mode,
       scheduleAt: prepared.scheduleAt,
       title,
+      transport,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
       browserbaseDebugUrl: session.browserbaseDebugUrl,
@@ -268,6 +284,7 @@ async function createDraftInBrowser(
     status: "publish-clicked",
     mode: prepared.mode,
     title,
+    transport,
     browserbaseSessionId: session.browserbaseSessionId,
     browserbaseSessionUrl: session.browserbaseSessionUrl,
     browserbaseDebugUrl: session.browserbaseDebugUrl,

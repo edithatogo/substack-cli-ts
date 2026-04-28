@@ -4,6 +4,7 @@ import "../config/store.test.js";
 import "../browser/draft-capture.test.js";
 import "../schema/fixtures.test.js";
 import "../parser/media.test.js";
+import "../publish/transport.test.js";
 import "../substack-api/draft-mappings.test.js";
 import "../substack-api/draft-write.test.js";
 import "../substack-api/payload.test.js";

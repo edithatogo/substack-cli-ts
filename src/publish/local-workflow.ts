@@ -10,11 +10,13 @@ import type {
   BrowserWorkflowResult,
   WorkflowStep,
 } from "./browser-workflow.js";
+import type { TransportResolution } from "./transport.js";
 import { resolvePostTitle } from "./title.js";
 
 export async function runLocalDraftWorkflow(
   prepared: PreparedPost,
   config: EffectiveConfig,
+  transport: TransportResolution,
 ): Promise<BrowserWorkflowResult> {
   const publicationUrl = requirePublicationUrl(config);
   const browser = await createLocalBrowserSession();
@@ -51,6 +53,7 @@ export async function runLocalDraftWorkflow(
       status: "draft-created",
       mode: prepared.mode,
       title,
+      transport,
       editorTextLength: editorText.length,
       trace,
     };

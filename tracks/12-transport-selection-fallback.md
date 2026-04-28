@@ -26,3 +26,9 @@ Allow the CLI to choose the best available transport for each operation.
 - `--transport browser` preserves current behavior.
 - `--transport api` fails cleanly if the API adapter is unavailable.
 - `--transport auto` documents and reports which transport was used.
+
+## Current Progress
+
+- Added `--transport browser|api|auto` to draft, publish, and schedule commands.
+- Browser workflow now reports the requested transport and whether auto fell back to browser.
+- Explicit API transport is rejected with a clear error until a live API write adapter exists.

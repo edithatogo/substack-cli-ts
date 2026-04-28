@@ -36,6 +36,7 @@ import {
 } from "./publish/browser-workflow.js";
 import { runDoctor } from "./doctor/doctor.js";
 import { preparePost } from "./publish/prepare.js";
+import { resolveTransport } from "./publish/transport.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
   resolveApiAuthMaterial,
@@ -108,6 +109,7 @@ program
     "Use experimental editor-state injection",
     false,
   )
+  .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
     async (
       file: string,
@@ -115,8 +117,10 @@ program
         dryRun: boolean;
         sessionId?: string;
         experimentalInjectState: boolean;
+        transport: "browser" | "api" | "auto";
       },
     ) => {
+      resolveTransport(options.transport);
       const prepared = await preparePost(file, { mode: "draft" });
       await runBrowserWorkflow(prepared, options);
     },
@@ -138,6 +142,7 @@ program
     "Use experimental editor-state injection",
     false,
   )
+  .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
     async (
       file: string,
@@ -146,8 +151,10 @@ program
         yes: boolean;
         sessionId?: string;
         experimentalInjectState: boolean;
+        transport: "browser" | "api" | "auto";
       },
     ) => {
+      resolveTransport(options.transport);
       const prepared = await preparePost(file, { mode: "publish" });
       await runBrowserWorkflow(prepared, options);
     },
@@ -170,6 +177,7 @@ program
     "Use experimental editor-state injection",
     false,
   )
+  .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
     async (
       file: string,
@@ -179,8 +187,10 @@ program
         yes: boolean;
         sessionId?: string;
         experimentalInjectState: boolean;
+        transport: "browser" | "api" | "auto";
       },
     ) => {
+      resolveTransport(options.transport);
       const prepared = await preparePost(file, {
         mode: "schedule",
         scheduleAt: options.at,

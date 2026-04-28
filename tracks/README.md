@@ -17,7 +17,7 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 09. API Content Payload Compatibility     | In progress | API payload builder and unsupported-node preflight are implemented; captured draft comparison remains.   |
 | 10. API Media Upload                      | In progress | Media parsing and inspection are implemented; live upload transport remains pending.                     |
 | 11. API Prepublish, Publish, and Schedule | Proposed    | Add gated prepublish, publish, and schedule flows after draft writes are reliable.                       |
-| 12. Transport Selection and Fallback      | Proposed    | Let the CLI choose browser, API, or automatic fallback transports.                                       |
+| 12. Transport Selection and Fallback      | In progress | Draft, publish, and schedule now accept transport selection; API writes still fail cleanly.              |
 | 13. Dependency and Discovery Register     | Active      | Track missed work, open questions, and newly identified interdependencies.                               |
 | 14. Quality, CI, and Automation           | Active      | Maintain linting, formatting, coverage, mutation testing, CI, and dependency automation.                 |
 

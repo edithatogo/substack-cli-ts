@@ -21,6 +21,9 @@ Maintain a living register of missed work, open questions, and interdependencies
 
 Existing Browser Workflow + 08 Draft Write + 11 Publish/Schedule
   -> 12 Transport Selection and Fallback
+
+12 Transport Selection and Fallback
+  -> 03 Draft, Publish, and Schedule
 ```
 
 ## Discovery Process
