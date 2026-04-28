@@ -46,6 +46,7 @@ When new work is found:
 ## Additional Improvements To Consider
 
 - Add a `docs/decisions/` directory for architecture decision records.
+- Extract stable reusable modules into local workspace packages only after the API surface settles.
 - Add a `substack-cli doctor` command that checks config, auth, publication access, browser profile state, and ignored secret files.
 - Add a `substack-cli export` command group for read-side backup once Track 07 is mapped.
 - Add a controlled test publication before validating publish/schedule operations.
