@@ -13,6 +13,7 @@ Recommendation: continue this project, but borrow the feature checklist from the
 | Project | Language | Primary Interface | Create Draft | Update Draft | Publish | Schedule | Markdown | Images | Auth Model | Fit for This Project |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `jakub-k-slys/substack-api` | TypeScript | Library over undocumented/internal API | Yes | Not clear from docs | Yes | Not evident | HTML body examples, not full local Markdown pipeline | Not clear from docs | `substack.sid` / `connect.sid` cookie token | Strongest TypeScript option for broad read/write access: profiles, posts, notes, comments, likes, follows, analytics-style reads. Good candidate to test before building more direct API logic. |
+| `vznh/substack` | TypeScript | SDK over unofficial read APIs | No | No | No | No | No | No | No API key required for documented examples | Good lightweight read-side TypeScript reference for posts, podcasts, recommendations, authors, profiles, subscriptions, and search. Not a publishing replacement. |
 | `marcomoauro/substack-mcp` | JavaScript | MCP over internal API | Yes | Not evident | Not evident | Not evident | Body string only in README | Not evident | Session token, publication URL, user ID | Useful minimal MCP reference; not enough to replace this CLI. |
 | `conorbronsdon/substack-mcp` | TypeScript | MCP over internal API | Yes | Yes | No long-form publish by design | No | Yes: headings, marks, links, images, lists, code, quotes, HR | Yes | `connect.sid`, publication URL, user ID | Strongest TypeScript reference for draft/update/image features, but intentionally avoids publish/schedule and uses cookie API calls. |
 | `adelaidasofia/substack-mcp` | Unknown from public page | MCP | Unclear | Unclear | Unclear | Unclear | Unclear | Unclear | Unclear | Needs source review if reachable; not enough public evidence to influence direction yet. |
@@ -38,6 +39,7 @@ The external projects suggest these feature tracks should be explicit:
 ## Source Notes
 
 - `marcomoauro/substack-mcp`: README exposes `create_draft_post` with title/subtitle/body and requires session token, publication URL, and user ID. Source: https://github.com/marcomoauro/substack-mcp
+- `vznh/substack`: README describes an unofficial TypeScript SDK for retrieving newsletter posts, podcasts, recommendations, user profiles, subscriptions, post content, metadata, and search results. Source: https://github.com/vznh/substack
 - `conorbronsdon/substack-mcp`: README lists read tools, draft create/update, image upload, notes, and explicitly excludes long-form publish/delete/schedule. Source: https://github.com/conorbronsdon/substack-mcp
 - `mcpflow/substack-mcp`: README describes read-only newsletter/post/search/author/recommendation tools via `substack-api`. Source: https://github.com/mcpflow/substack-mcp
 - `NHagar/substack_api`: docs cover newsletter posts, podcasts, recommendations, user subscriptions, paywalled content via cookies, categories, caching, and redirect handling. Sources: https://github.com/NHagar/substack_api and https://www.nickhagar.net/substack_api/
