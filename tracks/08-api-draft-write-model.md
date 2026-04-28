@@ -38,6 +38,7 @@ Support internal API draft creation and update without touching final publish co
 - Added `api draft mappings` and `api draft link <file> --draft-id <id>` for duplicate/update planning.
 - Added `api draft observe` to watch local browser traffic and write a redacted draft-save capture artifact.
 - Added `api draft review <file>` to summarize a saved capture artifact for endpoint discovery.
+- Added `api draft contract <file>` to infer likely create/update/fetch shapes from a saved capture artifact.
 - Added `api draft compare <expected-file> <actual-file>` to diff normalized capture fixtures locally.
 - Added `api draft fixture <file> --out <file>` to write a normalized draft capture baseline.
 - `--live` is intentionally blocked until the draft endpoint contract is confirmed from a captured user-owned draft save.
@@ -45,6 +46,7 @@ Support internal API draft creation and update without touching final publish co
 ## Remaining Work
 
 - Confirm the exact create/update/fetch draft endpoints and request bodies from a live draft save (`D006`), using `api draft review` against a captured artifact.
+- Use `api draft contract` to infer likely endpoint shapes from a saved draft capture before touching any live write path.
 - Capture a stable local baseline with `api draft fixture` and compare it with `api draft compare` once a user-owned draft trace is available.
 - Add duplicate draft lookup by title/slug against remote draft inventory after draft read endpoints are known.
 - Add explicit live write execution behind a separate confirmation flag once endpoint compatibility is proven.

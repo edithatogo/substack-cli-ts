@@ -13,6 +13,7 @@ import {
   reviewDraftCaptureArtifact,
   writeDraftCaptureFixture,
 } from "../browser/draft-capture.js";
+import { inferDraftContract } from "../browser/draft-contract.js";
 import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
@@ -226,6 +227,37 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(policy),
             "Distribution policy review completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "capture",
+    name: "api.draft.contract",
+    description:
+      "Infer likely draft create/update/fetch endpoints from a saved draft capture artifact.",
+    cliCommand: "api draft contract <file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.draft.contract",
+        {
+          description:
+            "Infer likely draft create/update/fetch endpoints from a saved draft capture artifact.",
+          inputSchema: FileArg,
+          annotations: {
+            title: "Draft Contract Inference",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ file }) => {
+          const review = await reviewDraftCaptureArtifact(String(file));
+          const report = inferDraftContract(review);
+          return jsonResult(
+            toJsonRecord(report),
+            "Draft contract inference completed.",
           );
         },
       );

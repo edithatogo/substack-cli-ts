@@ -16,6 +16,7 @@ import {
   observeDraftTraffic,
   writeDraftCaptureFixture,
 } from "./browser/draft-capture.js";
+import { inferDraftContract } from "./browser/draft-contract.js";
 import {
   configFilePath,
   draftMappingsFilePath,
@@ -602,6 +603,18 @@ apiDraft
       }
     },
   );
+
+apiDraft
+  .command("contract")
+  .description(
+    "Infer likely draft create/update/fetch endpoints from a saved draft capture artifact.",
+  )
+  .argument("<file>", "Draft capture JSON file to analyze")
+  .action(async (file: string) => {
+    const review = await reviewDraftCaptureArtifact(file);
+    const report = inferDraftContract(review);
+    console.log(JSON.stringify(report, null, 2));
+  });
 
 apiDraft
   .command("review")

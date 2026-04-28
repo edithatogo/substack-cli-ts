@@ -20,7 +20,7 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 12. Transport Selection and Fallback      | In progress | Draft, publish, and schedule now accept transport selection; API writes still fail cleanly.              |
 | 13. Dependency and Discovery Register     | Active      | Track missed work, open questions, and newly identified interdependencies.                               |
 | 14. Quality, CI, and Automation           | Active      | Maintain linting, formatting, coverage, mutation testing, CI, and dependency automation.                 |
-| 15. MCP Integration                       | Planned     | Expose selected CLI summaries and validation flows through MCP without leaking local secrets.            |
+| 15. MCP Integration                       | Active      | Expose selected CLI summaries and validation flows through MCP without leaking local secrets.            |
 
 ## Operating Rules
 

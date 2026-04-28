@@ -64,6 +64,7 @@ node dist\cli.js api payload examples\basic.md
 node dist\cli.js api media examples\media.md
 node dist\cli.js api draft create examples\basic.md
 node dist\cli.js api draft observe --timeout-seconds 180
+node dist\cli.js api draft contract .substack-cli\draft-captures\example.json
 node dist\cli.js api draft review .substack-cli\draft-captures\example.json
 node dist\cli.js api draft compare .substack-cli\draft-captures\expected.json .substack-cli\draft-captures\actual.json
 node dist\cli.js api draft fixture .substack-cli\draft-captures\example.json --out fixtures\draft\baseline.json

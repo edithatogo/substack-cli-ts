@@ -2,6 +2,7 @@ import "../parser/markdown.test.js";
 import "../publish/title.test.js";
 import "../config/store.test.js";
 import "../browser/draft-capture.test.js";
+import "../browser/draft-contract.test.js";
 import "../schema/fixtures.test.js";
 import "../parser/media.test.js";
 import "../publish/browser-workflow.test.js";
