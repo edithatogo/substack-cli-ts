@@ -17,7 +17,10 @@ import {
   writeDraftCaptureFixture,
 } from "./browser/draft-capture.js";
 import { inferDraftContract } from "./browser/draft-contract.js";
-import { buildDraftContractMatrix } from "./browser/draft-contract-matrix.js";
+import {
+  buildDraftContractMatrix,
+  writeDraftContractMatrixFixture,
+} from "./browser/draft-contract-matrix.js";
 import {
   configFilePath,
   draftMappingsFilePath,
@@ -623,14 +626,17 @@ apiDraft
     "Merge multiple draft capture artifacts into one inferred contract matrix.",
   )
   .argument("<files...>", "Draft capture JSON files to analyze")
-  .action(async (files: string[]) => {
+  .option("--out <file>", "Write the matrix fixture to a file")
+  .action(async (files: string[], options: { out?: string }) => {
     const inputs = await Promise.all(
       files.map(async (sourceFile) => ({
         sourceFile,
         review: await reviewDraftCaptureArtifact(sourceFile),
       })),
     );
-    const report = buildDraftContractMatrix(inputs);
+    const report = options.out
+      ? await writeDraftContractMatrixFixture(inputs, { outFile: options.out })
+      : buildDraftContractMatrix(inputs);
     console.log(JSON.stringify(report, null, 2));
   });
 

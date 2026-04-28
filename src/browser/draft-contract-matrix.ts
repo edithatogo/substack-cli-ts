@@ -1,3 +1,4 @@
+import { writeFile } from "node:fs/promises";
 import type { DraftCaptureReview } from "./draft-capture.js";
 import { inferDraftContract } from "./draft-contract.js";
 
@@ -25,6 +26,10 @@ export interface DraftContractMatrixReport {
   rowCount: number;
   rows: DraftContractMatrixRow[];
   note: string;
+}
+
+export interface DraftContractMatrixFixtureOptions {
+  outFile: string;
 }
 
 type ConfidenceRank = Record<DraftContractMatrixRow["confidence"], number>;
@@ -100,6 +105,19 @@ export function buildDraftContractMatrix(
     rows: orderedRows,
     note: "This matrix merges multiple redacted capture reviews. It highlights recurring candidates, but it does not confirm the live contract.",
   };
+}
+
+export async function writeDraftContractMatrixFixture(
+  inputs: DraftContractMatrixInput[],
+  options: DraftContractMatrixFixtureOptions,
+): Promise<DraftContractMatrixReport> {
+  const report = buildDraftContractMatrix(inputs);
+  await writeFile(
+    options.outFile,
+    `${JSON.stringify(report, null, 2)}\n`,
+    "utf8",
+  );
+  return report;
 }
 
 function strongerConfidence(
