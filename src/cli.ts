@@ -48,6 +48,7 @@ import {
   evaluateDistributionPolicy,
   summarizeDistributionPolicy,
 } from "./policy/distribution.js";
+import { buildMcpSurfaceManifest, summarizeMcpSurface } from "./mcp/surface.js";
 import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
   resolveApiAuthMaterial,
@@ -115,6 +116,18 @@ program
     if (report.status === "error" || report.status === "warn") {
       process.exitCode = 1;
     }
+  });
+
+const mcp = program
+  .command("mcp")
+  .description("Inspect the planned MCP surface for redacted CLI summaries.");
+
+mcp
+  .command("surface")
+  .description("Print the planned MCP surface manifest.")
+  .action(() => {
+    const manifest = buildMcpSurfaceManifest();
+    console.log(JSON.stringify(summarizeMcpSurface(manifest), null, 2));
   });
 
 program

@@ -31,10 +31,10 @@ Expose the existing CLI capabilities through MCP so other local tools and agents
 ## Current Progress
 
 - Added to the roadmap as the tail track.
+- Defined an initial redacted MCP surface manifest with `mcp surface`.
 
 ## Remaining Work
 
-- Decide which CLI commands should be exposed first.
-- Define the MCP schema and transport choice.
-- Add tests for redaction and command parity.
+- Decide whether to implement an actual stdio MCP server next or keep the manifest as the contract for now.
+- Add tests for redaction and command parity across the exposed surface.
 - Keep MCP output aligned with the CLI summaries used by the existing tracks.

@@ -9,6 +9,7 @@ import "../publish/prepublish.test.js";
 import "../publish/workflow-trace.test.js";
 import "../publish/transport.test.js";
 import "../policy/distribution.test.js";
+import "../mcp/surface.test.js";
 import "../substack-api/draft-mappings.test.js";
 import "../substack-api/client.test.js";
 import "../substack-api/draft-write.test.js";
