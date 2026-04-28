@@ -24,6 +24,9 @@ Existing Browser Workflow + 08 Draft Write + 11 Publish/Schedule
 
 12 Transport Selection and Fallback
   -> 03 Draft, Publish, and Schedule
+
+14 Quality, CI, and Automation
+  -> 15 MCP Integration
 ```
 
 ## Discovery Process
@@ -45,6 +48,7 @@ When new work is found:
 | D004 | Identify license constraints before porting behavior from any open-source project.                        | GitHub research               | None          | All adapter tracks  | Open                                                                                |
 | D006 | Confirm the exact draft create/update/fetch request bodies and returned IDs for the live Substack editor. | Track 08 implementation       | Track 08      | Track 08, 11, 12    | Open; local capture, comparison, and fixture tools now available                    |
 | D005 | Confirm the safest read-only endpoint for validating current user and publication from extracted cookies. | Track 06 implementation       | Track 06      | Track 07            | Resolved: use `/api/v1/handle/options` plus `/api/v1/user/{handle}/public_profile`  |
+| D007 | Define the initial MCP surface for exposing CLI summaries and validation flows without leaking secrets.   | User request                  | Track 14      | Track 15            | Open                                                                                |
 
 ## Additional Improvements To Consider
 
