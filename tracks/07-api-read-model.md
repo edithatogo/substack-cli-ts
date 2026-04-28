@@ -25,3 +25,16 @@ Map the read-side Substack entities needed for export, diagnostics, and safe wri
 - Read probes are typed with Zod or equivalent runtime validation.
 - CLI can emit JSON for user, publication, section, draft, and post inventories.
 - Failures distinguish unauthenticated, unauthorized, not found, and schema drift cases.
+
+## Current Progress
+
+- Added `substack-cli api inventory --source auto|env|local-profile`.
+- Added typed read model for authenticated handle/profile, publication list, and configured publication.
+- Added shared API response classification for unauthenticated, forbidden, not found, schema drift, and network failures.
+
+## Remaining Work
+
+- Add sections inventory.
+- Add draft inventory after identifying stable read-only draft endpoints.
+- Add published post inventory and pagination.
+- Add redirects/custom-domain handling.

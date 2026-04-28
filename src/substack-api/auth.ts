@@ -2,6 +2,13 @@ import type { Cookie } from "playwright-core";
 import { z } from "zod";
 import { createLocalBrowserSession } from "../browser/local-browser.js";
 import {
+  apiHeaders,
+  classifyFailure,
+  type FetchLike,
+  requestJson,
+  type ApiReadStatus,
+} from "./client.js";
+import {
   requirePublicationUrl,
   type EffectiveConfig,
 } from "../config/store.js";
@@ -36,13 +43,7 @@ export interface ApiAuthStatus {
   cookies: ApiCookieSummary[];
 }
 
-export type ApiAuthValidationStatus =
-  | "ok"
-  | "unauthenticated"
-  | "forbidden"
-  | "not-found"
-  | "schema-drift"
-  | "network-error";
+export type ApiAuthValidationStatus = ApiReadStatus;
 
 export interface ApiAuthValidation {
   status: ApiAuthValidationStatus;
@@ -94,13 +95,6 @@ const PublicProfileSchema = z.object({
     )
     .optional(),
 });
-
-export type FetchLike = (
-  input: string,
-  init?: {
-    headers?: Record<string, string>;
-  },
-) => Promise<Pick<Response, "status" | "text">>;
 
 export async function resolveApiAuthMaterial(
   config: EffectiveConfig,
@@ -339,78 +333,17 @@ function summarizeCookie(cookie: Cookie): ApiCookieSummary {
   };
 }
 
-function apiHeaders(material: ApiAuthMaterial): Record<string, string> {
-  const publicationUrl = new URL(material.publicationUrl);
-
-  return {
-    accept: "application/json",
-    cookie: material.cookieHeader,
-    referer: material.publicationUrl,
-    origin: publicationUrl.origin,
-    "user-agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome Safari/537.36",
-  };
-}
-
-async function requestJson(
-  fetchImpl: FetchLike,
-  url: string,
-  headers: Record<string, string>,
-): Promise<{ status: number; body: unknown }> {
-  try {
-    const response = await fetchImpl(url, { headers });
-    const text = await response.text();
-
-    try {
-      return { status: response.status, body: JSON.parse(text) as unknown };
-    } catch {
-      return { status: response.status, body: null };
-    }
-  } catch {
-    return { status: 0, body: null };
-  }
-}
-
 function validationFailure(
   status: number,
   checkedEndpoints: string[],
 ): ApiAuthValidation {
-  if (status === 401) {
-    return {
-      status: "unauthenticated",
-      checkedEndpoints,
-      message: "Substack rejected the session as unauthenticated.",
-    };
-  }
-
-  if (status === 403) {
-    return {
-      status: "forbidden",
-      checkedEndpoints,
-      message: "Substack rejected the session with a forbidden response.",
-    };
-  }
-
-  if (status === 404) {
-    return {
-      status: "not-found",
-      checkedEndpoints,
-      message: "The expected read-only validation endpoint was not found.",
-    };
-  }
-
-  if (status === 0) {
-    return {
-      status: "network-error",
-      checkedEndpoints,
-      message:
-        "The read-only validation request failed before receiving a response.",
-    };
-  }
-
+  const failure = classifyFailure(
+    status,
+    checkedEndpoints[checkedEndpoints.length - 1] ?? "unknown",
+  );
   return {
-    status: "schema-drift",
+    status: failure.status,
     checkedEndpoints,
-    message: `Unexpected validation response status: ${status}.`,
+    message: failure.message,
   };
 }

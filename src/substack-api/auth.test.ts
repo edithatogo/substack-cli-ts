@@ -5,8 +5,8 @@ import {
   materialFromCookies,
   summarizeApiAuthMaterial,
   validateApiAuthMaterial,
-  type FetchLike,
 } from "./auth.js";
+import type { FetchLike } from "./client.js";
 
 describe("API auth material", () => {
   it("redacts cookie values and detects likely session cookies", () => {
@@ -66,15 +66,18 @@ describe("API auth material", () => {
       "https://rareinsights.substack.com",
       "env",
     );
-    const validation = await validateApiAuthMaterial(
-      material,
-      fakeFetch({
-        "https://substack.com/api/v1/handle/options": {
+    const routes = new Map<string, unknown>([
+      [
+        "https://substack.com/api/v1/handle/options",
+        {
           potentialHandles: [
             { id: "rareinsights", handle: "rareinsights", type: "existing" },
           ],
         },
-        "https://substack.com/api/v1/user/rareinsights/public_profile": {
+      ],
+      [
+        "https://substack.com/api/v1/user/rareinsights/public_profile",
+        {
           id: 123,
           name: "Example",
           handle: "rareinsights",
@@ -89,7 +92,11 @@ describe("API auth material", () => {
             },
           ],
         },
-      }),
+      ],
+    ]);
+    const validation = await validateApiAuthMaterial(
+      material,
+      fakeFetch(routes),
     );
 
     assert.equal(validation.status, "ok");
@@ -116,13 +123,14 @@ describe("API auth material", () => {
   });
 });
 
-function fakeFetch(routes: Record<string, unknown>): FetchLike {
-  return (input) => {
-    if (!(input in routes)) {
+function fakeFetch(routes: Map<string, unknown>): FetchLike {
+  return (input: string) => {
+    const body = routes.get(input);
+    if (body === undefined) {
       return Promise.resolve(response(404, { error: "not found" }));
     }
 
-    return Promise.resolve(response(200, routes[input]));
+    return Promise.resolve(response(200, body));
   };
 }
 

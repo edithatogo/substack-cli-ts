@@ -35,6 +35,7 @@ import {
   validateApiAuthMaterial,
   type ApiAuthSource,
 } from "./substack-api/auth.js";
+import { readApiInventory } from "./substack-api/read-model.js";
 import {
   captureFixture,
   compareFixture,
@@ -254,6 +255,24 @@ apiAuth
       }
     },
   );
+
+api
+  .command("inventory")
+  .description(
+    "Read user and publication inventory through read-only API probes.",
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const inventory = await readApiInventory(material);
+
+    console.log(JSON.stringify(inventory, null, 2));
+
+    if (inventory.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 const config = program
   .command("config")

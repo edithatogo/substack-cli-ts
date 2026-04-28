@@ -52,6 +52,7 @@ node dist\cli.js config set-publication https://example.substack.com
 node dist\cli.js config set-runtime local
 node dist\cli.js doctor
 node dist\cli.js api auth status --source local-profile
+node dist\cli.js api inventory --source local-profile
 node dist\cli.js auth status
 node dist\cli.js auth login --wait-seconds 120
 node dist\cli.js auth login --auto-login --wait-seconds 120

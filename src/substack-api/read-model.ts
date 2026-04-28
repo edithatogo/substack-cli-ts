@@ -1,0 +1,214 @@
+import { z } from "zod";
+import type { ApiAuthMaterial } from "./auth.js";
+import {
+  apiHeaders,
+  classifyFailure,
+  type FetchLike,
+  requestJson,
+  type ApiReadStatus,
+} from "./client.js";
+
+export interface PublicationSummary {
+  id: number;
+  name: string;
+  subdomain: string;
+  customDomain?: string | null | undefined;
+  role?: string | undefined;
+  isPrimary?: boolean | undefined;
+}
+
+export interface UserSummary {
+  id: number;
+  name: string;
+  handle: string;
+  publications: PublicationSummary[];
+}
+
+export interface ConfiguredPublicationSummary {
+  id?: number | undefined;
+  name: string;
+  subdomain: string;
+  customDomain?: string | null | undefined;
+  heroText?: string | null | undefined;
+  authorId?: number | undefined;
+  paymentsState?: string | null | undefined;
+}
+
+export interface ApiReadInventory {
+  status: ApiReadStatus;
+  endpoints: string[];
+  user?: UserSummary | undefined;
+  configuredPublication?: ConfiguredPublicationSummary | undefined;
+  message: string;
+}
+
+const PublicProfileSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  handle: z.string(),
+  publicationUsers: z
+    .array(
+      z.object({
+        role: z.string().optional(),
+        public: z.boolean().optional(),
+        is_primary: z.boolean().optional(),
+        publication: z.object({
+          id: z.number(),
+          name: z.string(),
+          subdomain: z.string(),
+          custom_domain: z.string().nullable().optional(),
+        }),
+      }),
+    )
+    .default([]),
+});
+
+const PublicationSchema = z.object({
+  id: z.number().optional(),
+  name: z.string(),
+  subdomain: z.string(),
+  custom_domain: z.string().nullable().optional(),
+  hero_text: z.string().nullable().optional(),
+  author_id: z.number().optional(),
+  payments_state: z.string().nullable().optional(),
+});
+
+const HandleOptionsSchema = z.object({
+  potentialHandles: z.array(
+    z.object({
+      handle: z.string(),
+      type: z.string(),
+    }),
+  ),
+});
+
+export async function readApiInventory(
+  material: ApiAuthMaterial,
+  fetchImpl: FetchLike = fetch,
+): Promise<ApiReadInventory> {
+  const headers = apiHeaders(material);
+  const endpoints: string[] = [];
+  const handleOptionsEndpoint = "https://substack.com/api/v1/handle/options";
+  endpoints.push(handleOptionsEndpoint);
+
+  const handleOptionsResponse = await requestJson(
+    fetchImpl,
+    handleOptionsEndpoint,
+    headers,
+  );
+  if (handleOptionsResponse.status !== 200) {
+    return failureInventory(handleOptionsResponse.status, endpoints);
+  }
+
+  const handleOptions = HandleOptionsSchema.safeParse(
+    handleOptionsResponse.body,
+  );
+  if (!handleOptions.success) {
+    return {
+      status: "schema-drift",
+      endpoints,
+      message: "The handle options response did not match the expected shape.",
+    };
+  }
+
+  const handle =
+    handleOptions.data.potentialHandles.find(
+      (candidate) => candidate.type === "existing",
+    )?.handle ?? handleOptions.data.potentialHandles[0]?.handle;
+
+  if (!handle) {
+    return {
+      status: "schema-drift",
+      endpoints,
+      message: "The authenticated session returned no usable handle.",
+    };
+  }
+
+  const profileEndpoint = `https://substack.com/api/v1/user/${encodeURIComponent(handle)}/public_profile`;
+  endpoints.push(profileEndpoint);
+  const profileResponse = await requestJson(
+    fetchImpl,
+    profileEndpoint,
+    headers,
+  );
+  if (profileResponse.status !== 200) {
+    return failureInventory(profileResponse.status, endpoints);
+  }
+
+  const profile = PublicProfileSchema.safeParse(profileResponse.body);
+  if (!profile.success) {
+    return {
+      status: "schema-drift",
+      endpoints,
+      message: "The public profile response did not match the expected shape.",
+    };
+  }
+
+  const publicationEndpoint = new URL(
+    "/api/v1/publication",
+    material.publicationUrl,
+  ).toString();
+  endpoints.push(publicationEndpoint);
+  const publicationResponse = await requestJson(
+    fetchImpl,
+    publicationEndpoint,
+    headers,
+  );
+  if (publicationResponse.status !== 200) {
+    return failureInventory(publicationResponse.status, endpoints);
+  }
+
+  const publication = PublicationSchema.safeParse(publicationResponse.body);
+  if (!publication.success) {
+    return {
+      status: "schema-drift",
+      endpoints,
+      message:
+        "The configured publication response did not match the expected shape.",
+    };
+  }
+
+  return {
+    status: "ok",
+    endpoints,
+    user: {
+      id: profile.data.id,
+      name: profile.data.name,
+      handle: profile.data.handle,
+      publications: profile.data.publicationUsers.map((publicationUser) => ({
+        id: publicationUser.publication.id,
+        name: publicationUser.publication.name,
+        subdomain: publicationUser.publication.subdomain,
+        customDomain: publicationUser.publication.custom_domain,
+        role: publicationUser.role,
+        isPrimary: publicationUser.is_primary,
+      })),
+    },
+    configuredPublication: {
+      id: publication.data.id,
+      name: publication.data.name,
+      subdomain: publication.data.subdomain,
+      customDomain: publication.data.custom_domain,
+      heroText: publication.data.hero_text,
+      authorId: publication.data.author_id,
+      paymentsState: publication.data.payments_state,
+    },
+    message: "Read-only API inventory completed.",
+  };
+}
+
+function failureInventory(
+  status: number,
+  endpoints: string[],
+): ApiReadInventory {
+  const failure = classifyFailure(
+    status,
+    endpoints[endpoints.length - 1] ?? "unknown",
+  );
+
+  return {
+    status: failure.status,
+    endpoints,
+    message: failure.message,
+  };
+}
