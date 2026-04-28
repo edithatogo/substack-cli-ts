@@ -28,6 +28,8 @@ export interface DraftInspectionReport {
   sourceFile: string;
   publicationUrl: string;
   title: string;
+  sectionResolutionApplied: boolean;
+  resolvedSectionId?: number | undefined;
   compatibility: ReturnType<typeof validatePayloadCompatibility>;
   payload?: ReturnType<typeof buildSubstackDraftPayload> | undefined;
   plan?: DraftWritePlan | undefined;
@@ -56,6 +58,7 @@ export function buildDraftInspectionReport(
       sourceFile: input.post.filePath,
       publicationUrl: input.publicationUrl,
       title: resolveTitle(input.post),
+      sectionResolutionApplied: false,
       compatibility,
       section,
       duplicates,
@@ -63,9 +66,10 @@ export function buildDraftInspectionReport(
     };
   }
 
-  const payload = buildSubstackDraftPayload(input.post);
+  const plannedPost = applyResolvedSectionId(input.post, section);
+  const payload = buildSubstackDraftPayload(plannedPost);
   const plan = planCreateDraft(
-    input.post,
+    plannedPost,
     input.publicationUrl,
     input.existingDraft ?? undefined,
   );
@@ -79,6 +83,8 @@ export function buildDraftInspectionReport(
     sourceFile: input.post.filePath,
     publicationUrl: input.publicationUrl,
     title: payload.title,
+    sectionResolutionApplied: plannedPost !== input.post,
+    resolvedSectionId: plannedPost.metadata.sectionId,
     compatibility,
     payload,
     plan,
@@ -90,4 +96,21 @@ export function buildDraftInspectionReport(
 
 function resolveTitle(post: ParsedPost): string {
   return post.metadata.title ?? "<untitled>";
+}
+
+function applyResolvedSectionId(
+  post: ParsedPost,
+  section: DraftSectionResolutionReport,
+): ParsedPost {
+  if (section.status !== "resolved" || post.metadata.sectionId !== undefined) {
+    return post;
+  }
+
+  return {
+    ...post,
+    metadata: {
+      ...post.metadata,
+      sectionId: section.resolvedSection?.id,
+    },
+  };
 }

@@ -12,7 +12,6 @@ describe("buildDraftInspectionReport", () => {
           slug: "example-draft",
           tags: [],
           section: "News",
-          sectionId: 12,
         },
         markdown: "# Example Draft",
         html: "<h1>Example Draft</h1>",
@@ -84,9 +83,12 @@ describe("buildDraftInspectionReport", () => {
 
     assert.equal(report.status, "ready");
     assert.equal(report.title, "Example Draft");
+    assert.equal(report.sectionResolutionApplied, true);
+    assert.equal(report.resolvedSectionId, 12);
     assert.equal(report.section.status, "resolved");
     assert.equal(report.duplicates.status, "matched");
     assert.ok(report.plan);
     assert.equal(report.plan.operation, "update");
+    assert.equal(report.plan.payload.sectionId, 12);
   });
 });
