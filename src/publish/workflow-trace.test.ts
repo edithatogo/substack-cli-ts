@@ -24,6 +24,7 @@ describe("reviewWorkflowTraceArtifact", () => {
           currentUrl: "https://rareinsights.substack.com/publish/post/123",
           finalUrl: "https://rareinsights.substack.com/publish/post/123",
           finalState: "publish-review-opened",
+          publishedUrl: "https://rareinsights.substack.com/p/fixture-title",
           transport: {
             requested: "auto",
             selected: "browser",
@@ -78,6 +79,7 @@ describe("reviewWorkflowTraceArtifact", () => {
           currentUrl: "https://rareinsights.substack.com/publish/post/123",
           finalUrl: "https://rareinsights.substack.com/publish/post/123",
           finalState: "publish-review-opened",
+          publishedUrl: "https://rareinsights.substack.com/p/expected-title",
           transport: {
             requested: "auto",
             selected: "browser",
@@ -100,6 +102,7 @@ describe("reviewWorkflowTraceArtifact", () => {
           currentUrl: "https://rareinsights.substack.com/publish/post/456",
           finalUrl: "https://rareinsights.substack.com/publish/post/456",
           finalState: "publish-clicked",
+          publishedUrl: "https://rareinsights.substack.com/p/actual-title",
           transport: {
             requested: "browser",
             selected: "browser",
@@ -156,14 +159,14 @@ describe("reviewWorkflowTraceArtifact", () => {
           currentUrl: "https://rareinsights.substack.com/publish/post/123",
           finalUrl: "https://rareinsights.substack.com/publish/post/123",
           finalState: "publish-review-opened",
-          transport: {
-            requested: "auto",
-            selected: "browser",
-          },
-          browserbaseSessionId: "session-123",
-          browserbaseSessionUrl: "https://browserbase.example/session/123",
-          browserbaseDebugUrl: "https://browserbase.example/debug/123",
-          trace: [],
+          publishedUrl: "https://rareinsights.substack.com/p/fixture-title",
+          transportRequested: "auto",
+          transportSelected: "browser",
+          traceCount: 1,
+          stepNames: ["open-publish-settings"],
+          failedStepNames: [],
+          browserSessionPresent: true,
+          note: "Use this summary to compare review-only, schedule-review, and publish-click traces without exposing session URLs.",
         },
         null,
         2,
@@ -177,6 +180,10 @@ describe("reviewWorkflowTraceArtifact", () => {
 
       assert.equal(fixture.title, "Fixture Title");
       assert.equal(reread.finalState, "publish-review-opened");
+      assert.equal(
+        reread.publishedUrl,
+        "https://rareinsights.substack.com/p/fixture-title",
+      );
       assert.equal(reread.browserSessionPresent, true);
     } finally {
       await rm(temp, { recursive: true, force: true });

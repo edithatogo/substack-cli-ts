@@ -10,6 +10,7 @@ export interface WorkflowTraceReview {
   currentUrl: string;
   finalUrl: string;
   finalState: string;
+  publishedUrl?: string | undefined;
   scheduleAt?: string | undefined;
   editorTextLength?: number | undefined;
   transportRequested: BrowserWorkflowResult["transport"]["requested"];
@@ -54,6 +55,7 @@ const BrowserWorkflowResultSchema = z.object({
   currentUrl: z.string().min(1),
   finalUrl: z.string().min(1),
   finalState: z.string().min(1),
+  publishedUrl: z.string().min(1).optional(),
   scheduleAt: z.string().optional(),
   editorTextLength: z.number().int().nonnegative().optional(),
   transport: z.object({
@@ -87,6 +89,7 @@ const WorkflowTraceReviewSchema = z.object({
   currentUrl: z.string().min(1),
   finalUrl: z.string().min(1),
   finalState: z.string().min(1),
+  publishedUrl: z.string().min(1).optional(),
   scheduleAt: z.string().optional(),
   editorTextLength: z.number().int().nonnegative().optional(),
   transportRequested: z.union([
@@ -146,6 +149,7 @@ export function summarizeWorkflowTrace(review: WorkflowTraceReview): unknown {
     currentUrl: review.currentUrl,
     finalUrl: review.finalUrl,
     finalState: review.finalState,
+    publishedUrl: review.publishedUrl,
     scheduleAt: review.scheduleAt,
     editorTextLength: review.editorTextLength,
     transport: {
@@ -181,6 +185,7 @@ async function loadWorkflowTraceReview(
     currentUrl: artifact.currentUrl,
     finalUrl: artifact.finalUrl,
     finalState: artifact.finalState,
+    publishedUrl: artifact.publishedUrl,
     scheduleAt: artifact.scheduleAt,
     editorTextLength: artifact.editorTextLength,
     transportRequested: artifact.transport.requested,
@@ -220,6 +225,12 @@ function diffWorkflowTraceReviews(
     "finalState",
     expected.finalState,
     actual.finalState,
+  );
+  compareField(
+    differences,
+    "publishedUrl",
+    expected.publishedUrl,
+    actual.publishedUrl,
   );
   compareField(
     differences,

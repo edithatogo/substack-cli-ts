@@ -36,6 +36,7 @@ Add final publishing operations only after draft writes and payload validation a
 - `publish` and `schedule` now run the same prepublish validation before opening the browser.
 - `publish --review-only` stops at the final confirmation screen without clicking Publish.
 - Review and publish checkpoints now report the current page URL and explicit final URL/state for controlled publication mapping.
+- Workflow artifacts now carry an optional `publishedUrl` slot for the eventual live post URL.
 - `--trace-out` can write a local JSON workflow artifact for review-only publish traces.
 - `trace review <file>` summarizes a saved workflow artifact without exposing browser session URLs.
 - `trace compare <expected-file> <actual-file>` compares saved workflow artifacts locally.
@@ -46,6 +47,7 @@ Add final publishing operations only after draft writes and payload validation a
 
 - Map the live publish confirmation screen and final schedule controls in a controlled test publication.
 - Capture the returned post URL and final state after a successful live publish or schedule run.
+- Fill the optional `publishedUrl` field from a successful live publish or schedule run.
 - Add a controlled review-only publish trace that can be used before the final click.
 - Use `--trace-out` to persist the review-only publish trace and compare it later.
 - Use `trace review` to compare review-only, schedule-review, and publish-click artifacts locally.

@@ -39,6 +39,7 @@ export interface BrowserWorkflowResult {
   currentUrl: string;
   finalUrl: string;
   finalState: string;
+  publishedUrl?: string | undefined;
   transport: {
     requested: TransportPreference;
     selected: "browser";
@@ -255,6 +256,7 @@ async function createDraftInBrowser(
       currentUrl,
       finalUrl: currentUrl,
       finalState: "draft-created",
+      publishedUrl: undefined,
       transport,
       editorTextLength: editorText.length,
       browserbaseSessionId: session.browserbaseSessionId,
@@ -281,6 +283,7 @@ async function createDraftInBrowser(
       currentUrl: finalUrl,
       finalUrl,
       finalState: "publish-review-opened",
+      publishedUrl: undefined,
       transport,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
@@ -307,6 +310,7 @@ async function createDraftInBrowser(
       currentUrl: finalUrl,
       finalUrl,
       finalState: "schedule-review-opened",
+      publishedUrl: undefined,
       transport,
       browserbaseSessionId: session.browserbaseSessionId,
       browserbaseSessionUrl: session.browserbaseSessionUrl,
@@ -331,6 +335,7 @@ async function createDraftInBrowser(
     currentUrl: finalUrl,
     finalUrl,
     finalState: "publish-clicked",
+    publishedUrl: undefined,
     transport,
     browserbaseSessionId: session.browserbaseSessionId,
     browserbaseSessionUrl: session.browserbaseSessionUrl,
