@@ -1,6 +1,7 @@
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import type { DraftCaptureReview } from "./draft-capture.js";
 import { inferDraftContract } from "./draft-contract.js";
+import { z } from "zod";
 
 export interface DraftContractMatrixInput {
   sourceFile: string;
@@ -32,6 +33,13 @@ export interface DraftContractMatrixFixtureOptions {
   outFile: string;
 }
 
+export interface DraftContractMatrixComparison {
+  equal: boolean;
+  expected: DraftContractMatrixReport;
+  actual: DraftContractMatrixReport;
+  differences: string[];
+}
+
 type ConfidenceRank = Record<DraftContractMatrixRow["confidence"], number>;
 
 const CONFIDENCE_RANK: ConfidenceRank = {
@@ -39,6 +47,40 @@ const CONFIDENCE_RANK: ConfidenceRank = {
   medium: 1,
   high: 2,
 };
+
+const DraftContractMatrixRowSchema = z.object({
+  operation: z.union([
+    z.literal("create"),
+    z.literal("update"),
+    z.literal("fetch"),
+  ]),
+  method: z.union([
+    z.literal("GET"),
+    z.literal("POST"),
+    z.literal("PUT"),
+    z.literal("PATCH"),
+  ]),
+  endpoint: z.string().min(1),
+  confidence: z.union([
+    z.literal("low"),
+    z.literal("medium"),
+    z.literal("high"),
+  ]),
+  occurrences: z.number().int().nonnegative(),
+  sourceFiles: z.array(z.string()),
+  evidence: z.array(z.string()),
+  requestBodyKeys: z.array(z.string()),
+  responseKeys: z.array(z.string()),
+});
+
+const DraftContractMatrixReportSchema = z.object({
+  status: z.union([z.literal("inferred"), z.literal("insufficient-data")]),
+  captureCount: z.number().int().nonnegative(),
+  sourceFiles: z.array(z.string()),
+  rowCount: z.number().int().nonnegative(),
+  rows: z.array(DraftContractMatrixRowSchema),
+  note: z.string().min(1),
+});
 
 export function buildDraftContractMatrix(
   inputs: DraftContractMatrixInput[],
@@ -120,6 +162,33 @@ export async function writeDraftContractMatrixFixture(
   return report;
 }
 
+export async function reviewDraftContractMatrixArtifact(
+  filePath: string,
+): Promise<DraftContractMatrixReport> {
+  const raw = await readFile(filePath, "utf8");
+  const json = JSON.parse(raw) as unknown;
+  return DraftContractMatrixReportSchema.parse(json);
+}
+
+export async function compareDraftContractMatrixArtifacts(
+  expectedFile: string,
+  actualFile: string,
+): Promise<DraftContractMatrixComparison> {
+  const [expected, actual] = await Promise.all([
+    reviewDraftContractMatrixArtifact(expectedFile),
+    reviewDraftContractMatrixArtifact(actualFile),
+  ]);
+
+  const differences = diffDraftContractMatrixReports(expected, actual);
+
+  return {
+    equal: differences.length === 0,
+    expected,
+    actual,
+    differences,
+  };
+}
+
 function strongerConfidence(
   current: DraftContractMatrixRow["confidence"],
   next: DraftContractMatrixRow["confidence"],
@@ -133,4 +202,76 @@ function mergeUnique(target: string[], source: string[]): void {
       target.push(value);
     }
   }
+}
+
+function diffDraftContractMatrixReports(
+  expected: DraftContractMatrixReport,
+  actual: DraftContractMatrixReport,
+): string[] {
+  const differences: string[] = [];
+
+  compareField(differences, "status", expected.status, actual.status);
+  compareField(
+    differences,
+    "captureCount",
+    expected.captureCount,
+    actual.captureCount,
+  );
+  compareField(
+    differences,
+    "sourceFiles",
+    expected.sourceFiles,
+    actual.sourceFiles,
+  );
+  compareField(differences, "rowCount", expected.rowCount, actual.rowCount);
+  compareField(differences, "rows", expected.rows, actual.rows);
+  compareField(differences, "note", expected.note, actual.note);
+
+  return differences;
+}
+
+function compareField(
+  differences: string[],
+  name: string,
+  expected: unknown,
+  actual: unknown,
+): void {
+  if (stableStringify(expected) !== stableStringify(actual)) {
+    differences.push(
+      `${name}: ${stableValue(expected)} != ${stableValue(actual)}`,
+    );
+  }
+}
+
+function stableStringify(value: unknown): string {
+  const serialized = stringifyMaybe(value);
+  return serialized === undefined ? "undefined" : serialized;
+}
+
+function stringifyMaybe(value: unknown): string | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return JSON.stringify(sortValue(value));
+}
+
+function sortValue(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(sortValue);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, child]) => [key, sortValue(child)]),
+    );
+  }
+
+  return value;
+}
+
+function stableValue(value: unknown): string {
+  return stableStringify(value);
 }

@@ -19,6 +19,7 @@ import {
 import { inferDraftContract } from "./browser/draft-contract.js";
 import {
   buildDraftContractMatrix,
+  compareDraftContractMatrixArtifacts,
   writeDraftContractMatrixFixture,
 } from "./browser/draft-contract-matrix.js";
 import {
@@ -638,6 +639,24 @@ apiDraft
       ? await writeDraftContractMatrixFixture(inputs, { outFile: options.out })
       : buildDraftContractMatrix(inputs);
     console.log(JSON.stringify(report, null, 2));
+  });
+
+apiDraft
+  .command("contract-matrix-compare")
+  .description("Compare two draft contract matrix fixtures.")
+  .argument("<expected-file>", "Expected draft contract matrix JSON file")
+  .argument("<actual-file>", "Actual draft contract matrix JSON file")
+  .action(async (expectedFile: string, actualFile: string) => {
+    const comparison = await compareDraftContractMatrixArtifacts(
+      expectedFile,
+      actualFile,
+    );
+
+    console.log(JSON.stringify(comparison, null, 2));
+
+    if (!comparison.equal) {
+      process.exitCode = 1;
+    }
   });
 
 apiDraft

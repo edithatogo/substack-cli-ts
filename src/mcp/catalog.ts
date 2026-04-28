@@ -14,7 +14,10 @@ import {
   writeDraftCaptureFixture,
 } from "../browser/draft-capture.js";
 import { inferDraftContract } from "../browser/draft-contract.js";
-import { buildDraftContractMatrix } from "../browser/draft-contract-matrix.js";
+import {
+  buildDraftContractMatrix,
+  compareDraftContractMatrixArtifacts,
+} from "../browser/draft-contract-matrix.js";
 import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
@@ -297,6 +300,38 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(report),
             "Draft contract matrix completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "capture",
+    name: "api.draft.contract.matrix.compare",
+    description: "Compare two draft contract matrix fixtures.",
+    cliCommand:
+      "api draft contract-matrix-compare <expected-file> <actual-file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.draft.contract.matrix.compare",
+        {
+          description: "Compare two draft contract matrix fixtures.",
+          inputSchema: CompareFileArgs,
+          annotations: {
+            title: "Draft Contract Matrix Compare",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ expectedFile, actualFile }) => {
+          const comparison = await compareDraftContractMatrixArtifacts(
+            expectedFile,
+            actualFile,
+          );
+          return jsonResult(
+            toJsonRecord(comparison),
+            "Draft contract matrix comparison completed.",
           );
         },
       );

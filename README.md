@@ -67,6 +67,7 @@ node dist\cli.js api draft observe --timeout-seconds 180
 node dist\cli.js api draft contract .substack-cli\draft-captures\example.json
 node dist\cli.js api draft contract-matrix .substack-cli\draft-captures\a.json .substack-cli\draft-captures\b.json
 node dist\cli.js api draft contract-matrix .substack-cli\draft-captures\a.json .substack-cli\draft-captures\b.json --out fixtures\draft\matrix.json
+node dist\cli.js api draft contract-matrix-compare fixtures\draft\expected.json fixtures\draft\actual.json
 node dist\cli.js api draft review .substack-cli\draft-captures\example.json
 node dist\cli.js api draft compare .substack-cli\draft-captures\expected.json .substack-cli\draft-captures\actual.json
 node dist\cli.js api draft fixture .substack-cli\draft-captures\example.json --out fixtures\draft\baseline.json

@@ -5,6 +5,7 @@ import "../browser/draft-capture.test.js";
 import "../browser/draft-contract.test.js";
 import "../browser/draft-contract-matrix.test.js";
 import "../browser/draft-contract-matrix-fixture.test.js";
+import "../browser/draft-contract-matrix-compare.test.js";
 import "../schema/fixtures.test.js";
 import "../parser/media.test.js";
 import "../publish/browser-workflow.test.js";

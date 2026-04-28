@@ -35,6 +35,7 @@ Expose the existing CLI capabilities through MCP so other local tools and agents
 - Added `mcp summary` to print the redacted MCP summary resource.
 - Added `api draft contract` as a redacted contract-inference helper for captured draft traffic.
 - Added `api draft contract-matrix` as a redacted multi-capture contract aggregation helper.
+- Added `api draft contract-matrix-compare` as a redacted matrix fixture comparison helper.
 - Implemented a stdio MCP server with redacted read, review, and capture tools.
 - Added read-only MCP resources for the manifest and redacted summary.
 - Added redacted MCP prompts for surface overview and workflow review guidance.
