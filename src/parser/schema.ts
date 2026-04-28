@@ -50,7 +50,10 @@ export function collectMarkTypes(document: ProseMirrorNode): string[] {
   return [...types].sort();
 }
 
-function walk(node: ProseMirrorNode, visit: (node: ProseMirrorNode) => void): void {
+function walk(
+  node: ProseMirrorNode,
+  visit: (node: ProseMirrorNode) => void,
+): void {
   visit(node);
 
   for (const child of node.content ?? []) {

@@ -27,7 +27,9 @@ export function requireBrowserEnv(): RuntimeEnv {
     .map(([name]) => name);
 
   if (missing.length > 0) {
-    throw new Error(`Missing required browser environment variables: ${missing.join(", ")}`);
+    throw new Error(
+      `Missing required browser environment variables: ${missing.join(", ")}`,
+    );
   }
 
   return env;

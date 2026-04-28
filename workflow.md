@@ -109,5 +109,6 @@ Detailed track files live under `tracks/`:
 - `tracks/11-api-prepublish-publish-schedule.md`
 - `tracks/12-transport-selection-fallback.md`
 - `tracks/13-dependency-and-discovery-register.md`
+- `tracks/14-quality-ci-automation.md`
 
-Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, systematic external project research, and the TypeScript internal API adapter tracks remain open work.
+Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, systematic external project research, the TypeScript internal API adapter tracks, and quality automation hardening remain active work.

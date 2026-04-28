@@ -6,7 +6,7 @@ export const PaywallDivider = Node.create({
   atom: true,
 
   parseHTML() {
-    return [{ tag: "div[data-substack-cli-node=\"paywall\"]" }];
+    return [{ tag: 'div[data-substack-cli-node="paywall"]' }];
   },
 
   renderHTML({ HTMLAttributes }) {
@@ -28,14 +28,20 @@ export const SubscribeWidget = Node.create({
     return {
       label: {
         default: "Subscribe",
-        parseHTML: (element) => element.getAttribute("data-label") ?? "Subscribe",
-        renderHTML: (attributes) => ({ "data-label": attributes.label }),
+        parseHTML: (element) =>
+          element.getAttribute("data-label") ?? "Subscribe",
+        renderHTML: (attributes) => ({
+          "data-label":
+            typeof attributes.label === "string"
+              ? attributes.label
+              : "Subscribe",
+        }),
       },
     };
   },
 
   parseHTML() {
-    return [{ tag: "div[data-substack-cli-node=\"subscribe-widget\"]" }];
+    return [{ tag: 'div[data-substack-cli-node="subscribe-widget"]' }];
   },
 
   renderHTML({ HTMLAttributes }) {

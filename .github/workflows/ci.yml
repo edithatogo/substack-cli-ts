@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Quality Gate
+        run: npm run quality
+
+      - name: Production Audit
+        run: npm run audit:prod
+
+      - name: Secret Pattern Scan
+        run: |
+          if grep -RInE 'bb_live|SUBSTACK_PASSWORD=.+|connect\.sid=.*s%3A|BROWSERBASE_API_KEY=bb_' --exclude=ci.yml --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.substack-cli .; then
+            echo "Potential secret pattern found"
+            exit 1
+          fi

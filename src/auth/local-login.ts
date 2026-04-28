@@ -25,21 +25,26 @@ export interface LocalLoginResult {
   };
 }
 
-export async function runLocalLogin(options: LocalLoginOptions): Promise<LocalLoginResult> {
+export async function runLocalLogin(
+  options: LocalLoginOptions,
+): Promise<LocalLoginResult> {
   await mkdir(localBrowserProfileDir(), { recursive: true });
 
-  const context = await chromium.launchPersistentContext(localBrowserProfileDir(), {
-    executablePath: getChromePath(),
-    headless: false,
-    args: [
-      "--no-first-run",
-      "--no-default-browser-check",
-    ],
-  });
+  const context = await chromium.launchPersistentContext(
+    localBrowserProfileDir(),
+    {
+      executablePath: getChromePath(),
+      headless: false,
+      args: ["--no-first-run", "--no-default-browser-check"],
+    },
+  );
 
   try {
     const page = await context.newPage();
-    await page.goto(options.publicationUrl, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await page.goto(options.publicationUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
+    });
 
     const autoLogin = options.credentials
       ? await attemptPasswordLogin(page, options.credentials, {
@@ -69,20 +74,28 @@ async function attemptPasswordLogin(
   credentials: { email: string; password: string },
   options: { pauseBeforePassword: boolean },
 ): Promise<NonNullable<LocalLoginResult["autoLogin"]>> {
-  await clickFirst(page, [
-    page.getByRole("button", { name: /sign in/i }),
-    page.getByRole("link", { name: /sign in/i }),
-    page.locator("text=/sign in/i"),
-  ], 10000);
+  await clickFirst(
+    page,
+    [
+      page.getByRole("button", { name: /sign in/i }),
+      page.getByRole("link", { name: /sign in/i }),
+      page.locator("text=/sign in/i"),
+    ],
+    10000,
+  );
 
   await choosePasswordLogin(page);
 
-  const email = await firstVisible(page, [
-    page.locator("input[type='email']"),
-    page.locator("input[name='email']"),
-    page.locator("input[autocomplete='email']"),
-    page.locator("input").filter({ hasText: /@/i }),
-  ], 15000);
+  const email = await firstVisible(
+    page,
+    [
+      page.locator("input[type='email']"),
+      page.locator("input[name='email']"),
+      page.locator("input[autocomplete='email']"),
+      page.locator("input").filter({ hasText: /@/i }),
+    ],
+    15000,
+  );
 
   if (!email) {
     return {
@@ -96,23 +109,35 @@ async function attemptPasswordLogin(
   await email.fill(credentials.email);
   await choosePasswordLogin(page);
 
-  let password = await firstVisible(page, [
-    page.locator("input[type='password']"),
-    page.locator("input[name='password']"),
-    page.locator("input[autocomplete='current-password']"),
-  ], 5000);
-
-  if (!password) {
-    await clickFirst(page, [
-      page.getByRole("button", { name: /continue|next|sign in|log in/i }),
-      page.locator("button[type='submit']"),
-    ], 10000);
-    await choosePasswordLogin(page);
-    password = await firstVisible(page, [
+  let password = await firstVisible(
+    page,
+    [
       page.locator("input[type='password']"),
       page.locator("input[name='password']"),
       page.locator("input[autocomplete='current-password']"),
-    ], 15000);
+    ],
+    5000,
+  );
+
+  if (!password) {
+    await clickFirst(
+      page,
+      [
+        page.getByRole("button", { name: /continue|next|sign in|log in/i }),
+        page.locator("button[type='submit']"),
+      ],
+      10000,
+    );
+    await choosePasswordLogin(page);
+    password = await firstVisible(
+      page,
+      [
+        page.locator("input[type='password']"),
+        page.locator("input[name='password']"),
+        page.locator("input[autocomplete='current-password']"),
+      ],
+      15000,
+    );
   }
 
   if (!password) {
@@ -136,12 +161,18 @@ async function attemptPasswordLogin(
   }
 
   await password.fill(credentials.password);
-  await clickFirst(page, [
-    page.getByRole("button", { name: /sign in|log in|continue|submit/i }),
-    page.locator("button[type='submit']"),
-  ], 10000);
+  await clickFirst(
+    page,
+    [
+      page.getByRole("button", { name: /sign in|log in|continue|submit/i }),
+      page.locator("button[type='submit']"),
+    ],
+    10000,
+  );
   await Promise.race([
-    page.waitForLoadState("domcontentloaded", { timeout: 15000 }).catch(() => undefined),
+    page
+      .waitForLoadState("domcontentloaded", { timeout: 15000 })
+      .catch(() => undefined),
     page.waitForTimeout(5000),
   ]);
 
@@ -153,14 +184,18 @@ async function attemptPasswordLogin(
 }
 
 async function choosePasswordLogin(page: Page): Promise<boolean> {
-  return clickFirst(page, [
-    page.getByRole("button", { name: /password/i }),
-    page.getByRole("link", { name: /password/i }),
-    page.getByText(/use .*password/i),
-    page.getByText(/sign in .*password/i),
-    page.getByText(/log in .*password/i),
-    page.getByText(/enter .*password/i),
-  ], 15000);
+  return clickFirst(
+    page,
+    [
+      page.getByRole("button", { name: /password/i }),
+      page.getByRole("link", { name: /password/i }),
+      page.getByText(/use .*password/i),
+      page.getByText(/sign in .*password/i),
+      page.getByText(/log in .*password/i),
+      page.getByText(/enter .*password/i),
+    ],
+    15000,
+  );
 }
 
 async function firstVisible(
@@ -189,7 +224,11 @@ async function firstVisible(
   return null;
 }
 
-async function clickFirst(page: Page, locators: Locator[], timeout: number): Promise<boolean> {
+async function clickFirst(
+  page: Page,
+  locators: Locator[],
+  timeout: number,
+): Promise<boolean> {
   const target = await firstVisible(page, locators, timeout);
 
   if (!target) {
@@ -202,8 +241,16 @@ async function clickFirst(page: Page, locators: Locator[], timeout: number): Pro
 
 async function isSignInVisible(page: Page): Promise<boolean> {
   try {
-    return await page.getByRole("button", { name: /sign in/i }).first().isVisible({ timeout: 1000 }) ||
-      await page.getByRole("link", { name: /sign in/i }).first().isVisible({ timeout: 1000 });
+    return (
+      (await page
+        .getByRole("button", { name: /sign in/i })
+        .first()
+        .isVisible({ timeout: 1000 })) ||
+      (await page
+        .getByRole("link", { name: /sign in/i })
+        .first()
+        .isVisible({ timeout: 1000 }))
+    );
   } catch {
     return false;
   }

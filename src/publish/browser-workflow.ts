@@ -1,7 +1,18 @@
 import type { PreparedPost } from "../types.js";
-import { loadSession, saveSession, createStoredSession } from "../auth/session-store.js";
-import { insertTextIntoActiveElement, pasteHtmlIntoEditor, getEditorText } from "../browser/editor.js";
-import { createStagehandSession, type StagehandSession } from "../browser/stagehand.js";
+import {
+  loadSession,
+  saveSession,
+  createStoredSession,
+} from "../auth/session-store.js";
+import {
+  insertTextIntoActiveElement,
+  pasteHtmlIntoEditor,
+  getEditorText,
+} from "../browser/editor.js";
+import {
+  createStagehandSession,
+  type StagehandSession,
+} from "../browser/stagehand.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import { runLocalDraftWorkflow } from "./local-workflow.js";
 import { resolvePostTitle } from "./title.js";
@@ -53,8 +64,13 @@ export async function runBrowserWorkflow(
     return;
   }
 
-  if ((prepared.mode === "publish" || prepared.mode === "schedule") && !options.yes) {
-    throw new Error("Publishing and scheduling require --yes. Run with --dry-run first.");
+  if (
+    (prepared.mode === "publish" || prepared.mode === "schedule") &&
+    !options.yes
+  ) {
+    throw new Error(
+      "Publishing and scheduling require --yes. Run with --dry-run first.",
+    );
   }
 
   const config = await loadEffectiveConfig();
@@ -68,18 +84,21 @@ export async function runBrowserWorkflow(
   const storedSession = await loadSession();
   const session = await createStagehandSession({
     config,
-    browserbaseSessionId: options.sessionId ?? storedSession?.browserbaseSessionId,
+    browserbaseSessionId:
+      options.sessionId ?? storedSession?.browserbaseSessionId,
     keepAlive: true,
   });
 
   try {
     if (session.browserbaseSessionId) {
-      await saveSession(createStoredSession({
-        browserbaseSessionId: session.browserbaseSessionId,
-        publicationUrl: session.publicationUrl,
-        browserbaseSessionUrl: session.browserbaseSessionUrl,
-        browserbaseDebugUrl: session.browserbaseDebugUrl,
-      }));
+      await saveSession(
+        createStoredSession({
+          browserbaseSessionId: session.browserbaseSessionId,
+          publicationUrl: session.publicationUrl,
+          browserbaseSessionUrl: session.browserbaseSessionUrl,
+          browserbaseDebugUrl: session.browserbaseDebugUrl,
+        }),
+      );
     }
 
     try {
@@ -87,14 +106,20 @@ export async function runBrowserWorkflow(
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
       if (error instanceof BrowserWorkflowError) {
-        console.error(JSON.stringify({
-          status: "validation-failed",
-          message: error.message,
-          trace: error.trace,
-          browserbaseSessionId: session.browserbaseSessionId,
-          browserbaseSessionUrl: session.browserbaseSessionUrl,
-          browserbaseDebugUrl: session.browserbaseDebugUrl,
-        }, null, 2));
+        console.error(
+          JSON.stringify(
+            {
+              status: "validation-failed",
+              message: error.message,
+              trace: error.trace,
+              browserbaseSessionId: session.browserbaseSessionId,
+              browserbaseSessionUrl: session.browserbaseSessionUrl,
+              browserbaseDebugUrl: session.browserbaseDebugUrl,
+            },
+            null,
+            2,
+          ),
+        );
       }
 
       throw error;
@@ -114,27 +139,47 @@ async function createDraftInBrowser(
   const trace: WorkflowStep[] = [];
 
   await recordStep(trace, "navigate-publication", async () => {
-    await session.page.goto(publicationUrl, { waitUntil: "domcontentloaded", timeoutMs: 60000 });
+    await session.page.goto(publicationUrl, {
+      waitUntil: "domcontentloaded",
+      timeoutMs: 60000,
+    });
     return { url: publicationUrl };
   });
 
-  await observedAct(trace, session,
+  await observedAct(
+    trace,
+    session,
     "open-draft-editor",
     "Open the publisher dashboard for this publication, then start creating a new text post draft.",
     120000,
   );
 
-  await observedAct(trace, session, "focus-title", "Focus the post title field.", 60000);
+  await observedAct(
+    trace,
+    session,
+    "focus-title",
+    "Focus the post title field.",
+    60000,
+  );
   const titleResult = await recordStep(trace, "insert-title", async () => {
     const result = await insertTextIntoActiveElement(session.page, title);
     return { ...result, titleLength: title.length };
   });
 
   if (!titleResult.ok) {
-    throw new BrowserWorkflowError(`Could not insert title: ${titleResult.reason ?? "unknown error"}`, trace);
+    throw new BrowserWorkflowError(
+      `Could not insert title: ${titleResult.reason ?? "unknown error"}`,
+      trace,
+    );
   }
 
-  await observedAct(trace, session, "focus-body", "Focus the main body editor for the post.", 60000);
+  await observedAct(
+    trace,
+    session,
+    "focus-body",
+    "Focus the main body editor for the post.",
+    60000,
+  );
 
   if (options.experimentalInjectState) {
     throw new BrowserWorkflowError(
@@ -158,7 +203,10 @@ async function createDraftInBrowser(
   });
 
   if (!bodyResult.ok) {
-    throw new BrowserWorkflowError(`Could not insert body: ${bodyResult.reason ?? "unknown error"}`, trace);
+    throw new BrowserWorkflowError(
+      `Could not insert body: ${bodyResult.reason ?? "unknown error"}`,
+      trace,
+    );
   }
 
   const editorText = await recordStep(trace, "verify-editor-text", async () => {
@@ -208,7 +256,13 @@ async function createDraftInBrowser(
     };
   }
 
-  await observedAct(trace, session, "click-final-publish", "Click the final Publish button for this post.", 60000);
+  await observedAct(
+    trace,
+    session,
+    "click-final-publish",
+    "Click the final Publish button for this post.",
+    60000,
+  );
 
   return {
     status: "publish-clicked",
@@ -224,18 +278,20 @@ async function createDraftInBrowser(
 export function printPreparedPost(prepared: PreparedPost): void {
   const { post } = prepared;
 
-  console.log(JSON.stringify(
-    {
-      mode: prepared.mode,
-      scheduleAt: prepared.scheduleAt,
-      filePath: post.filePath,
-      metadata: post.metadata,
-      html: post.html,
-      document: post.document,
-    },
-    null,
-    2,
-  ));
+  console.log(
+    JSON.stringify(
+      {
+        mode: prepared.mode,
+        scheduleAt: prepared.scheduleAt,
+        filePath: post.filePath,
+        metadata: post.metadata,
+        html: post.html,
+        document: post.document,
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 async function observedAct(
@@ -304,18 +360,27 @@ async function recordStep<T extends Record<string, unknown>>(
   }
 }
 
-function sanitizeStepDetails(details: Record<string, unknown>): Record<string, unknown> {
+function sanitizeStepDetails(
+  details: Record<string, unknown>,
+): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(details)) {
-    sanitized[key] = key === "text" && typeof value === "string"
-      ? { length: value.length }
-      : value;
+    sanitized[key] =
+      key === "text" && typeof value === "string"
+        ? { length: value.length }
+        : value;
   }
 
   return sanitized;
 }
 
 function countDocumentNodes(node: PreparedPost["post"]["document"]): number {
-  return 1 + (node.content ?? []).reduce((total, child) => total + countDocumentNodes(child), 0);
+  return (
+    1 +
+    (node.content ?? []).reduce(
+      (total, child) => total + countDocumentNodes(child),
+      0,
+    )
+  );
 }

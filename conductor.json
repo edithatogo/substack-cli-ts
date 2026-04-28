@@ -1,1 +1,1 @@
-{"scripts":{"setup":"bin/conductor-setup","run":"script/server"}}
+{ "scripts": { "setup": "bin/conductor-setup", "run": "script/server" } }

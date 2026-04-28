@@ -18,7 +18,11 @@ export async function preparePost(
     throw new Error("Scheduling requires --at or scheduleAt front matter.");
   }
 
-  if (mode === "schedule" && scheduleAt && Number.isNaN(Date.parse(scheduleAt))) {
+  if (
+    mode === "schedule" &&
+    scheduleAt &&
+    Number.isNaN(Date.parse(scheduleAt))
+  ) {
     throw new Error(`Invalid schedule timestamp: ${scheduleAt}`);
   }
 

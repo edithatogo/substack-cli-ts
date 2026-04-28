@@ -65,9 +65,18 @@ export async function createStagehandSession(
     stagehand,
     page,
     publicationUrl,
-    browserbaseSessionId: config.browserRuntime === "browserbase" ? stagehand.browserbaseSessionID : undefined,
-    browserbaseSessionUrl: config.browserRuntime === "browserbase" ? stagehand.browserbaseSessionURL : undefined,
-    browserbaseDebugUrl: config.browserRuntime === "browserbase" ? stagehand.browserbaseDebugURL : undefined,
+    browserbaseSessionId:
+      config.browserRuntime === "browserbase"
+        ? stagehand.browserbaseSessionID
+        : undefined,
+    browserbaseSessionUrl:
+      config.browserRuntime === "browserbase"
+        ? stagehand.browserbaseSessionURL
+        : undefined,
+    browserbaseDebugUrl:
+      config.browserRuntime === "browserbase"
+        ? stagehand.browserbaseDebugURL
+        : undefined,
     close: () => stagehand.close(),
   };
 }
@@ -82,7 +91,9 @@ function createBrowserbaseOptions(
     env: "BROWSERBASE" as const,
     apiKey: config.browserbaseApiKey!,
     projectId: config.browserbaseProjectId!,
-    ...(options.browserbaseSessionId ? { browserbaseSessionID: options.browserbaseSessionId } : {}),
+    ...(options.browserbaseSessionId
+      ? { browserbaseSessionID: options.browserbaseSessionId }
+      : {}),
     keepAlive: options.keepAlive ?? true,
     model: config.stagehandModel,
     cacheDir: cacheDir(),

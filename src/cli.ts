@@ -1,11 +1,21 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
-import { clearSession, createStoredSession, loadSession, saveSession } from "./auth/session-store.js";
+import {
+  clearSession,
+  createStoredSession,
+  loadSession,
+  saveSession,
+} from "./auth/session-store.js";
 import { performSubstackLogin } from "./auth/substack-login.js";
 import { createStagehandSession } from "./browser/stagehand.js";
 import { captureLocalDiagnostics } from "./browser/diagnostics.js";
-import { configFilePath, localBrowserProfileDir, sessionFilePath, stateDir } from "./config/paths.js";
+import {
+  configFilePath,
+  localBrowserProfileDir,
+  sessionFilePath,
+  stateDir,
+} from "./config/paths.js";
 import {
   loadConfig,
   loadEffectiveConfig,
@@ -13,21 +23,32 @@ import {
   requireSubstackCredentials,
   updateConfig,
 } from "./config/store.js";
-import { printPreparedPost, runBrowserWorkflow } from "./publish/browser-workflow.js";
+import {
+  printPreparedPost,
+  runBrowserWorkflow,
+} from "./publish/browser-workflow.js";
 import { preparePost } from "./publish/prepare.js";
-import { captureFixture, compareFixture, validateSchemaFile } from "./schema/fixtures.js";
+import {
+  captureFixture,
+  compareFixture,
+  validateSchemaFile,
+} from "./schema/fixtures.js";
 import { redact, redactUrl } from "./util/redact.js";
 
 const program = new Command();
 
 program
   .name("substack-cli")
-  .description("Publish local Markdown files to a user-owned Substack publication.")
+  .description(
+    "Publish local Markdown files to a user-owned Substack publication.",
+  )
   .version("0.1.0");
 
 program
   .command("inspect")
-  .description("Parse a Markdown file and print the generated Tiptap/ProseMirror payload.")
+  .description(
+    "Parse a Markdown file and print the generated Tiptap/ProseMirror payload.",
+  )
   .argument("<file>", "Markdown file to inspect")
   .action(async (file: string) => {
     const prepared = await preparePost(file, { mode: "draft" });
@@ -38,13 +59,25 @@ program
   .command("draft")
   .description("Create or update a Substack draft from Markdown.")
   .argument("<file>", "Markdown file to draft")
-  .option("--dry-run", "Print the generated payload without opening a browser", false)
+  .option(
+    "--dry-run",
+    "Print the generated payload without opening a browser",
+    false,
+  )
   .option("--session-id <id>", "Browserbase session ID to resume")
-  .option("--experimental-inject-state", "Use experimental editor-state injection", false)
+  .option(
+    "--experimental-inject-state",
+    "Use experimental editor-state injection",
+    false,
+  )
   .action(
     async (
       file: string,
-      options: { dryRun: boolean; sessionId?: string; experimentalInjectState: boolean },
+      options: {
+        dryRun: boolean;
+        sessionId?: string;
+        experimentalInjectState: boolean;
+      },
     ) => {
       const prepared = await preparePost(file, { mode: "draft" });
       await runBrowserWorkflow(prepared, options);
@@ -55,10 +88,18 @@ program
   .command("publish")
   .description("Publish a Markdown file after explicit confirmation.")
   .argument("<file>", "Markdown file to publish")
-  .option("--dry-run", "Print the generated payload without opening a browser", false)
+  .option(
+    "--dry-run",
+    "Print the generated payload without opening a browser",
+    false,
+  )
   .option("--yes", "Confirm publishing without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
-  .option("--experimental-inject-state", "Use experimental editor-state injection", false)
+  .option(
+    "--experimental-inject-state",
+    "Use experimental editor-state injection",
+    false,
+  )
   .action(
     async (
       file: string,
@@ -79,10 +120,18 @@ program
   .description("Schedule a Markdown file for future publication.")
   .argument("<file>", "Markdown file to schedule")
   .requiredOption("--at <iso-date>", "ISO timestamp for scheduled publication")
-  .option("--dry-run", "Print the generated payload without opening a browser", false)
+  .option(
+    "--dry-run",
+    "Print the generated payload without opening a browser",
+    false,
+  )
   .option("--yes", "Confirm scheduling without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
-  .option("--experimental-inject-state", "Use experimental editor-state injection", false)
+  .option(
+    "--experimental-inject-state",
+    "Use experimental editor-state injection",
+    false,
+  )
   .action(
     async (
       file: string,
@@ -94,12 +143,17 @@ program
         experimentalInjectState: boolean;
       },
     ) => {
-      const prepared = await preparePost(file, { mode: "schedule", scheduleAt: options.at });
+      const prepared = await preparePost(file, {
+        mode: "schedule",
+        scheduleAt: options.at,
+      });
       await runBrowserWorkflow(prepared, options);
     },
   );
 
-const schema = program.command("schema").description("Validate and capture ProseMirror schema fixtures.");
+const schema = program
+  .command("schema")
+  .description("Validate and capture ProseMirror schema fixtures.");
 
 schema
   .command("validate")
@@ -112,21 +166,31 @@ schema
 
 schema
   .command("capture")
-  .description("Capture the generated payload for a Markdown file as a schema fixture.")
+  .description(
+    "Capture the generated payload for a Markdown file as a schema fixture.",
+  )
   .argument("<markdown-file>", "Markdown file to parse")
   .requiredOption("--out <file>", "Fixture JSON output path")
   .action(async (file: string, options: { out: string }) => {
     const fixture = await captureFixture(file, options.out);
-    console.log(JSON.stringify({
-      status: "fixture-written",
-      outputFile: options.out,
-      summary: fixture.summary,
-    }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          status: "fixture-written",
+          outputFile: options.out,
+          summary: fixture.summary,
+        },
+        null,
+        2,
+      ),
+    );
   });
 
 schema
   .command("compare")
-  .description("Compare a Markdown file's current generated document with a saved fixture.")
+  .description(
+    "Compare a Markdown file's current generated document with a saved fixture.",
+  )
   .argument("<markdown-file>", "Markdown file to parse")
   .argument("<fixture-file>", "Fixture JSON file")
   .action(async (markdownFile: string, fixtureFile: string) => {
@@ -138,7 +202,9 @@ schema
     }
   });
 
-const config = program.command("config").description("Manage non-secret local configuration.");
+const config = program
+  .command("config")
+  .description("Manage non-secret local configuration.");
 
 config
   .command("show")
@@ -150,42 +216,47 @@ config
       loadSession(),
     ]);
 
-    console.log(JSON.stringify(
-      {
-        stateDir: stateDir(),
-        configFile: configFilePath(),
-        sessionFile: sessionFilePath(),
-        localBrowserProfileDir: localBrowserProfileDir(),
-        local,
-        effective: {
-          publicationUrl: effective.publicationUrl ?? null,
-          browserRuntime: effective.browserRuntime,
-          defaultMode: effective.defaultMode,
-          browserbaseApiKey: redact(effective.browserbaseApiKey),
-          browserbaseProjectId: redact(effective.browserbaseProjectId),
-          stagehandModel: effective.stagehandModel,
-          substackEmail: redact(effective.substackEmail),
-          substackPasswordConfigured: Boolean(effective.substackPassword),
+    console.log(
+      JSON.stringify(
+        {
+          stateDir: stateDir(),
+          configFile: configFilePath(),
+          sessionFile: sessionFilePath(),
+          localBrowserProfileDir: localBrowserProfileDir(),
+          local,
+          effective: {
+            publicationUrl: effective.publicationUrl ?? null,
+            browserRuntime: effective.browserRuntime,
+            defaultMode: effective.defaultMode,
+            browserbaseApiKey: redact(effective.browserbaseApiKey),
+            browserbaseProjectId: redact(effective.browserbaseProjectId),
+            stagehandModel: effective.stagehandModel,
+            substackEmail: redact(effective.substackEmail),
+            substackPasswordConfigured: Boolean(effective.substackPassword),
+          },
+          session: session
+            ? {
+                browserbaseSessionId: redact(session.browserbaseSessionId),
+                publicationUrl: session.publicationUrl,
+                updatedAt: session.updatedAt,
+                browserbaseSessionUrl: redactUrl(session.browserbaseSessionUrl),
+                browserbaseDebugUrl: redactUrl(session.browserbaseDebugUrl),
+              }
+            : null,
         },
-        session: session
-          ? {
-              browserbaseSessionId: redact(session.browserbaseSessionId),
-              publicationUrl: session.publicationUrl,
-              updatedAt: session.updatedAt,
-              browserbaseSessionUrl: redactUrl(session.browserbaseSessionUrl),
-              browserbaseDebugUrl: redactUrl(session.browserbaseDebugUrl),
-            }
-          : null,
-      },
-      null,
-      2,
-    ));
+        null,
+        2,
+      ),
+    );
   });
 
 config
   .command("set-publication")
   .description("Set the default Substack publication URL.")
-  .argument("<url>", "Publication URL, for example https://example.substack.com")
+  .argument(
+    "<url>",
+    "Publication URL, for example https://example.substack.com",
+  )
   .action(async (url: string) => {
     const next = await updateConfig({ publicationUrl: url });
     console.log(JSON.stringify(next, null, 2));
@@ -200,111 +271,151 @@ config
     console.log(JSON.stringify(next, null, 2));
   });
 
-const auth = program.command("auth").description("Manage authenticated browser sessions.");
+const auth = program
+  .command("auth")
+  .description("Manage authenticated browser sessions.");
 
 auth
   .command("status")
   .description("Show configured publication and browser environment status.")
   .action(async () => {
-    const [effective, session] = await Promise.all([loadEffectiveConfig(), loadSession()]);
-    console.log(JSON.stringify(
-      {
-        publicationUrl: effective.publicationUrl ?? null,
-        browserRuntime: effective.browserRuntime,
-        browserbaseConfigured: effective.browserRuntime === "browserbase"
-          ? Boolean(effective.browserbaseApiKey && effective.browserbaseProjectId)
-          : null,
-        stagehandModel: effective.stagehandModel,
-        substackLoginConfigured: Boolean(effective.substackEmail && effective.substackPassword),
-        session: session
-          ? {
-              browserbaseSessionId: redact(session.browserbaseSessionId),
-              publicationUrl: session.publicationUrl,
-              updatedAt: session.updatedAt,
-              browserbaseSessionUrl: redactUrl(session.browserbaseSessionUrl),
-              browserbaseDebugUrl: redactUrl(session.browserbaseDebugUrl),
-            }
-          : null,
-      },
-      null,
-      2,
-    ));
+    const [effective, session] = await Promise.all([
+      loadEffectiveConfig(),
+      loadSession(),
+    ]);
+    console.log(
+      JSON.stringify(
+        {
+          publicationUrl: effective.publicationUrl ?? null,
+          browserRuntime: effective.browserRuntime,
+          browserbaseConfigured:
+            effective.browserRuntime === "browserbase"
+              ? Boolean(
+                  effective.browserbaseApiKey && effective.browserbaseProjectId,
+                )
+              : null,
+          stagehandModel: effective.stagehandModel,
+          substackLoginConfigured: Boolean(
+            effective.substackEmail && effective.substackPassword,
+          ),
+          session: session
+            ? {
+                browserbaseSessionId: redact(session.browserbaseSessionId),
+                publicationUrl: session.publicationUrl,
+                updatedAt: session.updatedAt,
+                browserbaseSessionUrl: redactUrl(session.browserbaseSessionUrl),
+                browserbaseDebugUrl: redactUrl(session.browserbaseDebugUrl),
+              }
+            : null,
+        },
+        null,
+        2,
+      ),
+    );
   });
 
 auth
   .command("login")
-  .description("Start or resume a Browserbase session for manual Substack login.")
+  .description(
+    "Start or resume a Browserbase session for manual Substack login.",
+  )
   .option("--session-id <id>", "Existing Browserbase session ID to resume")
-  .option("--auto-login", "Attempt Substack login using SUBSTACK_EMAIL and SUBSTACK_PASSWORD", false)
-  .option("--pause-before-password", "For local auto-login, stop after opening and focusing the password field", false)
-  .option("--wait-seconds <seconds>", "Keep the session open for manual login before closing", parseInteger, 0)
-  .action(async (options: {
-    sessionId?: string;
-    autoLogin: boolean;
-    pauseBeforePassword: boolean;
-    waitSeconds: number;
-  }) => {
-    const stored = await loadSession();
-    const effective = await loadEffectiveConfig();
+  .option(
+    "--auto-login",
+    "Attempt Substack login using SUBSTACK_EMAIL and SUBSTACK_PASSWORD",
+    false,
+  )
+  .option(
+    "--pause-before-password",
+    "For local auto-login, stop after opening and focusing the password field",
+    false,
+  )
+  .option(
+    "--wait-seconds <seconds>",
+    "Keep the session open for manual login before closing",
+    parseInteger,
+    0,
+  )
+  .action(
+    async (options: {
+      sessionId?: string;
+      autoLogin: boolean;
+      pauseBeforePassword: boolean;
+      waitSeconds: number;
+    }) => {
+      const stored = await loadSession();
+      const effective = await loadEffectiveConfig();
 
-    if (effective.browserRuntime === "local") {
-      const result = await runLocalLogin({
-        publicationUrl: requirePublicationUrl(effective),
-        credentials: options.autoLogin ? requireSubstackCredentials(effective) : undefined,
-        waitSeconds: options.waitSeconds,
-        pauseBeforePassword: options.pauseBeforePassword,
-      });
+      if (effective.browserRuntime === "local") {
+        const result = await runLocalLogin({
+          publicationUrl: requirePublicationUrl(effective),
+          credentials: options.autoLogin
+            ? requireSubstackCredentials(effective)
+            : undefined,
+          waitSeconds: options.waitSeconds,
+          pauseBeforePassword: options.pauseBeforePassword,
+        });
 
-      console.log(JSON.stringify(result, null, 2));
-      return;
-    }
-
-    const session = await createStagehandSession({
-      config: effective,
-      browserbaseSessionId: options.sessionId ?? stored?.browserbaseSessionId,
-      keepAlive: true,
-    });
-
-    try {
-      await session.page.goto(session.publicationUrl, {
-        waitUntil: "domcontentloaded",
-        timeoutMs: 60000,
-      });
-
-      if (session.browserbaseSessionId) {
-        await saveSession(createStoredSession({
-          browserbaseSessionId: session.browserbaseSessionId,
-          publicationUrl: session.publicationUrl,
-          browserbaseSessionUrl: session.browserbaseSessionUrl,
-          browserbaseDebugUrl: session.browserbaseDebugUrl,
-        }));
+        console.log(JSON.stringify(result, null, 2));
+        return;
       }
 
-      const autoLoginResult = options.autoLogin
-        ? await performSubstackLogin(session, requireSubstackCredentials(effective))
-        : null;
+      const session = await createStagehandSession({
+        config: effective,
+        browserbaseSessionId: options.sessionId ?? stored?.browserbaseSessionId,
+        keepAlive: true,
+      });
 
-      console.log(JSON.stringify(
-        {
-          status: "session-started",
-          publicationUrl: session.publicationUrl,
-          browserbaseSessionId: redact(session.browserbaseSessionId),
-          browserbaseSessionUrl: session.browserbaseSessionUrl ?? null,
-          browserbaseDebugUrl: session.browserbaseDebugUrl ?? null,
-          autoLogin: autoLoginResult,
-          note: "Use the Browserbase session URL to complete login manually if needed.",
-        },
-        null,
-        2,
-      ));
+      try {
+        await session.page.goto(session.publicationUrl, {
+          waitUntil: "domcontentloaded",
+          timeoutMs: 60000,
+        });
 
-      if (options.waitSeconds > 0) {
-        await new Promise((resolve) => setTimeout(resolve, options.waitSeconds * 1000));
+        if (session.browserbaseSessionId) {
+          await saveSession(
+            createStoredSession({
+              browserbaseSessionId: session.browserbaseSessionId,
+              publicationUrl: session.publicationUrl,
+              browserbaseSessionUrl: session.browserbaseSessionUrl,
+              browserbaseDebugUrl: session.browserbaseDebugUrl,
+            }),
+          );
+        }
+
+        const autoLoginResult = options.autoLogin
+          ? await performSubstackLogin(
+              session,
+              requireSubstackCredentials(effective),
+            )
+          : null;
+
+        console.log(
+          JSON.stringify(
+            {
+              status: "session-started",
+              publicationUrl: session.publicationUrl,
+              browserbaseSessionId: redact(session.browserbaseSessionId),
+              browserbaseSessionUrl: session.browserbaseSessionUrl ?? null,
+              browserbaseDebugUrl: session.browserbaseDebugUrl ?? null,
+              autoLogin: autoLoginResult,
+              note: "Use the Browserbase session URL to complete login manually if needed.",
+            },
+            null,
+            2,
+          ),
+        );
+
+        if (options.waitSeconds > 0) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, options.waitSeconds * 1000),
+          );
+        }
+      } finally {
+        await session.close();
       }
-    } finally {
-      await session.close();
-    }
-  });
+    },
+  );
 
 auth
   .command("logout")
@@ -318,11 +429,15 @@ const debug = program.command("debug").description("Diagnostic helpers.");
 
 debug
   .command("local-page")
-  .description("Inspect visible links, buttons, and editor fields from the local browser profile.")
+  .description(
+    "Inspect visible links, buttons, and editor fields from the local browser profile.",
+  )
   .argument("[url]", "URL to inspect")
   .action(async (url?: string) => {
     const effective = await loadEffectiveConfig();
-    const diagnostics = await captureLocalDiagnostics(url ?? requirePublicationUrl(effective));
+    const diagnostics = await captureLocalDiagnostics(
+      url ?? requirePublicationUrl(effective),
+    );
     console.log(JSON.stringify(diagnostics, null, 2));
   });
 

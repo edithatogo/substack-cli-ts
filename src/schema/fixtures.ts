@@ -1,6 +1,10 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { collectMarkTypes, collectNodeTypes, validateProseMirrorDocument } from "../parser/schema.js";
+import {
+  collectMarkTypes,
+  collectNodeTypes,
+  validateProseMirrorDocument,
+} from "../parser/schema.js";
 import { preparePost } from "../publish/prepare.js";
 import type { PreparedPost, ProseMirrorNode } from "../types.js";
 
@@ -21,7 +25,9 @@ export interface CapturedFixture {
   summary: SchemaSummary;
 }
 
-export async function validateSchemaFile(filePath: string): Promise<SchemaSummary> {
+export async function validateSchemaFile(
+  filePath: string,
+): Promise<SchemaSummary> {
   const raw = await readFile(filePath, "utf8");
   const json = JSON.parse(raw) as unknown;
   const document = extractDocument(json);
@@ -29,7 +35,10 @@ export async function validateSchemaFile(filePath: string): Promise<SchemaSummar
   return summarizeDocument(document);
 }
 
-export async function captureFixture(markdownFile: string, outputFile: string): Promise<CapturedFixture> {
+export async function captureFixture(
+  markdownFile: string,
+  outputFile: string,
+): Promise<CapturedFixture> {
   const prepared = await preparePost(markdownFile, { mode: "draft" });
   const fixture: CapturedFixture = {
     generatedAt: new Date().toISOString(),
@@ -47,7 +56,10 @@ export async function captureFixture(markdownFile: string, outputFile: string): 
   return fixture;
 }
 
-export async function compareFixture(markdownFile: string, fixtureFile: string): Promise<{
+export async function compareFixture(
+  markdownFile: string,
+  fixtureFile: string,
+): Promise<{
   equal: boolean;
   expectedSummary: SchemaSummary;
   actualSummary: SchemaSummary;

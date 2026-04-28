@@ -1,9 +1,6 @@
 node_modules/
 dist/
 coverage/
-.env
-.env.*
-!.env.example
 .substack-cli/
 playwright-report/
 test-results/
@@ -11,5 +8,4 @@ traces/
 reports/
 stryker-tmp/
 .stryker-tmp/
-*.log
-!fixtures/**/*.json
+package-lock.json

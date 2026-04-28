@@ -11,14 +11,14 @@ export interface LocalBrowserSession {
 export async function createLocalBrowserSession(): Promise<LocalBrowserSession> {
   await mkdir(localBrowserProfileDir(), { recursive: true });
 
-  const context = await chromium.launchPersistentContext(localBrowserProfileDir(), {
-    executablePath: getChromePath(),
-    headless: false,
-    args: [
-      "--no-first-run",
-      "--no-default-browser-check",
-    ],
-  });
+  const context = await chromium.launchPersistentContext(
+    localBrowserProfileDir(),
+    {
+      executablePath: getChromePath(),
+      headless: false,
+      args: ["--no-first-run", "--no-default-browser-check"],
+    },
+  );
   const page = await context.newPage();
 
   return {

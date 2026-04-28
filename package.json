@@ -10,9 +10,16 @@
     "build": "tsc -p tsconfig.json",
     "dev": "npm run build -- --watch",
     "inspect": "npm run build && node dist/cli.js inspect",
-    "test": "npm run build && node dist/test/run-tests.js",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:mutation": "stryker run",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write ."
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:coverage",
+    "audit:prod": "npm audit --omit=dev"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.0.0",
@@ -30,8 +37,16 @@
     "camoufox-js": "^0.7.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/vitest-runner": "^9.6.1",
     "@types/node": "^24.0.0",
+    "@vitest/coverage-v8": "^4.1.5",
+    "eslint": "^10.2.1",
+    "fast-check": "^4.7.0",
     "prettier": "^3.6.0",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "typescript-eslint": "^8.59.1",
+    "vitest": "^4.1.5"
   }
 }

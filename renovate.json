@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "labels": ["dependencies"],
+  "packageRules": [
+    {
+      "matchDepTypes": ["dependencies"],
+      "groupName": "runtime dependencies"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "development dependencies"
+    },
+    {
+      "matchPackageNames": [
+        "playwright-core",
+        "@browserbasehq/stagehand",
+        "camoufox-js"
+      ],
+      "groupName": "browser automation stack",
+      "separateMajorMinor": true
+    }
+  ],
+  "prConcurrentLimit": 5,
+  "rangeStrategy": "bump",
+  "vulnerabilityAlerts": {
+    "enabled": true
+  }
+}

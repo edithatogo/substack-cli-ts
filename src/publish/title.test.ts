@@ -1,21 +1,27 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 import { parseMarkdownString } from "../parser/markdown.js";
 import { resolvePostTitle } from "./title.js";
 
 describe("resolvePostTitle", () => {
   it("prefers front matter title", async () => {
-    const post = await parseMarkdownString(`---
+    const post = await parseMarkdownString(
+      `---
 title: "Front Matter Title"
 ---
 # Heading Title
-`, "post.md");
+`,
+      "post.md",
+    );
 
     assert.equal(resolvePostTitle(post), "Front Matter Title");
   });
 
   it("falls back to the first heading", async () => {
-    const post = await parseMarkdownString("# Heading Title\n\nBody.", "post.md");
+    const post = await parseMarkdownString(
+      "# Heading Title\n\nBody.",
+      "post.md",
+    );
 
     assert.equal(resolvePostTitle(post), "Heading Title");
   });

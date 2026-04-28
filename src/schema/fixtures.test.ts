@@ -2,8 +2,12 @@ import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, it } from "node:test";
-import { captureFixture, compareFixture, validateSchemaFile } from "./fixtures.js";
+import { describe, it } from "vitest";
+import {
+  captureFixture,
+  compareFixture,
+  validateSchemaFile,
+} from "./fixtures.js";
 
 describe("schema fixtures", () => {
   it("captures, validates, and compares generated fixtures", async () => {
@@ -20,7 +24,12 @@ describe("schema fixtures", () => {
       const comparison = await compareFixture(markdownFile, fixtureFile);
 
       assert.equal(fixture.summary.valid, true);
-      assert.deepEqual(summary.nodeTypes, ["doc", "heading", "paragraph", "text"]);
+      assert.deepEqual(summary.nodeTypes, [
+        "doc",
+        "heading",
+        "paragraph",
+        "text",
+      ]);
       assert.equal(comparison.equal, true);
 
       const raw = await readFile(fixtureFile, "utf8");

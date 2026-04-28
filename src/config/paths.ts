@@ -4,6 +4,10 @@ import { join, resolve } from "node:path";
 const STATE_DIR_NAME = ".substack-cli";
 
 export function stateDir(): string {
+  if (process.env.SUBSTACK_CLI_STATE_DIR) {
+    return resolve(process.env.SUBSTACK_CLI_STATE_DIR);
+  }
+
   return resolve(process.cwd(), STATE_DIR_NAME);
 }
 

@@ -30,7 +30,10 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
   const tags = Array.isArray(parsed.tags)
     ? parsed.tags
     : parsed.tags
-      ? parsed.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
+      ? parsed.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
       : [];
 
   return {
@@ -86,7 +89,7 @@ function parseScalar(value: string): unknown {
 
 function stripQuotes(value: string): string {
   if (
-    (value.startsWith("\"") && value.endsWith("\"")) ||
+    (value.startsWith('"') && value.endsWith('"')) ||
     (value.startsWith("'") && value.endsWith("'"))
   ) {
     return value.slice(1, -1);

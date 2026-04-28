@@ -37,14 +37,23 @@ export function htmlToProseMirrorJson(html: string): ProseMirrorNode {
 
 function normalizeSubstackShortcodes(markdown: string): string {
   return markdown
-    .replace(/^\s*(?:<!--\s*paywall\s*-->|{{\s*paywall\s*}})\s*$/gim, paywallHtml())
-    .replace(/^\s*{{\s*subscribe(?::([^}]+))?\s*}}\s*$/gim, (_match, label: string) =>
-      subscribeHtml(label?.trim() || "Subscribe"),
+    .replace(
+      /^\s*(?:<!--\s*paywall\s*-->|{{\s*paywall\s*}})\s*$/gim,
+      paywallHtml(),
+    )
+    .replace(
+      /^\s*{{\s*subscribe(?::([^}]+))?\s*}}\s*$/gim,
+      (_match, label: string | undefined) =>
+        subscribeHtml(
+          typeof label === "string" && label.trim().length > 0
+            ? label.trim()
+            : "Subscribe",
+        ),
     );
 }
 
 function paywallHtml(): string {
-  return "<div data-substack-cli-node=\"paywall\"></div>";
+  return '<div data-substack-cli-node="paywall"></div>';
 }
 
 function subscribeHtml(label: string): string {
@@ -54,7 +63,7 @@ function subscribeHtml(label: string): string {
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
-    .replaceAll("\"", "&quot;")
+    .replaceAll('"', "&quot;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
 }

@@ -2,8 +2,13 @@ import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, it } from "node:test";
-import { clearSession, createStoredSession, loadSession, saveSession } from "../auth/session-store.js";
+import { describe, it } from "vitest";
+import {
+  clearSession,
+  createStoredSession,
+  loadSession,
+  saveSession,
+} from "../auth/session-store.js";
 import { configFilePath, sessionFilePath, stateDir } from "./paths.js";
 import { loadConfig, loadEffectiveConfig, updateConfig } from "./store.js";
 
@@ -20,7 +25,9 @@ describe("config store", () => {
 
   it("writes local non-secret config under .substack-cli", async () => {
     await withTempCwd(async () => {
-      const config = await updateConfig({ publicationUrl: "https://example.substack.com" });
+      const config = await updateConfig({
+        publicationUrl: "https://example.substack.com",
+      });
       const raw = await readFile(configFilePath(), "utf8");
 
       assert.equal(stateDir().endsWith(".substack-cli"), true);
@@ -64,14 +71,14 @@ describe("session store", () => {
 });
 
 async function withTempCwd(run: () => Promise<void>): Promise<void> {
-  const original = process.cwd();
+  const previousStateDir = process.env.SUBSTACK_CLI_STATE_DIR;
   const temp = await mkdtemp(join(tmpdir(), "substack-cli-test-"));
 
   try {
-    process.chdir(temp);
+    process.env.SUBSTACK_CLI_STATE_DIR = join(temp, ".substack-cli");
     await run();
   } finally {
-    process.chdir(original);
+    restoreEnv("SUBSTACK_CLI_STATE_DIR", previousStateDir);
     await rm(temp, { recursive: true, force: true });
   }
 }

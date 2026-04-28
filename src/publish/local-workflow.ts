@@ -1,9 +1,15 @@
 import type { Locator, Page } from "playwright-core";
 import { createLocalBrowserSession } from "../browser/local-browser.js";
 import { localBrowserProfileDir } from "../config/paths.js";
-import { requirePublicationUrl, type EffectiveConfig } from "../config/store.js";
+import {
+  requirePublicationUrl,
+  type EffectiveConfig,
+} from "../config/store.js";
 import type { PreparedPost } from "../types.js";
-import type { BrowserWorkflowResult, WorkflowStep } from "./browser-workflow.js";
+import type {
+  BrowserWorkflowResult,
+  WorkflowStep,
+} from "./browser-workflow.js";
 import { resolvePostTitle } from "./title.js";
 
 export async function runLocalDraftWorkflow(
@@ -22,7 +28,12 @@ export async function runLocalDraftWorkflow(
     });
 
     await record(trace, "fill-title", async () => {
-      const filled = await fillFirst(browser.page, titleLocators(browser.page), title, 20000);
+      const filled = await fillFirst(
+        browser.page,
+        titleLocators(browser.page),
+        title,
+        20000,
+      );
       return { filled, titleLength: title.length };
     });
 
@@ -50,15 +61,24 @@ export async function runLocalDraftWorkflow(
       status: "ok",
       startedAt: new Date().toISOString(),
       endedAt: new Date().toISOString(),
-      details: { profileDir: localBrowserProfileDir(), currentUrl: browser.page.url() },
+      details: {
+        profileDir: localBrowserProfileDir(),
+        currentUrl: browser.page.url(),
+      },
     });
-    throw new Error(`${message}\n${JSON.stringify({ status: "validation-failed", trace }, null, 2)}`);
+    throw new Error(
+      `${message}\n${JSON.stringify({ status: "validation-failed", trace }, null, 2)}`,
+      { cause: error },
+    );
   } finally {
     await browser.close();
   }
 }
 
-async function openSubstackEditor(page: Page, publicationUrl: string): Promise<string> {
+async function openSubstackEditor(
+  page: Page,
+  publicationUrl: string,
+): Promise<string> {
   const host = new URL(publicationUrl).host;
   const candidates = [
     `https://substack.com/publish/post?publication_url=${encodeURIComponent(publicationUrl)}`,
@@ -74,26 +94,35 @@ async function openSubstackEditor(page: Page, publicationUrl: string): Promise<s
       return url;
     }
 
-    await clickFirst(page, [
-      page.getByRole("link", { name: /new post|write|dashboard|publish/i }),
-      page.getByRole("button", { name: /new post|write|dashboard|publish/i }),
-      page.locator("a[href*='/publish']").first(),
-      page.locator("a[href*='/post']").first(),
-    ], 8000);
+    await clickFirst(
+      page,
+      [
+        page.getByRole("link", { name: /new post|write|dashboard|publish/i }),
+        page.getByRole("button", { name: /new post|write|dashboard|publish/i }),
+        page.locator("a[href*='/publish']").first(),
+        page.locator("a[href*='/post']").first(),
+      ],
+      8000,
+    );
 
     if (await hasEditor(page)) {
       return page.url();
     }
   }
 
-  throw new Error("Could not open a Substack editor. Confirm the local profile is logged in and has publication access.");
+  throw new Error(
+    "Could not open a Substack editor. Confirm the local profile is logged in and has publication access.",
+  );
 }
 
 async function hasEditor(page: Page): Promise<boolean> {
-  return Boolean(await firstVisible(page, [
-    ...titleLocators(page),
-    page.locator("[contenteditable='true']"),
-  ], 3000));
+  return Boolean(
+    await firstVisible(
+      page,
+      [...titleLocators(page), page.locator("[contenteditable='true']")],
+      3000,
+    ),
+  );
 }
 
 function titleLocators(page: Page): Locator[] {
@@ -105,11 +134,19 @@ function titleLocators(page: Page): Locator[] {
   ];
 }
 
-async function fillBody(page: Page, html: string, timeout: number): Promise<boolean> {
-  const editor = await firstVisible(page, [
-    page.locator("[contenteditable='true']").nth(1),
-    page.locator("[contenteditable='true']").first(),
-  ], timeout);
+async function fillBody(
+  page: Page,
+  html: string,
+  timeout: number,
+): Promise<boolean> {
+  const editor = await firstVisible(
+    page,
+    [
+      page.locator("[contenteditable='true']").nth(1),
+      page.locator("[contenteditable='true']").first(),
+    ],
+    timeout,
+  );
 
   if (!editor) {
     return false;
@@ -122,7 +159,9 @@ async function fillBody(page: Page, html: string, timeout: number): Promise<bool
       return false;
     }
     document.execCommand("insertHTML", false, value);
-    target.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }));
+    target.dispatchEvent(
+      new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }),
+    );
     return true;
   }, html);
   return true;
@@ -130,8 +169,13 @@ async function fillBody(page: Page, html: string, timeout: number): Promise<bool
 
 async function readEditorText(page: Page): Promise<string> {
   return page.evaluate(() => {
-    const nodes = Array.from(document.querySelectorAll("[contenteditable='true']"));
-    return nodes.map((node) => node.textContent ?? "").join("\n").trim();
+    const nodes = Array.from(
+      document.querySelectorAll("[contenteditable='true']"),
+    );
+    return nodes
+      .map((node) => node.textContent)
+      .join("\n")
+      .trim();
   });
 }
 
@@ -150,7 +194,11 @@ async function fillFirst(
   return true;
 }
 
-async function firstVisible(page: Page, locators: Locator[], timeout: number): Promise<Locator | null> {
+async function firstVisible(
+  page: Page,
+  locators: Locator[],
+  timeout: number,
+): Promise<Locator | null> {
   const deadline = Date.now() + timeout;
   while (Date.now() < deadline) {
     for (const locator of locators) {
@@ -168,7 +216,11 @@ async function firstVisible(page: Page, locators: Locator[], timeout: number): P
   return null;
 }
 
-async function clickFirst(page: Page, locators: Locator[], timeout: number): Promise<boolean> {
+async function clickFirst(
+  page: Page,
+  locators: Locator[],
+  timeout: number,
+): Promise<boolean> {
   const target = await firstVisible(page, locators, timeout);
   if (!target) {
     return false;
@@ -185,7 +237,13 @@ async function record<T extends Record<string, unknown>>(
   const startedAt = new Date().toISOString();
   try {
     const details = await run();
-    trace.push({ name, status: "ok", startedAt, endedAt: new Date().toISOString(), details });
+    trace.push({
+      name,
+      status: "ok",
+      startedAt,
+      endedAt: new Date().toISOString(),
+      details,
+    });
     return details;
   } catch (error) {
     trace.push({
