@@ -38,8 +38,9 @@ When new work is found:
 | ---- | --------------------------------------------------------------------------------------------------------- | ----------------------------- | ------------- | ------------------- | ---------------------------------------------------------------------------------- |
 | D001 | Determine whether schedule is available through a stable internal endpoint or must remain browser-only.   | Research matrix               | Tracks 07, 08 | Track 11            | Open                                                                               |
 | D002 | Decide whether subscriber/analytics export belongs in this CLI or a separate read/export command group.   | User goal: information in/out | Track 07      | Future export track | Open                                                                               |
-| D003 | Determine how to safely persist source-file-to-draft mappings without leaking private titles or content.  | Draft update requirement      | Tracks 08, 12 | Track 08            | Open                                                                               |
+| D003 | Determine how to safely persist source-file-to-draft mappings without leaking private titles or content.  | Draft update requirement      | Tracks 08, 12 | Track 08            | Resolved: local-only `.substack-cli/draft-mappings.json` store with redacted output |
 | D004 | Identify license constraints before porting behavior from any open-source project.                        | GitHub research               | None          | All adapter tracks  | Open                                                                               |
+| D006 | Confirm the exact draft create/update/fetch request bodies and returned IDs for the live Substack editor. | Track 08 implementation       | Track 08      | Track 08, 11, 12    | Open                                                                               |
 | D005 | Confirm the safest read-only endpoint for validating current user and publication from extracted cookies. | Track 06 implementation       | Track 06      | Track 07            | Resolved: use `/api/v1/handle/options` plus `/api/v1/user/{handle}/public_profile` |
 
 ## Additional Improvements To Consider
@@ -49,3 +50,4 @@ When new work is found:
 - Add a `substack-cli export` command group for read-side backup once Track 07 is mapped.
 - Add a controlled test publication before validating publish/schedule operations.
 - Add CI that runs unit tests and a secret scan, while excluding any live Substack integration tests by default.
+- Add a local draft endpoint capture fixture once D006 is resolved.

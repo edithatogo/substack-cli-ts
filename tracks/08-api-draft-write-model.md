@@ -40,6 +40,6 @@ Support internal API draft creation and update without touching final publish co
 
 ## Remaining Work
 
-- Confirm the exact create/update/fetch draft endpoints and request bodies from a live draft save.
+- Confirm the exact create/update/fetch draft endpoints and request bodies from a live draft save (`D006`).
 - Add duplicate draft lookup by title/slug against remote draft inventory after draft read endpoints are known.
 - Add explicit live write execution behind a separate confirmation flag once endpoint compatibility is proven.
