@@ -11,6 +11,7 @@ import "../publish/transport.test.js";
 import "../policy/distribution.test.js";
 import "../mcp/surface.test.js";
 import "../mcp/resources.test.js";
+import "../mcp/prompts.test.js";
 import "../mcp/server.test.js";
 import "../substack-api/draft-mappings.test.js";
 import "../substack-api/client.test.js";

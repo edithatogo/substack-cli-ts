@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { registerMcpTools } from "./catalog.js";
+import { registerMcpPrompts } from "./prompts.js";
 import { registerMcpResources } from "./resources.js";
 
 export function createMcpServer(): McpServer {
@@ -11,6 +12,7 @@ export function createMcpServer(): McpServer {
 
   registerMcpTools(server);
   registerMcpResources(server);
+  registerMcpPrompts(server);
   return server;
 }
 

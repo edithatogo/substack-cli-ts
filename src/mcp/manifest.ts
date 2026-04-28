@@ -1,4 +1,5 @@
 import { buildMcpToolGroups, buildMcpToolDescriptors } from "./catalog.js";
+import { buildMcpPromptSurfaceDescriptors } from "./prompts.js";
 import type {
   McpResourceSurface,
   McpSurfaceManifest,
@@ -38,6 +39,7 @@ export function buildMcpSurfaceManifest(): McpSurfaceManifest {
     status: "ready",
     groups: buildMcpSurfaceGroups(),
     resources: buildMcpResourceDescriptors(),
+    prompts: buildMcpPromptSurfaceDescriptors(),
     note: "This MCP surface is backed by a stdio server and intentionally exposes redacted summaries only.",
   };
 }
@@ -50,6 +52,7 @@ export function summarizeMcpSurface(
 
 export function buildMcpSummaryResource(): Record<string, unknown> {
   const tools = buildMcpToolDescriptors();
+  const prompts = buildMcpPromptSurfaceDescriptors();
 
   return {
     name: "substack-cli",
@@ -57,7 +60,9 @@ export function buildMcpSummaryResource(): Record<string, unknown> {
     toolCount: tools.length,
     redactedToolCount: tools.filter((tool) => tool.redacted).length,
     resourceCount: MCP_RESOURCE_DESCRIPTORS.length,
+    promptCount: prompts.length,
     groups: [...new Set(tools.map((tool) => tool.group))],
+    promptNames: prompts.map((prompt) => prompt.name),
     note: "This summary is redacted and intended for local agent inspection only.",
   };
 }

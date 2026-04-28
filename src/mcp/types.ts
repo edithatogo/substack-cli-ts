@@ -19,6 +19,12 @@ export interface McpResourceSurface {
   redacted: boolean;
 }
 
+export interface McpPromptSurface {
+  name: string;
+  description: string;
+  redacted: boolean;
+}
+
 export interface McpSurfaceGroup {
   name: McpToolGroup;
   description: string;
@@ -32,6 +38,7 @@ export interface McpSurfaceManifest {
   status: McpSurfaceStatus;
   groups: McpSurfaceGroup[];
   resources: McpResourceSurface[];
+  prompts: McpPromptSurface[];
   note: string;
 }
 
@@ -40,6 +47,13 @@ export interface McpToolDescriptor {
   name: string;
   description: string;
   cliCommand: string;
+  redacted: boolean;
+  register: (server: McpServer) => void;
+}
+
+export interface McpPromptDescriptor {
+  name: string;
+  description: string;
   redacted: boolean;
   register: (server: McpServer) => void;
 }
