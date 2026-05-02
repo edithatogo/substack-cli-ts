@@ -1,0 +1,189 @@
+{
+  "generatedAt": "2026-04-30T10:22:36.422Z",
+  "sourceFile": "examples/images.md",
+  "mode": "draft",
+  "metadata": {
+    "title": "Image Handling Examples",
+    "tags": [
+      "example",
+      "images",
+      "media"
+    ]
+  },
+  "html": "<h2>Standard Image with Alt Text</h2>\n<p><img src=\"https://example.com/mountains.jpg\" alt=\"A scenic mountain landscape\"></p>\n<h2>Image with Title (maps to caption)</h2>\n<p><img src=\"https://example.com/team.png\" alt=\"Team photo\" title=\"Our engineering team in 2026\"></p>\n<h2>Image with Local Path</h2>\n<p><img src=\"./assets/logo.png\" alt=\"Logo\" title=\"Company logo\"></p>\n<h2>Image with Explicit Caption via HTML</h2>\n<img src=\"https://example.com/product.jpg\" alt=\"Product screenshot\" data-caption=\"The main dashboard view showing analytics\">\n\n<h2>Remote Image with No Alt</h2>\n<p><img src=\"https://example.com/banner.jpg\" alt=\"\"></p>\n<h2>Multiple Images in Sequence</h2>\n<p><img src=\"https://example.com/first.png\" alt=\"First\" title=\"First screenshot\">\n<img src=\"https://example.com/second.png\" alt=\"Second\" title=\"Second screenshot\">\n<img src=\"https://example.com/third.png\" alt=\"Third\" title=\"Third screenshot\"></p>\n",
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Standard Image with Alt Text"
+          }
+        ]
+      },
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/mountains.jpg",
+          "alt": "A scenic mountain landscape",
+          "title": null,
+          "caption": null
+        }
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Image with Title (maps to caption)"
+          }
+        ]
+      },
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/team.png",
+          "alt": "Team photo",
+          "title": "Our engineering team in 2026",
+          "caption": null
+        }
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Image with Local Path"
+          }
+        ]
+      },
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "./assets/logo.png",
+          "alt": "Logo",
+          "title": "Company logo",
+          "caption": null
+        }
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Image with Explicit Caption via HTML"
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/product.jpg",
+          "alt": "Product screenshot",
+          "title": null,
+          "caption": "The main dashboard view showing analytics"
+        }
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Remote Image with No Alt"
+          }
+        ]
+      },
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/banner.jpg",
+          "alt": "",
+          "title": null,
+          "caption": null
+        }
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Multiple Images in Sequence"
+          }
+        ]
+      },
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/first.png",
+          "alt": "First",
+          "title": "First screenshot",
+          "caption": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/second.png",
+          "alt": "Second",
+          "title": "Second screenshot",
+          "caption": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/third.png",
+          "alt": "Third",
+          "title": "Third screenshot",
+          "caption": null
+        }
+      }
+    ]
+  },
+  "summary": {
+    "valid": true,
+    "nodeTypes": [
+      "doc",
+      "heading",
+      "image",
+      "paragraph",
+      "text"
+    ],
+    "markTypes": []
+  }
+}

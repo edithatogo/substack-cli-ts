@@ -27,6 +27,48 @@ Hello **world**.
     assert.equal(report.title, "Publish Ready");
     assert.equal(report.payload?.title, "Publish Ready");
     assert.equal(report.compatibility.ok, true);
+    assert.equal(report.mode, "publish");
+    assert.equal(report.filePath, "ready.md");
+  });
+
+  it("produces a ready report for draft mode", async () => {
+    const prepared = {
+      mode: "draft" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Draft Post"
+---
+# Draft Post`,
+        "draft.md",
+      ),
+    };
+
+    const report = prepublishPost(prepared);
+
+    assert.equal(report.status, "ready");
+    assert.equal(report.mode, "draft");
+    assert.equal(report.filePath, "draft.md");
+  });
+
+  it("includes scheduleAt when present", async () => {
+    const prepared = {
+      mode: "schedule" as const,
+      scheduleAt: "2026-06-15T14:00:00Z",
+      post: await parseMarkdownString(
+        `---
+title: "Scheduled Post"
+---
+# Scheduled Post`,
+        "scheduled.md",
+      ),
+    };
+
+    const report = prepublishPost(prepared);
+
+    assert.equal(report.status, "ready");
+    assert.equal(report.mode, "schedule");
+    assert.equal(report.scheduleAt, "2026-06-15T14:00:00Z");
   });
 
   it("blocks unsupported content before publishing", () => {
@@ -57,5 +99,35 @@ Hello **world**.
     assert.equal(report.compatibility.ok, false);
     assert.equal(report.payload, undefined);
     assert.match(report.message, /unsupported Substack payload content/i);
+  });
+
+  it("reports blocked with correct file path and mode", () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: {
+        filePath: "bad.md",
+        metadata: { tags: [] },
+        markdown: "",
+        html: "",
+        document: {
+          type: "doc",
+          content: [{ type: "unknownBlockType" }],
+        },
+        media: {
+          assets: [],
+          localCount: 0,
+          remoteCount: 0,
+          dataCount: 0,
+        },
+      },
+    };
+
+    const report = prepublishPost(prepared);
+
+    assert.equal(report.status, "blocked");
+    assert.equal(report.mode, "publish");
+    assert.equal(report.filePath, "bad.md");
+    assert.equal(report.payload, undefined);
   });
 });

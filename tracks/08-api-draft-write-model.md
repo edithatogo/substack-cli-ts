@@ -47,17 +47,23 @@ Support internal API draft creation and update without touching final publish co
 - Added `api draft inspect <file>` to bundle payload validation, section resolution, duplicate lookup, and draft planning.
 - Added `api draft compare <expected-file> <actual-file>` to diff normalized capture fixtures locally.
 - Added `api draft fixture <file> --out <file>` to write a normalized draft capture baseline.
-- `--live` is intentionally blocked until the draft endpoint contract is confirmed from a captured user-owned draft save.
+- **D006 resolved** (2026-04-29): Confirmed draft endpoint contract from live Substack session capture.
+- **Confirmed contract:** `POST /api/v1/drafts` (create), `PUT /api/v1/drafts/{id}` (update).
+- **Request body keys (create):** audience, draft_body (ProseMirror JSON string), draft_bylines, draft_podcast_duration, draft_podcast_url, draft_section_id, draft_subtitle, draft_title, section_chosen, type.
+- **Request body keys (update):** Same as create minus audience/type, plus last_updated_at.
+- **Response:** Full draft object with id (numeric), uuid, slug, draft_created_at, draft_updated_at, etc.
+- **Fixture saved:** `fixtures/drafts/live-draft-contract.json`.
 
 ## Remaining Work
 
-- Confirm the exact create/update/fetch draft endpoints and request bodies from a live draft save (`D006`), using `api draft review` against a captured artifact.
-- Use `api draft contract` to infer likely endpoint shapes from a saved draft capture before touching any live write path.
-- Use `api draft contract-matrix` to merge multiple user-owned captures into one candidate set and compare the stable shapes.
-- Use `api draft contract-matrix --out` to persist a normalized contract matrix fixture once a stable set of captures exists.
-- Use `api draft contract-matrix-compare` to compare matrix fixtures once they stabilize.
-- Use `api draft duplicates` to match a prepared draft against the read inventory and stored mappings.
-- Use `api draft section` to resolve draft section metadata before planning a draft write.
-- Use `api draft inspect` to review the full draft plan in one command before any live write attempt.
-- Capture a stable local baseline with `api draft fixture` and compare it with `api draft compare` once a user-owned draft trace is available.
-- Add explicit live write execution behind a separate confirmation flag once endpoint compatibility is proven.
+- ✅ Confirm draft endpoints from a live draft save (`D006`).
+- ✅ Run `api draft contract` to infer endpoint shapes from captured artifact.
+- ✅ Save normalized fixture with `api draft fixture`.
+- ✅ Add explicit live write execution (`--live` flag) behind a confirmation prompt, using the confirmed POST/PUT contract.
+- ✅ Write a typed API adapter for draft create/update/fetch operations.
+- ✅ Wire `api draft create <file> --live` to call POST/PUT against the confirmed endpoints.
+- ✅ Wire `draft <file>` CLI command to use the API transport when `--transport api` is specified.
+- ✅ Update `resolveTransport()` to accept `"api"` without throwing.
+- Consider capturing additional drafts (e.g., with a section selected) to build a `contract-matrix` for comparison.
+- Test end-to-end live draft creation with `--live` flag against a real Substack session.
+- Wire `publish` and `schedule` commands for API transport (requires publish/schedule endpoint contracts).

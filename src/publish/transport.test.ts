@@ -8,10 +8,7 @@ describe("resolveTransport", () => {
 
     assert.equal(transport.requested, "auto");
     assert.equal(transport.selected, "browser");
-    assert.equal(
-      transport.fallbackReason,
-      "API transport is unavailable, so the browser workflow was selected.",
-    );
+    assert.ok(transport.fallbackReason?.includes("--transport api"));
   });
 
   it("selects the browser workflow when explicitly requested", () => {
@@ -22,10 +19,11 @@ describe("resolveTransport", () => {
     assert.equal(transport.fallbackReason, undefined);
   });
 
-  it("rejects explicit api transport for live operations", () => {
-    assert.throws(
-      () => resolveTransport("api"),
-      /API transport is not enabled/,
-    );
+  it("selects the api transport when explicitly requested", () => {
+    const transport = resolveTransport("api");
+
+    assert.equal(transport.requested, "api");
+    assert.equal(transport.selected, "api");
+    assert.equal(transport.fallbackReason, undefined);
   });
 });

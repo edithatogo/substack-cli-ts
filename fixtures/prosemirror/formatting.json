@@ -1,0 +1,547 @@
+{
+  "generatedAt": "2026-04-30T10:22:36.431Z",
+  "sourceFile": "examples/formatting.md",
+  "mode": "draft",
+  "metadata": {
+    "title": "Formatting Examples",
+    "subtitle": "Lists, quotes, code, and rules",
+    "tags": [
+      "example",
+      "formatting",
+      "markdown"
+    ],
+    "audience": "everyone"
+  },
+  "html": "<h1>Formatting Examples</h1>\n<p>This article covers common Markdown formatting patterns for Substack newsletters.</p>\n<h2>Lists</h2>\n<h3>Unordered List</h3>\n<ul>\n<li>First item</li>\n<li>Second item</li>\n<li>Third item<ul>\n<li>Nested item A</li>\n<li>Nested item B</li>\n</ul>\n</li>\n<li>Fourth item</li>\n</ul>\n<h3>Ordered List</h3>\n<ol>\n<li>Step one</li>\n<li>Step two</li>\n<li>Step three<ol>\n<li>Sub-step A</li>\n<li>Sub-step B</li>\n</ol>\n</li>\n<li>Step four</li>\n</ol>\n<h2>Blockquotes</h2>\n<blockquote>\n<p>This is a simple blockquote.</p>\n</blockquote>\n<blockquote>\n<p>Multi-paragraph blockquote:</p>\n<p>This is the second paragraph of the blockquote.</p>\n<blockquote>\n<p>A nested blockquote for emphasis.</p>\n</blockquote>\n</blockquote>\n<h2>Code</h2>\n<p>Here is some <code>inline code</code> within a paragraph.</p>\n<pre><code class=\"language-javascript\">function greet(name) {\n  return `Hello, ${name}!`;\n}\n</code></pre>\n<pre><code class=\"language-python\">def factorial(n):\n    if n &lt;= 1:\n        return 1\n    return n * factorial(n - 1)\n</code></pre>\n<p>A standalone code span: <code>const x = 42;</code></p>\n<h2>Horizontal Rules</h2>\n<hr>\n<p>Three dashes above.</p>\n<hr>\n<p>Three asterisks above.</p>\n<h2>Mixed Content</h2>\n<blockquote>\n<p>A blockquote with a list inside:</p>\n<ul>\n<li>Item one</li>\n<li>Item two</li>\n</ul>\n<p>And a code block:</p>\n<pre><code>echo &quot;hello&quot;\n</code></pre>\n</blockquote>\n",
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Formatting Examples"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "This article covers common Markdown formatting patterns for Substack newsletters."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Lists"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 3
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Unordered List"
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "First item"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Second item"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Third item"
+                  }
+                ]
+              },
+              {
+                "type": "bulletList",
+                "content": [
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "Nested item A"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "Nested item B"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Fourth item"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 3
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Ordered List"
+          }
+        ]
+      },
+      {
+        "type": "orderedList",
+        "attrs": {
+          "start": 1,
+          "type": null
+        },
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Step one"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Step two"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Step three"
+                  }
+                ]
+              },
+              {
+                "type": "orderedList",
+                "attrs": {
+                  "start": 1,
+                  "type": null
+                },
+                "content": [
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "Sub-step A"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "content": [
+                          {
+                            "type": "text",
+                            "text": "Sub-step B"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Step four"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Blockquotes"
+          }
+        ]
+      },
+      {
+        "type": "blockquote",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "This is a simple blockquote."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "blockquote",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Multi-paragraph blockquote:"
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "This is the second paragraph of the blockquote."
+              }
+            ]
+          },
+          {
+            "type": "blockquote",
+            "content": [
+              {
+                "type": "paragraph",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "A nested blockquote for emphasis."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Code"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Here is some "
+          },
+          {
+            "type": "text",
+            "text": "inline code",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": " within a paragraph."
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "javascript"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "function greet(name) {\n  return `Hello, ${name}!`;\n}\n"
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": {
+          "language": "python"
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "A standalone code span: "
+          },
+          {
+            "type": "text",
+            "text": "const x = 42;",
+            "marks": [
+              {
+                "type": "code"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Horizontal Rules"
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Three dashes above."
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Three asterisks above."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Mixed Content"
+          }
+        ]
+      },
+      {
+        "type": "blockquote",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "A blockquote with a list inside:"
+              }
+            ]
+          },
+          {
+            "type": "bulletList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Item one"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "Item two"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "And a code block:"
+              }
+            ]
+          },
+          {
+            "type": "codeBlock",
+            "attrs": {
+              "language": null
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "echo \"hello\"\n"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "valid": true,
+    "nodeTypes": [
+      "blockquote",
+      "bulletList",
+      "codeBlock",
+      "doc",
+      "heading",
+      "horizontalRule",
+      "listItem",
+      "orderedList",
+      "paragraph",
+      "text"
+    ],
+    "markTypes": [
+      "code"
+    ]
+  }
+}

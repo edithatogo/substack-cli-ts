@@ -55,6 +55,22 @@ export interface PostSummary {
   sectionId?: number | null | undefined;
 }
 
+export interface DraftSummary {
+  id: number;
+  publicationId: number;
+  draftTitle: string | null;
+  title: string | null;
+  draftUpdatedAt: string | null;
+  type: string;
+  audience: string | null;
+  sectionId: number | null;
+  sectionName: string | null;
+  sectionSlug: string | null;
+  isPublished: boolean;
+  slug: string | null;
+  writeCommentPermissions: string | null;
+}
+
 export interface ApiReadInventory {
   status: ApiReadStatus;
   endpoints: string[];
@@ -62,11 +78,14 @@ export interface ApiReadInventory {
   configuredPublication?: ConfiguredPublicationSummary | undefined;
   sections?: SectionSummary[] | undefined;
   posts?: PostSummary[] | undefined;
+  drafts?: DraftSummary[] | undefined;
+  draftHasMore?: boolean | undefined;
   message: string;
 }
 
 export interface ReadInventoryOptions {
   postLimit?: number | undefined;
+  draftLimit?: number | undefined;
 }
 
 const PublicProfileSchema = z.object({
@@ -119,6 +138,31 @@ const PostSchema = z.object({
   audience: z.string().nullable().optional(),
   canonical_url: z.string().nullable().optional(),
   section_id: z.number().nullable().optional(),
+});
+
+const DraftPostSchema = z.object({
+  id: z.number(),
+  publication_id: z.number(),
+  type: z.string(),
+  post_date: z.string().nullable().optional(),
+  email_sent_at: z.string().nullable().optional(),
+  is_published: z.boolean(),
+  title: z.string().nullable().optional(),
+  draft_title: z.string().nullable().optional(),
+  draft_updated_at: z.string().nullable().optional(),
+  audience: z.string().nullable().optional(),
+  slug: z.string().nullable().optional(),
+  should_send_email: z.boolean().nullable().optional(),
+  write_comment_permissions: z.string().nullable().optional(),
+  section_id: z.number().nullable().optional(),
+  section_name: z.string().nullable().optional(),
+  section_slug: z.string().nullable().optional(),
+});
+
+const DraftListResponseSchema = z.object({
+  posts: z.array(DraftPostSchema),
+  hasMore: z.boolean(),
+  nextCursor: z.number().nullable().optional(),
 });
 
 const HandleOptionsSchema = z.object({
@@ -217,6 +261,14 @@ export async function readApiInventory(
     };
   }
 
+  const draftsResult = await fetchDrafts(
+    material,
+    fetchImpl,
+    headers,
+    endpoints,
+    options.draftLimit ?? 10,
+  );
+
   return {
     status: "ok",
     endpoints,
@@ -250,8 +302,30 @@ export async function readApiInventory(
       endpoints,
       options.postLimit ?? 10,
     ),
+    drafts: draftsResult.items,
+    draftHasMore: draftsResult.hasMore,
     message: "Read-only API inventory completed.",
   };
+}
+
+async function fetchDrafts(
+  material: ApiAuthMaterial,
+  fetchImpl: FetchLike,
+  headers: Record<string, string>,
+  endpoints: string[],
+  limit: number,
+): Promise<{ items: DraftSummary[]; hasMore: boolean }> {
+  const result = await readDrafts(
+    material,
+    fetchImpl,
+    headers,
+    endpoints,
+    limit,
+  );
+  if (!result) {
+    return { items: [], hasMore: false };
+  }
+  return result;
 }
 
 async function readSections(
@@ -315,6 +389,45 @@ async function readPosts(
     canonicalUrl: post.canonical_url,
     sectionId: post.section_id,
   }));
+}
+
+async function readDrafts(
+  material: ApiAuthMaterial,
+  fetchImpl: FetchLike,
+  headers: Record<string, string>,
+  endpoints: string[],
+  limit: number,
+): Promise<{ items: DraftSummary[]; hasMore: boolean } | undefined> {
+  const endpoint = new URL("/api/v1/drafts", material.publicationUrl).toString();
+  endpoints.push(endpoint);
+  const response = await requestJson(fetchImpl, endpoint, headers);
+  if (response.status !== 200) {
+    return undefined;
+  }
+
+  const parsed = DraftListResponseSchema.safeParse(response.body);
+  if (!parsed.success) {
+    return undefined;
+  }
+
+  return {
+    items: parsed.data.posts.slice(0, limit).map((draft) => ({
+      id: draft.id,
+      publicationId: draft.publication_id,
+      draftTitle: draft.draft_title ?? null,
+      title: draft.title ?? null,
+      draftUpdatedAt: draft.draft_updated_at ?? null,
+      type: draft.type,
+      audience: draft.audience ?? null,
+      sectionId: draft.section_id ?? null,
+      sectionName: draft.section_name ?? null,
+      sectionSlug: draft.section_slug ?? null,
+      isPublished: draft.is_published,
+      slug: draft.slug ?? null,
+      writeCommentPermissions: draft.write_comment_permissions ?? null,
+    })),
+    hasMore: parsed.data.hasMore,
+  };
 }
 
 function failureInventory(

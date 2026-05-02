@@ -6,8 +6,75 @@ import { describe, it } from "vitest";
 import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
+  summarizeWorkflowTrace,
   writeWorkflowTraceFixture,
 } from "./workflow-trace.js";
+
+describe("summarizeWorkflowTrace", () => {
+  it("returns a structured summary with all expected fields", () => {
+    const review = {
+      status: "publish-clicked" as const,
+      mode: "publish" as const,
+      title: "Summary Title",
+      currentUrl: "https://example.com/publish/post/1",
+      finalUrl: "https://example.com/publish/post/1",
+      finalState: "publish-clicked",
+      publishedUrl: "https://example.com/p/my-post",
+      scheduleAt: undefined,
+      editorTextLength: 500,
+      transportRequested: "auto" as const,
+      transportSelected: "browser" as const,
+      fallbackReason: "API transport unavailable",
+      traceCount: 2,
+      stepNames: ["open-publish-settings", "click-final-publish"],
+      failedStepNames: [],
+      browserSessionPresent: true,
+      note: "Session URLs redacted.",
+    };
+
+    const summary = summarizeWorkflowTrace(review) as Record<string, unknown>;
+
+    assert.equal(summary.status, "publish-clicked");
+    assert.equal(summary.mode, "publish");
+    assert.equal(summary.title, "Summary Title");
+    assert.equal(summary.traceCount, 2);
+    assert.deepEqual(summary.failedStepNames, []);
+    assert.equal(summary.browserSessionPresent, true);
+    assert.equal((summary.transport as Record<string, string>).requested, "auto");
+    assert.equal((summary.transport as Record<string, string>).selected, "browser");
+    assert.equal(summary.editorTextLength, 500);
+  });
+
+  it("handles a draft trace review with no session", () => {
+    const review = {
+      status: "draft-created" as const,
+      mode: "draft" as const,
+      title: "Draft",
+      currentUrl: "https://example.com/publish",
+      finalUrl: "https://example.com/publish",
+      finalState: "draft-created",
+      publishedUrl: undefined,
+      scheduleAt: undefined,
+      editorTextLength: undefined,
+      transportRequested: "browser" as const,
+      transportSelected: "browser" as const,
+      fallbackReason: undefined,
+      traceCount: 0,
+      stepNames: [],
+      failedStepNames: [],
+      browserSessionPresent: false,
+      note: "No session URLs.",
+    };
+
+    const summary = summarizeWorkflowTrace(review) as Record<string, unknown>;
+
+    assert.equal(summary.status, "draft-created");
+    assert.equal(summary.traceCount, 0);
+    assert.equal(summary.browserSessionPresent, false);
+    assert.equal(summary.editorTextLength, undefined);
+    assert.equal(summary.fallbackReason, undefined);
+  });
+});
 
 describe("reviewWorkflowTraceArtifact", () => {
   it("summarizes a stored workflow trace artifact", async () => {

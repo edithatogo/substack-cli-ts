@@ -13,3 +13,8 @@ stryker-tmp/
 .stryker-tmp/
 *.log
 !fixtures/**/*.json
+.aider*
+_cookie_header.txt
+research/
+scripts/*.mjs
+fixtures/drafts/

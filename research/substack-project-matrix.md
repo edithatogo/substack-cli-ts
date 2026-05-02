@@ -53,3 +53,37 @@ The external projects suggest these feature tracks should be explicit:
 If the objective is simply the best practical way to move information in and out of Substack, run a small evaluation of `ma2za/python-substack` and `jakub-k-slys/substack-api` before expanding this custom CLI. If they work against the target account today, they may cover more of the read/write surface faster than browser automation. Keep this CLI as the safer browser-editor fallback for draft creation and for cases where direct internal endpoints fail.
 
 Implementation note: the TypeScript internal API adapter is now split across tracks 06-12, with ongoing dependency discovery in `tracks/13-dependency-and-discovery-register.md`.
+
+## Source-Level Review Findings (2026-04-29)
+
+### ma2za/python-substack — Confirmed Endpoints
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/v1/drafts` | POST | Create draft |
+| `/api/v1/drafts/{id}` | PUT | Update draft fields |
+| `/api/v1/drafts/{id}/prepublish` | POST | Validate draft for publishing |
+| `/api/v1/drafts/{id}/publish` | POST | Publish draft |
+| `/api/v1/image` | POST | Upload image |
+| `/api/v1/sections` | GET | List publication sections |
+
+### conorbronsdon/substack-mcp — Key Discovery
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/api/v1/archive?sort=new&limit=1` | GET | Extract user ID from `publishedBylines[0].id` |
+
+### jakub-k-slys/substack-api — Entity Model
+| Entity | Key Fields |
+|---|---|
+| Profile | id (number), name, slug, bio?, followerCount, isFollowing, photo? |
+| OwnProfile | (all Profile) + email?, isEmailConfirmed, stripeCustomerId? |
+| Post | id (string), title, body (HTML), author, publishedAt?, isDraft, slug, canonicalUrl, commentCount |
+| Note | id (string), body, author, createdAt, commentCount |
+
+### Key Insights for This CLI
+1. **Draft endpoints match** — `POST /api/v1/drafts`, `PUT /api/v1/drafts/{id}` — consistent across projects.
+2. **Prepublish endpoint** separates validation from publish — matches Track 11 design.
+3. **Image upload** — `POST /api/v1/image` — upload file, get URL. Straightforward.
+4. **ProseMirror body format** — Array of block objects (no `doc`/`content` wrapper). Blocks: paragraph, heading (level), captionedImage, paywall, embeddedPublication. Marks: strong, em, link (href).
+5. **Auth** — `connect.sid` cookie is universal. No password-automated flow.
+6. **User ID extraction** — `/api/v1/archive` endpoint can provide this. Could be added to Track 06/07.
+7. **`jakub-k-slys/substack-api`** has notes/posts/comments CRUD but no long-form draft creation. Draft creation is unique to `ma2za/python-substack` and `conorbronsdon/substack-mcp`.

@@ -7,6 +7,69 @@ import {
   requirePublicationUrl,
   type EffectiveConfig,
 } from "../config/store.js";
+import {
+  SessionTimeoutError,
+  NavigationTimeoutError,
+} from "./errors.js";
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isTransientFailure(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  const lower = message.toLowerCase();
+  return (
+    lower.includes("timeout") ||
+    lower.includes("navigation") ||
+    lower.includes("net::err_") ||
+    lower.includes("page did not") ||
+    lower.includes("target closed") ||
+    lower.includes("session closed")
+  );
+}
+
+function classifyError(error: unknown): Error {
+  const message = error instanceof Error ? error.message : String(error);
+  const lower = message.toLowerCase();
+
+  if (lower.includes("timeout") && lower.includes("navigation")) {
+    return new NavigationTimeoutError(message);
+  }
+
+  if (lower.includes("session") && (lower.includes("closed") || lower.includes("timeout"))) {
+    return new SessionTimeoutError(message);
+  }
+
+  return error instanceof Error ? error : new Error(String(error));
+}
+
+export async function withStagehandRetry<T>(
+  fn: () => Promise<T>,
+  options: { retries?: number; label?: string } = {},
+): Promise<T> {
+  const maxRetries = options.retries ?? 2;
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+
+      if (!isTransientFailure(error)) {
+        throw error;
+      }
+
+      if (attempt < maxRetries) {
+        const delay = Math.min(1000 * 2 ** attempt, 8000);
+        await sleep(delay);
+      }
+    }
+  }
+
+  throw classifyError(lastError);
+}
 
 type StagehandInstance = InstanceType<typeof StagehandClass>;
 type StagehandPage = ReturnType<StagehandInstance["context"]["pages"]>[number];

@@ -10,7 +10,12 @@ import {
 import { performSubstackLogin } from "./auth/substack-login.js";
 import { createLocalBrowserSession } from "./browser/local-browser.js";
 import { createStagehandSession } from "./browser/stagehand.js";
-import { captureLocalDiagnostics } from "./browser/diagnostics.js";
+import {
+  captureLocalDiagnostics,
+  capturePublishScreenDiagnostics,
+  captureReviewOverlayDiagnostics,
+  captureScheduleScreenDiagnostics,
+} from "./browser/diagnostics.js";
 import {
   compareDraftCaptureArtifacts,
   observeDraftTraffic,
@@ -40,11 +45,13 @@ import {
   updateConfig,
 } from "./config/store.js";
 import {
+  maybeWriteTrace,
   printPreparedPost,
   runBrowserWorkflow,
 } from "./publish/browser-workflow.js";
 import { runDoctor } from "./doctor/doctor.js";
 import { prepublishPost } from "./publish/prepublish.js";
+import { resolvePostTitle } from "./publish/title.js";
 import { preparePost } from "./publish/prepare.js";
 import { resolveTransport } from "./publish/transport.js";
 import {
@@ -75,7 +82,8 @@ import {
   loadDraftMappings,
   saveDraftMapping,
 } from "./substack-api/draft-mappings.js";
-import { planCreateDraft } from "./substack-api/draft-write.js";
+import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
+import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
 import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import { readApiInventory } from "./substack-api/read-model.js";
 import {
@@ -272,9 +280,89 @@ program
         transport: "browser" | "api" | "auto";
       },
     ) => {
-      resolveTransport(options.transport);
+      const transport = resolveTransport(options.transport);
       const prepared = await preparePost(file, { mode: "draft" });
-      await runBrowserWorkflow(prepared, options);
+
+      if (options.dryRun) {
+        const plan = planCreateDraft(
+          prepared.post,
+          requirePublicationUrl(await loadEffectiveConfig()),
+        );
+        console.log(JSON.stringify(plan, null, 2));
+        return;
+      }
+
+      if (transport.selected === "api") {
+        const effective = await loadEffectiveConfig();
+        const publicationUrl = requirePublicationUrl(effective);
+        const existingDraft = await findDraftMapping(
+          prepared.post.filePath,
+          publicationUrl,
+        );
+        const material = await resolveApiAuthMaterial(effective, "auto");
+        const validation = await validateApiAuthMaterial(material, fetch);
+
+        if (validation.status !== "ok" || !validation.userId) {
+          console.error(
+            `API transport failed: ${validation.message ?? "Could not validate the API session."}`,
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const plan = planCreateDraft(
+          prepared.post,
+          publicationUrl,
+          existingDraft,
+          undefined,
+          {
+            uploadEndpoint: effective.uploadEndpoint,
+            responseUrlField: effective.uploadResponseField,
+          },
+        );
+        const result = await executeDraftWrite(
+          plan,
+          material,
+          validation.userId,
+          fetch,
+        );
+
+        console.log(JSON.stringify(result, null, 2));
+
+        if (result.status === "failed") {
+          process.exitCode = 1;
+        }
+
+        await maybeWriteTrace({
+          status: result.status === "created" ? "draft-created" : "draft-updated",
+          operation: result.operation,
+          mode: "draft",
+          title: resolvePostTitle(prepared.post),
+          currentUrl: plan.endpoint,
+          finalUrl: plan.endpoint,
+          finalState: result.status,
+          publishedUrl: undefined,
+          draftId: result.draftId,
+          draftUrl: result.draftUrl,
+          metadata: {
+            subtitle: prepared.post.metadata.subtitle,
+            tags: prepared.post.metadata.tags,
+            audience: prepared.post.metadata.audience,
+            section: prepared.post.metadata.section,
+          },
+          transport: { requested: "api", selected: "api" },
+          trace: [],
+        }, options.traceOut);
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const existingDraft = await findDraftMapping(
+        prepared.post.filePath,
+        publicationUrl,
+      );
+      await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
     },
   );
 
@@ -314,7 +402,7 @@ program
         transport: "browser" | "api" | "auto";
       },
     ) => {
-      resolveTransport(options.transport);
+      const transport = resolveTransport(options.transport);
       const prepared = await preparePost(file, { mode: "publish" });
       const report = prepublishPost(prepared);
       if (report.status === "blocked") {
@@ -322,7 +410,89 @@ program
         process.exitCode = 1;
         return;
       }
-      await runBrowserWorkflow(prepared, options);
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+
+      if (transport.selected === "api") {
+        const existingDraft = await findDraftMapping(
+          prepared.post.filePath,
+          publicationUrl,
+        );
+        if (!existingDraft) {
+          console.error(JSON.stringify({ status: "failed", message: "API publish requires an existing draft. Run `draft --transport api` first or omit --transport to use the browser workflow.", transport }));
+          process.exitCode = 1;
+          return;
+        }
+
+        if (options.dryRun || options.reviewOnly) {
+          console.log(JSON.stringify({ ...report, transport }, null, 2));
+          if (options.traceOut) {
+            await maybeWriteTrace({
+              status: "preview",
+              operation: "create",
+              mode: "publish",
+              title: report.title,
+              currentUrl: existingDraft.draftUrl ?? "",
+              finalUrl: existingDraft.draftUrl ?? "",
+              finalState: "reviewed",
+              publishedUrl: undefined,
+              draftId: existingDraft.draftId,
+              metadata: {
+                subtitle: prepared.post.metadata.subtitle,
+                tags: prepared.post.metadata.tags,
+                audience: prepared.post.metadata.audience,
+                section: prepared.post.metadata.section,
+              },
+              transport: { requested: "api", selected: "api" },
+              trace: [],
+            }, options.traceOut);
+          }
+          return;
+        }
+
+        const material = await resolveApiAuthMaterial(effective, "auto");
+        const validation = await validateApiAuthMaterial(material, fetch);
+        if (validation.status !== "ok") {
+          console.error(JSON.stringify({ status: "failed", message: validation.message ?? "Could not validate API session.", transport }));
+          process.exitCode = 1;
+          return;
+        }
+
+        const publishPlan = planPublishWrite(
+          existingDraft.draftId, existingDraft.draftUrl ?? "",
+          "publish", publicationUrl, undefined, existingDraft,
+        );
+        const publishResult = await executePublishWrite(publishPlan, material, fetch);
+        console.log(JSON.stringify({ ...publishResult, publishedUrl: publishResult.postUrl, transport }, null, 2));
+        if (publishResult.status === "failed") process.exitCode = 1;
+
+        await maybeWriteTrace({
+          status: publishResult.status === "failed" ? "failed" : "published",
+          operation: "create",
+          mode: "publish",
+          title: report.title,
+          currentUrl: publishPlan.endpoint,
+          finalUrl: publishPlan.endpoint,
+          finalState: publishResult.status,
+          publishedUrl: publishResult.postUrl,
+          draftId: publishPlan.draftId,
+          metadata: {
+            subtitle: prepared.post.metadata.subtitle,
+            tags: prepared.post.metadata.tags,
+            audience: prepared.post.metadata.audience,
+            section: prepared.post.metadata.section,
+          },
+          transport: { requested: "api", selected: "api" },
+          trace: [],
+        }, options.traceOut);
+        return;
+      }
+
+      const existingDraft = await findDraftMapping(
+        prepared.post.filePath,
+        publicationUrl,
+      );
+      await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
     },
   );
 
@@ -364,7 +534,7 @@ program
         transport: "browser" | "api" | "auto";
       },
     ) => {
-      resolveTransport(options.transport);
+      const transport = resolveTransport(options.transport);
       const prepared = await preparePost(file, {
         mode: "schedule",
         scheduleAt: options.at,
@@ -375,7 +545,91 @@ program
         process.exitCode = 1;
         return;
       }
-      await runBrowserWorkflow(prepared, options);
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+
+      if (transport.selected === "api") {
+        const existingDraft = await findDraftMapping(
+          prepared.post.filePath,
+          publicationUrl,
+        );
+        if (!existingDraft) {
+          console.error(JSON.stringify({ status: "failed", message: "API schedule requires an existing draft. Run `draft --transport api` first or omit --transport to use the browser workflow.", transport }));
+          process.exitCode = 1;
+          return;
+        }
+
+        if (options.dryRun || options.reviewOnly) {
+          console.log(JSON.stringify({ ...report, transport }, null, 2));
+          if (options.traceOut) {
+            await maybeWriteTrace({
+              status: "preview",
+              operation: "create",
+              mode: "schedule",
+              title: report.title,
+              currentUrl: existingDraft.draftUrl ?? "",
+              finalUrl: existingDraft.draftUrl ?? "",
+              finalState: "reviewed",
+              publishedUrl: undefined,
+              draftId: existingDraft.draftId,
+              scheduleAt: options.at,
+              metadata: {
+                subtitle: prepared.post.metadata.subtitle,
+                tags: prepared.post.metadata.tags,
+                audience: prepared.post.metadata.audience,
+                section: prepared.post.metadata.section,
+              },
+              transport: { requested: "api", selected: "api" },
+              trace: [],
+            }, options.traceOut);
+          }
+          return;
+        }
+
+        const material = await resolveApiAuthMaterial(effective, "auto");
+        const validation = await validateApiAuthMaterial(material, fetch);
+        if (validation.status !== "ok") {
+          console.error(JSON.stringify({ status: "failed", message: validation.message ?? "Could not validate API session.", transport }));
+          process.exitCode = 1;
+          return;
+        }
+
+        const schedulePlan = planPublishWrite(
+          existingDraft.draftId, existingDraft.draftUrl ?? "",
+          "schedule", publicationUrl, options.at, existingDraft,
+        );
+        const scheduleResult = await executePublishWrite(schedulePlan, material, fetch);
+        console.log(JSON.stringify({ ...scheduleResult, publishedUrl: scheduleResult.postUrl, transport }, null, 2));
+        if (scheduleResult.status === "failed") process.exitCode = 1;
+
+        await maybeWriteTrace({
+          status: scheduleResult.status === "failed" ? "failed" : "scheduled",
+          operation: "create",
+          mode: "schedule",
+          title: report.title,
+          currentUrl: schedulePlan.endpoint,
+          finalUrl: schedulePlan.endpoint,
+          finalState: scheduleResult.status,
+          publishedUrl: scheduleResult.postUrl,
+          draftId: schedulePlan.draftId,
+          scheduleAt: options.at,
+          metadata: {
+            subtitle: prepared.post.metadata.subtitle,
+            tags: prepared.post.metadata.tags,
+            audience: prepared.post.metadata.audience,
+            section: prepared.post.metadata.section,
+          },
+          transport: { requested: "api", selected: "api" },
+          trace: [],
+        }, options.traceOut);
+        return;
+      }
+
+      const existingDraft = await findDraftMapping(
+        prepared.post.filePath,
+        publicationUrl,
+      );
+      await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
     },
   );
 
@@ -507,12 +761,23 @@ api
     parseInteger,
     10,
   )
+  .option(
+    "--draft-limit <limit>",
+    "Maximum number of drafts to include",
+    parseInteger,
+    10,
+  )
   .action(
-    async (options: { source: "auto" | ApiAuthSource; postLimit: number }) => {
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      postLimit: number;
+      draftLimit: number;
+    }) => {
       const effective = await loadEffectiveConfig();
       const material = await resolveApiAuthMaterial(effective, options.source);
       const inventory = await readApiInventory(material, fetch, {
         postLimit: options.postLimit,
+        draftLimit: options.draftLimit,
       });
 
       console.log(JSON.stringify(inventory, null, 2));
@@ -545,9 +810,64 @@ apiDraft
       options: { live: boolean; source: "none" | ApiAuthSource },
     ) => {
       if (options.live) {
-        throw new Error(
-          "Live API draft creation is not enabled until the draft endpoint contract is confirmed.",
+        const effective = await loadEffectiveConfig();
+        const publicationUrl = requirePublicationUrl(effective);
+        const prepared = await preparePost(file, { mode: "draft" });
+        const existingDraft = await findDraftMapping(
+          prepared.post.filePath,
+          publicationUrl,
         );
+
+        const liveSource: "auto" | ApiAuthSource =
+          options.source === "none" ? "auto" : options.source;
+        const material = await resolveApiAuthMaterial(effective, liveSource);
+        const validation = await validateApiAuthMaterial(material, fetch);
+
+        if (validation.status !== "ok" || !validation.userId) {
+          console.log(
+            JSON.stringify(
+              {
+                status: "failed",
+                message:
+                  validation.message ??
+                  "Could not validate the API session.",
+                details: validation,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const sectionResolution =
+          options.source === "none"
+            ? null
+            : buildDraftSectionResolutionReport({
+                post: prepared.post,
+                inventory: await readApiInventory(material, fetch, {
+                  postLimit: 10,
+                }),
+              });
+        const plan = planCreateDraft(
+          prepared.post,
+          publicationUrl,
+          existingDraft,
+          sectionResolution,
+          {
+            uploadEndpoint: effective.uploadEndpoint,
+            responseUrlField: effective.uploadResponseField,
+          },
+        );
+        const result = await executeDraftWrite(plan, material, validation.userId, fetch);
+
+        console.log(JSON.stringify(result, null, 2));
+
+        if (result.status === "failed") {
+          process.exitCode = 1;
+        }
+        return;
       }
 
       const effective = await loadEffectiveConfig();
@@ -1114,6 +1434,64 @@ debug
       url ?? requirePublicationUrl(effective),
     );
     console.log(JSON.stringify(diagnostics, null, 2));
+  });
+
+debug
+  .command("publish-screen")
+  .description(
+    "Navigate to a draft URL and inspect the publish review screen structure (buttons, dialogs, forms). Pass a draft editor URL like https://substack.com/publish/post/12345.",
+  )
+  .argument("<url>", "Draft editor URL to inspect (e.g., the draft URL from a prior `draft` run)")
+  .option("--capture", "Click Continue first to reveal the review overlay before capturing diagnostics", false)
+  .action(async (url: string, options: { capture: boolean }) => {
+    try {
+      if (options.capture) {
+        const diagnostics = await captureReviewOverlayDiagnostics(url, true);
+        console.log(JSON.stringify({ ...diagnostics, _note: "--capture clicks Continue first to map the review overlay" }, null, 2));
+      } else {
+        const diagnostics = await capturePublishScreenDiagnostics(url);
+        console.log(JSON.stringify(diagnostics, null, 2));
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(JSON.stringify({ status: "error", message, hint: "Make sure you are logged into Substack in your local Chrome profile." }, null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+debug
+  .command("review-overlay")
+  .description(
+    "Navigate to a draft URL, optionally click Continue, and inspect the review overlay (buttons, dialogs, confirmation elements). Pass a draft editor URL like https://substack.com/publish/post/12345.",
+  )
+  .argument("<url>", "Draft editor URL to inspect (e.g., the draft URL from a prior `draft` run)")
+  .option("--capture", "Click Continue first to reveal the review overlay before capturing (default: true)", true)
+  .action(async (url: string, options: { capture: boolean }) => {
+    try {
+      const diagnostics = await captureReviewOverlayDiagnostics(url, options.capture);
+      console.log(JSON.stringify(diagnostics, null, 2));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(JSON.stringify({ status: "error", message, hint: "Make sure you are logged into Substack in your local Chrome profile." }, null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+debug
+  .command("schedule-screen")
+  .description(
+    "Navigate to a draft URL and inspect the schedule picker UI (date/time inputs, timezone, error states). Pass a draft editor URL like https://substack.com/publish/post/12345.",
+  )
+  .argument("<url>", "Draft editor URL to inspect (e.g., the draft URL from a prior `draft` run)")
+  .action(async (url: string) => {
+    try {
+      const diagnostics = await captureScheduleScreenDiagnostics(url);
+      console.log(JSON.stringify(diagnostics, null, 2));
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(JSON.stringify({ status: "error", message, hint: "Make sure you are logged into Substack in your local Chrome profile." }, null, 2));
+      process.exitCode = 1;
+    }
   });
 
 function parseInteger(value: string): number {

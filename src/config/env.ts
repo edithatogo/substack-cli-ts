@@ -9,6 +9,8 @@ const EnvSchema = z.object({
   SUBSTACK_EMAIL: z.string().email().optional(),
   SUBSTACK_PASSWORD: z.string().min(1).optional(),
   SUBSTACK_COOKIE: z.string().min(1).optional(),
+  SUBSTACK_UPLOAD_ENDPOINT: z.string().min(1).optional(),
+  SUBSTACK_UPLOAD_RESPONSE_FIELD: z.string().min(1).optional(),
 });
 
 export type RuntimeEnv = z.infer<typeof EnvSchema>;

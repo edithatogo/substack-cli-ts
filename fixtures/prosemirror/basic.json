@@ -1,11 +1,14 @@
 {
-  "generatedAt": "2026-04-27T12:59:01.841Z",
-  "sourceFile": "examples\\basic.md",
+  "generatedAt": "2026-04-30T10:22:44.169Z",
+  "sourceFile": "examples/basic.md",
   "mode": "draft",
   "metadata": {
     "title": "Example Substack Draft",
     "subtitle": "Generated from local Markdown",
-    "tags": ["example", "markdown"],
+    "tags": [
+      "example",
+      "markdown"
+    ],
     "audience": "everyone"
   },
   "html": "<h1>Example Substack Draft</h1>\n<p>This is a local Markdown draft with <strong>bold text</strong> and a <a href=\"https://substack.com\">link</a>.</p>\n<div data-substack-cli-node=\"paywall\"></div>\n<div data-substack-cli-node=\"subscribe-widget\" data-label=\"Subscribe for future posts\"></div>",
@@ -87,6 +90,9 @@
       "subscribeWidget",
       "text"
     ],
-    "markTypes": ["bold", "link"]
+    "markTypes": [
+      "bold",
+      "link"
+    ]
   }
 }

@@ -23,12 +23,22 @@ Allow the CLI to choose the best available transport for each operation.
 
 ## Acceptance Criteria
 
-- `--transport browser` preserves current behavior.
-- `--transport api` fails cleanly if the API adapter is unavailable.
-- `--transport auto` documents and reports which transport was used.
+- `--transport browser` preserves current behavior. ✅
+- `--transport api` fails cleanly if the API adapter is unavailable. ✅
+- `--transport auto` documents and reports which transport was used. ✅
 
-## Current Progress
+## Completed
 
-- Added `--transport browser|api|auto` to draft, publish, and schedule commands.
-- Browser workflow now reports the requested transport and whether auto fell back to browser.
-- Explicit API transport is rejected with a clear error until a live API write adapter exists.
+1. ✅ `--transport browser|api|auto` on all three commands (draft, publish, schedule).
+2. ✅ `draft --transport api` full flow: resolves auth, validates session, plans creates/updates, executes writes, handles conflicts.
+3. ✅ `publish --transport api` full flow: requires existing draft mapping, validates session, publishes via `POST /api/v1/drafts/{id}/publish`.
+4. ✅ `schedule --transport api` full flow: requires existing draft, passes `draft_scheduled_at`, schedules via `POST /api/v1/drafts/{id}/schedule`.
+5. ✅ `--transport auto` defaults to browser with informative fallback message in `TransportResolution.fallbackReason`.
+6. ✅ `--transport api` fails cleanly with a clear error when no draft mapping exists or API session is invalid.
+7. ✅ `resolveTransport()` returns consistent `TransportResolution` with `requested`, `selected`, and optional `fallbackReason`.
+8. ✅ `BrowserWorkflowResult` includes `transport` block with requested, selected, and fallback info.
+9. ✅ Transport tests cover all three preferences and fallback message.
+
+## Remaining Work
+
+- None. Transport selection is fully implemented for all commands.

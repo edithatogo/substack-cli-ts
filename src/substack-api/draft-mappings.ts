@@ -11,6 +11,7 @@ const DraftMappingSchema = z.object({
   title: z.string().min(1),
   slug: z.string().optional(),
   updatedAt: z.string().datetime(),
+  serverUpdatedAt: z.string().datetime().optional(),
 });
 
 const DraftMappingsSchema = z.object({
@@ -26,6 +27,7 @@ export interface SaveDraftMappingInput {
   draftUrl?: string | undefined;
   title: string;
   slug?: string | undefined;
+  serverUpdatedAt?: string | undefined;
 }
 
 export async function loadDraftMappings(): Promise<DraftMapping[]> {
@@ -53,6 +55,7 @@ export async function saveDraftMapping(
     title: input.title,
     slug: input.slug,
     updatedAt: new Date().toISOString(),
+    serverUpdatedAt: input.serverUpdatedAt ?? undefined,
   });
 
   const filtered = current.filter(

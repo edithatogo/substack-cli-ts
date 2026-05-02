@@ -21,6 +21,8 @@ export interface EffectiveConfig extends AppConfig {
   substackEmail?: string | undefined;
   substackPassword?: string | undefined;
   substackCookie?: string | undefined;
+  uploadEndpoint?: string | undefined;
+  uploadResponseField?: string | undefined;
 }
 
 export async function loadConfig(): Promise<AppConfig> {
@@ -70,6 +72,8 @@ export async function loadEffectiveConfig(): Promise<EffectiveConfig> {
     substackEmail: env.SUBSTACK_EMAIL,
     substackPassword: env.SUBSTACK_PASSWORD,
     substackCookie: env.SUBSTACK_COOKIE,
+    uploadEndpoint: env.SUBSTACK_UPLOAD_ENDPOINT,
+    uploadResponseField: env.SUBSTACK_UPLOAD_RESPONSE_FIELD,
   };
 }
 

@@ -1,10 +1,19 @@
 import { mergeAttributes, Node } from "@tiptap/core";
+import { Table } from "@tiptap/extension-table";
+import { TableRow } from "@tiptap/extension-table-row";
+import { TableCell } from "@tiptap/extension-table-cell";
+import { TableHeader } from "@tiptap/extension-table-header";
 
 interface SubstackImageAttributes {
   src: string | null;
   alt: string | null;
   title: string | null;
   caption: string | null;
+}
+
+interface EmbedNodeAttributes {
+  url: string | null;
+  embedType: string | null;
 }
 
 export const PaywallDivider = Node.create({
@@ -109,8 +118,59 @@ export const SubstackImage = Node.create({
   },
 });
 
+export const EmbedNode = Node.create({
+  name: "embedNode",
+  group: "block",
+  atom: true,
+
+  addAttributes() {
+    return {
+      url: {
+        default: null,
+        parseHTML: (element: HTMLElement) => element.getAttribute("data-url"),
+        renderHTML: (attributes: EmbedNodeAttributes) => ({
+          "data-url": normalizeAttribute(attributes.url),
+        }),
+      },
+      embedType: {
+        default: "url",
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-embed-type") ?? "url",
+        renderHTML: (attributes: EmbedNodeAttributes) => ({
+          "data-embed-type": attributes.embedType ?? "url",
+        }),
+      },
+    };
+  },
+
+  parseHTML() {
+    return [{ tag: 'div[data-substack-cli-node="embed"]' }];
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "div",
+      mergeAttributes(HTMLAttributes, {
+        "data-substack-cli-node": "embed",
+      }),
+    ];
+  },
+});
+
 export function getTiptapExtensions() {
-  return [PaywallDivider, SubscribeWidget, SubstackImage];
+  return [
+    PaywallDivider,
+    SubscribeWidget,
+    SubstackImage,
+    EmbedNode,
+    Table.configure({
+      resizable: false,
+      allowTableNodeSelection: false,
+    }),
+    TableRow,
+    TableCell,
+    TableHeader,
+  ];
 }
 
 function normalizeAttribute(value: string | null): string | undefined {

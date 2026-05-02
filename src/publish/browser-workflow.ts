@@ -12,12 +12,16 @@ import {
 } from "../browser/editor.js";
 import {
   createStagehandSession,
+  withStagehandRetry,
   type StagehandSession,
 } from "../browser/stagehand.js";
+import { CaptchaDetectedError } from "../browser/errors.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import { runLocalDraftWorkflow } from "./local-workflow.js";
-import { resolveTransport, type TransportPreference } from "./transport.js";
+import { resolveTransport, type TransportPreference, type TransportResolution } from "./transport.js";
 import { resolvePostTitle } from "./title.js";
+import { validatePayloadCompatibility } from "../substack-api/payload.js";
+import type { DraftMapping } from "../substack-api/draft-mappings.js";
 
 export interface WorkflowStep {
   name: string;
@@ -28,21 +32,35 @@ export interface WorkflowStep {
   error?: string | undefined;
 }
 
+export type DraftOperation = "create" | "update";
+
 export interface BrowserWorkflowResult {
   status:
     | "draft-created"
+    | "draft-updated"
     | "schedule-review-opened"
     | "publish-review-opened"
-    | "publish-clicked";
+    | "publish-clicked"
+    | "published"
+    | "scheduled";
+  operation: DraftOperation;
   mode: PreparedPost["mode"];
   title: string;
   currentUrl: string;
   finalUrl: string;
   finalState: string;
   publishedUrl?: string | undefined;
+  draftId?: string | undefined;
+  draftUrl?: string | undefined;
+  metadata: {
+    subtitle?: string | undefined;
+    tags?: string[];
+    audience?: string | undefined;
+    section?: string | undefined;
+  };
   transport: {
     requested: TransportPreference;
-    selected: "browser";
+    selected: TransportResolution["selected"];
     fallbackReason?: string | undefined;
   };
   scheduleAt?: string | undefined;
@@ -71,6 +89,7 @@ export interface BrowserWorkflowOptions {
   experimentalInjectState?: boolean;
   sessionId?: string | undefined;
   transport?: TransportPreference | undefined;
+  draftMapping?: DraftMapping | undefined;
 }
 
 export function shouldOpenPublishReview(
@@ -101,7 +120,7 @@ export async function runBrowserWorkflow(
   const transport = resolveTransport(options.transport ?? "auto");
 
   if (config.browserRuntime === "local") {
-    const result = await runLocalDraftWorkflow(prepared, config, transport);
+    const result = await runLocalDraftWorkflow(prepared, config, transport, options.draftMapping, options);
     await maybeWriteTrace(result, options.traceOut);
     console.log(JSON.stringify(result, null, 2));
     return;
@@ -170,22 +189,36 @@ async function createDraftInBrowser(
   const title = resolvePostTitle(prepared.post);
   const publicationUrl = requirePublicationUrl(await loadEffectiveConfig());
   const trace: WorkflowStep[] = [];
+  const existingDraft = options.draftMapping;
+  const operation: DraftOperation = existingDraft ? "update" : "create";
 
-  await recordStep(trace, "navigate-publication", async () => {
-    await session.page.goto(publicationUrl, {
-      waitUntil: "domcontentloaded",
-      timeoutMs: 60000,
+  if (existingDraft?.draftUrl) {
+    await recordStep(trace, "navigate-existing-draft", async () => {
+      await session.page.goto(existingDraft.draftUrl!, {
+        waitUntil: "domcontentloaded",
+        timeoutMs: 60000,
+      });
+      await checkForCaptcha(session);
+      return { draftUrl: existingDraft.draftUrl };
     });
-    return { url: publicationUrl };
-  });
+  } else {
+    await recordStep(trace, "navigate-publication", async () => {
+      await session.page.goto(publicationUrl, {
+        waitUntil: "domcontentloaded",
+        timeoutMs: 60000,
+      });
+      await checkForCaptcha(session);
+      return { url: publicationUrl };
+    });
 
-  await observedAct(
-    trace,
-    session,
-    "open-draft-editor",
-    "Open the publisher dashboard for this publication, then start creating a new text post draft.",
-    120000,
-  );
+    await observedAct(
+      trace,
+      session,
+      "open-draft-editor",
+      "Open the publisher dashboard for this publication, then start creating a new text post draft.",
+      120000,
+    );
+  }
 
   await observedAct(
     trace,
@@ -203,6 +236,46 @@ async function createDraftInBrowser(
     throw new BrowserWorkflowError(
       `Could not insert title: ${titleResult.reason ?? "unknown error"}`,
       trace,
+    );
+  }
+
+  if (prepared.post.metadata.subtitle) {
+    await observedAct(
+      trace,
+      session,
+      "set-subtitle",
+      `Set the subtitle/description for this post to: ${prepared.post.metadata.subtitle}`,
+      60000,
+    );
+  }
+
+  if (prepared.post.metadata.tags && prepared.post.metadata.tags.length > 0) {
+    await observedAct(
+      trace,
+      session,
+      "set-tags",
+      `Add the following tags to this post: ${prepared.post.metadata.tags.join(", ")}`,
+      60000,
+    );
+  }
+
+  if (prepared.post.metadata.audience) {
+    await observedAct(
+      trace,
+      session,
+      "set-audience",
+      `Set the audience for this post to: ${prepared.post.metadata.audience}`,
+      60000,
+    );
+  }
+
+  if (prepared.post.metadata.section) {
+    await observedAct(
+      trace,
+      session,
+      "set-section",
+      `Set the section for this post to: ${prepared.post.metadata.section}`,
+      60000,
     );
   }
 
@@ -248,21 +321,34 @@ async function createDraftInBrowser(
   });
   const currentUrl = session.page.url();
 
+  const baseResult = {
+    operation,
+    title,
+    currentUrl,
+      publishedUrl: undefined as string | undefined, // Captured after publish via waitForURL(/\/p\//) in the publish path above
+    transport,
+    editorTextLength: editorText.length,
+    draftId: existingDraft?.draftId,
+    draftUrl: existingDraft?.draftUrl,
+    metadata: {
+      subtitle: prepared.post.metadata.subtitle,
+      tags: prepared.post.metadata.tags,
+      audience: prepared.post.metadata.audience,
+      section: prepared.post.metadata.section,
+    },
+    browserbaseSessionId: session.browserbaseSessionId,
+    browserbaseSessionUrl: session.browserbaseSessionUrl,
+    browserbaseDebugUrl: session.browserbaseDebugUrl,
+    trace,
+  };
+
   if (prepared.mode === "draft") {
     return {
-      status: "draft-created",
+      ...baseResult,
+      status: operation === "update" ? "draft-updated" : "draft-created",
       mode: prepared.mode,
-      title,
-      currentUrl,
       finalUrl: currentUrl,
-      finalState: "draft-created",
-      publishedUrl: undefined,
-      transport,
-      editorTextLength: editorText.length,
-      browserbaseSessionId: session.browserbaseSessionId,
-      browserbaseSessionUrl: session.browserbaseSessionUrl,
-      browserbaseDebugUrl: session.browserbaseDebugUrl,
-      trace,
+      finalState: operation === "update" ? "draft-updated" : "draft-created",
     };
   }
 
@@ -270,25 +356,18 @@ async function createDraftInBrowser(
     trace,
     session,
     "open-publish-settings",
-    "Click Continue to review the post publishing settings.",
+    `Click the "Continue" button to open the publish review screen. There is a button with visible text "Continue" near the top of the editor page.`,
     60000,
   );
 
   if (prepared.mode === "publish" && shouldOpenPublishReview(options)) {
     const finalUrl = session.page.url();
     return {
+      ...baseResult,
       status: "publish-review-opened",
       mode: prepared.mode,
-      title,
-      currentUrl: finalUrl,
       finalUrl,
       finalState: "publish-review-opened",
-      publishedUrl: undefined,
-      transport,
-      browserbaseSessionId: session.browserbaseSessionId,
-      browserbaseSessionUrl: session.browserbaseSessionUrl,
-      browserbaseDebugUrl: session.browserbaseDebugUrl,
-      trace,
     };
   }
 
@@ -297,55 +376,115 @@ async function createDraftInBrowser(
       trace,
       session,
       "open-schedule-settings",
-      "Choose the schedule option for this post and leave the scheduler open for the user to verify the date and time.",
+      `Click the "Schedule" option or tab in the publish settings panel. On Substack, after clicking Continue the review panel has a "Schedule for later" option or a "Schedule" button.`,
       60000,
     );
 
+    if (prepared.scheduleAt) {
+      await observedAct(
+        trace,
+        session,
+        "fill-schedule-date",
+        `Find the date input or date picker in the scheduler panel and set it to the scheduled date. The date is: ${prepared.scheduleAt}. Set the date field to match this.`,
+        60000,
+      );
+
+      await observedAct(
+        trace,
+        session,
+        "fill-schedule-time",
+        `Find the time input or dropdown in the scheduler panel and set it to the scheduled time. The full schedule timestamp is: ${prepared.scheduleAt}. Set the time to match this.`,
+        60000,
+      );
+    }
+
+    if (shouldOpenPublishReview(options)) {
+      const finalUrl = session.page.url();
+      return {
+        ...baseResult,
+        status: "schedule-review-opened",
+        mode: prepared.mode,
+        scheduleAt: prepared.scheduleAt,
+        finalUrl,
+        finalState: "schedule-review-opened",
+      };
+    }
+
+    await observedAct(
+      trace,
+      session,
+      "click-final-schedule",
+      `Click the final "Schedule" button to confirm scheduling this post. Look for a visible button with text "Schedule" that is the final confirmation action.`,
+      60000,
+    );
+
+    await recordStep(trace, "wait-for-schedule-confirmation", async () => {
+      await checkForCaptcha(session);
+      const url = session.page.url();
+      const hasConfirmation = await session.page.evaluate(() => {
+        return document.body.innerText.toLowerCase().includes("scheduled");
+      }).catch(() => false);
+      return { url, hasConfirmation, scheduleAt: prepared.scheduleAt };
+    });
+
     const finalUrl = session.page.url();
     return {
-      status: "schedule-review-opened",
+      ...baseResult,
+      status: "scheduled",
       mode: prepared.mode,
       scheduleAt: prepared.scheduleAt,
-      title,
-      currentUrl: finalUrl,
       finalUrl,
-      finalState: "schedule-review-opened",
-      publishedUrl: undefined,
-      transport,
-      browserbaseSessionId: session.browserbaseSessionId,
-      browserbaseSessionUrl: session.browserbaseSessionUrl,
-      browserbaseDebugUrl: session.browserbaseDebugUrl,
-      trace,
+      finalState: "scheduled",
     };
   }
+
+  await recordStep(trace, "verify-publish-review-screen", async () => {
+    await checkForCaptcha(session);
+    const url = session.page.url();
+    const isReviewUrl = /\/publish\//.test(url) || /\/post\//.test(url);
+    if (!isReviewUrl) {
+      console.warn(
+        `Warning: Current URL "${url}" does not look like a publish review screen. Expected URL containing "/publish/" or "/post/".`,
+      );
+    }
+    return { url, looksLikeReviewScreen: isReviewUrl };
+  });
 
   await observedAct(
     trace,
     session,
     "click-final-publish",
-    "Click the final Publish button for this post.",
+    `Click the button with text "Send to everyone now" to publish this post. It is inside the publish dialog/modal and may have a class containing "priority_primary". Look for a button with exact text "Send to everyone now".`,
     60000,
   );
 
+  const publishUrl = await recordStep(trace, "wait-for-publish-navigation", async () => {
+    await checkForCaptcha(session);
+    const beforeUrl = session.page.url();
+    // Poll for URL change (Stagehand Page does not expose waitForURL)
+    const deadline = Date.now() + 30000;
+    let afterUrl = beforeUrl;
+    while (Date.now() < deadline && afterUrl === beforeUrl) {
+      await session.page.waitForTimeout(500);
+      afterUrl = session.page.url();
+    }
+    return { beforeUrl, afterUrl };
+  });
+
   const finalUrl = session.page.url();
   return {
-    status: "publish-clicked",
+    ...baseResult,
+    publishedUrl: publishUrl.afterUrl,
+    status: "published",
     mode: prepared.mode,
-    title,
-    currentUrl: finalUrl,
     finalUrl,
-    finalState: "publish-clicked",
-    publishedUrl: undefined,
-    transport,
-    browserbaseSessionId: session.browserbaseSessionId,
-    browserbaseSessionUrl: session.browserbaseSessionUrl,
-    browserbaseDebugUrl: session.browserbaseDebugUrl,
-    trace,
+    finalState: "published",
   };
 }
 
 export function printPreparedPost(prepared: PreparedPost): void {
   const { post } = prepared;
+  const compatibility = validatePayloadCompatibility(post.document);
 
   console.log(
     JSON.stringify(
@@ -356,11 +495,43 @@ export function printPreparedPost(prepared: PreparedPost): void {
         metadata: post.metadata,
         html: post.html,
         document: post.document,
+        compatibility: {
+          ok: compatibility.ok,
+          supportedNodeTypes: compatibility.nodeTypes,
+          supportedMarkTypes: compatibility.markTypes,
+          unsupportedIssues: compatibility.issues.length > 0 ? compatibility.issues : undefined,
+        },
       },
       null,
       2,
     ),
   );
+}
+
+async function checkForCaptcha(
+  session: StagehandSession,
+): Promise<void> {
+  const url = session.page.url().toLowerCase();
+
+  if (url.includes("challenge") || url.includes("captcha")) {
+    throw new CaptchaDetectedError(session.browserbaseDebugUrl);
+  }
+
+  const hasCaptchaFrame = await session.page.evaluate(() => {
+    const iframes = document.querySelectorAll<HTMLIFrameElement>(
+      "iframe[src*='captcha'], iframe[src*='challenge'], iframe[title*='captcha' i], iframe[title*='challenge' i]",
+    );
+    for (const iframe of iframes) {
+      if (iframe.checkVisibility()) {
+        return true;
+      }
+    }
+    return false;
+  });
+
+  if (hasCaptchaFrame) {
+    throw new CaptchaDetectedError(session.browserbaseDebugUrl);
+  }
 }
 
 async function observedAct(
@@ -372,25 +543,29 @@ async function observedAct(
 ): Promise<void> {
   try {
     await recordStep(trace, name, async () => {
-      const actions = await session.stagehand.observe(instruction, { timeout });
-      const [action] = actions;
+      await checkForCaptcha(session);
 
-      if (action) {
-        const result = await session.stagehand.act(action, { timeout });
+      return await withStagehandRetry(async () => {
+        const actions = await session.stagehand.observe(instruction, { timeout });
+        const [action] = actions;
+
+        if (action) {
+          const result = await session.stagehand.act(action, { timeout });
+          return {
+            observedActions: actions.length,
+            actionDescription: action.description,
+            success: result.success,
+            message: result.message,
+          };
+        }
+
+        const result = await session.stagehand.act(instruction, { timeout });
         return {
-          observedActions: actions.length,
-          actionDescription: action.description,
+          observedActions: 0,
           success: result.success,
           message: result.message,
         };
-      }
-
-      const result = await session.stagehand.act(instruction, { timeout });
-      return {
-        observedActions: 0,
-        success: result.success,
-        message: result.message,
-      };
+      }, { retries: 2, label: name });
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -454,8 +629,8 @@ function countDocumentNodes(node: PreparedPost["post"]["document"]): number {
   );
 }
 
-async function maybeWriteTrace(
-  result: BrowserWorkflowResult,
+export async function maybeWriteTrace(
+  result: unknown,
   traceOut: string | undefined,
 ): Promise<void> {
   if (!traceOut) {

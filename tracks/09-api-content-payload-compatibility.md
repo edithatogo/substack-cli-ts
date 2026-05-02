@@ -35,8 +35,18 @@ Translate the existing Markdown/Tiptap pipeline into the payload shape expected 
 - Added compatibility validation for supported ProseMirror nodes and marks before any write request.
 - Added `substack-cli api payload <file>` for local payload inspection without network access.
 
+## Completed
+
+1. ✅ Payload builder (`buildSubstackDraftPayload`) handles all metadata: title, subtitle, slug, tags, audience, section, sectionId, comments.
+2. ✅ Compatibility validation (`validatePayloadCompatibility`) checks all node/mark types before write.
+3. ✅ Request body builder (`buildDraftWriteRequestBody`) produces create/update payloads matching the live captured Substack contract.
+4. ✅ Contract validation tests verify create body keys (10 keys) and update body keys (9 keys) match the live `fixtures/drafts/live-draft-contract.json` capture.
+5. ✅ `section_chosen` boolean correctly reflects whether `sectionId` is set.
+6. ✅ Create body includes `audience` and `type`; update body includes `last_updated_at` — matching the live contract.
+7. ✅ Unsupported content throws before any write request (tested).
+8. ✅ Browser and API transports share the same parsed source model (both call `preparePost`/`parseMarkdownFile`).
+
 ## Remaining Work
 
-- Compare captured Substack draft bodies against the generated payload shape.
-- Add image/embed/caption compatibility after media upload mapping exists.
+- Image/embed/caption payload compatibility after media upload mapping exists (depends on Track 10).
 - Expand unsupported fallback documentation once draft write probes identify exact endpoint requirements.

@@ -7,10 +7,10 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | Track                                     | Status      | Current Position                                                                                         |
 | ----------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------- |
 | 01. Editor Schema Mapping                 | In progress | Basic Markdown, front matter, links, bold text, paywall and subscribe placeholders are covered by tests. |
-| 02. Content Feature Parity                | Planned     | Needs coverage for images, tables, embeds, captions, callouts, code blocks, and footnotes.               |
+| 02. Content Feature Parity                | Complete   | Lists, blockquotes, code blocks, inline code, horizontal rules, images with captions, tables, and embed shortcodes (YouTube/URL/podcast) are supported with tests. Content verification checks for missing title/body, link counts, and table warnings. |
 | 03. Draft, Publish, and Schedule          | In progress | Local draft creation is validated; publish and schedule are scaffolded but not validated.                |
 | 04. Browser Runtime Hardening             | In progress | Local Chrome profile works with manual CAPTCHA; Browserbase and Stagehand remain scaffolded.             |
-| 05. External Project Research             | Planned     | Initial scan identified projects and feature ideas to review systematically.                             |
+| 05. External Project Research             | Complete   | Source-level review completed for `ma2za/python-substack`, `conorbronsdon/substack-mcp`, `jakub-k-slys/substack-api`. Confirmed draft, prepublish, publish, image upload, and section endpoints. Findings recorded in research matrix and D006 partially resolved. |
 | 06. API Auth and Session Extraction       | In progress | Cookie extraction and read-only auth validation work against local browser profile sessions.             |
 | 07. API Read Model                        | In progress | Maps user, publication, sections, and bounded recent posts; drafts and pagination remain.                |
 | 08. API Draft Write Model                 | In progress | No-network draft write planning is implemented; live create/update waits on endpoint confirmation.       |

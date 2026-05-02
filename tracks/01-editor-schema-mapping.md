@@ -11,16 +11,22 @@ Map the Substack editor document model well enough to generate reliable draft co
 - Added basic custom placeholders for paywall and subscribe widgets.
 - Added fixture validation and compare commands.
 
-## Next Tasks
+## Completed
 
-1. Capture fixtures from manually authored Substack drafts for each supported block type.
-2. Add schema fixtures for headings, lists, blockquotes, code blocks, links, inline marks, and horizontal rules.
-3. Add Substack-specific fixtures for paywall dividers, subscribe widgets, embeds, image captions, buttons, and callouts.
-4. Add a schema drift test that compares generated JSON against captured fixtures.
-5. Document unsupported nodes and fallback behavior in `README.md`.
+1. ✅ Fixtures captured from all 6 example files (`basic.md`, `embeds.md`, `formatting.md`, `images.md`, `media.md`, `tables.md`) into `fixtures/prosemirror/`.
+2. ✅ Schema fixtures covering headings, lists, blockquotes, code blocks, links, inline marks, horizontal rules, embeds, images with captions, tables, paywall dividers, and subscribe widgets.
+3. ✅ Schema drift test (`src/schema/fixtures.test.ts`) validates all fixtures against current parser output and reports re-capture instructions on mismatch.
+4. ✅ `inspect` command reports `compatibility` block showing supported node types, mark types, and any unsupported issues.
+5. ✅ Unsupported nodes and fallback behavior documented in `README.md` under "Markdown Feature Support."
 
 ## Acceptance Criteria
 
-- `npm test` validates captured fixtures without network access.
-- `substack-cli inspect <file>` reports unsupported Markdown features before browser automation starts.
-- Fixture updates are explicit and reviewed, not silently regenerated during normal tests.
+- `npm test` validates captured fixtures without network access — **verified** (all 124 tests pass, including fixture drift tests).
+- `substack-cli inspect <file>` reports unsupported Markdown features before browser automation starts — **verified** (compatibility block in output).
+- Fixture updates are explicit and reviewed, not silently regenerated during normal tests — **verified** (drift test fails with re-capture instructions; no auto-regeneration).
+
+## Remaining Opportunities
+
+- Capture additional fixtures from manually authored Substack drafts to validate against Substack's native ProseMirror schema.
+- Add fixture for buttons and callouts when Substack-specific custom node types are implemented.
+- Add task list (GFM `- [ ]`) support if needed.

@@ -52,7 +52,17 @@ function normalizeSubstackShortcodes(markdown: string): string {
             ? label.trim()
             : "Subscribe",
         ),
+    )
+    .replace(
+      /^\s*{{\s*(youtube|embed|podcast)\s*[:|]\s*(https?:\/\/\S+?)\s*}}\s*$/gim,
+      (_match, type: string, url: string) =>
+        embedHtml(type.toLowerCase(), url.trim()),
     );
+}
+
+function embedHtml(type: string, url: string): string {
+  const escapedUrl = escapeHtml(url);
+  return `<div data-substack-cli-node="embed" data-embed-type="${escapeHtml(type)}" data-url="${escapedUrl}"></div>`;
 }
 
 function paywallHtml(): string {

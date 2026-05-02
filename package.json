@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "bin": {
     "substack-cli": "dist/cli.js"
   },
@@ -12,6 +15,7 @@
     "inspect": "npm run build && node dist/cli.js inspect",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage --configLoader native",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:mutation": "stryker run",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -26,6 +30,10 @@
     "@browserbasehq/stagehand": "^3.0.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@tiptap/core": "^3.0.0",
+    "@tiptap/extension-table": "^3.22.4",
+    "@tiptap/extension-table-cell": "^3.22.4",
+    "@tiptap/extension-table-header": "^3.22.4",
+    "@tiptap/extension-table-row": "^3.22.4",
     "@tiptap/html": "^3.0.0",
     "@tiptap/starter-kit": "^3.0.0",
     "chrome-launcher": "^1.2.1",

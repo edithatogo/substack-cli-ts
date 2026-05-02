@@ -43,6 +43,38 @@ Expose the existing CLI capabilities through MCP so other local tools and agents
 - Added read-only MCP resources for the manifest and redacted summary.
 - Added redacted MCP prompts for surface overview and workflow review guidance.
 
+## Alignment Audit (May 2026)
+
+Audit results comparing the MCP tool surface against the CLI command surface:
+
+| CLI Command      | MCP Equivalent          | Status |
+|------------------|-------------------------|--------|
+| `api inventory`  | `api.inventory`         | ✓      |
+| `api auth status`| `api.auth.status`       | ✓      |
+| `api media`      | `api.media`             | ✓ Added |
+| `schema validate`| `schema.validate`       | ✓      |
+| `trace review`   | `trace.review`          | ✓      |
+| `trace compare`  | `trace.compare`         | ✓      |
+| `policy`         | `policy`                | ✓      |
+| `doctor`         | `doctor`                | ✓ Added |
+| `api draft contract` | `api.draft.contract` | ✓      |
+| `api draft inspect`   | `api.draft.inspect`   | ✓      |
+| `api draft duplicates`| `api.draft.duplicates`| ✓      |
+| `api draft section`   | `api.draft.section`   | ✓      |
+| `api draft review`    | `api.draft.review`    | ✓      |
+| `api draft compare`   | `api.draft.compare`   | ✓      |
+| `api draft fixture`    | `api.draft.fixture`   | ✓      |
+| `api draft contract-matrix` | `api.draft.contract.matrix` | ✓ |
+| `api draft contract-matrix-compare` | `api.draft.contract.matrix.compare` | ✓ |
+| `api payload`                       | `api.payload`                   | ❌ Not added |
+
+**Key read/review flows**: All inventory, schema inspection, trace review, policy, diagnostics, and media inspection flows are covered.
+
+**Write flows excluded intentionally**: `publish`, `schedule`, `draft`, `api draft create`, `api draft link`, `api draft observe`, `config set-*`, `auth login/logout`, `debug *` — these require interactive or write access and are intentionally kept out of MCP.
+
+**Read flows not yet covered**:
+- `api payload <file>` — builds the Substack draft payload from a Markdown file without network access. Currently CLI-only. Candidate for an MCP `review`-group tool (`api.payload`). Low priority since the same information is available through `api draft inspect` and `schema validate` which already have MCP equivalents.
+
 ## Remaining Work
 
 - Keep the surface intentionally narrow around tools, read-only resources, and redacted prompts.

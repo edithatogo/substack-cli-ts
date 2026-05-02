@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-04-30T10:22:36.428Z",
+  "sourceFile": "examples/embeds.md",
+  "mode": "draft",
+  "metadata": {
+    "title": "Embed Examples",
+    "tags": [
+      "example",
+      "embeds"
+    ]
+  },
+  "html": "<h1>Embed Examples</h1>\n<h2>YouTube Video</h2>\n<div data-substack-cli-node=\"embed\" data-embed-type=\"youtube\" data-url=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"></div>\n## Generic URL Embed\n<div data-substack-cli-node=\"embed\" data-embed-type=\"embed\" data-url=\"https://example.com/article\"></div>\n## Podcast Embed\n<div data-substack-cli-node=\"embed\" data-embed-type=\"podcast\" data-url=\"https://open.spotify.com/episode/12345\"></div>\n## Content with text around embeds\n\n<p>Before the embed.</p>\n<div data-substack-cli-node=\"embed\" data-embed-type=\"youtube\" data-url=\"https://youtu.be/abcdefg\"></div>\nAfter the embed.\n",
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 1
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Embed Examples"
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "YouTube Video"
+          }
+        ]
+      },
+      {
+        "type": "embedNode",
+        "attrs": {
+          "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+          "embedType": "youtube"
+        }
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": " ## Generic URL Embed"
+          }
+        ]
+      },
+      {
+        "type": "embedNode",
+        "attrs": {
+          "url": "https://example.com/article",
+          "embedType": "embed"
+        }
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": " ## Podcast Embed"
+          }
+        ]
+      },
+      {
+        "type": "embedNode",
+        "attrs": {
+          "url": "https://open.spotify.com/episode/12345",
+          "embedType": "podcast"
+        }
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": " ## Content with text around embeds"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Before the embed."
+          }
+        ]
+      },
+      {
+        "type": "embedNode",
+        "attrs": {
+          "url": "https://youtu.be/abcdefg",
+          "embedType": "youtube"
+        }
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": " After the embed."
+          }
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "valid": true,
+    "nodeTypes": [
+      "doc",
+      "embedNode",
+      "heading",
+      "paragraph",
+      "text"
+    ],
+    "markTypes": []
+  }
+}

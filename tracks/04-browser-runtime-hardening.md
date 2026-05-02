@@ -10,13 +10,15 @@ Make browser execution reliable across local development and optional remote ses
 - Local runtime is the default for password-based Substack login.
 - Browserbase and Stagehand are scaffolded but not validated for authenticated publishing.
 
-## Next Tasks
+## Completed
 
-1. Add browser runtime smoke tests that do not require real credentials.
-2. Improve diagnostics for stale profile locks, closed browser contexts, and unauthenticated redirects.
-3. Add trace and screenshot capture behind an explicit opt-in flag, with secret redaction guidance.
-4. Validate Browserbase only with a session created interactively or with non-sensitive test credentials.
-5. Evaluate Stagehand for semantic button discovery after the deterministic local workflow is stable.
+1. ✅ Typed error classes (`src/browser/errors.ts`): `BrowserNotFoundError`, `CaptchaDetectedError`, `SessionTimeoutError`, `NavigationTimeoutError`.
+2. ✅ Chrome binary detection (`createLocalBrowserSessionWithRetry`): checks `PLAYWRIGHT_BROWSERS_PATH` and `getChromePath()`, throws `BrowserNotFoundError` with install instructions if not found.
+3. ✅ Retry logic for local browser launch: 3 retries with exponential backoff (2s, 4s, capped 10s).
+4. ✅ Stagehand retry wrapper (`withStagehandRetry`): retries up to 2 times on transient failures (timeout, `net::ERR_*`, target/session closed).
+5. ✅ CAPTCHA detection (`checkForCaptcha`): checks page URL for "challenge"/"captcha" and inspects for visible captcha iframes. Throws `CaptchaDetectedError` with Browserbase debug URL.
+6. ✅ CAPTCHA checks after every navigation step in `browser-workflow.ts` (navigate-publication, navigate-existing-draft).
+7. ✅ `observedAct` wrapped with `withStagehandRetry` for transient-failure resilience.
 
 ## Acceptance Criteria
 

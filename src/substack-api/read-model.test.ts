@@ -78,6 +78,32 @@ describe("readApiInventory", () => {
               },
             ],
           ],
+          [
+            "https://rareinsights.substack.com/api/v1/drafts",
+            {
+              posts: [
+                {
+                  id: 20,
+                  publication_id: 456,
+                  type: "newsletter",
+                  post_date: null,
+                  email_sent_at: null,
+                  is_published: false,
+                  title: null,
+                  draft_title: "Draft Title",
+                  draft_updated_at: "2026-04-02T00:00:00.000Z",
+                  audience: "everyone",
+                  slug: null,
+                  should_send_email: null,
+                  write_comment_permissions: "only_paid",
+                  section_id: null,
+                  section_name: null,
+                  section_slug: null,
+                },
+              ],
+              hasMore: false,
+            },
+          ],
         ]),
       ),
     );
@@ -88,6 +114,8 @@ describe("readApiInventory", () => {
     assert.equal(inventory.configuredPublication?.id, 456);
     assert.equal(inventory.sections?.[0]?.slug, "main");
     assert.equal(inventory.posts?.[0]?.slug, "recent-post");
+    assert.equal(inventory.drafts?.[0]?.draftTitle, "Draft Title");
+    assert.equal(inventory.draftHasMore, false);
   });
 
   it("classifies read failures", async () => {

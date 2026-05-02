@@ -31,6 +31,7 @@ const SUPPORTED_NODE_TYPES = new Set([
   "bulletList",
   "codeBlock",
   "doc",
+  "embedNode",
   "hardBreak",
   "heading",
   "horizontalRule",
@@ -40,6 +41,10 @@ const SUPPORTED_NODE_TYPES = new Set([
   "paragraph",
   "paywallDivider",
   "subscribeWidget",
+  "table",
+  "tableRow",
+  "tableCell",
+  "tableHeader",
   "text",
 ]);
 
@@ -74,6 +79,47 @@ export function buildSubstackDraftPayload(
     sectionId: post.metadata.sectionId,
     comments: post.metadata.comments,
   };
+}
+
+export interface DraftWriteRequestBody extends Record<string, unknown> {
+  draft_title: string;
+  draft_subtitle: string;
+  draft_body: string;
+  draft_podcast_url: null;
+  draft_podcast_duration: null;
+  draft_section_id: number | null;
+  section_chosen: boolean;
+  draft_bylines: Array<{ id: number; is_guest: boolean }>;
+  audience?: string;
+  type?: string;
+  last_updated_at?: string;
+}
+
+export function buildDraftWriteRequestBody(
+  payload: SubstackDraftPayload,
+  userId: number,
+  operation: "create" | "update",
+  lastUpdatedAt?: string,
+): DraftWriteRequestBody {
+  const body: DraftWriteRequestBody = {
+    draft_title: payload.title,
+    draft_subtitle: payload.subtitle ?? "",
+    draft_body: JSON.stringify(payload.body),
+    draft_podcast_url: null,
+    draft_podcast_duration: null,
+    draft_section_id: payload.sectionId ?? null,
+    section_chosen: payload.sectionId !== undefined,
+    draft_bylines: [{ id: userId, is_guest: false }],
+  };
+
+  if (operation === "create") {
+    body.audience = payload.audience ?? "everyone";
+    body.type = "newsletter";
+  } else {
+    body.last_updated_at = lastUpdatedAt ?? new Date().toISOString();
+  }
+
+  return body;
 }
 
 export function validatePayloadCompatibility(

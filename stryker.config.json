@@ -7,8 +7,12 @@
   "mutate": [
     "src/parser/frontmatter.ts",
     "src/parser/schema.ts",
+    "src/parser/markdown.ts",
+    "src/parser/media.ts",
     "src/publish/title.ts",
     "src/publish/prepare.ts",
+    "src/publish/prepublish.ts",
+    "src/substack-api/payload.ts",
     "!src/**/*.test.ts",
     "!src/test/**"
   ],

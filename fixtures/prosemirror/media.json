@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-04-30T10:22:36.416Z",
+  "sourceFile": "examples/media.md",
+  "mode": "draft",
+  "metadata": {
+    "title": "Media Example",
+    "tags": [
+      "example",
+      "media"
+    ]
+  },
+  "html": "<p><img src=\"https://example.com/image.png\" alt=\"Remote alt\" title=\"Remote caption\"></p>\n<p><img src=\"./assets/local-image.png\" alt=\"Local alt\" title=\"Local caption\"></p>\n",
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "https://example.com/image.png",
+          "alt": "Remote alt",
+          "title": "Remote caption",
+          "caption": null
+        }
+      },
+      {
+        "type": "paragraph"
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "./assets/local-image.png",
+          "alt": "Local alt",
+          "title": "Local caption",
+          "caption": null
+        }
+      }
+    ]
+  },
+  "summary": {
+    "valid": true,
+    "nodeTypes": [
+      "doc",
+      "image",
+      "paragraph"
+    ],
+    "markTypes": []
+  }
+}

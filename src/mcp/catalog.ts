@@ -18,6 +18,7 @@ import {
   buildDraftContractMatrix,
   compareDraftContractMatrixArtifacts,
 } from "../browser/draft-contract-matrix.js";
+import { runDoctor } from "../doctor/doctor.js";
 import { preparePost } from "../publish/prepare.js";
 import { buildDraftDuplicateLookupReport } from "../substack-api/draft-lookup.js";
 import { buildDraftInspectionReport } from "../substack-api/draft-inspect.js";
@@ -27,6 +28,7 @@ import {
   compareWorkflowTraceArtifacts,
   reviewWorkflowTraceArtifact,
 } from "../publish/workflow-trace.js";
+import { summarizeMediaManifest } from "../parser/media.js";
 import { validateSchemaFile } from "../schema/fixtures.js";
 import type { McpSurfaceGroup, McpToolDescriptor } from "./types.js";
 
@@ -153,6 +155,40 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   },
   {
     group: "review",
+    name: "api.media",
+    description: "Inspect the parsed media manifest for a Markdown file.",
+    cliCommand: "api media <file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.media",
+        {
+          description: "Inspect the parsed media manifest for a Markdown file.",
+          inputSchema: FileArg,
+          annotations: {
+            title: "Media Manifest",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ file }) => {
+          const prepared = await preparePost(String(file), { mode: "draft" });
+          return jsonResult(
+            toJsonRecord({
+              filePath: prepared.post.filePath,
+              media: {
+                ...prepared.post.media,
+                assets: summarizeMediaManifest(prepared.post.media),
+              },
+            }),
+            "Media manifest inspection completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "review",
     name: "trace.review",
     description: "Summarize a saved workflow trace artifact.",
     cliCommand: "trace review <file>",
@@ -236,6 +272,35 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(policy),
             "Distribution policy review completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "review",
+    name: "doctor",
+    description:
+      "Check local configuration, transport readiness, and ignored runtime files.",
+    cliCommand: "doctor",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "doctor",
+        {
+          description:
+            "Check local configuration, transport readiness, and ignored runtime files.",
+          annotations: {
+            title: "Doctor Diagnostics",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async () => {
+          const report = await runDoctor();
+          return jsonResult(
+            toJsonRecord(report),
+            "Doctor diagnostics completed.",
           );
         },
       );

@@ -42,9 +42,12 @@ const WorkflowStepSchema = z.object({
 const BrowserWorkflowResultSchema = z.object({
   status: z.union([
     z.literal("draft-created"),
+    z.literal("draft-updated"),
     z.literal("schedule-review-opened"),
     z.literal("publish-review-opened"),
     z.literal("publish-clicked"),
+    z.literal("published"),
+    z.literal("scheduled"),
   ]),
   mode: z.union([
     z.literal("draft"),
@@ -64,7 +67,7 @@ const BrowserWorkflowResultSchema = z.object({
       z.literal("api"),
       z.literal("auto"),
     ]),
-    selected: z.literal("browser"),
+    selected: z.union([z.literal("browser"), z.literal("api")]),
     fallbackReason: z.string().optional(),
   }),
   browserbaseSessionId: z.string().optional(),
@@ -76,9 +79,12 @@ const BrowserWorkflowResultSchema = z.object({
 const WorkflowTraceReviewSchema = z.object({
   status: z.union([
     z.literal("draft-created"),
+    z.literal("draft-updated"),
     z.literal("schedule-review-opened"),
     z.literal("publish-review-opened"),
     z.literal("publish-clicked"),
+    z.literal("published"),
+    z.literal("scheduled"),
   ]),
   mode: z.union([
     z.literal("draft"),
@@ -97,7 +103,7 @@ const WorkflowTraceReviewSchema = z.object({
     z.literal("api"),
     z.literal("auto"),
   ]),
-  transportSelected: z.literal("browser"),
+  transportSelected: z.union([z.literal("browser"), z.literal("api")]),
   fallbackReason: z.string().optional(),
   traceCount: z.number().int().nonnegative(),
   stepNames: z.array(z.string()),
@@ -141,7 +147,7 @@ export async function compareWorkflowTraceArtifacts(
   };
 }
 
-export function summarizeWorkflowTrace(review: WorkflowTraceReview): unknown {
+export function summarizeWorkflowTrace(review: WorkflowTraceReview): Record<string, unknown> {
   return {
     status: review.status,
     mode: review.mode,

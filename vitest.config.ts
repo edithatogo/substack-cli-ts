@@ -3,6 +3,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     include: ["src/**/*.test.ts"],
+    exclude: ["src/test/e2e/**"],
     pool: "threads",
     testTimeout: 30_000,
     coverage: {
@@ -18,10 +19,10 @@ export default defineConfig({
         "src/publish/local-workflow.ts",
       ],
       thresholds: {
-        statements: 55,
-        branches: 45,
-        functions: 55,
-        lines: 55,
+        statements: 60,
+        branches: 50,
+        functions: 60,
+        lines: 60,
       },
     },
   },

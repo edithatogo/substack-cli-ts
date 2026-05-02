@@ -134,4 +134,71 @@ Supported custom markers:
 ```markdown
 {{paywall}}
 {{subscribe: Subscribe for future posts}}
+{{youtube: https://www.youtube.com/watch?v=VIDEO_ID}}
+{{embed: https://example.com/article}}
+{{podcast: https://open.spotify.com/episode/ID}}
+```
+
+## Markdown Feature Support
+
+### Supported Nodes (Substack API-compatible)
+
+| ProseMirror Node | Markdown Source | Notes |
+|---|---|---|
+| `paragraph` | Plain text | Default block |
+| `heading` | `#` through `######` | Levels 1-6 |
+| `bulletList` / `listItem` | `- `, `* ` | Nested lists supported |
+| `orderedList` / `listItem` | `1. ` | Nested lists supported |
+| `blockquote` | `> ` | Nested blockquotes supported |
+| `codeBlock` | ` ``` ` or ` ```language ` | Language annotation preserved |
+| `horizontalRule` | `---` | Thematic break |
+| `image` | `![alt](src)` or `<img>` | Captions via `data-caption`, alt, title |
+| `embedNode` | `{{youtube:}}`, `{{embed:}}`, `{{podcast:}}` | URL and embed type stored |
+| `paywallDivider` | `{{paywall}}` | Atom block, no content |
+| `subscribeWidget` | `{{subscribe: label}}` | Label attribute |
+| `table` / `tableRow` / `tableCell` / `tableHeader` | GFM tables | Non-resizable, inline marks supported |
+| `hardBreak` | Line break | |
+| `text` | Text content | |
+
+### Supported Marks
+
+| ProseMirror Mark | Markdown Source |
+|---|---|
+| `bold` | `**text**` or `__text__` |
+| `italic` | `*text*` or `_text_` |
+| `strike` | `~~text~~` |
+| `code` | `` `text` `` |
+| `link` | `[text](url)` |
+
+### Unsupported Markdown Features
+
+These constructs pass through the parser but are either not mapped to a named ProseMirror node or may render differently in Substack's editor. The `inspect` command reports them as compatibility issues before any publish attempt:
+
+| Feature | Why / Fallback |
+|---|---|
+| **Image galleries** | No multi-image group node; single images work independently |
+| **Substack native captioned images** | Captions parsed from `data-caption` but no separate caption element |
+| **Native audio/video** | All media embeds use `embedNode`; no dedicated audio/video ProseMirror node |
+| **Math / LaTeX** (`$$`, `$`) | No MathExtension registered; falls through as plain text |
+| **Callouts / pull quotes** | No Substack blockquote variant; rendered as standard `blockquote` |
+| **Buttons** | No Substack button element; would be stripped if HTML is unrecognized |
+| **Task lists** (`- [ ]`) | Syntax not processed; renders as plain `listItem` |
+| **Mentions** (`@user`) | No mention extension |
+| **Footnote references** | No footnote ProseMirror node |
+| **Figure / figcaption** | HTML5 `<figure>` not handled; children still parsed |
+| **Auto-generated heading IDs** | StarterKit heading extension does not emit `id` attributes |
+| **Image dimensions** | `image` node does not carry `width`/`height` attrs |
+| **Substack editor node names** | Custom node names (`paywallDivider`, `subscribeWidget`, `embedNode`) may not match Substack's internal schema |
+
+The `inspect` command reports the full list of detected node types, mark types, and any unmapped types in `compatibility`:
+
+```text
+$ substack-cli inspect examples/formatting.md
+{
+  "compatibility": {
+    "ok": true,
+    "supportedNodeTypes": ["blockquote", "bulletList", ...],
+    "unsupportedIssues": null
+  }
+}
 ```
