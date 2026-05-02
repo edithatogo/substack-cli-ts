@@ -21,6 +21,12 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 13. Dependency and Discovery Register     | Active      | Track missed work, open questions, and newly identified interdependencies.                               |
 | 14. Quality, CI, and Automation           | Active      | Maintain linting, formatting, coverage, mutation testing, CI, and dependency automation.                 |
 | 15. MCP Integration                       | Active      | Expose selected CLI summaries and validation flows through MCP without leaking local secrets.            |
+| 16. Publish Navigation Diagnosis          | Resolved    | Two-step publish confirmation flow diagnosed and fixed.                                                  |
+| 17. Publication Settings & Branding       | Planned     | Not started.                                                                                             |
+| 18. Custom Domain Management              | Planned     | Not started.                                                                                             |
+| 19. Subscriber Management                 | Planned     | Not started.                                                                                             |
+| 20. Comments & Moderation                 | Planned     | Not started.                                                                                             |
+| 21. Community Features                    | Planned     | Not started.                                                                                             |
 
 ## Operating Rules
 
