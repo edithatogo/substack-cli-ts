@@ -93,67 +93,91 @@
 ## Phase 5: Publication Management
 
 ### Track 17: Publication Settings & Branding
-- **Status:** Planned
+- **Status:** In Progress
 - **File:** [../tracks/17-publication-settings-branding.md](../tracks/17-publication-settings-branding.md)
-- **Summary:** Programmatic management of publication branding — name, description, logo, colors, fonts, layout, SEO metadata, navigation. Requires endpoint discovery.
+- **Summary:** READ implemented: `api publication get` and `api publication settings` commands fetch full publication details via `fetchPublication()` (name, subdomain, colors, fonts, logos, payments state). WRITE not implemented — `POST /api/v1/publication/update` endpoint undiscovered.
 
 ### Track 18: Custom Domain Management
-- **Status:** Planned
+- **Status:** In Progress
 - **File:** [../tracks/18-custom-domain-management.md](../tracks/18-custom-domain-management.md)
-- **Summary:** Programmatic custom domain configuration — read/write domain, DNS verification guidance, SSL status, subdomain setup.
+- **Summary:** READ implemented: `api domain status` via `fetchDomainStatus()` with SSL status mapping and DNS instruction generation for apex/subdomain. WRITE not implemented — set/remove endpoints undiscovered.
 
 ## Phase 6: Subscribers & Community
 
 ### Track 19: Subscriber Management
-- **Status:** Planned
+- **Status:** In Progress
 - **File:** [../tracks/19-subscriber-management.md](../tracks/19-subscriber-management.md)
-- **Summary:** Subscriber CRUD, CSV import/export, segments, suppression lists, gift subscriptions. Requires endpoint discovery.
+- **Summary:** Aggregate subscriber count implemented via `fetchPublicationChecklist()` and `api subscriber count` command. CRUD not implemented — subscriber list endpoint (`GET /api/v1/subscribers`) remains undiscovered.
 
 ### Track 20: Comments & Moderation
-- **Status:** Planned
+- **Status:** In Progress
 - **File:** [../tracks/20-comments-moderation.md](../tracks/20-comments-moderation.md)
-- **Summary:** Comment reading, moderation (approve/delete/pin/reply), spam/quarantine, commenter management.
+- **Summary:** READ implemented: `api comment get <id>` via `client.commentForId()` through substack-adapter. Moderation not implemented — approve/delete/pin/reply endpoints undiscovered.
 
 ### Track 21: Community Features
-- **Status:** Planned
+- **Status:** In Progress
 - **File:** [../tracks/21-community-features.md](../tracks/21-community-features.md)
-- **Summary:** Notes (social posts), chat/DM, threads/Q&A, publication recommendations network.
+- **Summary:** Notes (list/get/create) and following implemented via `src/substack-api/notes.ts` + `substack-api` library. CLI commands: `api notes list`, `api notes get`, `api notes create`, `api following`. Chat/DM, recommendations, threads not implemented.
 
 ## Phase 7: Analytics & Revenue
 
 ### Track 22: Analytics & Reporting
-- **Status:** Planned
+- **Status:** Planned (no discovered endpoints)
 - **File:** [../tracks/22-analytics-reporting.md](../tracks/22-analytics-reporting.md)
-- **Summary:** Post-level analytics, subscriber growth, email performance, revenue reporting. CSV/JSON export.
+- **Summary:** No API endpoints discovered for post-level analytics, subscriber growth, email performance, or revenue reporting. Dashboard-only features.
 
 ### Track 23: Revenue & Billing
-- **Status:** Planned
+- **Status:** Planned (no discovered endpoints)
 - **File:** [../tracks/23-revenue-billing.md](../tracks/23-revenue-billing.md)
-- **Summary:** Subscription tiers/pricing, payout history, tax forms, refunds, boosted posts. Financial data with extra redaction.
+- **Summary:** No API endpoints discovered for subscription tiers, payouts, tax forms, refunds, or boosted posts. `payments_state` read-only via publication object.
 
 ## Phase 8: Content Extensions
 
 ### Track 24: Email & Newsletter Design
-- **Status:** Planned
+- **Status:** Planned (no discovered endpoints)
 - **File:** [../tracks/24-email-newsletter-design.md](../tracks/24-email-newsletter-design.md)
-- **Summary:** Email template design, subject/preview text, test sends, broadcast history.
+- **Summary:** No API endpoints discovered for email templates, test sends, or broadcast history. `should_send_email` draft field partially supported.
 
 ### Track 25: Podcast & Video Management
-- **Status:** Planned
+- **Status:** Planned (no discovered endpoints)
 - **File:** [../tracks/25-podcast-video-management.md](../tracks/25-podcast-video-management.md)
-- **Summary:** Podcast episodes/RSS, audio upload, distribution settings. Video upload and transcoding.
+- **Summary:** No API endpoints discovered for podcast episodes, audio upload, video upload, or distribution settings. Distinct upload pipelines from image upload.
 
 ### Track 26: Cross-posting & Integrations
-- **Status:** Planned
+- **Status:** Planned (no discovered endpoints)
 - **File:** [../tracks/26-cross-posting-integrations.md](../tracks/26-cross-posting-integrations.md)
-- **Summary:** Cross-posting, WordPress/RSS import, Zapier/IFTTT/Discord/Slack integrations, API tokens.
+- **Summary:** No API endpoints discovered for cross-posting, WordPress/RSS import, or third-party integrations. OAuth-based web flows, not CLI-accessible.
 
 ## Phase 9: Team & Collaboration
 
 ### Track 27: Team Management
-- **Status:** Planned
+- **Status:** In Progress
 - **File:** [../tracks/27-team-management.md](../tracks/27-team-management.md)
-- **Summary:** Team member listing, invites, role changes, activity log. Roles: admin, editor, contributor, reader.
+- **Summary:** READ implemented: `api team list` via `fetchTeamMembers()` from `GET /api/v1/publication/users` with id, name, email, role. Invites, role changes, remove, and activity log not implemented.
+
+---
+
+## Phase 10: Project Maturity & Documentation
+
+### Track 28: Package Publishing
+- **Status:** Complete
+- **File:** [../tracks/28-package-publishing.md](../tracks/28-package-publishing.md)
+- **Summary:** `package.json` has all required npm publish metadata (`"private": false`, `"main"`, `"files"`, `"publishConfig"`, `"prepublishOnly"`). `npm pack` produces clean `.tgz`. `npm publish --dry-run` succeeds.
+
+### Track 29: Contributor Documentation
+- **Status:** Complete
+- **File:** [../tracks/29-contributor-documentation.md](../tracks/29-contributor-documentation.md)
+- **Summary:** CONTRIBUTING.md, CODE_OF_CONDUCT.md, CHANGELOG.md, SECURITY.md all exist at repository root with complete content.
+
+### Track 30: API Documentation
+- **Status:** Complete
+- **File:** [../tracks/30-api-documentation.md](../tracks/30-api-documentation.md)
+- **Summary:** `docs/api/architecture.md` provides module map, data flow, dual-transport design rationale, and endpoint-adding guide. `docs/api/commands.md` provides comprehensive CLI command reference.
+
+### Track 31: Remaining Platform Gaps
+- **Status:** Complete
+- **File:** [../tracks/31-remaining-platform-gaps.md](../tracks/31-remaining-platform-gaps.md)
+- **Summary:** Living document cataloging Substack features not implementable via current API discovery — analytics, revenue, email templates, podcast/video, cross-posting, chat, subscriber CRUD, comments write, publication settings write. Includes Tier 1/2/3 recommendations for endpoint discovery and browser automation fallback.
 
 ---
 
@@ -161,10 +185,11 @@
 
 | Status | Count | Tracks |
 |---|---|---|
-| **Complete** | 13 | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 16 |
+| **Complete** | 17 | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 16, 28, 29, 30, 31 |
 | **Active** (ongoing) | 3 | 13, 14, 15 |
-| **Planned** | 11 | 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 |
+| **In Progress** (partial impl.) | 6 | 17, 18, 19, 20, 21, 27 |
+| **Planned** (no endpoints) | 5 | 22, 23, 24, 25, 26 |
 | **Blocked** | 0 | — |
-| **Total** | **27** | |
+| **Total** | **31** | |
 
-*Last updated: 2026-05-02* — Repository pushed to github.com/edithatogo/substack-cli-ts. Initial 16 tracks (Phases 1-4) complete — content pipeline, browser automation, API adapter, and quality tooling. 11 planned tracks (Phases 5-9) mapped covering publication management, subscribers & community, analytics & revenue, content extensions, and team collaboration. Feature coverage document at `docs/substack-feature-coverage.md` and comparison matrix at `docs/feature-matrix.md`.
+*Last updated: 2026-05-04* — Final implementation sweep. Audited all 31 tracks against actual codebase state in `src/cli.ts`, `src/substack-api/`, and `docs/`. Updated track files 17-27 with accurate status reflecting partially implemented functionality. Added Phase 10 (Tracks 28-31) all marked Complete. Key changes: READ operations for publication settings, custom domain, subscribers (count only), comments, notes/following, and team list all confirmed implemented with CLI commands; WRITE operations for all six remain pending due to undiscovered endpoints.

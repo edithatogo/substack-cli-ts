@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Command } from "commander";
+import { Command, type Help } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
 import {
   clearSession,
@@ -102,6 +102,73 @@ program
     "Publish local Markdown files to a user-owned Substack publication.",
   )
   .version("0.1.0");
+
+program
+  .command("completion")
+  .description("Generate shell completion scripts.")
+  .argument("<shell>", "Shell type: bash, zsh, or powershell")
+  .action((shell: string) => {
+    const allCommands: Array<{ name: string; path: string }> = [];
+    function collect(cmd: Command, path?: string) {
+      for (const sub of cmd.commands) {
+        const fullPath = path ? `${path} ${sub.name()}` : sub.name();
+        allCommands.push({ name: sub.name(), path: fullPath });
+        collect(sub, fullPath);
+      }
+    }
+    collect(program);
+
+    const cmdNames = allCommands.map((c) => c.name);
+    const globalOpts = program.options
+      .map((o) => o.long ?? o.short ?? "")
+      .filter(Boolean);
+
+    switch (shell) {
+      case "bash":
+        console.log(`# substack-cli bash completion
+_substack_cli() {
+  local cur prev words cword
+  _init_completion || return
+  if [[ $cword -eq 1 ]]; then
+    COMPREPLY=($(compgen -W "${cmdNames.join(" ")}" -- "$cur"))
+    return
+  fi
+  local word="\${words[$cword]}"
+  if [[ "$word" == --* ]]; then
+    COMPREPLY=($(compgen -W "${globalOpts.join(" ")}" -- "$word"))
+  fi
+}
+complete -F _substack_cli substack-cli
+`);
+        break;
+      case "zsh":
+        console.log(`#compdef substack-cli
+_substack_cli() {
+  local -a commands
+  commands=(
+${allCommands.map((c) => `    "${c.path}:${c.path}"`).join("\n")}
+  )
+  _arguments \\
+${globalOpts.map((o) => `    "${o}"`).join(" \\\n")} \\
+    "*: :->args"
+  case $state in
+    args) _describe 'command' commands ;;
+  esac
+}
+_substack_cli
+`);
+        break;
+      case "powershell":
+        console.log(`@(${allCommands.map((c) => `"${c.name}"`).join(", ")})
+`);
+        break;
+      default:
+        console.error(
+          `Unsupported shell: ${shell}. Use bash, zsh, or powershell.`,
+        );
+        process.exitCode = 1;
+    }
+  });
 
 program
   .command("inspect")

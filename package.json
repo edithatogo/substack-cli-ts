@@ -24,7 +24,8 @@
     "format:check": "prettier --check .",
     "scan:secrets": "node scripts/secret-scan.mjs",
     "quality": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:coverage",
-    "audit:prod": "npm audit --omit=dev"
+    "audit:prod": "npm audit --omit=dev",
+    "completions": "substack-cli completion bash > scripts/completions.bash && substack-cli completion zsh > scripts/completions.zsh && substack-cli completion powershell > scripts/completions.ps1"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.0.0",

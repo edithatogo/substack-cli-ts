@@ -55,4 +55,16 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**Planned.** No implementation started.
+**In Progress (notes+following implemented, chat/recommendations pending)**
+
+**Implemented:**
+- `api notes list` — list recent notes from own profile via `listNotes()` in `notes.ts`
+- `api notes get <id>` — get full note details via `getNote()`
+- `api notes create --body <text>` — create and publish a new note via `createNote()`
+- `api following` — list followed users via `client.ownProfile().following()`
+
+**Pending:**
+- Note delete, like, reshare, reply
+- Recommendations network management (recommend/unrecommend publications)
+- Chat/DM (likely WebSocket-based, not CLI-accessible)
+- Threads/Q&A management

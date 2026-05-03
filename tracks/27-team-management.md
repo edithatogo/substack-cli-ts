@@ -2,7 +2,17 @@
 
 ## Status
 
-Planned
+**In Progress (list implemented, invites pending)**
+
+**Implemented:**
+- `api team list` CLI command — reads team members via `fetchTeamMembers()` from `GET /api/v1/publication/users`
+- Team member schema with id, name, email, role
+
+**Pending:**
+- Invite new collaborators via email
+- Remove collaborators
+- Role changes (admin, editor, contributor, reader)
+- Activity log
 
 ## Goal
 

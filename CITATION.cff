@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: Edithatogo
+    email: d.a.mordaunt@gmail.com
+title: "substack-cli-ts: A TypeScript CLI for publishing Markdown to Substack"
+version: 0.1.0
+date-released: 2026-05-02
+url: "https://github.com/edithatogo/substack-cli-ts"
+license: Apache-2.0
+type: software
+repository-code: "https://github.com/edithatogo/substack-cli-ts"

@@ -54,4 +54,15 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**Planned.** No implementation started.
+**In Progress (read implemented, moderation pending)**
+
+**Implemented:**
+- `api comment get <id>` CLI command — reads a single comment by ID via `client.commentForId()` through substack-adapter
+- Comment read flow via `substack-api` library (exposes `GET /api/v1/comments`)
+
+**Pending:**
+- Comment list with pagination
+- All moderation operations (approve, delete, pin, reply)
+- Spam detection and quarantine management
+- Commenter management (mute, ban, approve)
+- Comment settings per post and globally

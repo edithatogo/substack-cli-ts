@@ -2,7 +2,7 @@
 
 ## Status
 
-Planned
+**Planned (no discovered endpoints)**
 
 ## Goal
 

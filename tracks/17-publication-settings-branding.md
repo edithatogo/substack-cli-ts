@@ -44,10 +44,16 @@ Enable programmatic management of Substack publication settings — branding, la
 
 ## Status
 
-- **Planned**: `publication settings get` command
-- **Planned**: `publication settings set` command with read-modify-write
-- **Planned**: Logo upload command extending Track 10
-- **Planned**: Config-file-based branding import (JSON/YAML)
-- **Planned**: Zod schema for full publication settings payload
-- **Planned**: Pre-write validation and drift detection
-- **Planned**: E2E test that reads current settings, applies a known change, and restores original state
+**In Progress (read implemented, write pending)**
+
+**Implemented:**
+- `api publication get` command — fetches full publication details via `fetchPublication()` with rich schema (name, subdomain, logo, favicon, colors, fonts, payments state)
+- `api publication settings` command — exposes branding-specific fields (colors, fonts, logos)
+- `api inventory` command includes publication details in composite output
+
+**Pending:**
+- `publication settings set` command with read-modify-write
+- Logo upload command extending Track 10
+- Config-file-based branding import (JSON/YAML)
+- Pre-write validation and drift detection
+- E2E test that reads current settings, applies a known change, and restores original state

@@ -53,4 +53,15 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**Planned.** No implementation started.
+**In Progress (count implemented, CRUD pending)**
+
+**Implemented:**
+- Aggregate subscriber count via `fetchPublicationChecklist()` → `getSubscriberCount()` in `subscriber.ts`
+- `api subscriber count` CLI command
+
+**Pending:**
+- Subscriber list (no endpoint discovered)
+- CSV import/export
+- Suppression list management
+- Segments/groups
+- Gift subscriptions
