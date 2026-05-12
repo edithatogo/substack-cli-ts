@@ -10,6 +10,7 @@ export interface PostMetadata {
   sectionId?: number | undefined;
   comments?: "enabled" | "disabled" | "paid" | "free" | undefined;
   scheduleAt?: string | undefined;
+  shouldSendEmail?: boolean | undefined;
 }
 
 export interface ProseMirrorMark {

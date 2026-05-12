@@ -378,6 +378,338 @@ List publication team members.
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
+### `api publication get`
+Fetch full publication details including branding fields.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api publication settings`
+Fetch publication settings (colors, fonts, branding).
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api domain status`
+Show custom domain status and DNS configuration.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api profile me`
+Show own profile information.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api profile show <handle>`
+Show public profile by handle.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `handle` | User handle or slug |
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api following list`
+List followed users.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--limit <limit>` | Maximum number of users to list | `10` |
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api subscriber count`
+Show subscriber count from the publication checklist.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api analytics inventory`
+Probe all analytics endpoints and report availability.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--post-id <id>` | Post ID for post-level analytics | — |
+
+### `api analytics post <post-id>`
+Fetch analytics for a specific post.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `post-id` | Post ID to fetch analytics for |
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api analytics subscribers`
+Fetch subscriber growth analytics.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api analytics email`
+Fetch email performance analytics.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--limit <limit>` | Maximum number of emails to return | `10` |
+
+### `api analytics revenue`
+Fetch revenue analytics.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api analytics snapshot`
+Capture an analytics snapshot and append to local snapshot store.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--interval <interval>` | `daily`, `weekly`, or `monthly` | `daily` |
+| `--post-id <id>` | Post ID for post-level analytics | — |
+
+### `api billing summary`
+Probe all billing endpoints and report availability.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api billing tiers`
+List subscription tiers and pricing.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api billing payouts`
+Show payout history.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api billing taxes`
+Show tax form status.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api email template`
+Show current email template settings.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api email broadcast list`
+Show broadcast history.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--limit <limit>` | Maximum broadcasts to return | `20` |
+
+### `api email broadcast cancel <broadcast-id>`
+Cancel a scheduled broadcast.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `broadcast-id` | Broadcast ID to cancel |
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm cancellation |
+
+### `api email send-test <draft-id>`
+Send a test email for a draft.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `draft-id` | Draft ID to send test for |
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm sending test email |
+
+### `api podcast section`
+Show podcast section details.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api podcast episodes`
+List podcast episodes.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--limit <limit>` | Maximum episodes to return | `20` |
+
+### `api podcast settings`
+Show podcast distribution settings.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api podcast create <audio-file>`
+Create a podcast episode draft from an audio file.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `audio-file` | Audio file path |
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+| `--title <title>` | Episode title |
+| `--draft-id <id>` | Existing draft ID to attach audio to |
+| `--yes` (required) | Confirm episode creation |
+
+### `api podcast schedule <draft-id>`
+Schedule a podcast episode for publication.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `draft-id` | Draft ID to schedule |
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--at <iso-date>` (required) | ISO timestamp for scheduled publication |
+| `--yes` (required) | Confirm scheduling |
+
+### `api podcast video upload <file>`
+Upload a video file.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `file` | Video file path |
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--yes` (required) | Confirm video upload |
+
+### `api podcast video settings <post-id>`
+Show video player settings for a post.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `post-id` | Post ID to inspect |
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api integrations list`
+List configured integrations and their status.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api integrations crosspost <post-id>`
+Cross-post a published article to another platform.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `post-id` | Post ID to cross-post |
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--platform <platform>` (required) | Target platform (e.g., twitter, bluesky) |
+| `--yes` (required) | Confirm cross-posting |
+
+### `api integrations import wordpress <file>`
+Import from WordPress.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `file` | WordPress export file path |
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm import |
+
+### `api integrations import rss <url>`
+Import from an RSS feed.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `url` | RSS feed URL |
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm import |
+
+### `api integrations tokens`
+List API tokens (redacted).
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
 ---
 
 ## `config`

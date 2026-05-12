@@ -30,13 +30,7 @@ import {
 import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
 import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
-import {
-  configFilePath,
-  draftMappingsFilePath,
-  localBrowserProfileDir,
-  sessionFilePath,
-  stateDir,
-} from "./config/paths.js";
+import { stateDir, configFilePath, draftMappingsFilePath, sessionFilePath, localBrowserProfileDir, analyticsSnapshotsDir } from "./config/paths.js";
 import {
   loadConfig,
   loadEffectiveConfig,
@@ -93,6 +87,57 @@ import {
 } from "./schema/fixtures.js";
 import { summarizeMediaManifest } from "./parser/media.js";
 import { redact, redactUrl } from "./util/redact.js";
+import {
+  fetchPostAnalytics,
+  fetchSubscriberGrowth,
+  fetchEmailPerformance,
+  fetchRevenueAnalytics,
+  fetchAnalyticsInventory,
+} from "./substack-api/analytics.js";
+import {
+  fetchSubscriptionTiers,
+  fetchPayoutHistory,
+  fetchTaxFormStatus,
+  fetchBillingSummary,
+} from "./substack-api/billing.js";
+import {
+  fetchEmailTemplate,
+  fetchBroadcastHistory,
+  cancelScheduledBroadcast,
+  sendTestEmail,
+} from "./substack-api/email.js";
+import {
+  fetchPodcastSection,
+  fetchPodcastEpisodes,
+  fetchPodcastSettings,
+  createPodcastEpisode,
+  schedulePodcastEpisode,
+  uploadVideo,
+  fetchVideoSettings,
+} from "./substack-api/podcast.js";
+import {
+  fetchIntegrations,
+  crossPost,
+  importFromWordPress,
+  importFromRss,
+  fetchApiTokens,
+} from "./substack-api/integrations.js";
+import { fetchPublication, fetchPublicationChecklist } from "./substack-api/publication.js";
+import {
+  fetchPublicationSettings,
+  updatePublicationSettings,
+  uploadPublicationLogo,
+  uploadPublicationFavicon,
+} from "./substack-api/publication-settings.js";
+import { fetchDomainStatus } from "./substack-api/domain.js";
+import { fetchTeamMembers } from "./substack-api/team.js";
+import { getSubscriberCount } from "./substack-api/subscriber.js";
+import { readOwnProfile, readPublicProfile } from "./substack-api/profile.js";
+import { listNotes, getNote, createNote } from "./substack-api/notes.js";
+import { createSubstackClient } from "./substack-api/substack-adapter.js";
+import { fetchSubscriberList } from "./substack-api/subscriber-list.js";
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const program = new Command();
 
@@ -1262,6 +1307,1220 @@ apiDraft
 
     console.log(JSON.stringify(report, null, 2));
   });
+
+const apiPublication = api
+  .command("publication")
+  .description("Read publication details and settings.");
+
+apiPublication
+  .command("get")
+  .description("Fetch full publication details.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    try {
+      const result = await fetchPublication(material.publicationUrl, material, fetch);
+      console.log(JSON.stringify(result, null, 2));
+    } catch (err) {
+      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+apiPublication
+  .command("settings")
+  .description("Fetch publication settings (colors, fonts, branding).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    try {
+      const result = await fetchPublication(material.publicationUrl, material, fetch);
+      console.log(JSON.stringify({
+        name: result.name,
+        subdomain: result.subdomain,
+        customDomain: result.customDomain,
+        heroText: result.heroText,
+        paymentsState: result.paymentsState,
+        logoUrl: result.logoUrl,
+        faviconUrl: result.faviconUrl,
+        colors: result.colors,
+        fontFamilyHeading: result.fontFamilyHeading,
+        fontFamilyBody: result.fontFamilyBody,
+        customDomainEnabled: result.customDomainEnabled,
+      }, null, 2));
+    } catch (err) {
+      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+apiPublication
+  .command("settings")
+  .description("Fetch publication settings (colors, fonts, branding).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    try {
+      const result = await fetchPublication(material.publicationUrl, material, fetch);
+      console.log(JSON.stringify({
+        name: result.name,
+        subdomain: result.subdomain,
+        customDomain: result.customDomain,
+        heroText: result.heroText,
+        paymentsState: result.paymentsState,
+        logoUrl: result.logoUrl,
+        faviconUrl: result.faviconUrl,
+        colors: result.colors,
+        fontFamilyHeading: result.fontFamilyHeading,
+        fontFamilyBody: result.fontFamilyBody,
+        customDomainEnabled: result.customDomainEnabled,
+      }, null, 2));
+    } catch (err) {
+      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+apiPublication
+  .command("get-details")
+  .description("Alias for settings.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    try {
+      const result = await fetchPublicationSettings(material.publicationUrl, material, fetch);
+      console.log(JSON.stringify(result, null, 2));
+    } catch (err) {
+      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+apiPublication
+  .command("set")
+  .description("Update publication settings with a read-modify-write cycle.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--from-json <file>", "JSON file with settings to apply")
+  .option("--from-yaml <file>", "YAML file with settings to apply")
+  .option("--name <name>", "Publication name")
+  .option("--description <description>", "Publication description")
+  .option("--hero-text <text>", "Hero text")
+  .option("--logo-url <url>", "Logo URL")
+  .option("--favicon-url <url>", "Favicon URL")
+  .option("--primary-color <color>", "Primary color (hex)")
+  .option("--secondary-color <color>", "Secondary color (hex)")
+  .option("--background-color <color>", "Background color (hex)")
+  .option("--text-color <color>", "Text color (hex)")
+  .option("--font-heading <font>", "Heading font family")
+  .option("--font-body <font>", "Body font family")
+  .option("--seo-title <title>", "SEO meta title")
+  .option("--seo-description <description>", "SEO meta description")
+  .option("--og-image-url <url>", "Open Graph image URL")
+  .option("--email-header-color <color>", "Email header color (hex)")
+  .option("--email-footer-color <color>", "Email footer color (hex)")
+  .option("--dry-run", "Preview changes without writing", false)
+  .option("--yes", "Confirm update without interactive prompt", false)
+  .action(async (options: {
+    source: "auto" | ApiAuthSource;
+    fromJson?: string;
+    fromYaml?: string;
+    name?: string;
+    description?: string;
+    heroText?: string;
+    logoUrl?: string;
+    faviconUrl?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    fontHeading?: string;
+    fontBody?: string;
+    seoTitle?: string;
+    seoDescription?: string;
+    ogImageUrl?: string;
+    emailHeaderColor?: string;
+    emailFooterColor?: string;
+    dryRun: boolean;
+    yes: boolean;
+  }) => {
+    if (!options.yes && !options.dryRun) {
+      console.log(JSON.stringify({
+        status: "failed",
+        message: "Use --yes to confirm update or --dry-run to preview changes."
+      }, null, 2));
+      process.exitCode = 1;
+      return;
+    }
+
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+
+    let updates: Record<string, unknown> = {};
+
+    if (options.fromJson) {
+      const { readFileSync } = await import("node:fs");
+      updates = JSON.parse(readFileSync(options.fromJson, "utf-8"));
+    } else if (options.fromYaml) {
+      const { readFileSync } = await import("node:fs");
+      const yaml = await import("js-yaml");
+      updates = yaml.load(readFileSync(options.fromYaml, "utf-8")) as Record<string, unknown>;
+    } else {
+      if (options.name) updates.name = options.name;
+      if (options.description) updates.description = options.description;
+      if (options.heroText) updates.hero_text = options.heroText;
+      if (options.logoUrl) updates.logo_url = options.logoUrl;
+      if (options.faviconUrl) updates.favicon_url = options.faviconUrl;
+      if (options.primaryColor || options.secondaryColor || options.backgroundColor || options.textColor) {
+        updates.colors = {};
+        if (options.primaryColor) (updates.colors as Record<string, string>).primary = options.primaryColor;
+        if (options.secondaryColor) (updates.colors as Record<string, string>).secondary = options.secondaryColor;
+        if (options.backgroundColor) (updates.colors as Record<string, string>).background = options.backgroundColor;
+        if (options.textColor) (updates.colors as Record<string, string>).text = options.textColor;
+      }
+      if (options.fontHeading) updates.font_family_heading = options.fontHeading;
+      if (options.fontBody) updates.font_family_body = options.fontBody;
+      if (options.seoTitle) updates.seo_title = options.seoTitle;
+      if (options.seoDescription) updates.seo_description = options.seoDescription;
+      if (options.ogImageUrl) updates.og_image_url = options.ogImageUrl;
+      if (options.emailHeaderColor) updates.email_header_color = options.emailHeaderColor;
+      if (options.emailFooterColor) updates.email_footer_color = options.emailFooterColor;
+    }
+
+    const result = await updatePublicationSettings(
+      material.publicationUrl,
+      material,
+      fetch,
+      updates,
+      { dryRun: options.dryRun, confirm: options.yes },
+    );
+
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiPublication
+  .command("upload-logo")
+  .description("Upload a logo image and update publication settings.")
+  .argument("<file>", "Logo image file to upload")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--yes", "Confirm upload without interactive prompt", false)
+  .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(JSON.stringify({
+        status: "failed",
+        message: "Use --yes to confirm logo upload."
+      }, null, 2));
+      process.exitCode = 1;
+      return;
+    }
+
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await uploadPublicationLogo(
+      material.publicationUrl,
+      material,
+      fetch,
+      file,
+      { yes: options.yes },
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiPublication
+  .command("upload-favicon")
+  .description("Upload a favicon image and update publication settings.")
+  .argument("<file>", "Favicon image file to upload")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--yes", "Confirm upload without interactive prompt", false)
+  .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(JSON.stringify({
+        status: "failed",
+        message: "Use --yes to confirm favicon upload."
+      }, null, 2));
+      process.exitCode = 1;
+      return;
+    }
+
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await uploadPublicationFavicon(
+      material.publicationUrl,
+      material,
+      fetch,
+      file,
+      { yes: options.yes },
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiDomain = api
+  .command("domain")
+  .description("Custom domain status and DNS instructions.");
+
+apiDomain
+  .command("status")
+  .description("Show custom domain status and DNS configuration.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchDomainStatus(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiTeam = api
+  .command("team")
+  .description("Publication team management.");
+
+apiTeam
+  .command("list")
+  .description("List publication team members.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchTeamMembers(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiProfile = api
+  .command("profile")
+  .description("Read own or public Substack profiles.");
+
+apiProfile
+  .command("me")
+  .description("Show own profile information.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await readOwnProfile(material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiProfile
+  .command("show")
+  .description("Show public profile by handle.")
+  .argument("<handle>", "User handle or slug")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (handle: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await readPublicProfile(material, handle, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiFollowing = api
+  .command("following")
+  .description("Show users that the authenticated user follows.");
+
+apiFollowing
+  .command("list")
+  .description("List followed users.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--limit <limit>", "Maximum number of users to list", parseInteger, 10)
+  .action(async (options: { source: "auto" | ApiAuthSource; limit: number }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const client = createSubstackClient(material);
+    const profile = await client.ownProfile();
+    const users: Array<{ id: string; name: string; handle: string }> = [];
+    let count = 0;
+    for await (const user of profile.following({ limit: options.limit })) {
+      users.push({ id: String(user.id), name: user.name, handle: user.handle });
+      count++;
+    }
+    console.log(JSON.stringify({ status: "ok", users, count, message: `Found ${count} followed users.` }, null, 2));
+  });
+
+const apiSubscriber = api
+  .command("subscriber")
+  .description("Subscriber information.");
+
+apiSubscriber
+  .command("count")
+  .description("Show subscriber count from the publication checklist.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    try {
+      const count = await getSubscriberCount(material.publicationUrl, material, fetch);
+      console.log(JSON.stringify({ status: "ok", count, message: `Publication has ${count} subscribers.` }, null, 2));
+    } catch (err) {
+      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      process.exitCode = 1;
+    }
+  });
+
+apiSubscriber
+  .command("list")
+  .description("List subscribers for the publication.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--limit <limit>", "Maximum number of subscribers to return", parseInteger, 100)
+  .option("--offset <offset>", "Offset for pagination", parseInteger, 0)
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      limit: number;
+      offset: number;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchSubscriberList(
+        material.publicationUrl,
+        material,
+        fetch,
+        { limit: options.limit, offset: options.offset },
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+const apiNotes = api
+  .command("notes")
+  .description("Manage notes through the Substack API.");
+
+apiNotes
+  .command("list")
+  .description("List recent notes from your profile.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--limit <limit>", "Maximum number of notes to list", parseInteger, 10)
+  .action(async (options: { source: "auto" | ApiAuthSource; limit: number }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const notes = await listNotes(material, options.limit);
+    console.log(JSON.stringify({ status: "ok", notes, count: notes.length, message: `Found ${notes.length} notes.` }, null, 2));
+  });
+
+apiNotes
+  .command("get")
+  .description("Get full details for a specific note by ID.")
+  .argument("<id>", "Note ID")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (id: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const noteId = Number.parseInt(id, 10);
+    if (!Number.isFinite(noteId) || noteId < 0) {
+      console.error(`Invalid note ID: ${id}`);
+      process.exitCode = 1;
+      return;
+    }
+    const result = await getNote(material, noteId);
+    console.log(JSON.stringify({ status: "ok", note: result }, null, 2));
+  });
+
+apiNotes
+  .command("create")
+  .description("Publish a note immediately.")
+  .requiredOption("--body <text>", "Note body text")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { body: string; source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await createNote(material, options.body);
+    console.log(JSON.stringify({ status: "ok", id: result.id, publishedAt: result.publishedAt, message: `Note published (ID: ${result.id}).` }, null, 2));
+  });
+
+const apiAnalytics = api
+  .command("analytics")
+  .description("Read-only analytics and reporting probes.");
+
+apiAnalytics
+  .command("inventory")
+  .description("Probe all analytics endpoints and report availability.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--post-id <id>", "Post ID for post-level analytics", parseInteger)
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      postId?: number;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchAnalyticsInventory(
+        material.publicationUrl,
+        material,
+        fetch,
+        options.postId,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiAnalytics
+  .command("post")
+  .description("Fetch analytics for a specific post.")
+  .argument("<post-id>", "Post ID to fetch analytics for")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (
+      postId: string,
+      options: { source: "auto" | ApiAuthSource },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchPostAnalytics(
+        material.publicationUrl,
+        Number(postId),
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiAnalytics
+  .command("subscribers")
+  .description("Fetch subscriber growth analytics.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchSubscriberGrowth(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiAnalytics
+  .command("email")
+  .description("Fetch email performance analytics.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--limit <limit>", "Maximum number of emails to return", parseInteger, 10)
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      limit: number;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchEmailPerformance(
+        material.publicationUrl,
+        material,
+        fetch,
+        options.limit,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiAnalytics
+  .command("revenue")
+  .description("Fetch revenue analytics.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchRevenueAnalytics(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiAnalytics
+  .command("snapshot")
+  .description("Capture an analytics snapshot and append to local snapshot store.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--interval <interval>", "daily, weekly, or monthly", "daily")
+  .option("--post-id <id>", "Post ID for post-level analytics", parseInteger)
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      interval: string;
+      postId?: number;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const inventory = await fetchAnalyticsInventory(
+        material.publicationUrl,
+        material,
+        fetch,
+        options.postId,
+      );
+
+      const snapshot = {
+        capturedAt: new Date().toISOString(),
+        interval: options.interval,
+        postId: options.postId,
+        postAnalytics: inventory.postAnalytics ?? null,
+        subscriberGrowth: inventory.subscriberGrowth ?? null,
+        emailPerformance: inventory.emailPerformance ?? null,
+        revenue: inventory.revenue ?? null,
+      };
+
+      const snapshotsDir = analyticsSnapshotsDir();
+      if (!existsSync(snapshotsDir)) {
+        mkdirSync(snapshotsDir, { recursive: true });
+      }
+
+      const date = new Date().toISOString().slice(0, 10);
+      const file = join(snapshotsDir, `${options.interval}-${date}.jsonl`);
+      appendFileSync(file, JSON.stringify(snapshot) + "\n");
+
+      console.log(JSON.stringify({
+        status: "ok",
+        snapshotFile: file,
+        capturedAt: snapshot.capturedAt,
+        message: `Analytics snapshot appended to ${file}`,
+      }, null, 2));
+    },
+  );
+
+const apiBilling = api
+  .command("billing")
+  .description("Read-only billing and revenue probes.");
+
+apiBilling
+  .command("summary")
+  .description("Probe all billing endpoints and report availability.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchBillingSummary(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiBilling
+  .command("tiers")
+  .description("List subscription tiers and pricing.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchSubscriptionTiers(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiBilling
+  .command("payouts")
+  .description("Show payout history.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchPayoutHistory(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiBilling
+  .command("taxes")
+  .description("Show tax form status.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchTaxFormStatus(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+const apiEmail = api
+  .command("email")
+  .description("Email newsletter design and management.");
+
+apiEmail
+  .command("template")
+  .description("Show current email template settings.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchEmailTemplate(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiEmail
+  .command("broadcast")
+  .description("Manage email broadcasts.")
+  .addCommand(
+    (() => {
+      const broadcastList = new Command("list")
+        .description("Show broadcast history.")
+        .option("--source <source>", "auto, env, or local-profile", "auto")
+        .option("--limit <limit>", "Maximum broadcasts to return", parseInteger, 20)
+        .action(
+          async (options: {
+            source: "auto" | ApiAuthSource;
+            limit: number;
+          }) => {
+            const effective = await loadEffectiveConfig();
+            const material = await resolveApiAuthMaterial(effective, options.source);
+            const result = await fetchBroadcastHistory(
+              material.publicationUrl,
+              material,
+              fetch,
+              options.limit,
+            );
+            console.log(JSON.stringify(result, null, 2));
+            if (result.status !== "ok") {
+              process.exitCode = 1;
+            }
+          },
+        );
+      return broadcastList;
+    })(),
+  )
+  .addCommand(
+    (() => {
+      const broadcastCancel = new Command("cancel")
+        .description("Cancel a scheduled broadcast.")
+        .argument("<broadcast-id>", "Broadcast ID to cancel")
+        .requiredOption("--yes", "Confirm cancellation")
+        .action(
+          async (broadcastId: string, options: { yes: boolean }) => {
+            if (!options.yes) {
+              console.log(
+                JSON.stringify(
+                  {
+                    status: "failed",
+                    message: "Add --yes to confirm broadcast cancellation.",
+                  },
+                  null,
+                  2,
+                ),
+              );
+              process.exitCode = 1;
+              return;
+            }
+            const effective = await loadEffectiveConfig();
+            const material = await resolveApiAuthMaterial(effective, "auto");
+            const result = await cancelScheduledBroadcast(
+              material.publicationUrl,
+              broadcastId,
+              material,
+              fetch,
+            );
+            console.log(JSON.stringify(result, null, 2));
+            if (result.status !== "ok") {
+              process.exitCode = 1;
+            }
+          },
+        );
+      return broadcastCancel;
+    })(),
+  );
+
+apiEmail
+  .command("send-test")
+  .description("Send a test email for a draft.")
+  .argument("<draft-id>", "Draft ID to send test for")
+  .requiredOption("--yes", "Confirm sending test email")
+  .action(async (draftId: string, options: { yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Add --yes to confirm sending test email.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, "auto");
+    const result = await sendTestEmail(
+      material.publicationUrl,
+      Number(draftId),
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiPodcast = api
+  .command("podcast")
+  .description("Podcast and video management.");
+
+apiPodcast
+  .command("section")
+  .description("Show podcast section details.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchPodcastSection(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiPodcast
+  .command("episodes")
+  .description("List podcast episodes.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--limit <limit>", "Maximum episodes to return", parseInteger, 20)
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      limit: number;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchPodcastEpisodes(
+        material.publicationUrl,
+        material,
+        fetch,
+        options.limit,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiPodcast
+  .command("settings")
+  .description("Show podcast distribution settings.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchPodcastSettings(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiPodcast
+  .command("create")
+  .description("Create a podcast episode draft from an audio file.")
+  .argument("<audio-file>", "Audio file path")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--title <title>", "Episode title")
+  .option("--draft-id <id>", "Existing draft ID to attach audio to", parseInteger)
+  .requiredOption("--yes", "Confirm episode creation")
+  .action(
+    async (
+      audioFile: string,
+      options: {
+        source: "auto" | ApiAuthSource;
+        title?: string;
+        draftId?: number;
+        yes: boolean;
+      },
+    ) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Add --yes to confirm podcast episode creation.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const episodeOptions: { title?: string; draftId?: number } = {};
+      if (options.title) episodeOptions.title = options.title;
+      if (options.draftId) episodeOptions.draftId = options.draftId;
+      const result = await createPodcastEpisode(
+        material.publicationUrl,
+        audioFile,
+        material,
+        fetch,
+        episodeOptions,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiPodcast
+  .command("schedule")
+  .description("Schedule a podcast episode for publication.")
+  .argument("<draft-id>", "Draft ID to schedule")
+  .requiredOption("--at <iso-date>", "ISO timestamp for scheduled publication")
+  .requiredOption("--yes", "Confirm scheduling")
+  .action(
+    async (
+      draftId: string,
+      options: { at: string; yes: boolean },
+    ) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Add --yes to confirm scheduling.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, "auto");
+      const result = await schedulePodcastEpisode(
+        material.publicationUrl,
+        Number(draftId),
+        options.at,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+const apiVideo = apiPodcast
+  .command("video")
+  .description("Video management.");
+
+apiVideo
+  .command("upload")
+  .description("Upload a video file.")
+  .argument("<file>", "Video file path")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm video upload")
+  .action(
+    async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Add --yes to confirm video upload.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await uploadVideo(
+        material.publicationUrl,
+        file,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiVideo
+  .command("settings")
+  .description("Show video player settings for a post.")
+  .argument("<post-id>", "Post ID to inspect")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (
+      postId: string,
+      options: { source: "auto" | ApiAuthSource },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchVideoSettings(
+        material.publicationUrl,
+        Number(postId),
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+const apiIntegrations = api
+  .command("integrations")
+  .description("Cross-posting and integration management.");
+
+apiIntegrations
+  .command("list")
+  .description("List configured integrations and their status.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchIntegrations(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiIntegrations
+  .command("crosspost")
+  .description("Cross-post a published article to another platform.")
+  .argument("<post-id>", "Post ID to cross-post")
+  .requiredOption("--platform <platform>", "Target platform (e.g., twitter, bluesky)")
+  .requiredOption("--yes", "Confirm cross-posting")
+  .action(
+    async (
+      postId: string,
+      options: { platform: string; yes: boolean },
+    ) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Add --yes to confirm cross-posting.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, "auto");
+      const result = await crossPost(
+        material.publicationUrl,
+        Number(postId),
+        options.platform,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiIntegrations
+  .command("import")
+  .description("Import content from external sources.")
+  .addCommand(
+    (() => {
+      const wpImport = new Command("wordpress")
+        .description("Import from WordPress.")
+        .argument("<file>", "WordPress export file path")
+        .requiredOption("--yes", "Confirm import")
+        .action(async (file: string, options: { yes: boolean }) => {
+          if (!options.yes) {
+            console.log(
+              JSON.stringify(
+                {
+                  status: "failed",
+                  message: "Add --yes to confirm WordPress import.",
+                },
+                null,
+                2,
+              ),
+            );
+            process.exitCode = 1;
+            return;
+          }
+          const effective = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(effective, "auto");
+          const result = await importFromWordPress(
+            material.publicationUrl,
+            file,
+            material,
+            fetch,
+          );
+          console.log(JSON.stringify(result, null, 2));
+          if (result.status !== "ok") {
+            process.exitCode = 1;
+          }
+        });
+      return wpImport;
+    })(),
+  )
+  .addCommand(
+    (() => {
+      const rssImport = new Command("rss")
+        .description("Import from an RSS feed.")
+        .argument("<url>", "RSS feed URL")
+        .requiredOption("--yes", "Confirm import")
+        .action(async (url: string, options: { yes: boolean }) => {
+          if (!options.yes) {
+            console.log(
+              JSON.stringify(
+                {
+                  status: "failed",
+                  message: "Add --yes to confirm RSS import.",
+                },
+                null,
+                2,
+              ),
+            );
+            process.exitCode = 1;
+            return;
+          }
+          const effective = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(effective, "auto");
+          const result = await importFromRss(
+            material.publicationUrl,
+            url,
+            material,
+            fetch,
+          );
+          console.log(JSON.stringify(result, null, 2));
+          if (result.status !== "ok") {
+            process.exitCode = 1;
+          }
+        });
+      return rssImport;
+    })(),
+  );
+
+apiIntegrations
+  .command("tokens")
+  .description("List API tokens (redacted).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchApiTokens(
+        material.publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 const config = program
   .command("config")

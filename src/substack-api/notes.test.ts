@@ -2,12 +2,14 @@ import assert from "node:assert/strict";
 import { describe, it, vi } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import { createSubstackClient } from "./substack-adapter.js";
+import { type FetchLike } from "./client.js";
 
 vi.mock("./substack-adapter.js", () => ({
   createSubstackClient: vi.fn(),
 }));
 
-const { listNotes, getNote, createNote } = await import("./notes.js");
+const { listNotes, getNote, createNote, deleteNote, likeNote, reshareNote } =
+  await import("./notes.js");
 
 function material() {
   return materialFromCookieHeader(
@@ -15,6 +17,14 @@ function material() {
     "https://rareinsights.substack.com",
     "env",
   );
+}
+
+function fakeFetch(status: number, body: string): FetchLike {
+  return () =>
+    Promise.resolve({
+      status,
+      text: () => Promise.resolve(body),
+    });
 }
 
 function asyncIterable<T>(items: T[]): AsyncIterable<T> {
@@ -181,5 +191,114 @@ describe("createNote", () => {
     vi.mocked(createSubstackClient).mockReturnValue(client as never);
 
     await assert.rejects(createNote(material(), "bad"), /Publish denied/);
+  });
+});
+
+describe("deleteNote", () => {
+  it("sends DELETE and returns status on success", async () => {
+    const result = await deleteNote(material(), 42, fakeFetch(200, "{}"));
+    assert.equal(result.status, 200);
+  });
+
+  it("returns status on not-found response", async () => {
+    const result = await deleteNote(material(), 999, fakeFetch(404, "{}"));
+    assert.equal(result.status, 404);
+  });
+
+  it("returns status 0 when fetch throws", async () => {
+    const failingFetch: FetchLike = () =>
+      Promise.reject(new Error("Network failure"));
+    const result = await deleteNote(material(), 1, failingFetch);
+    assert.equal(result.status, 0);
+  });
+
+  it("targets the correct URL", async () => {
+    let capturedUrl = "";
+    const urlCapturingFetch: FetchLike = (url) => {
+      capturedUrl = url;
+      return Promise.resolve({ status: 200, text: () => Promise.resolve("{}") });
+    };
+    await deleteNote(material(), 42, urlCapturingFetch);
+    assert.equal(
+      capturedUrl,
+      "https://rareinsights.substack.com/api/v1/notes/42",
+    );
+  });
+});
+
+describe("likeNote", () => {
+  it("calls like on the note returned by noteForId", async () => {
+    const likeFn = vi.fn().mockResolvedValue(undefined);
+    const client = mockClient();
+    client.noteForId.mockResolvedValue({
+      id: "note-like-1",
+      body: "Note to like",
+      author: { id: 1, name: "Author", handle: "@author", avatarUrl: "" },
+      publishedAt: new Date("2026-01-01T00:00:00Z"),
+      likesCount: 0,
+      like: likeFn,
+    });
+    vi.mocked(createSubstackClient).mockReturnValue(client as never);
+
+    await likeNote(material(), 1);
+
+    assert.equal(client.noteForId.mock.calls[0]?.[0], 1);
+    assert.equal(likeFn.mock.calls.length, 1);
+  });
+
+  it("propagates errors from noteForId", async () => {
+    const client = mockClient();
+    client.noteForId.mockRejectedValue(new Error("Note not found"));
+    vi.mocked(createSubstackClient).mockReturnValue(client as never);
+
+    await assert.rejects(likeNote(material(), 999), /Note not found/);
+  });
+
+  it("propagates errors from like", async () => {
+    const likeFn = vi.fn().mockRejectedValue(new Error("Like failed"));
+    const client = mockClient();
+    client.noteForId.mockResolvedValue({
+      id: "note-like-2",
+      body: "Note",
+      author: { id: 1, name: "Author", handle: "@author", avatarUrl: "" },
+      publishedAt: new Date("2026-01-01T00:00:00Z"),
+      likesCount: 0,
+      like: likeFn,
+    });
+    vi.mocked(createSubstackClient).mockReturnValue(client as never);
+
+    await assert.rejects(likeNote(material(), 1), /Like failed/);
+  });
+});
+
+describe("reshareNote", () => {
+  it("sends POST and returns status on success", async () => {
+    const result = await reshareNote(material(), 42, fakeFetch(200, "{}"));
+    assert.equal(result.status, 200);
+  });
+
+  it("returns status on not-found response", async () => {
+    const result = await reshareNote(material(), 999, fakeFetch(404, "{}"));
+    assert.equal(result.status, 404);
+  });
+
+  it("returns status 0 when fetch throws", async () => {
+    const failingFetch: FetchLike = () =>
+      Promise.reject(new Error("Network failure"));
+    const result = await reshareNote(material(), 1, failingFetch);
+    assert.equal(result.status, 0);
+  });
+
+  it("targets the correct URL", async () => {
+    let capturedUrl = "";
+    const urlCapturingFetch: FetchLike = (url) => {
+      capturedUrl = url;
+      return Promise.resolve({ status: 200, text: () => Promise.resolve("{}") });
+    };
+    await reshareNote(material(), 42, urlCapturingFetch);
+    assert.equal(
+      capturedUrl,
+      "https://rareinsights.substack.com/api/v1/notes/42/reshare",
+    );
   });
 });

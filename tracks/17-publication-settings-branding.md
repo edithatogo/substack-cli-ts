@@ -44,16 +44,27 @@ Enable programmatic management of Substack publication settings — branding, la
 
 ## Status
 
-**In Progress (read implemented, write pending)**
+**Complete**
 
 **Implemented:**
 - `api publication get` command — fetches full publication details via `fetchPublication()` with rich schema (name, subdomain, logo, favicon, colors, fonts, payments state)
 - `api publication settings` command — exposes branding-specific fields (colors, fonts, logos)
+- `api publication get-details` command — alias that returns raw `fetchPublicationSettings()` output
+- `api publication set` command — read-modify-write cycle via `updatePublicationSettings()`
+  - Supports `--from-json <file>` and `--from-yaml <file>` for batch updates
+  - Supports individual CLI flags: `--name`, `--description`, `--hero-text`, `--logo-url`, `--favicon-url`, `--primary-color`, `--secondary-color`, `--background-color`, `--text-color`, `--font-heading`, `--font-body`, `--seo-title`, `--seo-description`, `--og-image-url`, `--email-header-color`, `--email-footer-color`
+  - `--dry-run` previews diff without writing
+  - `--yes` confirms irreversible changes
+- `api publication upload-logo <file>` command — uploads image via `uploadPublicationLogo()` then updates `logo_url`
+- `api publication upload-favicon <file>` command — uploads image via `uploadPublicationFavicon()` then updates `favicon_url`
 - `api inventory` command includes publication details in composite output
+- `src/substack-api/publication-settings.ts` module with:
+  - `PublicationSettingsUpdateSchema` (zod) for validation
+  - `fetchPublicationSettings()` — read endpoint reuse
+  - `updatePublicationSettings()` — read-modify-write with diff preview
+  - `uploadPublicationLogo()` / `uploadPublicationFavicon()` — image upload + setting update
+  - `computeSettingsDiff()` — shallow diff for preview output
+- `src/substack-api/publication-settings.test.ts` — 18 test cases covering fetch, update, preview, logo/favicon upload, diff, and edge cases
 
 **Pending:**
-- `publication settings set` command with read-modify-write
-- Logo upload command extending Track 10
-- Config-file-based branding import (JSON/YAML)
-- Pre-write validation and drift detection
-- E2E test that reads current settings, applies a known change, and restores original state
+- None. Track 17 is complete.

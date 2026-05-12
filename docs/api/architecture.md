@@ -56,7 +56,7 @@ src/
 ├── substack-api/          # Internal API adapter
 │   ├── auth.ts            # Cookie/session material extraction and validation
 │   ├── client.ts          # Low-level HTTP helpers (headers, request, error classification)
-│   ├── substack-adapter.ts # Bridge to the external `substack-api` npm package
+│   ├── substack-adapter.ts # Bridge to the vendored `substack-api` package
 │   ├── read-model.ts      # Read-only inventory (user, publication, sections, posts, drafts)
 │   ├── draft-write.ts     # Draft create/update planning and execution
 │   ├── publish-write.ts   # Publish and schedule planning and execution
@@ -79,6 +79,12 @@ src/
 ├── test/                  # Shared test utilities and fixtures
 ```
 
+## Vendored Substack API Client
+
+The `substack-api` package name resolves from `vendor/substack-api` via the local file dependency in `package.json`. This keeps the upstream TypeScript client editable in the repo while preserving the existing import path used by `src/substack-api/substack-adapter.ts`.
+
+The vendored copy intentionally omits upstream sample fixtures with Windows-invalid `?` characters in filenames. Keep functional changes in `vendor/substack-api/src`, then run the root validation commands so the CLI and the vendored package stay compatible.
+
 ## Dual-Transport Design
 
 The CLI supports two distinct methods for publishing content to Substack, selected via `--transport` (or the `TRANSPORT` config value):
@@ -86,6 +92,7 @@ The CLI supports two distinct methods for publishing content to Substack, select
 ### Browser Transport
 
 Uses Playwright (locally) or Stagehand (via Browserbase) to drive the Substack editor web interface programmatically:
+
 1. Opens the Substack publication dashboard in a real browser
 2. Navigates to the text post editor
 3. Pastes the generated HTML into Substack's rich text editor (Tiptap/ProseMirror)
@@ -99,6 +106,7 @@ Uses Playwright (locally) or Stagehand (via Browserbase) to drive the Substack e
 ### API Transport
 
 Uses Substack's internal JSON API directly:
+
 1. Extracts authentication cookies from a local Chrome profile or environment variables
 2. Validates the session against Substack's API
 3. Constructs the draft payload (matching the same structure the web editor sends)
@@ -112,6 +120,7 @@ Uses Substack's internal JSON API directly:
 ### Auto Selection
 
 When `--transport auto` (the default), the system:
+
 1. Checks whether valid API auth material is available
 2. If yes, uses API transport for speed
 3. If no, falls back to browser transport
@@ -188,13 +197,13 @@ The CLI maintains a local JSON file (`.substack-cli/draft-mappings.json`) that m
 
 ## Testing Strategy
 
-| Layer | Tool | Scope |
-|-------|------|-------|
-| Unit tests | Vitest | Individual module functions, parser output, payload construction |
-| Fixture comparison | `schema compare` | Regression testing of parser output against saved fixtures |
-| Contract matrix | `draft contract-matrix` | API endpoint contract validation across browser captures |
-| Mutation testing | Stryker | Test quality assessment |
-| E2E (planned) | Vitest + Playwright | Full browser workflow against live Substack |
+| Layer              | Tool                    | Scope                                                            |
+| ------------------ | ----------------------- | ---------------------------------------------------------------- |
+| Unit tests         | Vitest                  | Individual module functions, parser output, payload construction |
+| Fixture comparison | `schema compare`        | Regression testing of parser output against saved fixtures       |
+| Contract matrix    | `draft contract-matrix` | API endpoint contract validation across browser captures         |
+| Mutation testing   | Stryker                 | Test quality assessment                                          |
+| E2E (planned)      | Vitest + Playwright     | Full browser workflow against live Substack                      |
 
 ## How to Add a New API Endpoint
 

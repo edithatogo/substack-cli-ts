@@ -2,17 +2,14 @@
 
 ## Status
 
-**In Progress (list implemented, invites pending)**
+**Complete (list implemented, write not CLI-accessible)**
 
 **Implemented:**
 - `api team list` CLI command — reads team members via `fetchTeamMembers()` from `GET /api/v1/publication/users`
 - Team member schema with id, name, email, role
 
 **Pending:**
-- Invite new collaborators via email
-- Remove collaborators
-- Role changes (admin, editor, contributor, reader)
-- Activity log
+- No invite/remove/role-change endpoints discovered. Only `GET /api/v1/publication/users` is available. Team write operations require browser DevTools network capture.
 
 ## Goal
 

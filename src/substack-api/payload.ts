@@ -11,6 +11,7 @@ export interface SubstackDraftPayload {
   section?: string | undefined;
   sectionId?: number | undefined;
   comments?: PostMetadata["comments"];
+  shouldSendEmail?: boolean | undefined;
 }
 
 export interface PayloadValidationIssue {
@@ -78,6 +79,7 @@ export function buildSubstackDraftPayload(
     section: post.metadata.section,
     sectionId: post.metadata.sectionId,
     comments: post.metadata.comments,
+    shouldSendEmail: post.metadata.shouldSendEmail,
   };
 }
 
@@ -115,6 +117,9 @@ export function buildDraftWriteRequestBody(
   if (operation === "create") {
     body.audience = payload.audience ?? "everyone";
     body.type = "newsletter";
+    if (payload.shouldSendEmail !== undefined) {
+      body.should_send_email = payload.shouldSendEmail;
+    }
   } else {
     body.last_updated_at = lastUpdatedAt ?? new Date().toISOString();
   }

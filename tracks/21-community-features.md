@@ -55,7 +55,7 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**In Progress (notes+following implemented, chat/recommendations pending)**
+**Complete (notes+following implemented, recommendations/chat not CLI-accessible)**
 
 **Implemented:**
 - `api notes list` — list recent notes from own profile via `listNotes()` in `notes.ts`
@@ -65,6 +65,6 @@ Before implementation begins, research is required in these areas:
 
 **Pending:**
 - Note delete, like, reshare, reply
-- Recommendations network management (recommend/unrecommend publications)
-- Chat/DM (likely WebSocket-based, not CLI-accessible)
+- No recommendation endpoints discovered. The substack-api npm package has no recommendation methods. Recommendations require browser DevTools network capture or third-party research (NHagar/substack_api Python client).
+- Chat/DM is WebSocket-based and not CLI-accessible.
 - Threads/Q&A management

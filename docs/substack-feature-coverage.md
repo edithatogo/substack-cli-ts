@@ -10,22 +10,21 @@ How much of Substack's platform surface the CLI can interact with.
 | **Draft management** | ~70% | Create, update, list, duplicate detection, mapping persistence. Missing: delete, fetch by ID, version history |
 | **Publishing** | ~80% | Publish, schedule, prepublish validation, dual transport. Missing: unpublish, republish |
 | **Metadata/frontmatter** | ~75% | Title, subtitle, tags, audience (4 tiers), section, comments, scheduleAt. Missing: SEO title/description, social preview image |
-| **Media** | ~60% | Image upload (5 formats via base64), media manifest inspection. Missing: native video, audio, file attachments |
-| **Publication settings** | ~10% | Read-only: name, subdomain, custom domain, hero text, payments state. Missing: all write operations |
-| **Custom domain** | ~5% | Read custom domain in publication response. Missing: configure, SSL management |
-| **Email/newsletter** | ~5% | `should_send_email` field on draft. Missing: templates, subject, preview, analytics, broadcast history |
+| **Media** | ~60% | Image upload (5 formats via base64), media manifest inspection, video upload probe. Missing: native video, audio, file attachments |
+| **Publication settings** | ~15% | Read-only: name, subdomain, custom domain, hero text, payments state, colors, fonts, logos. Missing: all write operations |
+| **Custom domain** | ~10% | Read custom domain in publication response, SSL status, DNS instructions. Missing: configure, SSL management |
+| **Email/newsletter** | ~15% | `should_send_email` field on draft create, email template probe, broadcast history/cancel probe, test email probe. Missing: template write, subject/preview |
 | **Sections** | ~40% | List sections, assign post to section. Missing: create, update, delete sections |
-| **Subscribers** | ~0% | Not supported |
-| **Comments** | ~5% | Comment permissions per post in frontmatter. Missing: moderation, read, spam |
-| **Analytics** | ~0% | Not supported |
+| **Subscribers** | ~15% | Subscriber count via publication checklist, subscriber list with pagination. Missing: CSV import/export, segments, suppression, gift subscriptions |
+| **Comments** | ~25% | Comment list, moderation (approve/delete/pin/reply). Missing: spam detection, quarantine, commenter management |
+| **Analytics** | ~10% | Post analytics probe, subscriber growth probe, email performance probe, revenue analytics probe, snapshot store. Missing: dashboard-only features |
 | **Recommendations** | ~0% | Not supported |
-| **Team** | ~5% | Read-only role in publicationUsers. Missing: add/remove, permissions |
-| **Billing** | ~5% | Read-only payments_state. Missing: tiers, payouts |
-| **Podcast** | ~0% | Not supported |
-| **Video** | ~0% | Not supported |
-| **Notes/social** | ~0% | Not supported |
-| **Chat/Threads** | ~0% | Not supported |
-| **Cross-posting** | ~0% | Not supported |
+| **Team** | ~15% | Read-only team member list. Missing: invite/remove, role changes |
+| **Billing** | ~10% | Read-only payments_state, subscription tiers probe, payout history probe, tax form probe. Missing: tier write, refunds, boosted posts |
+| **Podcast** | ~15% | Podcast section read, episode list probe, distribution settings probe, episode create/schedule, video upload/settings probe. Missing: RSS feed management, episode write |
+| **Video** | ~10% | Video upload probe, video settings probe. Missing: native hosting, transcoding, thumbnails |
+| **Notes/social** | ~15% | Notes list/get/create, following list, like/reshare/delete. Missing: chat/DM (WebSocket) |
+| **Cross-posting** | ~5% | Cross-post probe, WordPress import probe, RSS import probe, API token listing. Missing: actual cross-posting (dashboard-only) |
 | **Auth** | ~80% | Cookie, email/password, session validation, multi-publication. Missing: OAuth, 2FA |
 
 ## What the CLI Focuses On

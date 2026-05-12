@@ -53,14 +53,19 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**In Progress (count implemented, CRUD pending)**
+**Complete (list + count implemented, import/export/segments not CLI-accessible)**
 
 **Implemented:**
 - Aggregate subscriber count via `fetchPublicationChecklist()` → `getSubscriberCount()` in `subscriber.ts`
 - `api subscriber count` CLI command
+- Subscriber list via `fetchSubscriberList()` from `GET /api/v1/publication/subscribers` (discovered externally via tap-substack)
+- `api subscriber list` CLI command with `--limit` and `--offset` pagination
 
-**Pending:**
-- Subscriber list (no endpoint discovered)
+**Not CLI-accessible (no endpoints discovered):**
+- CSV import/export — dashboard UI only
+- Subscriber segments/groups — no endpoints discovered
+- Suppression list management — no endpoints discovered
+- Gift subscriptions — no endpoints discovered
 - CSV import/export
 - Suppression list management
 - Segments/groups

@@ -54,14 +54,20 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**In Progress (read implemented, moderation pending)**
+**Complete (list + moderation implemented, spam/commenter-mgmt not CLI-accessible)**
 
 **Implemented:**
-- `api comment get <id>` CLI command — reads a single comment by ID via `client.commentForId()` through substack-adapter
-- Comment read flow via `substack-api` library (exposes `GET /api/v1/comments`)
+- Comment list via `fetchCommentsForPost()` from `GET /api/v1/post/{postId}/comments` with `--limit`
+- `api comment list <post-id>` CLI command
+- Comment moderation via `moderateComment()` — POST `/api/v1/comments/{id}/{action}` for approve/delete/pin
+- Comment reply via `replyToComment()` — POST `/api/v1/comments/{id}/reply`
+- `api comment approve <id> --yes`, `api comment delete <id> --yes`, `api comment pin <id> --yes`, `api comment reply <id> <text> --yes`
+- Existing `api comment get <id>` via substack-api `client.commentForId()`
 
-**Pending:**
-- Comment list with pagination
+**Not CLI-accessible (no endpoints discovered):**
+- Spam detection and quarantine management
+- Commenter management (mute, ban, approve)
+- Comment settings per post and globally
 - All moderation operations (approve, delete, pin, reply)
 - Spam detection and quarantine management
 - Commenter management (mute, ban, approve)

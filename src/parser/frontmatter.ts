@@ -11,6 +11,7 @@ const MetadataSchema = z.object({
   sectionId: z.coerce.number().int().positive().optional(),
   comments: z.enum(["enabled", "disabled", "paid", "free"]).optional(),
   scheduleAt: z.string().optional(),
+  shouldSendEmail: z.coerce.boolean().optional(),
 });
 
 export interface FrontmatterResult {
@@ -50,6 +51,7 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
       sectionId: parsed.sectionId,
       comments: parsed.comments,
       scheduleAt: parsed.scheduleAt,
+      shouldSendEmail: parsed.shouldSendEmail,
     },
     body: markdown.slice(match[0].length),
   };

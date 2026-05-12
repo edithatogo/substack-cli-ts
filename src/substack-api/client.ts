@@ -1,5 +1,8 @@
 import { readFile } from "node:fs/promises";
 import type { ApiAuthMaterial } from "./auth.js";
+import { RateLimiter } from "./rate-limit.js";
+import type { RetryOptions } from "./retry.js";
+import { withRetry } from "./retry.js";
 
 export type ApiReadStatus =
   | "ok"
@@ -34,6 +37,22 @@ export function apiHeaders(material: ApiAuthMaterial): Record<string, string> {
     "user-agent":
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome Safari/537.36",
   };
+}
+
+export function wrapFetch(
+  fetchImpl: FetchLike,
+  limiter: RateLimiter,
+  retryOptions?: RetryOptions,
+): FetchLike {
+  return async (input, init) =>
+    withRetry(async () => {
+      await limiter.acquire();
+      const response = await fetchImpl(input, init);
+      if (response.status === 429 || response.status >= 500) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return response;
+    }, retryOptions);
 }
 
 export async function requestJson(
@@ -101,6 +120,27 @@ export interface WriteResponse {
   body: unknown;
   draftId?: number | undefined;
   draftUrl?: string | undefined;
+}
+
+export async function requestDelete(
+  fetchImpl: FetchLike,
+  url: string,
+  headers: Record<string, string>,
+): Promise<{ status: number; body: unknown }> {
+  try {
+    const response = await fetchImpl(url, {
+      method: "DELETE",
+      headers,
+    });
+    const text = await response.text();
+    try {
+      return { status: response.status, body: JSON.parse(text) };
+    } catch {
+      return { status: response.status, body: null };
+    }
+  } catch {
+    return { status: 0, body: null };
+  }
 }
 
 export async function requestWrite(

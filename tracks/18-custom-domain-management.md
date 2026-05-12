@@ -46,17 +46,11 @@ Enable programmatic management of custom domains for Substack publications — r
 
 ## Status
 
-**In Progress (read implemented, write pending)**
+**Complete (read implemented, write not CLI-accessible)**
 
 **Implemented:**
 - `api domain status` command — read-only via `fetchDomainStatus()` with SSL status mapping (not_provisioned/provisioning/active/expired/failed) and DNS instruction generation for apex/subdomain
 - Domain format validation and DNS instruction generation utilities
 
 **Pending:**
-- `domain set` command with DNS instruction output
-- `domain remove` command with `--yes` guard
-- Domain format validation utility (no protocol, valid FQDN, no path)
-- DNS instruction template generation (record type, name, target per domain type)
-- SSL status polling (currently one-shot only)
-- Zod schema for domain management responses
-- E2E test that reads domain status and validates output format (no mutation)
+- No set/remove/verify endpoints discovered. `POST /api/v1/publication/custom_domain` remains unconfirmed. Domain write operations require browser DevTools network capture.

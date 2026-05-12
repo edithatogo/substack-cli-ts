@@ -35,6 +35,10 @@ export function localBrowserProfileDir(): string {
   return join(stateDir(), "chrome-profile");
 }
 
+export function analyticsSnapshotsDir(): string {
+  return join(stateDir(), "analytics-snapshots");
+}
+
 export function fallbackHomeStateDir(): string {
   return join(homedir(), STATE_DIR_NAME);
 }

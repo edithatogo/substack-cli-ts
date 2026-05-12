@@ -1,0 +1,75 @@
+{
+  "name": "substack-api",
+  "version": "4.0.0",
+  "description": "TypeScript API client for interacting with Substack webservice",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "test": "node -e \"console.log('Vendored upstream tests are omitted; run root npm test after changing vendor/substack-api/src.')\"",
+    "test:unit": "npm test",
+    "test:integration": "npm test",
+    "test:e2e": "npm test",
+    "test:watch": "npm test",
+    "test:integration:watch": "npm test",
+    "test:e2e:watch": "npm test",
+    "test:all": "npm test",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint && npm test",
+    "clean": "rm -rf dist",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "sample": "node -e \"console.log('Vendored upstream samples are omitted from this Windows-safe copy.')\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakub-k-slys/substack-api.git"
+  },
+  "keywords": [
+    "substack",
+    "api",
+    "client",
+    "typescript"
+  ],
+  "author": "Jakub Slys",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jakub-k-slys/substack-api/issues"
+  },
+  "homepage": "https://github.com/jakub-k-slys/substack-api#readme",
+  "devDependencies": {
+    "@eslint/js": "^9.29.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.3",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/parser": "^8.34.1",
+    "dotenv": "^17.0.0",
+    "eslint": "^10.2.0",
+    "eslint-plugin-prettier": "^5.5.0",
+    "jest": "^30.0.0",
+    "jest-junit": "^17.0.0",
+    "prettier": "^3.5.3",
+    "rollup": "^4.55.1",
+    "rollup-plugin-dts": "^6.3.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tslib": "^2.8.1",
+    "typescript": "^6.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "axios-rate-limit": "^1.4.0",
+    "fp-ts": "^2.16.10",
+    "io-ts": "^2.2.22"
+  }
+}

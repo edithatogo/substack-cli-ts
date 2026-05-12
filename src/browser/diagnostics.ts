@@ -242,6 +242,293 @@ export async function captureReviewOverlayDiagnostics(
   }
 }
 
+export interface DashboardAnalyticsDiagnostics {
+  url: string;
+  stats: Array<{ label: string; value: string | null }>;
+  charts?: string[];
+  textSample: string;
+}
+
+export async function captureAnalyticsDiagnostics(
+  publicationUrl: string,
+): Promise<DashboardAnalyticsDiagnostics> {
+  const browser = await createLocalBrowserSession();
+
+  try {
+    const page = browser.page;
+    const patterns = [
+      `${publicationUrl.replace(/\/+$/, "")}/dashboard`,
+      `${publicationUrl.replace(/\/+$/, "")}/analytics`,
+    ];
+
+    let resolvedUrl = "";
+    for (const pattern of patterns) {
+      await page.goto(pattern, { waitUntil: "domcontentloaded", timeout: 60000 });
+      await page.waitForTimeout(5000);
+
+      const loaded = await page.evaluate(() => {
+        const content = (document.body?.textContent ?? "").trim();
+        return content.length > 200 && !/404|not found|page not found/i.test(document.title ?? "");
+      });
+
+      if (loaded) {
+        resolvedUrl = pattern;
+        break;
+      }
+    }
+
+    if (!resolvedUrl) {
+      resolvedUrl = await page.evaluate(() => location.href);
+    }
+
+    return await page.evaluate(() => {
+      const clean = (value: string | null | undefined) =>
+        (value ?? "").replace(/\s+/g, " ").trim();
+
+      const statSelectors = [
+        '[class*="stat"]', '[class*="Stat"]',
+        '[class*="metric"]', '[class*="Metric"]',
+        '[class*="count"]', '[class*="Count"]',
+        '[data-testid*="stat"]', '[data-testid*="stat-value"]',
+        '[class*="subscriberCount"]', '[class*="subscriber-count"]',
+        '[class*="email-count"]',
+        "strong, .number, [class*='value']",
+      ];
+
+      const stats: Array<{ label: string; value: string | null }> = [];
+
+      for (const sel of statSelectors) {
+        for (const el of document.querySelectorAll(sel)) {
+          const text = clean(el.textContent);
+          if (text && /\d/.test(text) && text.length < 60) {
+            const label = clean(
+              el.getAttribute("aria-label")
+              ?? el.closest("[class*='stat'], [class*='Stat'], [class*='metric'], [class*='Metric']")?.getAttribute("aria-label")
+              ?? "",
+            );
+            if (!stats.some((s) => s.value === text)) {
+              stats.push({ label, value: text });
+            }
+          }
+        }
+      }
+
+      const chartEls = document.querySelectorAll<HTMLElement>(
+        '[class*="chart"], [class*="Chart"], svg[role="img"], [aria-label*="chart" i]',
+      );
+      const charts = Array.from(chartEls)
+        .map((el) => clean(el.getAttribute("aria-label") ?? el.textContent))
+        .filter(Boolean) as string[];
+
+      return {
+        url: location.href,
+        stats: stats.slice(0, 30),
+        charts: charts.length > 0 ? [...new Set(charts)] : [],
+        textSample: clean(document.body.textContent).slice(0, 3000),
+      };
+    });
+  } finally {
+    await browser.close();
+  }
+}
+
+export interface SubscriberDiagnostics {
+  url: string;
+  totalCount: string | null;
+  listItems: Array<{ email: string | undefined; status: string | undefined; date: string | undefined }>;
+  textSample: string;
+}
+
+export async function captureSubscriberDiagnostics(
+  publicationUrl: string,
+): Promise<SubscriberDiagnostics> {
+  const browser = await createLocalBrowserSession();
+
+  try {
+    const page = browser.page;
+    await page.goto(`${publicationUrl.replace(/\/+$/, "")}/subscribers`, {
+      waitUntil: "domcontentloaded",
+      timeout: 60000,
+    });
+    await page.waitForTimeout(5000);
+
+    return await page.evaluate(() => {
+      const clean = (value: string | null | undefined) =>
+        (value ?? "").replace(/\s+/g, " ").trim();
+
+      const countEl = document.querySelector<HTMLElement>(
+        '[class*="subscriber-count"], [class*="subscriberCount"], [class*="total-count"], [data-testid*="subscriber-count"], h1, h2, [class*="header"] strong',
+      );
+      const totalCount = countEl
+        ? clean(countEl.textContent)?.match(/[\d,]+/)?.[0] ?? null
+        : null;
+
+      const rows = document.querySelectorAll<HTMLElement>(
+        "tr, [class*='subscriber-row'], [class*='list-item'], [class*='subscriber-item']",
+      );
+      const listItems = Array.from(rows)
+        .map((row) => {
+          const text = clean(row.textContent);
+          if (!text || text.length < 5) return null;
+          const cells = row.querySelectorAll("td, [class*='cell'], [class*='col-']");
+          return {
+            email:
+              cells[0]?.textContent
+                ? clean(cells[0].textContent)
+                : undefined,
+            status:
+              cells[1]?.textContent
+                ? clean(cells[1].textContent)
+                : undefined,
+            date:
+              cells[2]?.textContent
+                ? clean(cells[2].textContent)
+                : undefined,
+          };
+        })
+        .filter((item): item is NonNullable<typeof item> => item !== null)
+        .slice(0, 50);
+
+      if (listItems.length === 0) {
+        const emailLinks = document.querySelectorAll<HTMLAnchorElement>("a[href*='mailto']");
+        for (const link of emailLinks) {
+          const text = clean(link.textContent);
+          if (text && /@/.test(text)) {
+            listItems.push({ email: text, status: undefined, date: undefined });
+          }
+        }
+      }
+
+      return {
+        url: location.href,
+        totalCount,
+        listItems,
+        textSample: clean(document.body.textContent).slice(0, 3000),
+      };
+    });
+  } finally {
+    await browser.close();
+  }
+}
+
+export interface PublicationSettingsDiagnostics {
+  url: string;
+  buttons: Array<{ text: string; selector: string }>;
+  sections: Array<{ heading: string; fields: string[] }>;
+  forms: Array<{ action: string | null; fields: string[] }>;
+  textSample: string;
+}
+
+export async function captureSettingsDiagnostics(
+  publicationUrl: string,
+): Promise<PublicationSettingsDiagnostics> {
+  const browser = await createLocalBrowserSession();
+
+  try {
+    const page = browser.page;
+    const patterns = [
+      `${publicationUrl.replace(/\/+$/, "")}/settings`,
+      `${publicationUrl.replace(/\/+$/, "")}/publication/settings`,
+    ];
+
+    let resolvedUrl = "";
+    for (const pattern of patterns) {
+      await page.goto(pattern, { waitUntil: "domcontentloaded", timeout: 60000 });
+      await page.waitForTimeout(5000);
+
+      const loaded = await page.evaluate(() => {
+        const content = (document.body?.textContent ?? "").trim();
+        return content.length > 200 && !/404|not found|page not found/i.test(document.title ?? "");
+      });
+
+      if (loaded) {
+        resolvedUrl = pattern;
+        break;
+      }
+    }
+
+    if (!resolvedUrl) {
+      resolvedUrl = await page.evaluate(() => location.href);
+    }
+
+    return await page.evaluate(() => {
+      const clean = (value: string | null | undefined) =>
+        (value ?? "").replace(/\s+/g, " ").trim();
+
+      const buildSelector = (el: Element): string => {
+        const tag = el.tagName.toLowerCase();
+        if (el.id) return `${tag}#${el.id}`;
+        const classes = Array.from(el.classList).filter((c) => !c.startsWith("_")).join(".");
+        const attrs: string[] = [];
+        const candidates = ["data-testid", "data-test", "name", "type", "aria-label", "role"];
+        for (const attr of candidates) {
+          const val = el.getAttribute(attr);
+          if (val) {
+            attrs.push(`[${attr}='${val.replace(/'/g, "\\'")}']`);
+            break;
+          }
+        }
+        if (classes) return `${tag}.${classes}${attrs.join("")}`;
+        if (attrs.length) return `${tag}${attrs.join("")}`;
+        return tag;
+      };
+
+      const allButtons = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          "button, [role='button'], a[class*='btn'], a[class*='button']",
+        ),
+      );
+
+      const buttons = allButtons
+        .map((btn) => ({
+          text: clean(btn.textContent),
+          selector: buildSelector(btn),
+        }))
+        .filter((b) => b.text);
+
+      const allForms = Array.from(document.querySelectorAll("form"));
+
+      const forms = allForms.map((form) => ({
+        action: form.getAttribute("action"),
+        fields: Array.from(form.querySelectorAll("input, select, textarea"))
+          .map((f) => f.getAttribute("name") ?? f.getAttribute("type") ?? f.tagName.toLowerCase())
+          .filter(Boolean) as string[],
+      }));
+
+      const sectionHeadings = document.querySelectorAll<HTMLElement>(
+        "h1, h2, h3, h4, [class*='section-title'], [class*='SectionTitle'], [class*='settings-section'] h2, [class*='settings-section'] h3, legend",
+      );
+
+      const sections: Array<{ heading: string; fields: string[] }> = [];
+      for (const heading of sectionHeadings) {
+        const text = clean(heading.textContent);
+        if (!text || text.length > 80) continue;
+        const parent = heading.closest(
+          "[class*='section'], section, fieldset, [class*='setting-group']",
+        );
+        const fields = parent
+          ? Array.from(
+              parent.querySelectorAll(
+                "input:not([type='hidden']), select, textarea",
+              ),
+            ).map((f) => f.getAttribute("name") ?? f.getAttribute("type") ?? f.tagName.toLowerCase())
+          : [];
+        sections.push({ heading: text, fields });
+      }
+
+      return {
+        url: location.href,
+        buttons,
+        sections,
+        forms,
+        textSample: clean(document.body.textContent).slice(0, 3000),
+      };
+    });
+  } finally {
+    await browser.close();
+  }
+}
+
 export interface ScheduleScreenDiagnostics {
   url: string;
   dateInputs: Array<{

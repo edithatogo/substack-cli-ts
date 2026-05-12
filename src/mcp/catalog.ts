@@ -30,6 +30,8 @@ import {
 } from "../publish/workflow-trace.js";
 import { summarizeMediaManifest } from "../parser/media.js";
 import { validateSchemaFile } from "../schema/fixtures.js";
+import { fetchSubscriberList } from "../substack-api/subscriber-list.js";
+import { fetchCommentsForPost } from "../substack-api/comment-list.js";
 import type { McpSurfaceGroup, McpToolDescriptor } from "./types.js";
 
 type JsonToolResult = {

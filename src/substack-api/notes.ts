@@ -1,4 +1,5 @@
 import type { ApiAuthMaterial } from "./auth.js";
+import { apiHeaders, requestDelete, requestWrite, type FetchLike } from "./client.js";
 import { createSubstackClient } from "./substack-adapter.js";
 
 export interface NoteSummary {
@@ -73,4 +74,35 @@ export async function createNote(
     id: result.id,
     publishedAt: result.date,
   };
+}
+
+export async function deleteNote(
+  material: ApiAuthMaterial,
+  id: number,
+  fetchImpl: FetchLike,
+): Promise<{ status: number }> {
+  const url = `${material.publicationUrl}/api/v1/notes/${id}`;
+  const headers = apiHeaders(material);
+  const result = await requestDelete(fetchImpl, url, headers);
+  return { status: result.status };
+}
+
+export async function likeNote(
+  material: ApiAuthMaterial,
+  id: number,
+): Promise<void> {
+  const client = createSubstackClient(material);
+  const note = await client.noteForId(id);
+  await note.like();
+}
+
+export async function reshareNote(
+  material: ApiAuthMaterial,
+  id: number,
+  fetchImpl: FetchLike,
+): Promise<{ status: number }> {
+  const url = `${material.publicationUrl}/api/v1/notes/${id}/reshare`;
+  const headers = apiHeaders(material);
+  const result = await requestWrite(fetchImpl, url, "POST", headers, {});
+  return { status: result.status };
 }
