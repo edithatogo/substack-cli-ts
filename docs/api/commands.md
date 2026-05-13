@@ -52,12 +52,15 @@ Review the repository distribution and dependency policy. Prints a JSON policy r
 Inspect or run the MCP surface for redacted CLI summaries.
 
 ### `mcp surface`
+
 Print the MCP surface manifest as a JSON summary.
 
 ### `mcp summary`
+
 Print the redacted MCP summary resource as JSON.
 
 ### `mcp serve`
+
 Run the MCP server over stdio.
 
 ---
@@ -86,6 +89,7 @@ Exits with code 1 if validation blocks the publish.
 Review stored browser workflow trace artifacts.
 
 ### `trace review <file>`
+
 Review a saved browser workflow trace artifact.
 
 **Arguments:**
@@ -94,9 +98,11 @@ Review a saved browser workflow trace artifact.
 | `file` | Workflow trace JSON file to review |
 
 ### `trace compare <expected-file> <actual-file>`
+
 Compare two saved browser workflow trace artifacts. Exits with code 1 if not equal.
 
 ### `trace fixture <file>`
+
 Write a normalized browser workflow trace fixture.
 
 **Arguments:**
@@ -181,9 +187,11 @@ Schedule a Markdown file for future publication.
 Validate and capture ProseMirror schema fixtures.
 
 ### `schema validate <file>`
+
 Validate a ProseMirror JSON file or captured fixture.
 
 ### `schema capture <markdown-file>`
+
 Capture the generated payload for a Markdown file as a schema fixture.
 
 **Options:**
@@ -192,6 +200,7 @@ Capture the generated payload for a Markdown file as a schema fixture.
 | `--out <file>` (required) | Fixture JSON output path |
 
 ### `schema compare <markdown-file> <fixture-file>`
+
 Compare a Markdown file's current generated document with a saved fixture. Exits with code 1 if not equal.
 
 ---
@@ -201,6 +210,7 @@ Compare a Markdown file's current generated document with a saved fixture. Exits
 Read-only internal API probes and API transport tools.
 
 ### `api auth status`
+
 Extract and validate API authentication material.
 
 **Options:**
@@ -210,12 +220,15 @@ Extract and validate API authentication material.
 | `--no-validate` | Skip read-only Substack validation probes | — |
 
 ### `api payload <file>`
+
 Build the write-compatible Substack draft payload for a Markdown file.
 
 ### `api media <file>`
+
 Inspect the parsed media manifest for a Markdown file.
 
 ### `api inventory`
+
 Read user and publication inventory through read-only API probes.
 
 **Options:**
@@ -225,25 +238,8 @@ Read user and publication inventory through read-only API probes.
 | `--post-limit <limit>` | Maximum number of recent posts to include | `10` |
 | `--draft-limit <limit>` | Maximum number of drafts to include | `10` |
 
-### `api profile`
-Show own or public Substack profile information.
-
-**Options:**
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--handle <handle>` | Show public profile by handle/slug | — |
-| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-
-### `api posts list`
-List recent posts from your Substack profile.
-
-**Options:**
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--limit <limit>` | Maximum number of posts to list | `10` |
-| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-
 ### `api draft create <file>`
+
 Build and validate a draft creation request without publishing content.
 
 **Options:**
@@ -253,6 +249,7 @@ Build and validate a draft creation request without publishing content.
 | `--live` | Attempt the live write request after endpoint contract confirmation | `false` |
 
 ### `api draft inspect <file>`
+
 Bundle payload compatibility, section resolution, duplicate lookup, and draft planning.
 
 **Options:**
@@ -261,9 +258,11 @@ Bundle payload compatibility, section resolution, duplicate lookup, and draft pl
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api draft mappings`
+
 List local source-file to Substack draft mappings.
 
 ### `api draft observe [url]`
+
 Watch local browser traffic while manually creating or saving a draft.
 
 **Options:**
@@ -272,9 +271,11 @@ Watch local browser traffic while manually creating or saving a draft.
 | `--timeout-seconds <seconds>` | How long to observe network traffic | `180` |
 
 ### `api draft contract <file>`
+
 Infer likely draft create/update/fetch endpoints from a saved draft capture artifact.
 
 ### `api draft contract-matrix <files...>`
+
 Merge multiple draft capture artifacts into one inferred contract matrix.
 
 **Options:**
@@ -283,15 +284,19 @@ Merge multiple draft capture artifacts into one inferred contract matrix.
 | `--out <file>` | Write the matrix fixture to a file |
 
 ### `api draft contract-matrix-compare <expected-file> <actual-file>`
+
 Compare two draft contract matrix fixtures. Exits with code 1 if not equal.
 
 ### `api draft review <file>`
+
 Review a saved draft capture artifact and print a summary.
 
 ### `api draft compare <expected-file> <actual-file>`
+
 Compare two saved draft capture artifacts. Exits with code 1 if not equal.
 
 ### `api draft fixture <file>`
+
 Write a normalized draft capture fixture from a saved artifact.
 
 **Options:**
@@ -300,6 +305,7 @@ Write a normalized draft capture fixture from a saved artifact.
 | `--out <file>` (required) | Fixture JSON output path |
 
 ### `api draft link <file>`
+
 Record a local source-file to Substack draft mapping.
 
 **Options:**
@@ -311,6 +317,7 @@ Record a local source-file to Substack draft mapping.
 | `--slug <slug>` | Draft slug to store |
 
 ### `api draft duplicates <file>`
+
 Look up likely duplicate drafts using the read-only inventory and local mappings.
 
 **Options:**
@@ -320,6 +327,7 @@ Look up likely duplicate drafts using the read-only inventory and local mappings
 | `--post-limit <limit>` | Maximum number of recent posts to inspect | `10` |
 
 ### `api draft section <file>`
+
 Resolve a draft section against the current read-only inventory.
 
 **Options:**
@@ -328,6 +336,7 @@ Resolve a draft section against the current read-only inventory.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api notes list`
+
 List recent notes from your profile.
 
 **Options:**
@@ -337,6 +346,7 @@ List recent notes from your profile.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api notes get <id>`
+
 Get full details for a specific note by ID.
 
 **Options:**
@@ -345,6 +355,7 @@ Get full details for a specific note by ID.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api notes create`
+
 [EXPERIMENTAL] Publish a note immediately. This action cannot be undone.
 
 **Options:**
@@ -353,24 +364,8 @@ Get full details for a specific note by ID.
 | `--body <text>` (required) | Note body text |
 | `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
 
-### `api following`
-Show users that the authenticated user follows.
-
-**Options:**
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--limit <limit>` | Maximum number of followed users to list | `10` |
-| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-
-### `api subscriber count`
-Show subscriber count from the publication checklist.
-
-**Options:**
-| Flag | Description | Default |
-|------|-------------|---------|
-| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-
 ### `api team list`
+
 List publication team members.
 
 **Options:**
@@ -379,6 +374,7 @@ List publication team members.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api publication get`
+
 Fetch full publication details including branding fields.
 
 **Options:**
@@ -387,6 +383,7 @@ Fetch full publication details including branding fields.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api publication settings`
+
 Fetch publication settings (colors, fonts, branding).
 
 **Options:**
@@ -394,7 +391,76 @@ Fetch publication settings (colors, fonts, branding).
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
+### `api publication get-details`
+
+Alias for `api publication settings`. Fetches publication settings using `fetchPublicationSettings()`.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api publication set`
+
+Update publication settings with a read-modify-write cycle. Requires either `--yes` or `--dry-run`.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--from-json <file>` | JSON file with settings to apply | — |
+| `--from-yaml <file>` | YAML file with settings to apply | — |
+| `--name <name>` | Publication name | — |
+| `--description <description>` | Publication description | — |
+| `--hero-text <text>` | Hero text | — |
+| `--logo-url <url>` | Logo URL | — |
+| `--favicon-url <url>` | Favicon URL | — |
+| `--primary-color <color>` | Primary color (hex) | — |
+| `--secondary-color <color>` | Secondary color (hex) | — |
+| `--background-color <color>` | Background color (hex) | — |
+| `--text-color <color>` | Text color (hex) | — |
+| `--font-heading <font>` | Heading font family | — |
+| `--font-body <font>` | Body font family | — |
+| `--seo-title <title>` | SEO meta title | — |
+| `--seo-description <description>` | SEO meta description | — |
+| `--og-image-url <url>` | Open Graph image URL | — |
+| `--email-header-color <color>` | Email header color (hex) | — |
+| `--email-footer-color <color>` | Email footer color (hex) | — |
+| `--dry-run` | Preview changes without writing | `false` |
+| `--yes` | Confirm update without interactive prompt | `false` |
+
+### `api publication upload-logo`
+
+Upload a logo image and update publication settings. Requires `--yes`.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `file` | Logo image file to upload |
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--yes` | Confirm upload without interactive prompt | — |
+
+### `api publication upload-favicon`
+
+Upload a favicon image and update publication settings. Requires `--yes`.
+
+**Arguments:**
+| Name | Description |
+|------|-------------|
+| `file` | Favicon image file to upload |
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--yes` | Confirm upload without interactive prompt | — |
+
 ### `api domain status`
+
 Show custom domain status and DNS configuration.
 
 **Options:**
@@ -403,6 +469,7 @@ Show custom domain status and DNS configuration.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api profile me`
+
 Show own profile information.
 
 **Options:**
@@ -411,6 +478,7 @@ Show own profile information.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api profile show <handle>`
+
 Show public profile by handle.
 
 **Arguments:**
@@ -423,7 +491,12 @@ Show public profile by handle.
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
+### `api following`
+
+Show users that the authenticated user follows.
+
 ### `api following list`
+
 List followed users.
 
 **Options:**
@@ -433,6 +506,7 @@ List followed users.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api subscriber count`
+
 Show subscriber count from the publication checklist.
 
 **Options:**
@@ -440,7 +514,19 @@ Show subscriber count from the publication checklist.
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
+### `api subscriber list`
+
+List subscribers for the publication with pagination support.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--limit <limit>` | Maximum number of subscribers to return | `100` |
+| `--offset <offset>` | Offset for pagination | `0` |
+
 ### `api analytics inventory`
+
 Probe all analytics endpoints and report availability.
 
 **Options:**
@@ -450,6 +536,7 @@ Probe all analytics endpoints and report availability.
 | `--post-id <id>` | Post ID for post-level analytics | — |
 
 ### `api analytics post <post-id>`
+
 Fetch analytics for a specific post.
 
 **Arguments:**
@@ -463,6 +550,7 @@ Fetch analytics for a specific post.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api analytics subscribers`
+
 Fetch subscriber growth analytics.
 
 **Options:**
@@ -471,6 +559,7 @@ Fetch subscriber growth analytics.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api analytics email`
+
 Fetch email performance analytics.
 
 **Options:**
@@ -480,6 +569,7 @@ Fetch email performance analytics.
 | `--limit <limit>` | Maximum number of emails to return | `10` |
 
 ### `api analytics revenue`
+
 Fetch revenue analytics.
 
 **Options:**
@@ -488,6 +578,7 @@ Fetch revenue analytics.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api analytics snapshot`
+
 Capture an analytics snapshot and append to local snapshot store.
 
 **Options:**
@@ -498,6 +589,7 @@ Capture an analytics snapshot and append to local snapshot store.
 | `--post-id <id>` | Post ID for post-level analytics | — |
 
 ### `api billing summary`
+
 Probe all billing endpoints and report availability.
 
 **Options:**
@@ -506,6 +598,7 @@ Probe all billing endpoints and report availability.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api billing tiers`
+
 List subscription tiers and pricing.
 
 **Options:**
@@ -514,6 +607,7 @@ List subscription tiers and pricing.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api billing payouts`
+
 Show payout history.
 
 **Options:**
@@ -522,6 +616,7 @@ Show payout history.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api billing taxes`
+
 Show tax form status.
 
 **Options:**
@@ -530,6 +625,7 @@ Show tax form status.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api email template`
+
 Show current email template settings.
 
 **Options:**
@@ -538,6 +634,7 @@ Show current email template settings.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api email broadcast list`
+
 Show broadcast history.
 
 **Options:**
@@ -547,6 +644,7 @@ Show broadcast history.
 | `--limit <limit>` | Maximum broadcasts to return | `20` |
 
 ### `api email broadcast cancel <broadcast-id>`
+
 Cancel a scheduled broadcast.
 
 **Arguments:**
@@ -560,6 +658,7 @@ Cancel a scheduled broadcast.
 | `--yes` (required) | Confirm cancellation |
 
 ### `api email send-test <draft-id>`
+
 Send a test email for a draft.
 
 **Arguments:**
@@ -573,6 +672,7 @@ Send a test email for a draft.
 | `--yes` (required) | Confirm sending test email |
 
 ### `api podcast section`
+
 Show podcast section details.
 
 **Options:**
@@ -581,6 +681,7 @@ Show podcast section details.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api podcast episodes`
+
 List podcast episodes.
 
 **Options:**
@@ -590,6 +691,7 @@ List podcast episodes.
 | `--limit <limit>` | Maximum episodes to return | `20` |
 
 ### `api podcast settings`
+
 Show podcast distribution settings.
 
 **Options:**
@@ -598,6 +700,7 @@ Show podcast distribution settings.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api podcast create <audio-file>`
+
 Create a podcast episode draft from an audio file.
 
 **Arguments:**
@@ -614,6 +717,7 @@ Create a podcast episode draft from an audio file.
 | `--yes` (required) | Confirm episode creation |
 
 ### `api podcast schedule <draft-id>`
+
 Schedule a podcast episode for publication.
 
 **Arguments:**
@@ -628,6 +732,7 @@ Schedule a podcast episode for publication.
 | `--yes` (required) | Confirm scheduling |
 
 ### `api podcast video upload <file>`
+
 Upload a video file.
 
 **Arguments:**
@@ -642,6 +747,7 @@ Upload a video file.
 | `--yes` (required) | Confirm video upload |
 
 ### `api podcast video settings <post-id>`
+
 Show video player settings for a post.
 
 **Arguments:**
@@ -655,6 +761,7 @@ Show video player settings for a post.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api integrations list`
+
 List configured integrations and their status.
 
 **Options:**
@@ -663,6 +770,7 @@ List configured integrations and their status.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api integrations crosspost <post-id>`
+
 Cross-post a published article to another platform.
 
 **Arguments:**
@@ -677,6 +785,7 @@ Cross-post a published article to another platform.
 | `--yes` (required) | Confirm cross-posting |
 
 ### `api integrations import wordpress <file>`
+
 Import from WordPress.
 
 **Arguments:**
@@ -690,6 +799,7 @@ Import from WordPress.
 | `--yes` (required) | Confirm import |
 
 ### `api integrations import rss <url>`
+
 Import from an RSS feed.
 
 **Arguments:**
@@ -703,6 +813,7 @@ Import from an RSS feed.
 | `--yes` (required) | Confirm import |
 
 ### `api integrations tokens`
+
 List API tokens (redacted).
 
 **Options:**
@@ -717,12 +828,15 @@ List API tokens (redacted).
 Manage non-secret local configuration.
 
 ### `config show`
+
 Show effective CLI configuration without exposing secrets.
 
 ### `config set-publication <url>`
+
 Set the default Substack publication URL.
 
 ### `config set-runtime <runtime>`
+
 Set the browser runtime. Valid values: `browserbase`, `local`, `camoufox`.
 
 ---
@@ -732,9 +846,11 @@ Set the browser runtime. Valid values: `browserbase`, `local`, `camoufox`.
 Manage authenticated browser sessions.
 
 ### `auth status`
+
 Show configured publication and browser environment status.
 
 ### `auth login`
+
 Start or resume a Browserbase session for manual Substack login.
 
 **Options:**
@@ -746,6 +862,7 @@ Start or resume a Browserbase session for manual Substack login.
 | `--wait-seconds <seconds>` | Keep session open for manual login before closing | `0` |
 
 ### `auth logout`
+
 Forget the locally stored Browserbase session ID.
 
 ---
@@ -755,9 +872,11 @@ Forget the locally stored Browserbase session ID.
 Diagnostic helpers.
 
 ### `debug local-page [url]`
+
 Inspect visible links, buttons, and editor fields from the local browser profile.
 
 ### `debug publish-screen <url>`
+
 Navigate to a draft URL and inspect the publish review screen structure.
 
 **Options:**
@@ -766,6 +885,7 @@ Navigate to a draft URL and inspect the publish review screen structure.
 | `--capture` | Click Continue first to reveal the review overlay | `false` |
 
 ### `debug review-overlay <url>`
+
 Navigate to a draft URL and inspect the review overlay.
 
 **Options:**
@@ -774,4 +894,5 @@ Navigate to a draft URL and inspect the review overlay.
 | `--capture` | Click Continue first to reveal the review overlay | `true` |
 
 ### `debug schedule-screen <url>`
+
 Navigate to a draft URL and inspect the schedule picker UI.

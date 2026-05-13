@@ -1,0 +1,45 @@
+name: Auto-Merge
+
+on:
+  pull_request:
+    types: [labeled, opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+jobs:
+  auto-merge:
+    if: >
+      contains(github.event.pull_request.labels.*.name, 'dependencies') &&
+      !contains(github.event.pull_request.labels.*.name, 'breaking')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Approve and Enable Auto-Merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          # Approve the PR
+          gh pr review "$PR_URL" --approve
+
+          # Wait for CI checks to complete (up to 10 minutes)
+          for i in $(seq 1 60); do
+            CI_STATE=$(gh pr view "$PR_URL" --json statusCheckRollup --jq '.statusCheckRollup | map(.conclusion) | join(",")')
+            if echo "$CI_STATE" | grep -q "FAILURE"; then
+              echo "CI checks failed; not enabling auto-merge"
+              exit 1
+            fi
+            if echo "$CI_STATE" | grep -qv "PENDING"; then
+              echo "All CI checks completed"
+              break
+            fi
+            echo "Waiting for CI checks... ($i/60)"
+            sleep 10
+          done
+
+          # Enable auto-merge
+          gh pr merge "$PR_URL" --auto --squash

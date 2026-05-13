@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Command, type Help } from "commander";
+import { Command } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
 import {
   clearSession,
@@ -30,7 +30,14 @@ import {
 import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
 import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
-import { stateDir, configFilePath, draftMappingsFilePath, sessionFilePath, localBrowserProfileDir, analyticsSnapshotsDir } from "./config/paths.js";
+import {
+  stateDir,
+  configFilePath,
+  draftMappingsFilePath,
+  sessionFilePath,
+  localBrowserProfileDir,
+  analyticsSnapshotsDir,
+} from "./config/paths.js";
 import {
   loadConfig,
   loadEffectiveConfig,
@@ -54,10 +61,7 @@ import {
   summarizeWorkflowTrace,
   writeWorkflowTraceFixture,
 } from "./publish/workflow-trace.js";
-import {
-  evaluateDistributionPolicy,
-  summarizeDistributionPolicy,
-} from "./policy/distribution.js";
+import { evaluateDistributionPolicy, summarizeDistributionPolicy } from "./policy/distribution.js";
 import {
   buildMcpSummaryResource,
   buildMcpSurfaceManifest,
@@ -80,11 +84,7 @@ import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.j
 import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
 import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import { readApiInventory } from "./substack-api/read-model.js";
-import {
-  captureFixture,
-  compareFixture,
-  validateSchemaFile,
-} from "./schema/fixtures.js";
+import { captureFixture, compareFixture, validateSchemaFile } from "./schema/fixtures.js";
 import { summarizeMediaManifest } from "./parser/media.js";
 import { redact, redactUrl } from "./util/redact.js";
 import {
@@ -122,7 +122,7 @@ import {
   importFromRss,
   fetchApiTokens,
 } from "./substack-api/integrations.js";
-import { fetchPublication, fetchPublicationChecklist } from "./substack-api/publication.js";
+import { fetchPublication } from "./substack-api/publication.js";
 import {
   fetchPublicationSettings,
   updatePublicationSettings,
@@ -136,16 +136,14 @@ import { readOwnProfile, readPublicProfile } from "./substack-api/profile.js";
 import { listNotes, getNote, createNote } from "./substack-api/notes.js";
 import { createSubstackClient } from "./substack-api/substack-adapter.js";
 import { fetchSubscriberList } from "./substack-api/subscriber-list.js";
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 const program = new Command();
 
 program
   .name("substack-cli")
-  .description(
-    "Publish local Markdown files to a user-owned Substack publication.",
-  )
+  .description("Publish local Markdown files to a user-owned Substack publication.")
   .version("0.1.0");
 
 program
@@ -164,9 +162,7 @@ program
     collect(program);
 
     const cmdNames = allCommands.map((c) => c.name);
-    const globalOpts = program.options
-      .map((o) => o.long ?? o.short ?? "")
-      .filter(Boolean);
+    const globalOpts = program.options.map((o) => o.long ?? o.short ?? "").filter(Boolean);
 
     switch (shell) {
       case "bash":
@@ -208,18 +204,14 @@ _substack_cli
 `);
         break;
       default:
-        console.error(
-          `Unsupported shell: ${shell}. Use bash, zsh, or powershell.`,
-        );
+        console.error(`Unsupported shell: ${shell}. Use bash, zsh, or powershell.`);
         process.exitCode = 1;
     }
   });
 
 program
   .command("inspect")
-  .description(
-    "Parse a Markdown file and print the generated Tiptap/ProseMirror payload.",
-  )
+  .description("Parse a Markdown file and print the generated Tiptap/ProseMirror payload.")
   .argument("<file>", "Markdown file to inspect")
   .action(async (file: string) => {
     const prepared = await preparePost(file, { mode: "draft" });
@@ -228,9 +220,7 @@ program
 
 program
   .command("doctor")
-  .description(
-    "Check local configuration, transport readiness, and ignored runtime files.",
-  )
+  .description("Check local configuration, transport readiness, and ignored runtime files.")
   .action(async () => {
     const report = await runDoctor();
     console.log(JSON.stringify(report, null, 2));
@@ -280,9 +270,7 @@ mcp
 
 program
   .command("prepublish")
-  .description(
-    "Validate the final publish or schedule payload without opening the browser.",
-  )
+  .description("Validate the final publish or schedule payload without opening the browser.")
   .argument("<file>", "Markdown file to validate")
   .option("--mode <mode>", "publish or schedule", "publish")
   .option("--at <iso-date>", "ISO timestamp for scheduled publication")
@@ -333,10 +321,7 @@ trace
   .argument("<expected-file>", "Expected workflow trace JSON file")
   .argument("<actual-file>", "Actual workflow trace JSON file")
   .action(async (expectedFile: string, actualFile: string) => {
-    const comparison = await compareWorkflowTraceArtifacts(
-      expectedFile,
-      actualFile,
-    );
+    const comparison = await compareWorkflowTraceArtifacts(expectedFile, actualFile);
     console.log(JSON.stringify(comparison, null, 2));
 
     if (!comparison.equal) {
@@ -368,18 +353,10 @@ program
   .command("draft")
   .description("Create or update a Substack draft from Markdown.")
   .argument("<file>", "Markdown file to draft")
-  .option(
-    "--dry-run",
-    "Print the generated payload without opening a browser",
-    false,
-  )
+  .option("--dry-run", "Print the generated payload without opening a browser", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
-  .option(
-    "--experimental-inject-state",
-    "Use experimental editor-state injection",
-    false,
-  )
+  .option("--experimental-inject-state", "Use experimental editor-state injection", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
     async (
@@ -407,10 +384,7 @@ program
       if (transport.selected === "api") {
         const effective = await loadEffectiveConfig();
         const publicationUrl = requirePublicationUrl(effective);
-        const existingDraft = await findDraftMapping(
-          prepared.post.filePath,
-          publicationUrl,
-        );
+        const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
         const material = await resolveApiAuthMaterial(effective, "auto");
         const validation = await validateApiAuthMaterial(material, fetch);
 
@@ -422,22 +396,11 @@ program
           return;
         }
 
-        const plan = planCreateDraft(
-          prepared.post,
-          publicationUrl,
-          existingDraft,
-          undefined,
-          {
-            uploadEndpoint: effective.uploadEndpoint,
-            responseUrlField: effective.uploadResponseField,
-          },
-        );
-        const result = await executeDraftWrite(
-          plan,
-          material,
-          validation.userId,
-          fetch,
-        );
+        const plan = planCreateDraft(prepared.post, publicationUrl, existingDraft, undefined, {
+          uploadEndpoint: effective.uploadEndpoint,
+          responseUrlField: effective.uploadResponseField,
+        });
+        const result = await executeDraftWrite(plan, material, validation.userId, fetch);
 
         console.log(JSON.stringify(result, null, 2));
 
@@ -445,35 +408,35 @@ program
           process.exitCode = 1;
         }
 
-        await maybeWriteTrace({
-          status: result.status === "created" ? "draft-created" : "draft-updated",
-          operation: result.operation,
-          mode: "draft",
-          title: resolvePostTitle(prepared.post),
-          currentUrl: plan.endpoint,
-          finalUrl: plan.endpoint,
-          finalState: result.status,
-          publishedUrl: undefined,
-          draftId: result.draftId,
-          draftUrl: result.draftUrl,
-          metadata: {
-            subtitle: prepared.post.metadata.subtitle,
-            tags: prepared.post.metadata.tags,
-            audience: prepared.post.metadata.audience,
-            section: prepared.post.metadata.section,
+        await maybeWriteTrace(
+          {
+            status: result.status === "created" ? "draft-created" : "draft-updated",
+            operation: result.operation,
+            mode: "draft",
+            title: resolvePostTitle(prepared.post),
+            currentUrl: plan.endpoint,
+            finalUrl: plan.endpoint,
+            finalState: result.status,
+            publishedUrl: undefined,
+            draftId: result.draftId,
+            draftUrl: result.draftUrl,
+            metadata: {
+              subtitle: prepared.post.metadata.subtitle,
+              tags: prepared.post.metadata.tags,
+              audience: prepared.post.metadata.audience,
+              section: prepared.post.metadata.section,
+            },
+            transport: { requested: "api", selected: "api" },
+            trace: [],
           },
-          transport: { requested: "api", selected: "api" },
-          trace: [],
-        }, options.traceOut);
+          options.traceOut,
+        );
         return;
       }
 
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
-      const existingDraft = await findDraftMapping(
-        prepared.post.filePath,
-        publicationUrl,
-      );
+      const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
       await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
     },
   );
@@ -482,24 +445,12 @@ program
   .command("publish")
   .description("Publish a Markdown file after explicit confirmation.")
   .argument("<file>", "Markdown file to publish")
-  .option(
-    "--dry-run",
-    "Print the generated payload without opening a browser",
-    false,
-  )
+  .option("--dry-run", "Print the generated payload without opening a browser", false)
   .option("--yes", "Confirm publishing without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
-  .option(
-    "--experimental-inject-state",
-    "Use experimental editor-state injection",
-    false,
-  )
-  .option(
-    "--review-only",
-    "Stop at the publish review screen without clicking Publish",
-    false,
-  )
+  .option("--experimental-inject-state", "Use experimental editor-state injection", false)
+  .option("--review-only", "Stop at the publish review screen without clicking Publish", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
     async (
@@ -526,12 +477,16 @@ program
       const publicationUrl = requirePublicationUrl(effective);
 
       if (transport.selected === "api") {
-        const existingDraft = await findDraftMapping(
-          prepared.post.filePath,
-          publicationUrl,
-        );
+        const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
         if (!existingDraft) {
-          console.error(JSON.stringify({ status: "failed", message: "API publish requires an existing draft. Run `draft --transport api` first or omit --transport to use the browser workflow.", transport }));
+          console.error(
+            JSON.stringify({
+              status: "failed",
+              message:
+                "API publish requires an existing draft. Run `draft --transport api` first or omit --transport to use the browser workflow.",
+              transport,
+            }),
+          );
           process.exitCode = 1;
           return;
         }
@@ -539,25 +494,28 @@ program
         if (options.dryRun || options.reviewOnly) {
           console.log(JSON.stringify({ ...report, transport }, null, 2));
           if (options.traceOut) {
-            await maybeWriteTrace({
-              status: "preview",
-              operation: "create",
-              mode: "publish",
-              title: report.title,
-              currentUrl: existingDraft.draftUrl ?? "",
-              finalUrl: existingDraft.draftUrl ?? "",
-              finalState: "reviewed",
-              publishedUrl: undefined,
-              draftId: existingDraft.draftId,
-              metadata: {
-                subtitle: prepared.post.metadata.subtitle,
-                tags: prepared.post.metadata.tags,
-                audience: prepared.post.metadata.audience,
-                section: prepared.post.metadata.section,
+            await maybeWriteTrace(
+              {
+                status: "preview",
+                operation: "create",
+                mode: "publish",
+                title: report.title,
+                currentUrl: existingDraft.draftUrl ?? "",
+                finalUrl: existingDraft.draftUrl ?? "",
+                finalState: "reviewed",
+                publishedUrl: undefined,
+                draftId: existingDraft.draftId,
+                metadata: {
+                  subtitle: prepared.post.metadata.subtitle,
+                  tags: prepared.post.metadata.tags,
+                  audience: prepared.post.metadata.audience,
+                  section: prepared.post.metadata.section,
+                },
+                transport: { requested: "api", selected: "api" },
+                trace: [],
               },
-              transport: { requested: "api", selected: "api" },
-              trace: [],
-            }, options.traceOut);
+              options.traceOut,
+            );
           }
           return;
         }
@@ -565,45 +523,61 @@ program
         const material = await resolveApiAuthMaterial(effective, "auto");
         const validation = await validateApiAuthMaterial(material, fetch);
         if (validation.status !== "ok") {
-          console.error(JSON.stringify({ status: "failed", message: validation.message ?? "Could not validate API session.", transport }));
+          console.error(
+            JSON.stringify({
+              status: "failed",
+              message: validation.message ?? "Could not validate API session.",
+              transport,
+            }),
+          );
           process.exitCode = 1;
           return;
         }
 
         const publishPlan = planPublishWrite(
-          existingDraft.draftId, existingDraft.draftUrl ?? "",
-          "publish", publicationUrl, undefined, existingDraft,
+          existingDraft.draftId,
+          existingDraft.draftUrl ?? "",
+          "publish",
+          publicationUrl,
+          undefined,
+          existingDraft,
         );
         const publishResult = await executePublishWrite(publishPlan, material, fetch);
-        console.log(JSON.stringify({ ...publishResult, publishedUrl: publishResult.postUrl, transport }, null, 2));
+        console.log(
+          JSON.stringify(
+            { ...publishResult, publishedUrl: publishResult.postUrl, transport },
+            null,
+            2,
+          ),
+        );
         if (publishResult.status === "failed") process.exitCode = 1;
 
-        await maybeWriteTrace({
-          status: publishResult.status === "failed" ? "failed" : "published",
-          operation: "create",
-          mode: "publish",
-          title: report.title,
-          currentUrl: publishPlan.endpoint,
-          finalUrl: publishPlan.endpoint,
-          finalState: publishResult.status,
-          publishedUrl: publishResult.postUrl,
-          draftId: publishPlan.draftId,
-          metadata: {
-            subtitle: prepared.post.metadata.subtitle,
-            tags: prepared.post.metadata.tags,
-            audience: prepared.post.metadata.audience,
-            section: prepared.post.metadata.section,
+        await maybeWriteTrace(
+          {
+            status: publishResult.status === "failed" ? "failed" : "published",
+            operation: "create",
+            mode: "publish",
+            title: report.title,
+            currentUrl: publishPlan.endpoint,
+            finalUrl: publishPlan.endpoint,
+            finalState: publishResult.status,
+            publishedUrl: publishResult.postUrl,
+            draftId: publishPlan.draftId,
+            metadata: {
+              subtitle: prepared.post.metadata.subtitle,
+              tags: prepared.post.metadata.tags,
+              audience: prepared.post.metadata.audience,
+              section: prepared.post.metadata.section,
+            },
+            transport: { requested: "api", selected: "api" },
+            trace: [],
           },
-          transport: { requested: "api", selected: "api" },
-          trace: [],
-        }, options.traceOut);
+          options.traceOut,
+        );
         return;
       }
 
-      const existingDraft = await findDraftMapping(
-        prepared.post.filePath,
-        publicationUrl,
-      );
+      const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
       await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
     },
   );
@@ -613,24 +587,12 @@ program
   .description("Schedule a Markdown file for future publication.")
   .argument("<file>", "Markdown file to schedule")
   .requiredOption("--at <iso-date>", "ISO timestamp for scheduled publication")
-  .option(
-    "--dry-run",
-    "Print the generated payload without opening a browser",
-    false,
-  )
+  .option("--dry-run", "Print the generated payload without opening a browser", false)
   .option("--yes", "Confirm scheduling without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
-  .option(
-    "--experimental-inject-state",
-    "Use experimental editor-state injection",
-    false,
-  )
-  .option(
-    "--review-only",
-    "Stop at the schedule review screen without clicking Schedule",
-    false,
-  )
+  .option("--experimental-inject-state", "Use experimental editor-state injection", false)
+  .option("--review-only", "Stop at the schedule review screen without clicking Schedule", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
     async (
@@ -661,12 +623,16 @@ program
       const publicationUrl = requirePublicationUrl(effective);
 
       if (transport.selected === "api") {
-        const existingDraft = await findDraftMapping(
-          prepared.post.filePath,
-          publicationUrl,
-        );
+        const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
         if (!existingDraft) {
-          console.error(JSON.stringify({ status: "failed", message: "API schedule requires an existing draft. Run `draft --transport api` first or omit --transport to use the browser workflow.", transport }));
+          console.error(
+            JSON.stringify({
+              status: "failed",
+              message:
+                "API schedule requires an existing draft. Run `draft --transport api` first or omit --transport to use the browser workflow.",
+              transport,
+            }),
+          );
           process.exitCode = 1;
           return;
         }
@@ -674,26 +640,29 @@ program
         if (options.dryRun || options.reviewOnly) {
           console.log(JSON.stringify({ ...report, transport }, null, 2));
           if (options.traceOut) {
-            await maybeWriteTrace({
-              status: "preview",
-              operation: "create",
-              mode: "schedule",
-              title: report.title,
-              currentUrl: existingDraft.draftUrl ?? "",
-              finalUrl: existingDraft.draftUrl ?? "",
-              finalState: "reviewed",
-              publishedUrl: undefined,
-              draftId: existingDraft.draftId,
-              scheduleAt: options.at,
-              metadata: {
-                subtitle: prepared.post.metadata.subtitle,
-                tags: prepared.post.metadata.tags,
-                audience: prepared.post.metadata.audience,
-                section: prepared.post.metadata.section,
+            await maybeWriteTrace(
+              {
+                status: "preview",
+                operation: "create",
+                mode: "schedule",
+                title: report.title,
+                currentUrl: existingDraft.draftUrl ?? "",
+                finalUrl: existingDraft.draftUrl ?? "",
+                finalState: "reviewed",
+                publishedUrl: undefined,
+                draftId: existingDraft.draftId,
+                scheduleAt: options.at,
+                metadata: {
+                  subtitle: prepared.post.metadata.subtitle,
+                  tags: prepared.post.metadata.tags,
+                  audience: prepared.post.metadata.audience,
+                  section: prepared.post.metadata.section,
+                },
+                transport: { requested: "api", selected: "api" },
+                trace: [],
               },
-              transport: { requested: "api", selected: "api" },
-              trace: [],
-            }, options.traceOut);
+              options.traceOut,
+            );
           }
           return;
         }
@@ -701,46 +670,62 @@ program
         const material = await resolveApiAuthMaterial(effective, "auto");
         const validation = await validateApiAuthMaterial(material, fetch);
         if (validation.status !== "ok") {
-          console.error(JSON.stringify({ status: "failed", message: validation.message ?? "Could not validate API session.", transport }));
+          console.error(
+            JSON.stringify({
+              status: "failed",
+              message: validation.message ?? "Could not validate API session.",
+              transport,
+            }),
+          );
           process.exitCode = 1;
           return;
         }
 
         const schedulePlan = planPublishWrite(
-          existingDraft.draftId, existingDraft.draftUrl ?? "",
-          "schedule", publicationUrl, options.at, existingDraft,
+          existingDraft.draftId,
+          existingDraft.draftUrl ?? "",
+          "schedule",
+          publicationUrl,
+          options.at,
+          existingDraft,
         );
         const scheduleResult = await executePublishWrite(schedulePlan, material, fetch);
-        console.log(JSON.stringify({ ...scheduleResult, publishedUrl: scheduleResult.postUrl, transport }, null, 2));
+        console.log(
+          JSON.stringify(
+            { ...scheduleResult, publishedUrl: scheduleResult.postUrl, transport },
+            null,
+            2,
+          ),
+        );
         if (scheduleResult.status === "failed") process.exitCode = 1;
 
-        await maybeWriteTrace({
-          status: scheduleResult.status === "failed" ? "failed" : "scheduled",
-          operation: "create",
-          mode: "schedule",
-          title: report.title,
-          currentUrl: schedulePlan.endpoint,
-          finalUrl: schedulePlan.endpoint,
-          finalState: scheduleResult.status,
-          publishedUrl: scheduleResult.postUrl,
-          draftId: schedulePlan.draftId,
-          scheduleAt: options.at,
-          metadata: {
-            subtitle: prepared.post.metadata.subtitle,
-            tags: prepared.post.metadata.tags,
-            audience: prepared.post.metadata.audience,
-            section: prepared.post.metadata.section,
+        await maybeWriteTrace(
+          {
+            status: scheduleResult.status === "failed" ? "failed" : "scheduled",
+            operation: "create",
+            mode: "schedule",
+            title: report.title,
+            currentUrl: schedulePlan.endpoint,
+            finalUrl: schedulePlan.endpoint,
+            finalState: scheduleResult.status,
+            publishedUrl: scheduleResult.postUrl,
+            draftId: schedulePlan.draftId,
+            scheduleAt: options.at,
+            metadata: {
+              subtitle: prepared.post.metadata.subtitle,
+              tags: prepared.post.metadata.tags,
+              audience: prepared.post.metadata.audience,
+              section: prepared.post.metadata.section,
+            },
+            transport: { requested: "api", selected: "api" },
+            trace: [],
           },
-          transport: { requested: "api", selected: "api" },
-          trace: [],
-        }, options.traceOut);
+          options.traceOut,
+        );
         return;
       }
 
-      const existingDraft = await findDraftMapping(
-        prepared.post.filePath,
-        publicationUrl,
-      );
+      const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
       await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
     },
   );
@@ -760,9 +745,7 @@ schema
 
 schema
   .command("capture")
-  .description(
-    "Capture the generated payload for a Markdown file as a schema fixture.",
-  )
+  .description("Capture the generated payload for a Markdown file as a schema fixture.")
   .argument("<markdown-file>", "Markdown file to parse")
   .requiredOption("--out <file>", "Fixture JSON output path")
   .action(async (file: string, options: { out: string }) => {
@@ -782,9 +765,7 @@ schema
 
 schema
   .command("compare")
-  .description(
-    "Compare a Markdown file's current generated document with a saved fixture.",
-  )
+  .description("Compare a Markdown file's current generated document with a saved fixture.")
   .argument("<markdown-file>", "Markdown file to parse")
   .argument("<fixture-file>", "Fixture JSON file")
   .action(async (markdownFile: string, fixtureFile: string) => {
@@ -806,33 +787,25 @@ const apiAuth = api
 
 apiAuth
   .command("status")
-  .description(
-    "Extract local or environment cookie material and print a redacted summary.",
-  )
+  .description("Extract local or environment cookie material and print a redacted summary.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--no-validate", "Skip read-only Substack validation probes")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource; validate: boolean }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const summary = summarizeApiAuthMaterial(material);
-      const validation = options.validate
-        ? await validateApiAuthMaterial(material)
-        : null;
+  .action(async (options: { source: "auto" | ApiAuthSource; validate: boolean }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const summary = summarizeApiAuthMaterial(material);
+    const validation = options.validate ? await validateApiAuthMaterial(material) : null;
 
-      console.log(JSON.stringify({ ...summary, validation }, null, 2));
+    console.log(JSON.stringify({ ...summary, validation }, null, 2));
 
-      if (!summary.hasLikelySessionCookie || validation?.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+    if (!summary.hasLikelySessionCookie || validation?.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 api
   .command("payload")
-  .description(
-    "Build the write-compatible Substack draft payload for a Markdown file.",
-  )
+  .description("Build the write-compatible Substack draft payload for a Markdown file.")
   .argument("<file>", "Markdown file to convert")
   .action(async (file: string) => {
     const prepared = await preparePost(file, { mode: "draft" });
@@ -863,28 +836,12 @@ api
 
 api
   .command("inventory")
-  .description(
-    "Read user and publication inventory through read-only API probes.",
-  )
+  .description("Read user and publication inventory through read-only API probes.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .option(
-    "--post-limit <limit>",
-    "Maximum number of recent posts to include",
-    parseInteger,
-    10,
-  )
-  .option(
-    "--draft-limit <limit>",
-    "Maximum number of drafts to include",
-    parseInteger,
-    10,
-  )
+  .option("--post-limit <limit>", "Maximum number of recent posts to include", parseInteger, 10)
+  .option("--draft-limit <limit>", "Maximum number of drafts to include", parseInteger, 10)
   .action(
-    async (options: {
-      source: "auto" | ApiAuthSource;
-      postLimit: number;
-      draftLimit: number;
-    }) => {
+    async (options: { source: "auto" | ApiAuthSource; postLimit: number; draftLimit: number }) => {
       const effective = await loadEffectiveConfig();
       const material = await resolveApiAuthMaterial(effective, options.source);
       const inventory = await readApiInventory(material, fetch, {
@@ -906,109 +863,85 @@ const apiDraft = api
 
 apiDraft
   .command("create")
-  .description(
-    "Build and validate a draft creation request without publishing content.",
-  )
+  .description("Build and validate a draft creation request without publishing content.")
   .argument("<file>", "Markdown file to convert")
   .option("--source <source>", "none, auto, env, or local-profile", "none")
-  .option(
-    "--live",
-    "Attempt the live write request after endpoint contract confirmation",
-    false,
-  )
-  .action(
-    async (
-      file: string,
-      options: { live: boolean; source: "none" | ApiAuthSource },
-    ) => {
-      if (options.live) {
-        const effective = await loadEffectiveConfig();
-        const publicationUrl = requirePublicationUrl(effective);
-        const prepared = await preparePost(file, { mode: "draft" });
-        const existingDraft = await findDraftMapping(
-          prepared.post.filePath,
-          publicationUrl,
-        );
-
-        const liveSource: "auto" | ApiAuthSource =
-          options.source === "none" ? "auto" : options.source;
-        const material = await resolveApiAuthMaterial(effective, liveSource);
-        const validation = await validateApiAuthMaterial(material, fetch);
-
-        if (validation.status !== "ok" || !validation.userId) {
-          console.log(
-            JSON.stringify(
-              {
-                status: "failed",
-                message:
-                  validation.message ??
-                  "Could not validate the API session.",
-                details: validation,
-              },
-              null,
-              2,
-            ),
-          );
-          process.exitCode = 1;
-          return;
-        }
-
-        const sectionResolution =
-          options.source === "none"
-            ? null
-            : buildDraftSectionResolutionReport({
-                post: prepared.post,
-                inventory: await readApiInventory(material, fetch, {
-                  postLimit: 10,
-                }),
-              });
-        const plan = planCreateDraft(
-          prepared.post,
-          publicationUrl,
-          existingDraft,
-          sectionResolution,
-          {
-            uploadEndpoint: effective.uploadEndpoint,
-            responseUrlField: effective.uploadResponseField,
-          },
-        );
-        const result = await executeDraftWrite(plan, material, validation.userId, fetch);
-
-        console.log(JSON.stringify(result, null, 2));
-
-        if (result.status === "failed") {
-          process.exitCode = 1;
-        }
-        return;
-      }
-
+  .option("--live", "Attempt the live write request after endpoint contract confirmation", false)
+  .action(async (file: string, options: { live: boolean; source: "none" | ApiAuthSource }) => {
+    if (options.live) {
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
       const prepared = await preparePost(file, { mode: "draft" });
-      const existingDraft = await findDraftMapping(
-        prepared.post.filePath,
-        publicationUrl,
-      );
+      const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
+
+      const liveSource: "auto" | ApiAuthSource =
+        options.source === "none" ? "auto" : options.source;
+      const material = await resolveApiAuthMaterial(effective, liveSource);
+      const validation = await validateApiAuthMaterial(material, fetch);
+
+      if (validation.status !== "ok" || !validation.userId) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: validation.message ?? "Could not validate the API session.",
+              details: validation,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
       const sectionResolution =
         options.source === "none"
           ? null
           : buildDraftSectionResolutionReport({
               post: prepared.post,
-              inventory: await readApiInventory(
-                await resolveApiAuthMaterial(effective, options.source),
-                fetch,
-                { postLimit: 10 },
-              ),
+              inventory: await readApiInventory(material, fetch, {
+                postLimit: 10,
+              }),
             });
       const plan = planCreateDraft(
         prepared.post,
         publicationUrl,
         existingDraft,
         sectionResolution,
+        {
+          uploadEndpoint: effective.uploadEndpoint,
+          responseUrlField: effective.uploadResponseField,
+        },
       );
-      console.log(JSON.stringify(plan, null, 2));
-    },
-  );
+      const result = await executeDraftWrite(plan, material, validation.userId, fetch);
+
+      console.log(JSON.stringify(result, null, 2));
+
+      if (result.status === "failed") {
+        process.exitCode = 1;
+      }
+      return;
+    }
+
+    const effective = await loadEffectiveConfig();
+    const publicationUrl = requirePublicationUrl(effective);
+    const prepared = await preparePost(file, { mode: "draft" });
+    const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
+    const sectionResolution =
+      options.source === "none"
+        ? null
+        : buildDraftSectionResolutionReport({
+            post: prepared.post,
+            inventory: await readApiInventory(
+              await resolveApiAuthMaterial(effective, options.source),
+              fetch,
+              { postLimit: 10 },
+            ),
+          });
+    const plan = planCreateDraft(prepared.post, publicationUrl, existingDraft, sectionResolution);
+    console.log(JSON.stringify(plan, null, 2));
+  });
 
 apiDraft
   .command("inspect")
@@ -1026,10 +959,7 @@ apiDraft
       postLimit: 10,
     });
     const mappings = await loadDraftMappings();
-    const existingDraft = await findDraftMapping(
-      prepared.post.filePath,
-      publicationUrl,
-    );
+    const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
 
     const report = buildDraftInspectionReport({
       post: prepared.post,
@@ -1064,9 +994,7 @@ apiDraft
 
 apiDraft
   .command("observe")
-  .description(
-    "Watch local browser traffic while manually creating or saving a draft.",
-  )
+  .description("Watch local browser traffic while manually creating or saving a draft.")
   .argument(
     "[url]",
     "Publication URL to open before observation, defaults to the configured publication",
@@ -1115,9 +1043,7 @@ apiDraft
 
 apiDraft
   .command("contract-matrix")
-  .description(
-    "Merge multiple draft capture artifacts into one inferred contract matrix.",
-  )
+  .description("Merge multiple draft capture artifacts into one inferred contract matrix.")
   .argument("<files...>", "Draft capture JSON files to analyze")
   .option("--out <file>", "Write the matrix fixture to a file")
   .action(async (files: string[], options: { out?: string }) => {
@@ -1139,10 +1065,7 @@ apiDraft
   .argument("<expected-file>", "Expected draft contract matrix JSON file")
   .argument("<actual-file>", "Actual draft contract matrix JSON file")
   .action(async (expectedFile: string, actualFile: string) => {
-    const comparison = await compareDraftContractMatrixArtifacts(
-      expectedFile,
-      actualFile,
-    );
+    const comparison = await compareDraftContractMatrixArtifacts(expectedFile, actualFile);
 
     console.log(JSON.stringify(comparison, null, 2));
 
@@ -1166,10 +1089,7 @@ apiDraft
   .argument("<expected-file>", "Expected draft capture JSON file")
   .argument("<actual-file>", "Actual draft capture JSON file")
   .action(async (expectedFile: string, actualFile: string) => {
-    const comparison = await compareDraftCaptureArtifacts(
-      expectedFile,
-      actualFile,
-    );
+    const comparison = await compareDraftCaptureArtifacts(expectedFile, actualFile);
 
     console.log(JSON.stringify(comparison, null, 2));
 
@@ -1180,9 +1100,7 @@ apiDraft
 
 apiDraft
   .command("fixture")
-  .description(
-    "Write a normalized draft capture fixture from a saved artifact.",
-  )
+  .description("Write a normalized draft capture fixture from a saved artifact.")
   .argument("<file>", "Draft capture JSON file to normalize")
   .requiredOption("--out <file>", "Fixture JSON output path")
   .action(async (file: string, options: { out: string }) => {
@@ -1228,8 +1146,7 @@ apiDraft
         draftUrl: options.draftUrl,
         title:
           options.title ??
-          planCreateDraft(prepared.post, requirePublicationUrl(effective))
-            .payload.title,
+          planCreateDraft(prepared.post, requirePublicationUrl(effective)).payload.title,
         slug: options.slug ?? prepared.post.metadata.slug,
       });
 
@@ -1239,51 +1156,37 @@ apiDraft
 
 apiDraft
   .command("duplicates")
-  .description(
-    "Look up likely duplicate drafts using the read-only inventory and local mappings.",
-  )
+  .description("Look up likely duplicate drafts using the read-only inventory and local mappings.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .option(
-    "--post-limit <limit>",
-    "Maximum number of recent posts to inspect",
-    parseInteger,
-    10,
-  )
+  .option("--post-limit <limit>", "Maximum number of recent posts to inspect", parseInteger, 10)
   .argument("<file>", "Markdown file to inspect")
-  .action(
-    async (
-      file: string,
-      options: { source: "auto" | ApiAuthSource; postLimit: number },
-    ) => {
-      const effective = await loadEffectiveConfig();
-      const prepared = await preparePost(file, { mode: "draft" });
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const inventory = await readApiInventory(material, fetch, {
-        postLimit: options.postLimit,
-      });
+  .action(async (file: string, options: { source: "auto" | ApiAuthSource; postLimit: number }) => {
+    const effective = await loadEffectiveConfig();
+    const prepared = await preparePost(file, { mode: "draft" });
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const inventory = await readApiInventory(material, fetch, {
+      postLimit: options.postLimit,
+    });
 
-      if (inventory.status !== "ok") {
-        console.log(JSON.stringify(inventory, null, 2));
-        process.exitCode = 1;
-        return;
-      }
+    if (inventory.status !== "ok") {
+      console.log(JSON.stringify(inventory, null, 2));
+      process.exitCode = 1;
+      return;
+    }
 
-      const mappings = await loadDraftMappings();
-      const report = buildDraftDuplicateLookupReport({
-        post: prepared.post,
-        inventory,
-        mappings,
-      });
+    const mappings = await loadDraftMappings();
+    const report = buildDraftDuplicateLookupReport({
+      post: prepared.post,
+      inventory,
+      mappings,
+    });
 
-      console.log(JSON.stringify(report, null, 2));
-    },
-  );
+    console.log(JSON.stringify(report, null, 2));
+  });
 
 apiDraft
   .command("section")
-  .description(
-    "Resolve a draft section against the current read-only inventory.",
-  )
+  .description("Resolve a draft section against the current read-only inventory.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .argument("<file>", "Markdown file to inspect")
   .action(async (file: string, options: { source: "auto" | ApiAuthSource }) => {
@@ -1323,63 +1226,13 @@ apiPublication
       const result = await fetchPublication(material.publicationUrl, material, fetch);
       console.log(JSON.stringify(result, null, 2));
     } catch (err) {
-      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
-      process.exitCode = 1;
-    }
-  });
-
-apiPublication
-  .command("settings")
-  .description("Fetch publication settings (colors, fonts, branding).")
-  .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    try {
-      const result = await fetchPublication(material.publicationUrl, material, fetch);
-      console.log(JSON.stringify({
-        name: result.name,
-        subdomain: result.subdomain,
-        customDomain: result.customDomain,
-        heroText: result.heroText,
-        paymentsState: result.paymentsState,
-        logoUrl: result.logoUrl,
-        faviconUrl: result.faviconUrl,
-        colors: result.colors,
-        fontFamilyHeading: result.fontFamilyHeading,
-        fontFamilyBody: result.fontFamilyBody,
-        customDomainEnabled: result.customDomainEnabled,
-      }, null, 2));
-    } catch (err) {
-      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
-      process.exitCode = 1;
-    }
-  });
-
-apiPublication
-  .command("settings")
-  .description("Fetch publication settings (colors, fonts, branding).")
-  .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    try {
-      const result = await fetchPublication(material.publicationUrl, material, fetch);
-      console.log(JSON.stringify({
-        name: result.name,
-        subdomain: result.subdomain,
-        customDomain: result.customDomain,
-        heroText: result.heroText,
-        paymentsState: result.paymentsState,
-        logoUrl: result.logoUrl,
-        faviconUrl: result.faviconUrl,
-        colors: result.colors,
-        fontFamilyHeading: result.fontFamilyHeading,
-        fontFamilyBody: result.fontFamilyBody,
-        customDomainEnabled: result.customDomainEnabled,
-      }, null, 2));
-    } catch (err) {
-      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      console.error(
+        JSON.stringify(
+          { status: "failed", message: err instanceof Error ? err.message : String(err) },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
     }
   });
@@ -1395,7 +1248,13 @@ apiPublication
       const result = await fetchPublicationSettings(material.publicationUrl, material, fetch);
       console.log(JSON.stringify(result, null, 2));
     } catch (err) {
-      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      console.error(
+        JSON.stringify(
+          { status: "failed", message: err instanceof Error ? err.message : String(err) },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
     }
   });
@@ -1424,85 +1283,102 @@ apiPublication
   .option("--email-footer-color <color>", "Email footer color (hex)")
   .option("--dry-run", "Preview changes without writing", false)
   .option("--yes", "Confirm update without interactive prompt", false)
-  .action(async (options: {
-    source: "auto" | ApiAuthSource;
-    fromJson?: string;
-    fromYaml?: string;
-    name?: string;
-    description?: string;
-    heroText?: string;
-    logoUrl?: string;
-    faviconUrl?: string;
-    primaryColor?: string;
-    secondaryColor?: string;
-    backgroundColor?: string;
-    textColor?: string;
-    fontHeading?: string;
-    fontBody?: string;
-    seoTitle?: string;
-    seoDescription?: string;
-    ogImageUrl?: string;
-    emailHeaderColor?: string;
-    emailFooterColor?: string;
-    dryRun: boolean;
-    yes: boolean;
-  }) => {
-    if (!options.yes && !options.dryRun) {
-      console.log(JSON.stringify({
-        status: "failed",
-        message: "Use --yes to confirm update or --dry-run to preview changes."
-      }, null, 2));
-      process.exitCode = 1;
-      return;
-    }
-
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-
-    let updates: Record<string, unknown> = {};
-
-    if (options.fromJson) {
-      const { readFileSync } = await import("node:fs");
-      updates = JSON.parse(readFileSync(options.fromJson, "utf-8"));
-    } else if (options.fromYaml) {
-      const { readFileSync } = await import("node:fs");
-      const yaml = await import("js-yaml");
-      updates = yaml.load(readFileSync(options.fromYaml, "utf-8")) as Record<string, unknown>;
-    } else {
-      if (options.name) updates.name = options.name;
-      if (options.description) updates.description = options.description;
-      if (options.heroText) updates.hero_text = options.heroText;
-      if (options.logoUrl) updates.logo_url = options.logoUrl;
-      if (options.faviconUrl) updates.favicon_url = options.faviconUrl;
-      if (options.primaryColor || options.secondaryColor || options.backgroundColor || options.textColor) {
-        updates.colors = {};
-        if (options.primaryColor) (updates.colors as Record<string, string>).primary = options.primaryColor;
-        if (options.secondaryColor) (updates.colors as Record<string, string>).secondary = options.secondaryColor;
-        if (options.backgroundColor) (updates.colors as Record<string, string>).background = options.backgroundColor;
-        if (options.textColor) (updates.colors as Record<string, string>).text = options.textColor;
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      fromJson?: string;
+      fromYaml?: string;
+      name?: string;
+      description?: string;
+      heroText?: string;
+      logoUrl?: string;
+      faviconUrl?: string;
+      primaryColor?: string;
+      secondaryColor?: string;
+      backgroundColor?: string;
+      textColor?: string;
+      fontHeading?: string;
+      fontBody?: string;
+      seoTitle?: string;
+      seoDescription?: string;
+      ogImageUrl?: string;
+      emailHeaderColor?: string;
+      emailFooterColor?: string;
+      dryRun: boolean;
+      yes: boolean;
+    }) => {
+      if (!options.yes && !options.dryRun) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Use --yes to confirm update or --dry-run to preview changes.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
       }
-      if (options.fontHeading) updates.font_family_heading = options.fontHeading;
-      if (options.fontBody) updates.font_family_body = options.fontBody;
-      if (options.seoTitle) updates.seo_title = options.seoTitle;
-      if (options.seoDescription) updates.seo_description = options.seoDescription;
-      if (options.ogImageUrl) updates.og_image_url = options.ogImageUrl;
-      if (options.emailHeaderColor) updates.email_header_color = options.emailHeaderColor;
-      if (options.emailFooterColor) updates.email_footer_color = options.emailFooterColor;
-    }
 
-    const result = await updatePublicationSettings(
-      material.publicationUrl,
-      material,
-      fetch,
-      updates,
-      { dryRun: options.dryRun, confirm: options.yes },
-    );
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
 
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
-  });
+      let updates: Record<string, unknown> = {};
+
+      if (options.fromJson) {
+        const { readFileSync } = await import("node:fs");
+        updates = JSON.parse(readFileSync(options.fromJson, "utf-8")) as Record<string, unknown>;
+      } else if (options.fromYaml) {
+        const { readFileSync } = await import("node:fs");
+        const yaml = await import("js-yaml");
+        updates = yaml.load(readFileSync(options.fromYaml, "utf-8")) as Record<string, unknown>;
+      } else {
+        if (options.name) updates.name = options.name;
+        if (options.description) updates.description = options.description;
+        if (options.heroText) updates.hero_text = options.heroText;
+        if (options.logoUrl) updates.logo_url = options.logoUrl;
+        if (options.faviconUrl) updates.favicon_url = options.faviconUrl;
+        if (
+          options.primaryColor ||
+          options.secondaryColor ||
+          options.backgroundColor ||
+          options.textColor
+        ) {
+          updates.colors = {};
+          if (options.primaryColor)
+            (updates.colors as Record<string, string>).primary = options.primaryColor;
+          if (options.secondaryColor)
+            (updates.colors as Record<string, string>).secondary = options.secondaryColor;
+          if (options.backgroundColor)
+            (updates.colors as Record<string, string>).background = options.backgroundColor;
+          if (options.textColor)
+            (updates.colors as Record<string, string>).text = options.textColor;
+        }
+        if (options.fontHeading) updates.font_family_heading = options.fontHeading;
+        if (options.fontBody) updates.font_family_body = options.fontBody;
+        if (options.seoTitle) updates.seo_title = options.seoTitle;
+        if (options.seoDescription) updates.seo_description = options.seoDescription;
+        if (options.ogImageUrl) updates.og_image_url = options.ogImageUrl;
+        if (options.emailHeaderColor) updates.email_header_color = options.emailHeaderColor;
+        if (options.emailFooterColor) updates.email_footer_color = options.emailFooterColor;
+      }
+
+      const result = await updatePublicationSettings(
+        material.publicationUrl,
+        material,
+        fetch,
+        updates,
+        { dryRun: options.dryRun, confirm: options.yes },
+      );
+
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 apiPublication
   .command("upload-logo")
@@ -1512,23 +1388,25 @@ apiPublication
   .option("--yes", "Confirm upload without interactive prompt", false)
   .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
     if (!options.yes) {
-      console.log(JSON.stringify({
-        status: "failed",
-        message: "Use --yes to confirm logo upload."
-      }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Use --yes to confirm logo upload.",
+          },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
       return;
     }
 
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await uploadPublicationLogo(
-      material.publicationUrl,
-      material,
-      fetch,
-      file,
-      { yes: options.yes },
-    );
+    const result = await uploadPublicationLogo(material.publicationUrl, material, fetch, file, {
+      yes: options.yes,
+    });
     console.log(JSON.stringify(result, null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
@@ -1543,32 +1421,32 @@ apiPublication
   .option("--yes", "Confirm upload without interactive prompt", false)
   .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
     if (!options.yes) {
-      console.log(JSON.stringify({
-        status: "failed",
-        message: "Use --yes to confirm favicon upload."
-      }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Use --yes to confirm favicon upload.",
+          },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
       return;
     }
 
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await uploadPublicationFavicon(
-      material.publicationUrl,
-      material,
-      fetch,
-      file,
-      { yes: options.yes },
-    );
+    const result = await uploadPublicationFavicon(material.publicationUrl, material, fetch, file, {
+      yes: options.yes,
+    });
     console.log(JSON.stringify(result, null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
     }
   });
 
-const apiDomain = api
-  .command("domain")
-  .description("Custom domain status and DNS instructions.");
+const apiDomain = api.command("domain").description("Custom domain status and DNS instructions.");
 
 apiDomain
   .command("status")
@@ -1584,9 +1462,7 @@ apiDomain
     }
   });
 
-const apiTeam = api
-  .command("team")
-  .description("Publication team management.");
+const apiTeam = api.command("team").description("Publication team management.");
 
 apiTeam
   .command("list")
@@ -1602,9 +1478,7 @@ apiTeam
     }
   });
 
-const apiProfile = api
-  .command("profile")
-  .description("Read own or public Substack profiles.");
+const apiProfile = api.command("profile").description("Read own or public Substack profiles.");
 
 apiProfile
   .command("me")
@@ -1655,12 +1529,16 @@ apiFollowing
       users.push({ id: String(user.id), name: user.name, handle: user.handle });
       count++;
     }
-    console.log(JSON.stringify({ status: "ok", users, count, message: `Found ${count} followed users.` }, null, 2));
+    console.log(
+      JSON.stringify(
+        { status: "ok", users, count, message: `Found ${count} followed users.` },
+        null,
+        2,
+      ),
+    );
   });
 
-const apiSubscriber = api
-  .command("subscriber")
-  .description("Subscriber information.");
+const apiSubscriber = api.command("subscriber").description("Subscriber information.");
 
 apiSubscriber
   .command("count")
@@ -1671,9 +1549,21 @@ apiSubscriber
     const material = await resolveApiAuthMaterial(effective, options.source);
     try {
       const count = await getSubscriberCount(material.publicationUrl, material, fetch);
-      console.log(JSON.stringify({ status: "ok", count, message: `Publication has ${count} subscribers.` }, null, 2));
+      console.log(
+        JSON.stringify(
+          { status: "ok", count, message: `Publication has ${count} subscribers.` },
+          null,
+          2,
+        ),
+      );
     } catch (err) {
-      console.error(JSON.stringify({ status: "failed", message: err instanceof Error ? err.message : String(err) }, null, 2));
+      console.error(
+        JSON.stringify(
+          { status: "failed", message: err instanceof Error ? err.message : String(err) },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
     }
   });
@@ -1684,30 +1574,20 @@ apiSubscriber
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--limit <limit>", "Maximum number of subscribers to return", parseInteger, 100)
   .option("--offset <offset>", "Offset for pagination", parseInteger, 0)
-  .action(
-    async (options: {
-      source: "auto" | ApiAuthSource;
-      limit: number;
-      offset: number;
-    }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchSubscriberList(
-        material.publicationUrl,
-        material,
-        fetch,
-        { limit: options.limit, offset: options.offset },
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource; limit: number; offset: number }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchSubscriberList(material.publicationUrl, material, fetch, {
+      limit: options.limit,
+      offset: options.offset,
+    });
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
-const apiNotes = api
-  .command("notes")
-  .description("Manage notes through the Substack API.");
+const apiNotes = api.command("notes").description("Manage notes through the Substack API.");
 
 apiNotes
   .command("list")
@@ -1718,7 +1598,13 @@ apiNotes
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const notes = await listNotes(material, options.limit);
-    console.log(JSON.stringify({ status: "ok", notes, count: notes.length, message: `Found ${notes.length} notes.` }, null, 2));
+    console.log(
+      JSON.stringify(
+        { status: "ok", notes, count: notes.length, message: `Found ${notes.length} notes.` },
+        null,
+        2,
+      ),
+    );
   });
 
 apiNotes
@@ -1748,7 +1634,18 @@ apiNotes
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const result = await createNote(material, options.body);
-    console.log(JSON.stringify({ status: "ok", id: result.id, publishedAt: result.publishedAt, message: `Note published (ID: ${result.id}).` }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          status: "ok",
+          id: result.id,
+          publishedAt: result.publishedAt,
+          message: `Note published (ID: ${result.id}).`,
+        },
+        null,
+        2,
+      ),
+    );
   });
 
 const apiAnalytics = api
@@ -1760,115 +1657,88 @@ apiAnalytics
   .description("Probe all analytics endpoints and report availability.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--post-id <id>", "Post ID for post-level analytics", parseInteger)
-  .action(
-    async (options: {
-      source: "auto" | ApiAuthSource;
-      postId?: number;
-    }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchAnalyticsInventory(
-        material.publicationUrl,
-        material,
-        fetch,
-        options.postId,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource; postId?: number }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchAnalyticsInventory(
+      material.publicationUrl,
+      material,
+      fetch,
+      options.postId,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiAnalytics
   .command("post")
   .description("Fetch analytics for a specific post.")
   .argument("<post-id>", "Post ID to fetch analytics for")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (
-      postId: string,
-      options: { source: "auto" | ApiAuthSource },
-    ) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchPostAnalytics(
-        material.publicationUrl,
-        Number(postId),
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (postId: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchPostAnalytics(
+      material.publicationUrl,
+      Number(postId),
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiAnalytics
   .command("subscribers")
   .description("Fetch subscriber growth analytics.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchSubscriberGrowth(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchSubscriberGrowth(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiAnalytics
   .command("email")
   .description("Fetch email performance analytics.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--limit <limit>", "Maximum number of emails to return", parseInteger, 10)
-  .action(
-    async (options: {
-      source: "auto" | ApiAuthSource;
-      limit: number;
-    }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchEmailPerformance(
-        material.publicationUrl,
-        material,
-        fetch,
-        options.limit,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource; limit: number }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchEmailPerformance(
+      material.publicationUrl,
+      material,
+      fetch,
+      options.limit,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiAnalytics
   .command("revenue")
   .description("Fetch revenue analytics.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchRevenueAnalytics(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchRevenueAnalytics(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiAnalytics
   .command("snapshot")
@@ -1877,11 +1747,7 @@ apiAnalytics
   .option("--interval <interval>", "daily, weekly, or monthly", "daily")
   .option("--post-id <id>", "Post ID for post-level analytics", parseInteger)
   .action(
-    async (options: {
-      source: "auto" | ApiAuthSource;
-      interval: string;
-      postId?: number;
-    }) => {
+    async (options: { source: "auto" | ApiAuthSource; interval: string; postId?: number }) => {
       const effective = await loadEffectiveConfig();
       const material = await resolveApiAuthMaterial(effective, options.source);
       const inventory = await fetchAnalyticsInventory(
@@ -1910,122 +1776,94 @@ apiAnalytics
       const file = join(snapshotsDir, `${options.interval}-${date}.jsonl`);
       appendFileSync(file, JSON.stringify(snapshot) + "\n");
 
-      console.log(JSON.stringify({
-        status: "ok",
-        snapshotFile: file,
-        capturedAt: snapshot.capturedAt,
-        message: `Analytics snapshot appended to ${file}`,
-      }, null, 2));
+      console.log(
+        JSON.stringify(
+          {
+            status: "ok",
+            snapshotFile: file,
+            capturedAt: snapshot.capturedAt,
+            message: `Analytics snapshot appended to ${file}`,
+          },
+          null,
+          2,
+        ),
+      );
     },
   );
 
-const apiBilling = api
-  .command("billing")
-  .description("Read-only billing and revenue probes.");
+const apiBilling = api.command("billing").description("Read-only billing and revenue probes.");
 
 apiBilling
   .command("summary")
   .description("Probe all billing endpoints and report availability.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchBillingSummary(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchBillingSummary(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiBilling
   .command("tiers")
   .description("List subscription tiers and pricing.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchSubscriptionTiers(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchSubscriptionTiers(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiBilling
   .command("payouts")
   .description("Show payout history.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchPayoutHistory(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchPayoutHistory(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiBilling
   .command("taxes")
   .description("Show tax form status.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchTaxFormStatus(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchTaxFormStatus(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
-const apiEmail = api
-  .command("email")
-  .description("Email newsletter design and management.");
+const apiEmail = api.command("email").description("Email newsletter design and management.");
 
 apiEmail
   .command("template")
   .description("Show current email template settings.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchEmailTemplate(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchEmailTemplate(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiEmail
   .command("broadcast")
@@ -2036,25 +1874,20 @@ apiEmail
         .description("Show broadcast history.")
         .option("--source <source>", "auto, env, or local-profile", "auto")
         .option("--limit <limit>", "Maximum broadcasts to return", parseInteger, 20)
-        .action(
-          async (options: {
-            source: "auto" | ApiAuthSource;
-            limit: number;
-          }) => {
-            const effective = await loadEffectiveConfig();
-            const material = await resolveApiAuthMaterial(effective, options.source);
-            const result = await fetchBroadcastHistory(
-              material.publicationUrl,
-              material,
-              fetch,
-              options.limit,
-            );
-            console.log(JSON.stringify(result, null, 2));
-            if (result.status !== "ok") {
-              process.exitCode = 1;
-            }
-          },
-        );
+        .action(async (options: { source: "auto" | ApiAuthSource; limit: number }) => {
+          const effective = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(effective, options.source);
+          const result = await fetchBroadcastHistory(
+            material.publicationUrl,
+            material,
+            fetch,
+            options.limit,
+          );
+          console.log(JSON.stringify(result, null, 2));
+          if (result.status !== "ok") {
+            process.exitCode = 1;
+          }
+        });
       return broadcastList;
     })(),
   )
@@ -2064,36 +1897,34 @@ apiEmail
         .description("Cancel a scheduled broadcast.")
         .argument("<broadcast-id>", "Broadcast ID to cancel")
         .requiredOption("--yes", "Confirm cancellation")
-        .action(
-          async (broadcastId: string, options: { yes: boolean }) => {
-            if (!options.yes) {
-              console.log(
-                JSON.stringify(
-                  {
-                    status: "failed",
-                    message: "Add --yes to confirm broadcast cancellation.",
-                  },
-                  null,
-                  2,
-                ),
-              );
-              process.exitCode = 1;
-              return;
-            }
-            const effective = await loadEffectiveConfig();
-            const material = await resolveApiAuthMaterial(effective, "auto");
-            const result = await cancelScheduledBroadcast(
-              material.publicationUrl,
-              broadcastId,
-              material,
-              fetch,
+        .action(async (broadcastId: string, options: { yes: boolean }) => {
+          if (!options.yes) {
+            console.log(
+              JSON.stringify(
+                {
+                  status: "failed",
+                  message: "Add --yes to confirm broadcast cancellation.",
+                },
+                null,
+                2,
+              ),
             );
-            console.log(JSON.stringify(result, null, 2));
-            if (result.status !== "ok") {
-              process.exitCode = 1;
-            }
-          },
-        );
+            process.exitCode = 1;
+            return;
+          }
+          const effective = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(effective, "auto");
+          const result = await cancelScheduledBroadcast(
+            material.publicationUrl,
+            broadcastId,
+            material,
+            fetch,
+          );
+          console.log(JSON.stringify(result, null, 2));
+          if (result.status !== "ok") {
+            process.exitCode = 1;
+          }
+        });
       return broadcastCancel;
     })(),
   );
@@ -2120,11 +1951,42 @@ apiEmail
     }
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, "auto");
-    const result = await sendTestEmail(
+    const result = await sendTestEmail(material.publicationUrl, Number(draftId), material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiPodcast = api.command("podcast").description("Podcast and video management.");
+
+apiPodcast
+  .command("section")
+  .description("Show podcast section details.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchPodcastSection(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiPodcast
+  .command("episodes")
+  .description("List podcast episodes.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--limit <limit>", "Maximum episodes to return", parseInteger, 20)
+  .action(async (options: { source: "auto" | ApiAuthSource; limit: number }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchPodcastEpisodes(
       material.publicationUrl,
-      Number(draftId),
       material,
       fetch,
+      options.limit,
     );
     console.log(JSON.stringify(result, null, 2));
     if (result.status !== "ok") {
@@ -2132,74 +1994,19 @@ apiEmail
     }
   });
 
-const apiPodcast = api
-  .command("podcast")
-  .description("Podcast and video management.");
-
-apiPodcast
-  .command("section")
-  .description("Show podcast section details.")
-  .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchPodcastSection(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
-
-apiPodcast
-  .command("episodes")
-  .description("List podcast episodes.")
-  .option("--source <source>", "auto, env, or local-profile", "auto")
-  .option("--limit <limit>", "Maximum episodes to return", parseInteger, 20)
-  .action(
-    async (options: {
-      source: "auto" | ApiAuthSource;
-      limit: number;
-    }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchPodcastEpisodes(
-        material.publicationUrl,
-        material,
-        fetch,
-        options.limit,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
-
 apiPodcast
   .command("settings")
   .description("Show podcast distribution settings.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchPodcastSettings(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchPodcastSettings(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiPodcast
   .command("create")
@@ -2258,44 +2065,37 @@ apiPodcast
   .argument("<draft-id>", "Draft ID to schedule")
   .requiredOption("--at <iso-date>", "ISO timestamp for scheduled publication")
   .requiredOption("--yes", "Confirm scheduling")
-  .action(
-    async (
-      draftId: string,
-      options: { at: string; yes: boolean },
-    ) => {
-      if (!options.yes) {
-        console.log(
-          JSON.stringify(
-            {
-              status: "failed",
-              message: "Add --yes to confirm scheduling.",
-            },
-            null,
-            2,
-          ),
-        );
-        process.exitCode = 1;
-        return;
-      }
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, "auto");
-      const result = await schedulePodcastEpisode(
-        material.publicationUrl,
-        Number(draftId),
-        options.at,
-        material,
-        fetch,
+  .action(async (draftId: string, options: { at: string; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Add --yes to confirm scheduling.",
+          },
+          null,
+          2,
+        ),
       );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, "auto");
+    const result = await schedulePodcastEpisode(
+      material.publicationUrl,
+      Number(draftId),
+      options.at,
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
-const apiVideo = apiPodcast
-  .command("video")
-  .description("Video management.");
+const apiVideo = apiPodcast.command("video").description("Video management.");
 
 apiVideo
   .command("upload")
@@ -2303,61 +2103,49 @@ apiVideo
   .argument("<file>", "Video file path")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .requiredOption("--yes", "Confirm video upload")
-  .action(
-    async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
-      if (!options.yes) {
-        console.log(
-          JSON.stringify(
-            {
-              status: "failed",
-              message: "Add --yes to confirm video upload.",
-            },
-            null,
-            2,
-          ),
-        );
-        process.exitCode = 1;
-        return;
-      }
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await uploadVideo(
-        material.publicationUrl,
-        file,
-        material,
-        fetch,
+  .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Add --yes to confirm video upload.",
+          },
+          null,
+          2,
+        ),
       );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await uploadVideo(material.publicationUrl, file, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiVideo
   .command("settings")
   .description("Show video player settings for a post.")
   .argument("<post-id>", "Post ID to inspect")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (
-      postId: string,
-      options: { source: "auto" | ApiAuthSource },
-    ) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchVideoSettings(
-        material.publicationUrl,
-        Number(postId),
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (postId: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchVideoSettings(
+      material.publicationUrl,
+      Number(postId),
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 const apiIntegrations = api
   .command("integrations")
@@ -2367,21 +2155,15 @@ apiIntegrations
   .command("list")
   .description("List configured integrations and their status.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchIntegrations(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchIntegrations(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiIntegrations
   .command("crosspost")
@@ -2389,40 +2171,35 @@ apiIntegrations
   .argument("<post-id>", "Post ID to cross-post")
   .requiredOption("--platform <platform>", "Target platform (e.g., twitter, bluesky)")
   .requiredOption("--yes", "Confirm cross-posting")
-  .action(
-    async (
-      postId: string,
-      options: { platform: string; yes: boolean },
-    ) => {
-      if (!options.yes) {
-        console.log(
-          JSON.stringify(
-            {
-              status: "failed",
-              message: "Add --yes to confirm cross-posting.",
-            },
-            null,
-            2,
-          ),
-        );
-        process.exitCode = 1;
-        return;
-      }
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, "auto");
-      const result = await crossPost(
-        material.publicationUrl,
-        Number(postId),
-        options.platform,
-        material,
-        fetch,
+  .action(async (postId: string, options: { platform: string; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Add --yes to confirm cross-posting.",
+          },
+          null,
+          2,
+        ),
       );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, "auto");
+    const result = await crossPost(
+      material.publicationUrl,
+      Number(postId),
+      options.platform,
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiIntegrations
   .command("import")
@@ -2450,12 +2227,7 @@ apiIntegrations
           }
           const effective = await loadEffectiveConfig();
           const material = await resolveApiAuthMaterial(effective, "auto");
-          const result = await importFromWordPress(
-            material.publicationUrl,
-            file,
-            material,
-            fetch,
-          );
+          const result = await importFromWordPress(material.publicationUrl, file, material, fetch);
           console.log(JSON.stringify(result, null, 2));
           if (result.status !== "ok") {
             process.exitCode = 1;
@@ -2487,12 +2259,7 @@ apiIntegrations
           }
           const effective = await loadEffectiveConfig();
           const material = await resolveApiAuthMaterial(effective, "auto");
-          const result = await importFromRss(
-            material.publicationUrl,
-            url,
-            material,
-            fetch,
-          );
+          const result = await importFromRss(material.publicationUrl, url, material, fetch);
           console.log(JSON.stringify(result, null, 2));
           if (result.status !== "ok") {
             process.exitCode = 1;
@@ -2506,25 +2273,17 @@ apiIntegrations
   .command("tokens")
   .description("List API tokens (redacted).")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(
-    async (options: { source: "auto" | ApiAuthSource }) => {
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await fetchApiTokens(
-        material.publicationUrl,
-        material,
-        fetch,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchApiTokens(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
-const config = program
-  .command("config")
-  .description("Manage non-secret local configuration.");
+const config = program.command("config").description("Manage non-secret local configuration.");
 
 config
   .command("show")
@@ -2574,10 +2333,7 @@ config
 config
   .command("set-publication")
   .description("Set the default Substack publication URL.")
-  .argument(
-    "<url>",
-    "Publication URL, for example https://example.substack.com",
-  )
+  .argument("<url>", "Publication URL, for example https://example.substack.com")
   .action(async (url: string) => {
     const next = await updateConfig({ publicationUrl: url });
     console.log(JSON.stringify(next, null, 2));
@@ -2592,18 +2348,13 @@ config
     console.log(JSON.stringify(next, null, 2));
   });
 
-const auth = program
-  .command("auth")
-  .description("Manage authenticated browser sessions.");
+const auth = program.command("auth").description("Manage authenticated browser sessions.");
 
 auth
   .command("status")
   .description("Show configured publication and browser environment status.")
   .action(async () => {
-    const [effective, session] = await Promise.all([
-      loadEffectiveConfig(),
-      loadSession(),
-    ]);
+    const [effective, session] = await Promise.all([loadEffectiveConfig(), loadSession()]);
     console.log(
       JSON.stringify(
         {
@@ -2611,14 +2362,10 @@ auth
           browserRuntime: effective.browserRuntime,
           browserbaseConfigured:
             effective.browserRuntime === "browserbase"
-              ? Boolean(
-                  effective.browserbaseApiKey && effective.browserbaseProjectId,
-                )
+              ? Boolean(effective.browserbaseApiKey && effective.browserbaseProjectId)
               : null,
           stagehandModel: effective.stagehandModel,
-          substackLoginConfigured: Boolean(
-            effective.substackEmail && effective.substackPassword,
-          ),
+          substackLoginConfigured: Boolean(effective.substackEmail && effective.substackPassword),
           session: session
             ? {
                 browserbaseSessionId: redact(session.browserbaseSessionId),
@@ -2637,9 +2384,7 @@ auth
 
 auth
   .command("login")
-  .description(
-    "Start or resume a Browserbase session for manual Substack login.",
-  )
+  .description("Start or resume a Browserbase session for manual Substack login.")
   .option("--session-id <id>", "Existing Browserbase session ID to resume")
   .option(
     "--auto-login",
@@ -2670,9 +2415,7 @@ auth
       if (effective.browserRuntime === "local") {
         const result = await runLocalLogin({
           publicationUrl: requirePublicationUrl(effective),
-          credentials: options.autoLogin
-            ? requireSubstackCredentials(effective)
-            : undefined,
+          credentials: options.autoLogin ? requireSubstackCredentials(effective) : undefined,
           waitSeconds: options.waitSeconds,
           pauseBeforePassword: options.pauseBeforePassword,
         });
@@ -2705,10 +2448,7 @@ auth
         }
 
         const autoLoginResult = options.autoLogin
-          ? await performSubstackLogin(
-              session,
-              requireSubstackCredentials(effective),
-            )
+          ? await performSubstackLogin(session, requireSubstackCredentials(effective))
           : null;
 
         console.log(
@@ -2728,9 +2468,7 @@ auth
         );
 
         if (options.waitSeconds > 0) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, options.waitSeconds * 1000),
-          );
+          await new Promise((resolve) => setTimeout(resolve, options.waitSeconds * 1000));
         }
       } finally {
         await session.close();
@@ -2750,15 +2488,11 @@ const debug = program.command("debug").description("Diagnostic helpers.");
 
 debug
   .command("local-page")
-  .description(
-    "Inspect visible links, buttons, and editor fields from the local browser profile.",
-  )
+  .description("Inspect visible links, buttons, and editor fields from the local browser profile.")
   .argument("[url]", "URL to inspect")
   .action(async (url?: string) => {
     const effective = await loadEffectiveConfig();
-    const diagnostics = await captureLocalDiagnostics(
-      url ?? requirePublicationUrl(effective),
-    );
+    const diagnostics = await captureLocalDiagnostics(url ?? requirePublicationUrl(effective));
     console.log(JSON.stringify(diagnostics, null, 2));
   });
 
@@ -2768,19 +2502,39 @@ debug
     "Navigate to a draft URL and inspect the publish review screen structure (buttons, dialogs, forms). Pass a draft editor URL like https://substack.com/publish/post/12345.",
   )
   .argument("<url>", "Draft editor URL to inspect (e.g., the draft URL from a prior `draft` run)")
-  .option("--capture", "Click Continue first to reveal the review overlay before capturing diagnostics", false)
+  .option(
+    "--capture",
+    "Click Continue first to reveal the review overlay before capturing diagnostics",
+    false,
+  )
   .action(async (url: string, options: { capture: boolean }) => {
     try {
       if (options.capture) {
         const diagnostics = await captureReviewOverlayDiagnostics(url, true);
-        console.log(JSON.stringify({ ...diagnostics, _note: "--capture clicks Continue first to map the review overlay" }, null, 2));
+        console.log(
+          JSON.stringify(
+            { ...diagnostics, _note: "--capture clicks Continue first to map the review overlay" },
+            null,
+            2,
+          ),
+        );
       } else {
         const diagnostics = await capturePublishScreenDiagnostics(url);
         console.log(JSON.stringify(diagnostics, null, 2));
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      console.error(JSON.stringify({ status: "error", message, hint: "Make sure you are logged into Substack in your local Chrome profile." }, null, 2));
+      console.error(
+        JSON.stringify(
+          {
+            status: "error",
+            message,
+            hint: "Make sure you are logged into Substack in your local Chrome profile.",
+          },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
     }
   });
@@ -2791,14 +2545,28 @@ debug
     "Navigate to a draft URL, optionally click Continue, and inspect the review overlay (buttons, dialogs, confirmation elements). Pass a draft editor URL like https://substack.com/publish/post/12345.",
   )
   .argument("<url>", "Draft editor URL to inspect (e.g., the draft URL from a prior `draft` run)")
-  .option("--capture", "Click Continue first to reveal the review overlay before capturing (default: true)", true)
+  .option(
+    "--capture",
+    "Click Continue first to reveal the review overlay before capturing (default: true)",
+    true,
+  )
   .action(async (url: string, options: { capture: boolean }) => {
     try {
       const diagnostics = await captureReviewOverlayDiagnostics(url, options.capture);
       console.log(JSON.stringify(diagnostics, null, 2));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      console.error(JSON.stringify({ status: "error", message, hint: "Make sure you are logged into Substack in your local Chrome profile." }, null, 2));
+      console.error(
+        JSON.stringify(
+          {
+            status: "error",
+            message,
+            hint: "Make sure you are logged into Substack in your local Chrome profile.",
+          },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
     }
   });
@@ -2815,7 +2583,17 @@ debug
       console.log(JSON.stringify(diagnostics, null, 2));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      console.error(JSON.stringify({ status: "error", message, hint: "Make sure you are logged into Substack in your local Chrome profile." }, null, 2));
+      console.error(
+        JSON.stringify(
+          {
+            status: "error",
+            message,
+            hint: "Make sure you are logged into Substack in your local Chrome profile.",
+          },
+          null,
+          2,
+        ),
+      );
       process.exitCode = 1;
     }
   });

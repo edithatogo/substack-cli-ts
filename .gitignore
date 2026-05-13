@@ -14,7 +14,10 @@ stryker-tmp/
 *.log
 !fixtures/**/*.json
 .aider*
+.kilo/
 _cookie_header.txt
 research/
-scripts/*.mjs
+scripts/analyze-capture.mjs
+scripts/capture-draft.mjs
+scripts/capture-upload.mjs
 fixtures/drafts/

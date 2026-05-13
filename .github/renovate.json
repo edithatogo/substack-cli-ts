@@ -1,0 +1,55 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":separateMajorMinor",
+    ":combinePatchMinorUpdates",
+    ":enableVulnerabilityAlerts",
+    ":semanticCommits",
+    "group:allNonMajor"
+  ],
+  "labels": ["dependencies", "renovate"],
+  "schedule": ["before 9am on Monday"],
+  "timezone": "UTC",
+  "packageRules": [
+    {
+      "description": "Automerge non-major updates after CI passes",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Group devDependencies updates",
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "devDependencies",
+      "automerge": true
+    },
+    {
+      "description": "Separate major updates for manual review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "labels": ["dependencies", "breaking"]
+    },
+    {
+      "description": "Pin engine-strict and tooling versions",
+      "matchPackageNames": ["node", "npm", "typescript"],
+      "enabled": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true
+  },
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true,
+    "schedule": ["before 9am on Monday"]
+  },
+  "ignoreDeps": ["camoufox-js"],
+  "ignorePaths": ["vendor/**"],
+  "rebaseWhen": "conflicted",
+  "prCreation": "immediate",
+  "prConcurrentLimit": 5
+}

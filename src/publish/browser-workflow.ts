@@ -1,10 +1,6 @@
 import { writeFile } from "node:fs/promises";
 import type { PreparedPost } from "../types.js";
-import {
-  loadSession,
-  saveSession,
-  createStoredSession,
-} from "../auth/session-store.js";
+import { loadSession, saveSession, createStoredSession } from "../auth/session-store.js";
 import {
   insertTextIntoActiveElement,
   pasteHtmlIntoEditor,
@@ -18,7 +14,11 @@ import {
 import { CaptchaDetectedError } from "../browser/errors.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import { runLocalDraftWorkflow } from "./local-workflow.js";
-import { resolveTransport, type TransportPreference, type TransportResolution } from "./transport.js";
+import {
+  resolveTransport,
+  type TransportPreference,
+  type TransportResolution,
+} from "./transport.js";
 import { resolvePostTitle } from "./title.js";
 import { validatePayloadCompatibility } from "../substack-api/payload.js";
 import type { DraftMapping } from "../substack-api/draft-mappings.js";
@@ -92,9 +92,7 @@ export interface BrowserWorkflowOptions {
   draftMapping?: DraftMapping | undefined;
 }
 
-export function shouldOpenPublishReview(
-  options: BrowserWorkflowOptions,
-): boolean {
+export function shouldOpenPublishReview(options: BrowserWorkflowOptions): boolean {
   return options.reviewOnly === true;
 }
 
@@ -107,20 +105,21 @@ export async function runBrowserWorkflow(
     return;
   }
 
-  if (
-    (prepared.mode === "publish" || prepared.mode === "schedule") &&
-    !options.yes
-  ) {
-    throw new Error(
-      "Publishing and scheduling require --yes. Run with --dry-run first.",
-    );
+  if ((prepared.mode === "publish" || prepared.mode === "schedule") && !options.yes) {
+    throw new Error("Publishing and scheduling require --yes. Run with --dry-run first.");
   }
 
   const config = await loadEffectiveConfig();
   const transport = resolveTransport(options.transport ?? "auto");
 
   if (config.browserRuntime === "local") {
-    const result = await runLocalDraftWorkflow(prepared, config, transport, options.draftMapping, options);
+    const result = await runLocalDraftWorkflow(
+      prepared,
+      config,
+      transport,
+      options.draftMapping,
+      options,
+    );
     await maybeWriteTrace(result, options.traceOut);
     console.log(JSON.stringify(result, null, 2));
     return;
@@ -129,8 +128,7 @@ export async function runBrowserWorkflow(
   const storedSession = await loadSession();
   const session = await createStagehandSession({
     config,
-    browserbaseSessionId:
-      options.sessionId ?? storedSession?.browserbaseSessionId,
+    browserbaseSessionId: options.sessionId ?? storedSession?.browserbaseSessionId,
     keepAlive: true,
   });
 
@@ -147,12 +145,7 @@ export async function runBrowserWorkflow(
     }
 
     try {
-      const result = await createDraftInBrowser(
-        session,
-        prepared,
-        options,
-        transport,
-      );
+      const result = await createDraftInBrowser(session, prepared, options, transport);
       await maybeWriteTrace(result, options.traceOut);
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
@@ -220,13 +213,7 @@ async function createDraftInBrowser(
     );
   }
 
-  await observedAct(
-    trace,
-    session,
-    "focus-title",
-    "Focus the post title field.",
-    60000,
-  );
+  await observedAct(trace, session, "focus-title", "Focus the post title field.", 60000);
   const titleResult = await recordStep(trace, "insert-title", async () => {
     const result = await insertTextIntoActiveElement(session.page, title);
     return { ...result, titleLength: title.length };
@@ -288,9 +275,8 @@ async function createDraftInBrowser(
   );
 
   if (options.experimentalInjectState) {
-    throw new BrowserWorkflowError(
-      "Experimental editor-state injection is planned but not implemented. Use the paste-based default path.",
-      trace,
+    console.warn(
+      "Experimental editor-state injection is planned but not yet implemented. Falling back to the paste-based default path.",
     );
   }
 
@@ -325,7 +311,7 @@ async function createDraftInBrowser(
     operation,
     title,
     currentUrl,
-      publishedUrl: undefined as string | undefined, // Captured after publish via waitForURL(/\/p\//) in the publish path above
+    publishedUrl: undefined as string | undefined, // Captured after publish via waitForURL(/\/p\//) in the publish path above
     transport,
     editorTextLength: editorText.length,
     draftId: existingDraft?.draftId,
@@ -421,9 +407,11 @@ async function createDraftInBrowser(
     await recordStep(trace, "wait-for-schedule-confirmation", async () => {
       await checkForCaptcha(session);
       const url = session.page.url();
-      const hasConfirmation = await session.page.evaluate(() => {
-        return document.body.innerText.toLowerCase().includes("scheduled");
-      }).catch(() => false);
+      const hasConfirmation = await session.page
+        .evaluate(() => {
+          return document.body.innerText.toLowerCase().includes("scheduled");
+        })
+        .catch(() => false);
       return { url, hasConfirmation, scheduleAt: prepared.scheduleAt };
     });
 
@@ -508,9 +496,7 @@ export function printPreparedPost(prepared: PreparedPost): void {
   );
 }
 
-async function checkForCaptcha(
-  session: StagehandSession,
-): Promise<void> {
+async function checkForCaptcha(session: StagehandSession): Promise<void> {
   const url = session.page.url().toLowerCase();
 
   if (url.includes("challenge") || url.includes("captcha")) {
@@ -545,27 +531,30 @@ async function observedAct(
     await recordStep(trace, name, async () => {
       await checkForCaptcha(session);
 
-      return await withStagehandRetry(async () => {
-        const actions = await session.stagehand.observe(instruction, { timeout });
-        const [action] = actions;
+      return await withStagehandRetry(
+        async () => {
+          const actions = await session.stagehand.observe(instruction, { timeout });
+          const [action] = actions;
 
-        if (action) {
-          const result = await session.stagehand.act(action, { timeout });
+          if (action) {
+            const result = await session.stagehand.act(action, { timeout });
+            return {
+              observedActions: actions.length,
+              actionDescription: action.description,
+              success: result.success,
+              message: result.message,
+            };
+          }
+
+          const result = await session.stagehand.act(instruction, { timeout });
           return {
-            observedActions: actions.length,
-            actionDescription: action.description,
+            observedActions: 0,
             success: result.success,
             message: result.message,
           };
-        }
-
-        const result = await session.stagehand.act(instruction, { timeout });
-        return {
-          observedActions: 0,
-          success: result.success,
-          message: result.message,
-        };
-      }, { retries: 2, label: name });
+        },
+        { retries: 2, label: name },
+      );
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -604,29 +593,18 @@ async function recordStep<T extends Record<string, unknown>>(
   }
 }
 
-function sanitizeStepDetails(
-  details: Record<string, unknown>,
-): Record<string, unknown> {
+function sanitizeStepDetails(details: Record<string, unknown>): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(details)) {
-    sanitized[key] =
-      key === "text" && typeof value === "string"
-        ? { length: value.length }
-        : value;
+    sanitized[key] = key === "text" && typeof value === "string" ? { length: value.length } : value;
   }
 
   return sanitized;
 }
 
 function countDocumentNodes(node: PreparedPost["post"]["document"]): number {
-  return (
-    1 +
-    (node.content ?? []).reduce(
-      (total, child) => total + countDocumentNodes(child),
-      0,
-    )
-  );
+  return 1 + (node.content ?? []).reduce((total, child) => total + countDocumentNodes(child), 0);
 }
 
 export async function maybeWriteTrace(
