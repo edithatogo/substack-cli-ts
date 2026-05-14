@@ -9,3 +9,10 @@ reports/
 stryker-tmp/
 .stryker-tmp/
 package-lock.json
+vendor/
+tracks/
+conductor/
+docs/
+examples/
+fixtures/
+scripts/

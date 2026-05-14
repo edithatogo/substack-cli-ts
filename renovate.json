@@ -12,11 +12,7 @@
       "groupName": "development dependencies"
     },
     {
-      "matchPackageNames": [
-        "playwright-core",
-        "@browserbasehq/stagehand",
-        "camoufox-js"
-      ],
+      "matchPackageNames": ["playwright-core", "@browserbasehq/stagehand", "camoufox-js"],
       "groupName": "browser automation stack",
       "separateMajorMinor": true
     }

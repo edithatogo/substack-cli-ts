@@ -50,7 +50,10 @@ describe("substack-api client helpers", () => {
   it("handles network errors in requestJson gracefully", async () => {
     const failingFetch: typeof fetch = () => Promise.reject(new Error("Network failure"));
     const result = await requestJson(
-      failingFetch as unknown as (input: string, init?: Record<string, unknown>) => Promise<{ status: number; text: () => Promise<string> }>,
+      failingFetch as unknown as (
+        input: string,
+        init?: Record<string, unknown>,
+      ) => Promise<{ status: number; text: () => Promise<string> }>,
       "https://substack.com/api/v1/test",
       {},
     );
@@ -65,7 +68,10 @@ describe("substack-api client helpers", () => {
         text: () => Promise.resolve("Internal Server Error"),
       });
     const result = await requestJson(
-      nonJsonFetch as unknown as (input: string, init?: Record<string, unknown>) => Promise<{ status: number; text: () => Promise<string> }>,
+      nonJsonFetch as unknown as (
+        input: string,
+        init?: Record<string, unknown>,
+      ) => Promise<{ status: number; text: () => Promise<string> }>,
       "https://substack.com/api/v1/test",
       {},
     );
@@ -80,7 +86,10 @@ describe("substack-api client helpers", () => {
         text: () => Promise.resolve("Internal Server Error"),
       });
     const result = await requestJson(
-      nonJsonFetch as unknown as (input: string, init?: Record<string, unknown>) => Promise<{ status: number; text: () => Promise<string> }>,
+      nonJsonFetch as unknown as (
+        input: string,
+        init?: Record<string, unknown>,
+      ) => Promise<{ status: number; text: () => Promise<string> }>,
       "https://substack.com/api/v1/test",
       {},
     );
@@ -132,7 +141,10 @@ describe("requestWrite", () => {
     const { requestWrite } = await import("./client.js");
     const failing = () => Promise.reject(new Error("Network failure"));
     const result = await requestWrite(
-      failing as unknown as (input: string, init?: Record<string, unknown>) => Promise<{ status: number; text: () => Promise<string> }>,
+      failing as unknown as (
+        input: string,
+        init?: Record<string, unknown>,
+      ) => Promise<{ status: number; text: () => Promise<string> }>,
       "https://substack.com/api/v1/drafts",
       "POST",
       {},

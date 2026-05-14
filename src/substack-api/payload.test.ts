@@ -279,7 +279,10 @@ describe("buildDraftWriteRequestBody", () => {
       metadata: { title: "Test", tags: [] },
       markdown: "",
       html: "<p>Hello</p>",
-      document: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Hello" }] }] },
+      document: {
+        type: "doc",
+        content: [{ type: "paragraph", content: [{ type: "text", text: "Hello" }] }],
+      },
       media: { assets: [], localCount: 0, remoteCount: 0, dataCount: 0 },
     });
     const body = buildDraftWriteRequestBody(payload, 42, "create");
@@ -291,10 +294,25 @@ describe("buildDraftWriteRequestBody", () => {
 
 describe("validatePayloadCompatibility (property-based)", () => {
   const knownSupportedNodes = [
-    "blockquote", "bulletList", "codeBlock", "doc", "embedNode",
-    "hardBreak", "heading", "horizontalRule", "image", "listItem",
-    "orderedList", "paragraph", "paywallDivider", "subscribeWidget",
-    "table", "tableRow", "tableCell", "tableHeader", "text",
+    "blockquote",
+    "bulletList",
+    "codeBlock",
+    "doc",
+    "embedNode",
+    "hardBreak",
+    "heading",
+    "horizontalRule",
+    "image",
+    "listItem",
+    "orderedList",
+    "paragraph",
+    "paywallDivider",
+    "subscribeWidget",
+    "table",
+    "tableRow",
+    "tableCell",
+    "tableHeader",
+    "text",
   ];
 
   const knownSupportedMarks = ["bold", "code", "italic", "link", "strike"];
@@ -334,16 +352,21 @@ describe("validatePayloadCompatibility (property-based)", () => {
   })("accepts supported node and mark types", ({ nodeType, markType }) => {
     const doc: ProseMirrorNode = {
       type: "doc",
-      content: nodeType === "text"
-        ? [{ type: "text", text: "Hello" }]
-        : [
-            {
-              type: nodeType as ProseMirrorNode["type"],
-              content: [
-                { type: "text", text: "Hi", marks: [{ type: markType as ProseMirrorNode["marks"][number]["type"] }] },
-              ],
-            },
-          ],
+      content:
+        nodeType === "text"
+          ? [{ type: "text", text: "Hello" }]
+          : [
+              {
+                type: nodeType as ProseMirrorNode["type"],
+                content: [
+                  {
+                    type: "text",
+                    text: "Hi",
+                    marks: [{ type: markType as ProseMirrorNode["marks"][number]["type"] }],
+                  },
+                ],
+              },
+            ],
     };
 
     const report = validatePayloadCompatibility(doc);
