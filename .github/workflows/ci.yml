@@ -33,8 +33,10 @@ jobs:
 
       - name: Format
         run: npm run format:check -- --loglevel error
+      - name: Format
+        run: npm run format:check
       - name: Lint
-        run: npx eslint src --max-warnings=50
+        run: npm run lint
       - name: Typecheck
         run: npx tsc --noEmit --pretty false
       - name: Build
