@@ -1,0 +1,12 @@
+﻿{
+  "name": "substack-cli-gemini",
+  "version": "0.1.0",
+  "description": "Gemini integration docs for the Substack CLI MCP server",
+  "private": true,
+  "mcpServers": {
+    "substack-cli": {
+      "command": "node",
+      "args": ["dist/cli.js", "mcp", "serve"]
+    }
+  }
+}
