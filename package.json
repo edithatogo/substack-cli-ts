@@ -10,7 +10,7 @@
     "substack-cli": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json --incremental",
     "dev": "npm run build -- --watch",
     "inspect": "npm run build && node dist/cli.js inspect",
     "test": "vitest run",
