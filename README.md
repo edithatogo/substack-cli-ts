@@ -1,4 +1,4 @@
-# substack-cli
+﻿# substack-cli
 
 [![CI](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/edithatogo/substack-cli-ts/branch/master/graph/badge.svg)](https://codecov.io/gh/edithatogo/substack-cli-ts)
@@ -17,16 +17,16 @@ TypeScript CLI for publishing local Markdown files to a user-owned Substack publ
 
 ## Features
 
-- ✅ **Markdown → ProseMirror** — Parse Markdown with front matter into Substack-compatible JSON
-- ✅ **Dual Transport** — `--transport api` for API-driven or `--transport browser` for full editor interaction
-- ✅ **API Publishing** — Create, update, publish, and schedule drafts via Substack's API
-- ✅ **Browser Automation** — Local Chrome or Browserbase remote sessions
-- ✅ **Media Upload** — Upload images via base64 data URLs
-- ✅ **MCP Server** — 17 tools, 2 resources, 2 prompts for AI agents
-- ✅ **Rich Content** — Tables, embeds, paywall, subscribe, code blocks, blockquotes
-- ✅ **Draft Management** — Mappings, optimistic concurrency, section resolution, duplicates
-- ✅ **Workflow Traces** — Capture, review, and compare browser artifacts
-- ✅ **Quality Gates** — Format → Lint → TypeScript → Build → Test (≥91% coverage) → Mutation
+- âœ… **Markdown â†’ ProseMirror** â€” Parse Markdown with front matter into Substack-compatible JSON
+- âœ… **Dual Transport** â€” `--transport api` for API-driven or `--transport browser` for full editor interaction
+- âœ… **API Publishing** â€” Create, update, publish, and schedule drafts via Substack's API
+- âœ… **Browser Automation** â€” Local Chrome or Browserbase remote sessions
+- âœ… **Media Upload** â€” Upload images via base64 data URLs
+- âœ… **MCP Server** â€” 17 tools, 2 resources, 2 prompts for AI agents
+- âœ… **Rich Content** â€” Tables, embeds, paywall, subscribe, code blocks, blockquotes
+- âœ… **Draft Management** â€” Mappings, optimistic concurrency, section resolution, duplicates
+- âœ… **Workflow Traces** â€” Capture, review, and compare browser artifacts
+- âœ… **Quality Gates** â€” Format â†’ Lint â†’ TypeScript â†’ Build â†’ Test (â‰¥91% coverage) â†’ Mutation
 
 ---
 
@@ -242,3 +242,4 @@ $ substack-cli inspect examples/formatting.md
   }
 }
 ```
+
