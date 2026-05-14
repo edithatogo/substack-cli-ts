@@ -27,8 +27,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "scan:secrets": "node scripts/secret-scan.mjs",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:coverage",
+    "quality": "npm run format:check && npm run lint && npm run knip && npm run typecheck && npm run build && npm run test:coverage",
     "audit:prod": "npm audit --omit=dev",
+    "knip": "knip",
     "completions": "substack-cli completion bash > scripts/completions.bash && substack-cli completion zsh > scripts/completions.zsh && substack-cli completion powershell > scripts/completions.ps1"
   },
   "dependencies": {
@@ -49,9 +50,6 @@
     "substack-api": "file:vendor/substack-api",
     "zod": "^4.0.0"
   },
-  "optionalDependencies": {
-    "camoufox-js": "^0.7.0"
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stryker-mutator/core": "^9.6.1",
@@ -64,6 +62,7 @@
     "prettier": "^3.6.0",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.59.1",
+    "knip": "^5.0.0",
     "vitest": "^4.1.5"
   }
 }

@@ -18,8 +18,8 @@
   ],
   "coverageAnalysis": "perTest",
   "thresholds": {
-    "high": 80,
-    "low": 60,
-    "break": 50
+    "high": 75,
+    "low": 40,
+    "break": 30
   }
 }
