@@ -1,0 +1,1 @@
+var pj=require("./package.json").engines.node.replace(/[^\d.]/g,"").split(".").map(Number);var v=process.version.slice(1).split(".").map(Number);process.exit(v[0]>pj[0]||v[0]===pj[0]&&v[1]>=pj[1]?0:1)

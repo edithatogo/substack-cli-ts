@@ -1,0 +1,38 @@
+﻿# Release Drafter - auto-generates changelog from PR labels
+name-template: 'v\'
+tag-template: 'v\'
+categories:
+  - title: '\U0001F195 Features'
+    labels:
+      - 'feature'
+      - 'enhancement'
+  - title: '\U0001F41B Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: '\U0001F504 Maintenance'
+    labels:
+      - 'chore'
+      - 'dependencies'
+      - 'refactor'
+      - 'renovate'
+  - title: '\U0001F4D6 Documentation'
+    labels:
+      - 'documentation'
+      - 'docs'
+  - title: '\U0001F6A8 Security'
+    labels:
+      - 'security'
+  - title: '\U0001F3E1 CI/CD'
+    labels:
+      - 'ci'
+      - 'devops'
+change-template: '- \ (#\)'
+exclude-labels:
+  - 'skip-changelog'
+template: |
+  # What\'s Changed
+  \
+  
+  **Full Changelog**: \
