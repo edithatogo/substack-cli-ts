@@ -8,8 +8,9 @@ vi.mock("./substack-adapter.js", () => ({
   createSubstackClient: vi.fn(),
 }));
 
-const { listNotes, getNote, createNote, deleteNote, likeNote, reshareNote } =
-  await import("./notes.js");
+const { listNotes, getNote, createNote, deleteNote, likeNote, reshareNote } = await import(
+  "./notes.js"
+);
 
 function material() {
   return materialFromCookieHeader(
