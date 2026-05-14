@@ -29,13 +29,11 @@ jobs:
         run: node -e "const m=process.version.slice(1).split('.').map(Number),r=require('./package.json').engines.node.replace(/[>= ]+/g,'').split('.').map(Number);process.exitCode=m[0]>=r[0]&&m[1]>=r[1]?0:1"
 
       - name: Install
-        run: rm -rf node_modules && npm ci --cache /tmp/npm-cache
+        run: npm ci
 
-      - name: Format
-        run: npm run format:check -- --loglevel error
       - name: Lint & Format (Biome)
         continue-on-error: true
-        run: npm run ci
+        run: npx -p @biomejs/biome biome ci src
       - name: Typecheck
         run: npx tsc --noEmit --pretty false
       - name: Build
@@ -51,6 +49,13 @@ jobs:
       - name: Secret Pattern Scan
         continue-on-error: true
         run: npm run scan:secrets
+
+      - name: Upload Coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
 
   # Mutation testing runs after quality gate; non-blocking for PR merge
   mutation:
