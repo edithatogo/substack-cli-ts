@@ -39,8 +39,7 @@ export function planPublishWrite(
   scheduleAt?: string,
   existingDraft?: DraftMapping | null,
 ): PublishWritePlan {
-  const pathTemplate =
-    operation === "schedule" ? SCHEDULE_PATH : PUBLISH_PATH;
+  const pathTemplate = operation === "schedule" ? SCHEDULE_PATH : PUBLISH_PATH;
   const path = pathTemplate.replace("{id}", encodeURIComponent(draftId));
   const endpoint = new URL(path, publicationUrl).toString();
 
@@ -53,8 +52,7 @@ export function planPublishWrite(
     draftUrl,
     scheduleAt,
     existingDraft: existingDraft ?? undefined,
-    message:
-      `Publish write plan built locally. Endpoint: ${endpoint}. Use --live to execute.`,
+    message: `Publish write plan built locally. Endpoint: ${endpoint}. Use --live to execute.`,
   };
 }
 
@@ -71,13 +69,7 @@ export async function executePublishWrite(
     body.draft_scheduled_at = plan.scheduleAt;
   }
 
-  const response = await requestWrite(
-    fetchImpl,
-    plan.endpoint,
-    "POST",
-    headers,
-    body,
-  );
+  const response = await requestWrite(fetchImpl, plan.endpoint, "POST", headers, body);
 
   if (response.status >= 400) {
     return {

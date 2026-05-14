@@ -24,8 +24,7 @@ export function verifyDraftContent(post: ParsedPost): ContentVerificationReport 
   const body = post.markdown.trim();
 
   // Check title
-  const hasTitle =
-    typeof title === "string" && title.trim().length > 0;
+  const hasTitle = typeof title === "string" && title.trim().length > 0;
   if (!hasTitle) {
     issues.push({
       path: "metadata.title",
@@ -35,13 +34,8 @@ export function verifyDraftContent(post: ParsedPost): ContentVerificationReport 
   }
 
   // Check body content
-  const bodyContent = doc.content?.filter(
-    (n) => n.type !== "heading" || n.attrs?.level !== 1,
-  );
-  const hasBody =
-    body.length > 0 &&
-    (bodyContent?.length ?? 0) > 0 &&
-    hasNonEmptyContent(doc);
+  const bodyContent = doc.content?.filter((n) => n.type !== "heading" || n.attrs?.level !== 1);
+  const hasBody = body.length > 0 && (bodyContent?.length ?? 0) > 0 && hasNonEmptyContent(doc);
 
   if (!hasBody) {
     issues.push({
@@ -137,10 +131,7 @@ function extractText(node: ProseMirrorNode): string {
   return parts.join(" ");
 }
 
-function walk(
-  node: ProseMirrorNode,
-  visit: (node: ProseMirrorNode) => void,
-): void {
+function walk(node: ProseMirrorNode, visit: (node: ProseMirrorNode) => void): void {
   visit(node);
   node.content?.forEach((child) => walk(child, visit));
 }

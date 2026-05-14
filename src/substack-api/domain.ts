@@ -1,11 +1,6 @@
 import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
-import {
-  apiHeaders,
-  classifyFailure,
-  type FetchLike,
-  requestJson,
-} from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
 
 export type DomainReadStatus =
   | "ok"
@@ -66,8 +61,7 @@ export async function fetchDomainStatus(
   if (!parsed.success) {
     return {
       status: "schema-drift",
-      message:
-        "The publication response did not match the expected shape for domain fields.",
+      message: "The publication response did not match the expected shape for domain fields.",
     };
   }
 
@@ -101,9 +95,7 @@ export async function fetchDomainStatus(
   };
 }
 
-function mapSslStatus(
-  raw: string,
-): DomainStatus["sslStatus"] {
+function mapSslStatus(raw: string): DomainStatus["sslStatus"] {
   switch (raw) {
     case "not_provisioned":
     case "provisioning":
@@ -116,10 +108,7 @@ function mapSslStatus(
   }
 }
 
-function generateDnsInstructions(
-  subdomain: string,
-  customDomain: string | null,
-): DnsInstruction[] {
+function generateDnsInstructions(subdomain: string, customDomain: string | null): DnsInstruction[] {
   if (!customDomain) {
     return [];
   }

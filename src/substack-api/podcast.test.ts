@@ -42,15 +42,18 @@ describe("fetchPodcastSection", () => {
       200,
       JSON.stringify([
         { id: 1, publication_id: 10, name: "Articles", slug: "articles", is_podcast: false },
-        { id: 2, publication_id: 10, name: "Podcast", slug: "podcast", is_podcast: true, rss_feed_url: "https://feed.example.com/rss" },
+        {
+          id: 2,
+          publication_id: 10,
+          name: "Podcast",
+          slug: "podcast",
+          is_podcast: true,
+          rss_feed_url: "https://feed.example.com/rss",
+        },
       ]),
     );
 
-    const result = await fetchPodcastSection(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSection("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.section?.id, 2);
@@ -67,11 +70,7 @@ describe("fetchPodcastSection", () => {
       ]),
     );
 
-    const result = await fetchPodcastSection(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSection("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -79,11 +78,7 @@ describe("fetchPodcastSection", () => {
   it("returns schema-drift for non-array response", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({ not: "array" }));
 
-    const result = await fetchPodcastSection(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSection("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "schema-drift");
   });
@@ -91,11 +86,7 @@ describe("fetchPodcastSection", () => {
   it("returns unauthenticated on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await fetchPodcastSection(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSection("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -119,11 +110,7 @@ describe("fetchPodcastEpisodes", () => {
       ]),
     );
 
-    const result = await fetchPodcastEpisodes(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastEpisodes("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.episodes?.length, 1);
@@ -136,17 +123,11 @@ describe("fetchPodcastEpisodes", () => {
     const fetchFn = fakeFetch(
       200,
       JSON.stringify({
-        episodes: [
-          { id: 2, title: "Ep 2", draftTitle: "Ep 2 Draft", status: "draft" },
-        ],
+        episodes: [{ id: 2, title: "Ep 2", draftTitle: "Ep 2 Draft", status: "draft" }],
       }),
     );
 
-    const result = await fetchPodcastEpisodes(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastEpisodes("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.episodes?.length, 1);
@@ -162,12 +143,7 @@ describe("fetchPodcastEpisodes", () => {
 
     const fetchFn = fakeFetch(200, JSON.stringify(items));
 
-    const result = await fetchPodcastEpisodes(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-      3,
-    );
+    const result = await fetchPodcastEpisodes("https://test.substack.com", material, fetchFn, 3);
 
     assert.equal(result.status, "ok");
     assert.equal(result.episodes?.length, 3);
@@ -176,11 +152,7 @@ describe("fetchPodcastEpisodes", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchPodcastEpisodes(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastEpisodes("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -199,11 +171,7 @@ describe("fetchPodcastSettings", () => {
       }),
     );
 
-    const result = await fetchPodcastSettings(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSettings("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.settings?.spotifyUrl, "https://open.spotify.com/show/abc");
@@ -224,11 +192,7 @@ describe("fetchPodcastSettings", () => {
       }),
     );
 
-    const result = await fetchPodcastSettings(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSettings("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.settings?.spotifyUrl, "https://spotify.com/abc");
@@ -238,11 +202,7 @@ describe("fetchPodcastSettings", () => {
   it("returns null for missing fields", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({}));
 
-    const result = await fetchPodcastSettings(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSettings("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.settings?.spotifyUrl, null);
@@ -252,11 +212,7 @@ describe("fetchPodcastSettings", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchPodcastSettings(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPodcastSettings("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -273,12 +229,7 @@ describe("fetchVideoSettings", () => {
       }),
     );
 
-    const result = await fetchVideoSettings(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchVideoSettings("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.settings?.postId, 42);
@@ -297,12 +248,7 @@ describe("fetchVideoSettings", () => {
       }),
     );
 
-    const result = await fetchVideoSettings(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchVideoSettings("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.settings?.videoUrl, "https://video.example.com/vid2.mp4");
@@ -312,12 +258,7 @@ describe("fetchVideoSettings", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchVideoSettings(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchVideoSettings("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -325,12 +266,7 @@ describe("fetchVideoSettings", () => {
   it("returns unauthenticated on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await fetchVideoSettings(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchVideoSettings("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });

@@ -31,9 +31,7 @@ export interface UploadDraftMediaResult {
   document: ProseMirrorNode;
 }
 
-const SUPPORTED_EXTENSIONS = new Set([
-  ".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg",
-]);
+const SUPPORTED_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"]);
 
 export async function uploadDraftMedia(
   sourceFile: string,
@@ -90,7 +88,13 @@ export async function uploadDraftMedia(
     }
 
     hasLocal = true;
-    const uploadResult = await uploadImage(fetchImpl, uploadUrl, resolvedPath, headers, responseUrlField);
+    const uploadResult = await uploadImage(
+      fetchImpl,
+      uploadUrl,
+      resolvedPath,
+      headers,
+      responseUrlField,
+    );
 
     if (uploadResult.status === "ok" && uploadResult.url) {
       node.attrs = { ...node.attrs, src: uploadResult.url };

@@ -25,9 +25,7 @@ export interface CapturedFixture {
   summary: SchemaSummary;
 }
 
-export async function validateSchemaFile(
-  filePath: string,
-): Promise<SchemaSummary> {
+export async function validateSchemaFile(filePath: string): Promise<SchemaSummary> {
   const raw = await readFile(filePath, "utf8");
   const json = JSON.parse(raw) as unknown;
   const document = extractDocument(json);

@@ -72,8 +72,7 @@ describe("readApiInventory", () => {
                 post_date: "2026-04-01T00:00:00.000Z",
                 type: "newsletter",
                 audience: "everyone",
-                canonical_url:
-                  "https://rareinsights.substack.com/p/recent-post",
+                canonical_url: "https://rareinsights.substack.com/p/recent-post",
                 section_id: 1,
               },
             ],
@@ -146,10 +145,7 @@ function fakeFetch(routes: Map<string, unknown>): FetchLike {
   };
 }
 
-function response(
-  status: number,
-  body: unknown,
-): Awaited<ReturnType<FetchLike>> {
+function response(status: number, body: unknown): Awaited<ReturnType<FetchLike>> {
   return {
     status,
     text: () => Promise.resolve(JSON.stringify(body)),

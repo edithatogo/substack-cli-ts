@@ -80,10 +80,8 @@ describe("fetchPublication", () => {
 
   it("throws on non-200 status", async () => {
     await assert.rejects(
-      fetchPublication(
-        "https://rareinsights.substack.com",
-        material(),
-        () => Promise.resolve(response(404, { error: "not found" })),
+      fetchPublication("https://rareinsights.substack.com", material(), () =>
+        Promise.resolve(response(404, { error: "not found" })),
       ),
       /Failed to fetch publication/,
     );
@@ -91,10 +89,8 @@ describe("fetchPublication", () => {
 
   it("throws on network error (status 0)", async () => {
     await assert.rejects(
-      fetchPublication(
-        "https://rareinsights.substack.com",
-        material(),
-        () => Promise.resolve(response(0, null)),
+      fetchPublication("https://rareinsights.substack.com", material(), () =>
+        Promise.resolve(response(0, null)),
       ),
       /Failed to fetch publication/,
     );
@@ -206,10 +202,8 @@ describe("fetchPublicationChecklist", () => {
 
   it("throws on non-200 status", async () => {
     await assert.rejects(
-      fetchPublicationChecklist(
-        "https://rareinsights.substack.com",
-        material(),
-        () => Promise.resolve(response(403, { error: "forbidden" })),
+      fetchPublicationChecklist("https://rareinsights.substack.com", material(), () =>
+        Promise.resolve(response(403, { error: "forbidden" })),
       ),
       /Failed to fetch publication checklist/,
     );
@@ -217,10 +211,8 @@ describe("fetchPublicationChecklist", () => {
 
   it("throws on network error (status 0)", async () => {
     await assert.rejects(
-      fetchPublicationChecklist(
-        "https://rareinsights.substack.com",
-        material(),
-        () => Promise.resolve(response(0, null)),
+      fetchPublicationChecklist("https://rareinsights.substack.com", material(), () =>
+        Promise.resolve(response(0, null)),
       ),
       /Failed to fetch publication checklist/,
     );
@@ -228,10 +220,8 @@ describe("fetchPublicationChecklist", () => {
 
   it("throws on 401", async () => {
     await assert.rejects(
-      fetchPublicationChecklist(
-        "https://rareinsights.substack.com",
-        material(),
-        () => Promise.resolve(response(401, { error: "unauthorized" })),
+      fetchPublicationChecklist("https://rareinsights.substack.com", material(), () =>
+        Promise.resolve(response(401, { error: "unauthorized" })),
       ),
       /Failed to fetch publication checklist/,
     );
@@ -302,10 +292,7 @@ function fakeFetch(routes: Map<string, unknown>): FetchLike {
   };
 }
 
-function response(
-  status: number,
-  body: unknown,
-): Awaited<ReturnType<FetchLike>> {
+function response(status: number, body: unknown): Awaited<ReturnType<FetchLike>> {
   return {
     status,
     text: () => Promise.resolve(JSON.stringify(body)),

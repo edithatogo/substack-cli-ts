@@ -7,18 +7,28 @@ const dummyMaterial: ApiAuthMaterial = {
   source: "env",
   publicationUrl: "https://test.substack.com",
   cookieHeader: "dummy_session=abc",
-  cookies: [{
-    name: "dummy_session", domain: "test.substack.com",
-    path: "/", expires: 0, secure: false, httpOnly: false,     sameSite: "Lax" as const, value: "abc",
-  }],
+  cookies: [
+    {
+      name: "dummy_session",
+      domain: "test.substack.com",
+      path: "/",
+      expires: 0,
+      secure: false,
+      httpOnly: false,
+      sameSite: "Lax" as const,
+      value: "abc",
+    },
+  ],
   hasLikelySessionCookie: true,
 };
 
 describe("planPublishWrite", () => {
   it("plans publish operation", () => {
     const plan = planPublishWrite(
-      "123", "https://test.substack.com/publish/post/123",
-      "publish", "https://test.substack.com",
+      "123",
+      "https://test.substack.com/publish/post/123",
+      "publish",
+      "https://test.substack.com",
     );
 
     assert.equal(plan.status, "planned");
@@ -29,8 +39,10 @@ describe("planPublishWrite", () => {
 
   it("plans schedule operation with timestamp", () => {
     const plan = planPublishWrite(
-      "123", "https://test.substack.com/publish/post/123",
-      "schedule", "https://test.substack.com",
+      "123",
+      "https://test.substack.com/publish/post/123",
+      "schedule",
+      "https://test.substack.com",
       "2026-06-01T09:00:00Z",
     );
 
@@ -43,8 +55,10 @@ describe("planPublishWrite", () => {
 describe("executePublishWrite", () => {
   it("reports published status on success", async () => {
     const plan = planPublishWrite(
-      "123", "https://test.substack.com/publish/post/123",
-      "publish", "https://test.substack.com",
+      "123",
+      "https://test.substack.com/publish/post/123",
+      "publish",
+      "https://test.substack.com",
     );
 
     const mockFetch = async (url: string, init?: Record<string, unknown>) => ({
@@ -66,8 +80,10 @@ describe("executePublishWrite", () => {
 
   it("reports scheduled status on schedule success", async () => {
     const plan = planPublishWrite(
-      "123", "https://test.substack.com/publish/post/123",
-      "schedule", "https://test.substack.com",
+      "123",
+      "https://test.substack.com/publish/post/123",
+      "schedule",
+      "https://test.substack.com",
       "2026-06-01T09:00:00Z",
     );
 
@@ -84,8 +100,10 @@ describe("executePublishWrite", () => {
 
   it("fails on HTTP error", async () => {
     const plan = planPublishWrite(
-      "123", "https://test.substack.com/publish/post/123",
-      "publish", "https://test.substack.com",
+      "123",
+      "https://test.substack.com/publish/post/123",
+      "publish",
+      "https://test.substack.com",
     );
 
     const mockFetch = async () => ({

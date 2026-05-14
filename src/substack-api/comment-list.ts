@@ -91,10 +91,7 @@ export async function fetchCommentsForPost(
   options?: { limit?: number | undefined },
 ): Promise<CommentListResult> {
   const headers = apiHeaders(material);
-  const url = new URL(
-    `/api/v1/post/${postId}/comments`,
-    publicationUrl,
-  ).toString();
+  const url = new URL(`/api/v1/post/${postId}/comments`, publicationUrl).toString();
 
   const response = await requestJson(fetchFn, url, headers);
 
@@ -142,10 +139,7 @@ export async function moderateComment(
   fetchFn: FetchLike,
 ): Promise<CommentModerationResult> {
   const headers = apiHeaders(material);
-  const url = new URL(
-    `/api/v1/comments/${commentId}/${action}`,
-    publicationUrl,
-  ).toString();
+  const url = new URL(`/api/v1/comments/${commentId}/${action}`, publicationUrl).toString();
 
   const response = await requestWrite(fetchFn, url, "POST", headers, {});
 
@@ -184,10 +178,7 @@ export async function replyToComment(
   fetchFn: FetchLike,
 ): Promise<CommentModerationResult> {
   const headers = apiHeaders(material);
-  const url = new URL(
-    `/api/v1/comments/${commentId}/reply`,
-    publicationUrl,
-  ).toString();
+  const url = new URL(`/api/v1/comments/${commentId}/reply`, publicationUrl).toString();
 
   const response = await requestWrite(fetchFn, url, "POST", headers, { body });
 

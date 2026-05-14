@@ -6,9 +6,7 @@ export interface TransportResolution {
   fallbackReason?: string | undefined;
 }
 
-export function resolveTransport(
-  preference: TransportPreference,
-): TransportResolution {
+export function resolveTransport(preference: TransportPreference): TransportResolution {
   if (preference === "api") {
     return {
       requested: preference,

@@ -51,11 +51,7 @@ describe("fetchEmailTemplate", () => {
       }),
     );
 
-    const result = await fetchEmailTemplate(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchEmailTemplate("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.template?.headerHtml, "<h1>Header</h1>");
@@ -81,11 +77,7 @@ describe("fetchEmailTemplate", () => {
       }),
     );
 
-    const result = await fetchEmailTemplate(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchEmailTemplate("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.template?.headerHtml, "<h1>Alt</h1>");
@@ -95,11 +87,7 @@ describe("fetchEmailTemplate", () => {
   it("returns null for missing fields", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({}));
 
-    const result = await fetchEmailTemplate(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchEmailTemplate("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.template?.headerHtml, null);
@@ -109,11 +97,7 @@ describe("fetchEmailTemplate", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchEmailTemplate(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchEmailTemplate("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -136,11 +120,7 @@ describe("fetchBroadcastHistory", () => {
       ]),
     );
 
-    const result = await fetchBroadcastHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchBroadcastHistory("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.broadcasts?.length, 1);
@@ -169,11 +149,7 @@ describe("fetchBroadcastHistory", () => {
       }),
     );
 
-    const result = await fetchBroadcastHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchBroadcastHistory("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.broadcasts?.length, 1);
@@ -190,12 +166,7 @@ describe("fetchBroadcastHistory", () => {
 
     const fetchFn = fakeFetch(200, JSON.stringify(items));
 
-    const result = await fetchBroadcastHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-      3,
-    );
+    const result = await fetchBroadcastHistory("https://test.substack.com", material, fetchFn, 3);
 
     assert.equal(result.status, "ok");
     assert.equal(result.broadcasts?.length, 3);
@@ -204,11 +175,7 @@ describe("fetchBroadcastHistory", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchBroadcastHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchBroadcastHistory("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -261,12 +228,7 @@ describe("sendTestEmail", () => {
   it("returns ok on successful send", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({ sent: true }));
 
-    const result = await sendTestEmail(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await sendTestEmail("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.draftId, 42);
@@ -276,12 +238,7 @@ describe("sendTestEmail", () => {
   it("returns failed on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await sendTestEmail(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await sendTestEmail("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "failed");
   });
@@ -289,12 +246,7 @@ describe("sendTestEmail", () => {
   it("returns failed when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await sendTestEmail(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await sendTestEmail("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "failed");
   });

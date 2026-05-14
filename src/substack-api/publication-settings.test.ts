@@ -87,10 +87,8 @@ describe("fetchPublicationSettings", () => {
 
   it("throws on non-200 status", async () => {
     await assert.rejects(
-      fetchPublicationSettings(
-        "https://rareinsights.substack.com",
-        material(),
-        () => Promise.resolve(response(404, { error: "not found" })),
+      fetchPublicationSettings("https://rareinsights.substack.com", material(), () =>
+        Promise.resolve(response(404, { error: "not found" })),
       ),
       /Failed to fetch publication/,
     );
@@ -98,10 +96,8 @@ describe("fetchPublicationSettings", () => {
 
   it("throws on network error (status 0)", async () => {
     await assert.rejects(
-      fetchPublicationSettings(
-        "https://rareinsights.substack.com",
-        material(),
-        () => Promise.resolve(response(0, null)),
+      fetchPublicationSettings("https://rareinsights.substack.com", material(), () =>
+        Promise.resolve(response(0, null)),
       ),
       /Failed to fetch publication/,
     );
@@ -282,27 +278,30 @@ describe("uploadPublicationLogo", () => {
   it("uploads image and updates logo_url on success", async () => {
     let postBody: Record<string, unknown> | undefined;
 
-    const fetchFn = fakeFetchRoutes(new Map<string, unknown>([
-      [
-        "https://rareinsights.substack.com/api/v1/publication",
-        {
-          name: "Rare Insights",
-          subdomain: "rareinsights",
-        },
-      ],
-      [
-        "https://rareinsights.substack.com/api/v1/image",
-        {
-          url: "https://substackcdn.com/logo.png",
-        },
-      ],
-    ]), (input, body) => {
-      if (input === "https://rareinsights.substack.com/api/v1/publication/update") {
-        postBody = body;
-        return response(200, { ok: true });
-      }
-      return undefined;
-    });
+    const fetchFn = fakeFetchRoutes(
+      new Map<string, unknown>([
+        [
+          "https://rareinsights.substack.com/api/v1/publication",
+          {
+            name: "Rare Insights",
+            subdomain: "rareinsights",
+          },
+        ],
+        [
+          "https://rareinsights.substack.com/api/v1/image",
+          {
+            url: "https://substackcdn.com/logo.png",
+          },
+        ],
+      ]),
+      (input, body) => {
+        if (input === "https://rareinsights.substack.com/api/v1/publication/update") {
+          postBody = body;
+          return response(200, { ok: true });
+        }
+        return undefined;
+      },
+    );
 
     writeFileSync("logo.png", "fake image data");
     try {
@@ -318,25 +317,32 @@ describe("uploadPublicationLogo", () => {
       assert.equal(result.logoUrl, "https://substackcdn.com/logo.png");
       assert.equal(postBody?.logo_url, "https://substackcdn.com/logo.png");
     } finally {
-      try { unlinkSync("logo.png"); } catch { /* ignore */ }
+      try {
+        unlinkSync("logo.png");
+      } catch {
+        /* ignore */
+      }
     }
   });
 
   it("returns failed when upload fails", async () => {
-    const fetchFn = fakeFetchRoutes(new Map<string, unknown>([
-      [
-        "https://rareinsights.substack.com/api/v1/publication",
-        {
-          name: "Rare Insights",
-          subdomain: "rareinsights",
-        },
-      ],
-    ]), (input) => {
-      if (input === "https://rareinsights.substack.com/api/v1/image") {
-        return response(500, { error: "upload failed" });
-      }
-      return undefined;
-    });
+    const fetchFn = fakeFetchRoutes(
+      new Map<string, unknown>([
+        [
+          "https://rareinsights.substack.com/api/v1/publication",
+          {
+            name: "Rare Insights",
+            subdomain: "rareinsights",
+          },
+        ],
+      ]),
+      (input) => {
+        if (input === "https://rareinsights.substack.com/api/v1/image") {
+          return response(500, { error: "upload failed" });
+        }
+        return undefined;
+      },
+    );
 
     writeFileSync("logo.png", "fake image data");
     try {
@@ -350,7 +356,11 @@ describe("uploadPublicationLogo", () => {
 
       assert.equal(result.status, "failed");
     } finally {
-      try { unlinkSync("logo.png"); } catch { /* ignore */ }
+      try {
+        unlinkSync("logo.png");
+      } catch {
+        /* ignore */
+      }
     }
   });
 });
@@ -371,27 +381,30 @@ describe("uploadPublicationFavicon", () => {
   it("uploads favicon and updates favicon_url on success", async () => {
     let postBody: Record<string, unknown> | undefined;
 
-    const fetchFn = fakeFetchRoutes(new Map<string, unknown>([
-      [
-        "https://rareinsights.substack.com/api/v1/publication",
-        {
-          name: "Rare Insights",
-          subdomain: "rareinsights",
-        },
-      ],
-      [
-        "https://rareinsights.substack.com/api/v1/image",
-        {
-          url: "https://substackcdn.com/favicon.ico",
-        },
-      ],
-    ]), (input, body) => {
-      if (input === "https://rareinsights.substack.com/api/v1/publication/update") {
-        postBody = body;
-        return response(200, { ok: true });
-      }
-      return undefined;
-    });
+    const fetchFn = fakeFetchRoutes(
+      new Map<string, unknown>([
+        [
+          "https://rareinsights.substack.com/api/v1/publication",
+          {
+            name: "Rare Insights",
+            subdomain: "rareinsights",
+          },
+        ],
+        [
+          "https://rareinsights.substack.com/api/v1/image",
+          {
+            url: "https://substackcdn.com/favicon.ico",
+          },
+        ],
+      ]),
+      (input, body) => {
+        if (input === "https://rareinsights.substack.com/api/v1/publication/update") {
+          postBody = body;
+          return response(200, { ok: true });
+        }
+        return undefined;
+      },
+    );
 
     writeFileSync("favicon.ico", "fake image data");
     try {
@@ -407,25 +420,32 @@ describe("uploadPublicationFavicon", () => {
       assert.equal(result.faviconUrl, "https://substackcdn.com/favicon.ico");
       assert.equal(postBody?.favicon_url, "https://substackcdn.com/favicon.ico");
     } finally {
-      try { unlinkSync("favicon.ico"); } catch { /* ignore */ }
+      try {
+        unlinkSync("favicon.ico");
+      } catch {
+        /* ignore */
+      }
     }
   });
 
   it("returns failed when upload fails", async () => {
-    const fetchFn = fakeFetchRoutes(new Map<string, unknown>([
-      [
-        "https://rareinsights.substack.com/api/v1/publication",
-        {
-          name: "Rare Insights",
-          subdomain: "rareinsights",
-        },
-      ],
-    ]), (input) => {
-      if (input === "https://rareinsights.substack.com/api/v1/image") {
-        return response(500, { error: "upload failed" });
-      }
-      return undefined;
-    });
+    const fetchFn = fakeFetchRoutes(
+      new Map<string, unknown>([
+        [
+          "https://rareinsights.substack.com/api/v1/publication",
+          {
+            name: "Rare Insights",
+            subdomain: "rareinsights",
+          },
+        ],
+      ]),
+      (input) => {
+        if (input === "https://rareinsights.substack.com/api/v1/image") {
+          return response(500, { error: "upload failed" });
+        }
+        return undefined;
+      },
+    );
 
     const result = await uploadPublicationFavicon(
       "https://rareinsights.substack.com",
@@ -566,10 +586,7 @@ function fakeFetchRoutes(
   };
 }
 
-function response(
-  status: number,
-  body: unknown,
-): Awaited<ReturnType<FetchLike>> {
+function response(status: number, body: unknown): Awaited<ReturnType<FetchLike>> {
   return {
     status,
     text: () => Promise.resolve(JSON.stringify(body)),

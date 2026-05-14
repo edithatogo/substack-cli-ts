@@ -70,9 +70,7 @@ describe("API auth material", () => {
       [
         "https://substack.com/api/v1/handle/options",
         {
-          potentialHandles: [
-            { id: "rareinsights", handle: "rareinsights", type: "existing" },
-          ],
+          potentialHandles: [{ id: "rareinsights", handle: "rareinsights", type: "existing" }],
         },
       ],
       [
@@ -94,10 +92,7 @@ describe("API auth material", () => {
         },
       ],
     ]);
-    const validation = await validateApiAuthMaterial(
-      material,
-      fakeFetch(routes),
-    );
+    const validation = await validateApiAuthMaterial(material, fakeFetch(routes));
 
     assert.equal(validation.status, "ok");
     assert.equal(validation.handle, "rareinsights");
@@ -134,10 +129,7 @@ function fakeFetch(routes: Map<string, unknown>): FetchLike {
   };
 }
 
-function response(
-  status: number,
-  body: unknown,
-): Awaited<ReturnType<FetchLike>> {
+function response(status: number, body: unknown): Awaited<ReturnType<FetchLike>> {
   return {
     status,
     text: () => Promise.resolve(JSON.stringify(body)),

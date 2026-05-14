@@ -103,8 +103,7 @@ export function classifyFailure(status: number, endpoint: string): ApiFailure {
     return {
       status: "network-error",
       endpoint,
-      message:
-        "The read-only request failed before receiving a response from Substack.",
+      message: "The read-only request failed before receiving a response from Substack.",
     };
   }
 

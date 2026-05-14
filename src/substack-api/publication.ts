@@ -62,23 +62,16 @@ export async function fetchPublication(
   fetchFn: FetchLike,
 ): Promise<PublicationDetails> {
   const headers = apiHeaders(material);
-  const endpoint = new URL(
-    "/api/v1/publication",
-    publicationUrl,
-  ).toString();
+  const endpoint = new URL("/api/v1/publication", publicationUrl).toString();
   const response = await requestJson(fetchFn, endpoint, headers);
 
   if (response.status !== 200) {
-    throw new Error(
-      `Failed to fetch publication: HTTP ${response.status}`,
-    );
+    throw new Error(`Failed to fetch publication: HTTP ${response.status}`);
   }
 
   const parsed = RichPublicationSchema.safeParse(response.body);
   if (!parsed.success) {
-    throw new Error(
-      `Publication response schema drift: ${parsed.error.message}`,
-    );
+    throw new Error(`Publication response schema drift: ${parsed.error.message}`);
   }
 
   return mapPublication(parsed.data);
@@ -90,30 +83,20 @@ export async function fetchPublicationChecklist(
   fetchFn: FetchLike,
 ): Promise<PublicationChecklist> {
   const headers = apiHeaders(material);
-  const endpoint = new URL(
-    "/api/v1/publication_launch_checklist",
-    publicationUrl,
-  ).toString();
+  const endpoint = new URL("/api/v1/publication_launch_checklist", publicationUrl).toString();
   const response = await requestJson(fetchFn, endpoint, headers);
 
   if (response.status !== 200) {
-    throw new Error(
-      `Failed to fetch publication checklist: HTTP ${response.status}`,
-    );
+    throw new Error(`Failed to fetch publication checklist: HTTP ${response.status}`);
   }
 
   const body = response.body as Record<string, unknown>;
-  const subscriberCount =
-    typeof body?.subscriber_count === "number"
-      ? body.subscriber_count
-      : null;
+  const subscriberCount = typeof body?.subscriber_count === "number" ? body.subscriber_count : null;
 
   return { subscriberCount, ...body };
 }
 
-function mapPublication(
-  data: z.infer<typeof RichPublicationSchema>,
-): PublicationDetails {
+function mapPublication(data: z.infer<typeof RichPublicationSchema>): PublicationDetails {
   return {
     id: data.id,
     name: data.name,

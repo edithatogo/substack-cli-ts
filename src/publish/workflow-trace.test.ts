@@ -95,8 +95,7 @@ describe("reviewWorkflowTraceArtifact", () => {
           transport: {
             requested: "auto",
             selected: "browser",
-            fallbackReason:
-              "API transport is unavailable, so the browser workflow was selected.",
+            fallbackReason: "API transport is unavailable, so the browser workflow was selected.",
           },
           browserbaseSessionId: "session-123",
           browserbaseSessionUrl: "https://browserbase.example/session/123",
@@ -190,22 +189,11 @@ describe("reviewWorkflowTraceArtifact", () => {
     );
 
     try {
-      const comparison = await compareWorkflowTraceArtifacts(
-        expectedFile,
-        actualFile,
-      );
+      const comparison = await compareWorkflowTraceArtifacts(expectedFile, actualFile);
 
       assert.equal(comparison.equal, false);
-      assert.ok(
-        comparison.differences.some((difference) =>
-          difference.startsWith("status:"),
-        ),
-      );
-      assert.ok(
-        comparison.differences.some((difference) =>
-          difference.startsWith("title:"),
-        ),
-      );
+      assert.ok(comparison.differences.some((difference) => difference.startsWith("status:")));
+      assert.ok(comparison.differences.some((difference) => difference.startsWith("title:")));
     } finally {
       await rm(temp, { recursive: true, force: true });
     }
@@ -247,10 +235,7 @@ describe("reviewWorkflowTraceArtifact", () => {
 
       assert.equal(fixture.title, "Fixture Title");
       assert.equal(reread.finalState, "publish-review-opened");
-      assert.equal(
-        reread.publishedUrl,
-        "https://rareinsights.substack.com/p/fixture-title",
-      );
+      assert.equal(reread.publishedUrl, "https://rareinsights.substack.com/p/fixture-title");
       assert.equal(reread.browserSessionPresent, true);
     } finally {
       await rm(temp, { recursive: true, force: true });

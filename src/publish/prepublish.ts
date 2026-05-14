@@ -29,8 +29,7 @@ export function prepublishPost(prepared: PreparedPost): PrepublishReport {
       title,
       scheduleAt: prepared.scheduleAt,
       compatibility,
-      message:
-        "Prepublish blocked because the post contains unsupported Substack payload content.",
+      message: "Prepublish blocked because the post contains unsupported Substack payload content.",
     };
   }
 

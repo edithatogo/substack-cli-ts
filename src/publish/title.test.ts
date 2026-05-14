@@ -18,10 +18,7 @@ title: "Front Matter Title"
   });
 
   it("falls back to the first heading", async () => {
-    const post = await parseMarkdownString(
-      "# Heading Title\n\nBody.",
-      "post.md",
-    );
+    const post = await parseMarkdownString("# Heading Title\n\nBody.", "post.md");
 
     assert.equal(resolvePostTitle(post), "Heading Title");
   });

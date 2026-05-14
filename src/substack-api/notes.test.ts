@@ -164,9 +164,7 @@ describe("getNote", () => {
 describe("createNote", () => {
   it("returns id and publishedAt from published note", async () => {
     const client = mockClient();
-    const publishFn = vi
-      .fn()
-      .mockResolvedValue({ id: 789, date: "2026-04-01T12:00:00Z" });
+    const publishFn = vi.fn().mockResolvedValue({ id: 789, date: "2026-04-01T12:00:00Z" });
     const textFn = vi.fn().mockReturnValue({ publish: publishFn });
     const paragraphFn = vi.fn().mockReturnValue({ text: textFn });
     const newNoteFn = vi.fn().mockReturnValue({ paragraph: paragraphFn });
@@ -206,8 +204,7 @@ describe("deleteNote", () => {
   });
 
   it("returns status 0 when fetch throws", async () => {
-    const failingFetch: FetchLike = () =>
-      Promise.reject(new Error("Network failure"));
+    const failingFetch: FetchLike = () => Promise.reject(new Error("Network failure"));
     const result = await deleteNote(material(), 1, failingFetch);
     assert.equal(result.status, 0);
   });
@@ -219,10 +216,7 @@ describe("deleteNote", () => {
       return Promise.resolve({ status: 200, text: () => Promise.resolve("{}") });
     };
     await deleteNote(material(), 42, urlCapturingFetch);
-    assert.equal(
-      capturedUrl,
-      "https://rareinsights.substack.com/api/v1/notes/42",
-    );
+    assert.equal(capturedUrl, "https://rareinsights.substack.com/api/v1/notes/42");
   });
 });
 
@@ -283,8 +277,7 @@ describe("reshareNote", () => {
   });
 
   it("returns status 0 when fetch throws", async () => {
-    const failingFetch: FetchLike = () =>
-      Promise.reject(new Error("Network failure"));
+    const failingFetch: FetchLike = () => Promise.reject(new Error("Network failure"));
     const result = await reshareNote(material(), 1, failingFetch);
     assert.equal(result.status, 0);
   });
@@ -296,9 +289,6 @@ describe("reshareNote", () => {
       return Promise.resolve({ status: 200, text: () => Promise.resolve("{}") });
     };
     await reshareNote(material(), 42, urlCapturingFetch);
-    assert.equal(
-      capturedUrl,
-      "https://rareinsights.substack.com/api/v1/notes/42/reshare",
-    );
+    assert.equal(capturedUrl, "https://rareinsights.substack.com/api/v1/notes/42/reshare");
   });
 });

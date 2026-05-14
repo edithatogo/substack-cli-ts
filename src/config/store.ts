@@ -6,9 +6,7 @@ import { loadEnv } from "./env.js";
 
 const AppConfigSchema = z.object({
   publicationUrl: z.string().url().optional(),
-  browserRuntime: z
-    .enum(["browserbase", "local", "camoufox"])
-    .default("browserbase"),
+  browserRuntime: z.enum(["browserbase", "local", "camoufox"]).default("browserbase"),
   defaultMode: z.enum(["draft", "publish", "schedule"]).default("draft"),
 });
 
@@ -41,16 +39,10 @@ export async function loadConfig(): Promise<AppConfig> {
 export async function saveConfig(config: AppConfig): Promise<void> {
   const parsed = AppConfigSchema.parse(config);
   await mkdir(dirname(configFilePath()), { recursive: true });
-  await writeFile(
-    configFilePath(),
-    `${JSON.stringify(parsed, null, 2)}\n`,
-    "utf8",
-  );
+  await writeFile(configFilePath(), `${JSON.stringify(parsed, null, 2)}\n`, "utf8");
 }
 
-export async function updateConfig(
-  patch: Partial<AppConfig>,
-): Promise<AppConfig> {
+export async function updateConfig(patch: Partial<AppConfig>): Promise<AppConfig> {
   const current = await loadConfig();
   const next = AppConfigSchema.parse({ ...current, ...patch });
   await saveConfig(next);
@@ -58,10 +50,7 @@ export async function updateConfig(
 }
 
 export async function loadEffectiveConfig(): Promise<EffectiveConfig> {
-  const [config, env] = await Promise.all([
-    loadConfig(),
-    Promise.resolve(loadEnv()),
-  ]);
+  const [config, env] = await Promise.all([loadConfig(), Promise.resolve(loadEnv())]);
 
   return {
     ...config,
@@ -89,9 +78,7 @@ export function requireSubstackCredentials(config: EffectiveConfig): {
     .map(([name]) => name);
 
   if (missing.length > 0) {
-    throw new Error(
-      `Missing required Substack credential variables: ${missing.join(", ")}`,
-    );
+    throw new Error(`Missing required Substack credential variables: ${missing.join(", ")}`);
   }
 
   return {
@@ -119,9 +106,7 @@ export function requireBrowserbaseConfig(config: EffectiveConfig): void {
     .map(([name]) => name);
 
   if (missing.length > 0) {
-    throw new Error(
-      `Missing required Browserbase environment variables: ${missing.join(", ")}`,
-    );
+    throw new Error(`Missing required Browserbase environment variables: ${missing.join(", ")}`);
   }
 }
 

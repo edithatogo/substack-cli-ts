@@ -36,9 +36,7 @@ title: Media test
   });
 
   it("uses title attribute as caption fallback for standard Markdown images", async () => {
-    const parsed = await parseMarkdownString(
-      '![Alt](https://example.com/pic.png "Title text")',
-    );
+    const parsed = await parseMarkdownString('![Alt](https://example.com/pic.png "Title text")');
     assert.equal(parsed.media.assets.length, 1);
     // buildMediaManifest falls back from caption → title
     assert.equal(parsed.media.assets[0]?.caption, "Title text");
@@ -54,9 +52,7 @@ title: Media test
   });
 
   it("classifies image without alt text correctly", async () => {
-    const parsed = await parseMarkdownString(
-      "![](https://example.com/banner.jpg)",
-    );
+    const parsed = await parseMarkdownString("![](https://example.com/banner.jpg)");
     assert.equal(parsed.media.assets.length, 1);
     assert.equal(parsed.media.assets[0]?.kind, "remote");
     assert.equal(parsed.media.assets[0]?.alt, undefined);

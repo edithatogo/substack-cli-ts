@@ -43,9 +43,7 @@ export async function loadDraftMappings(): Promise<DraftMapping[]> {
   }
 }
 
-export async function saveDraftMapping(
-  input: SaveDraftMappingInput,
-): Promise<DraftMapping> {
+export async function saveDraftMapping(input: SaveDraftMappingInput): Promise<DraftMapping> {
   const current = await loadDraftMappings();
   const next = DraftMappingSchema.parse({
     sourceFile: normalizeSourceFile(input.sourceFile),
@@ -60,10 +58,7 @@ export async function saveDraftMapping(
 
   const filtered = current.filter(
     (mapping) =>
-      !(
-        mapping.sourceFile === next.sourceFile &&
-        mapping.publicationUrl === next.publicationUrl
-      ),
+      !(mapping.sourceFile === next.sourceFile && mapping.publicationUrl === next.publicationUrl),
   );
 
   await writeDraftMappings([...filtered, next]);
@@ -101,11 +96,7 @@ export function normalizePublicationUrl(publicationUrl: string): string {
 
 async function writeDraftMappings(mappings: DraftMapping[]): Promise<void> {
   await mkdir(dirname(draftMappingsFilePath()), { recursive: true });
-  await writeFile(
-    draftMappingsFilePath(),
-    `${JSON.stringify({ mappings }, null, 2)}\n`,
-    "utf8",
-  );
+  await writeFile(draftMappingsFilePath(), `${JSON.stringify({ mappings }, null, 2)}\n`, "utf8");
 }
 
 function isMissingFile(error: unknown): boolean {

@@ -84,10 +84,7 @@ describe("readOwnProfile", () => {
               subscriberCountNumber: 5000,
             },
           ],
-          [
-            "https://substack.com/api/v1/user/rareinsights/public_profile",
-            {},
-          ],
+          ["https://substack.com/api/v1/user/rareinsights/public_profile", {}],
         ]),
       ),
     );
@@ -101,10 +98,7 @@ describe("readOwnProfile", () => {
       material(),
       fakeFetch(
         new Map<string, unknown>([
-          [
-            "https://substack.com/api/v1/handle/options",
-            { potentialHandles: [] },
-          ],
+          ["https://substack.com/api/v1/handle/options", { potentialHandles: [] }],
         ]),
       ),
     );
@@ -114,10 +108,7 @@ describe("readOwnProfile", () => {
   });
 
   it("returns unauthenticated when handle endpoint returns non-200", async () => {
-    const result = await readOwnProfile(
-      material(),
-      fakeFetch(new Map<string, unknown>()),
-    );
+    const result = await readOwnProfile(material(), fakeFetch(new Map<string, unknown>()));
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -127,9 +118,7 @@ describe("readOwnProfile", () => {
       material(),
       makeRouter([
         route("https://substack.com/api/v1/handle/options", 200, {
-          potentialHandles: [
-            { id: "rareinsights", handle: "rareinsights", type: "existing" },
-          ],
+          potentialHandles: [{ id: "rareinsights", handle: "rareinsights", type: "existing" }],
         }),
         route("https://substack.com/api/v1/user/rareinsights", 403, {
           error: "forbidden",
@@ -146,9 +135,7 @@ describe("readOwnProfile", () => {
       material(),
       makeRouter([
         route("https://substack.com/api/v1/handle/options", 200, {
-          potentialHandles: [
-            { id: "rareinsights", handle: "rareinsights", type: "existing" },
-          ],
+          potentialHandles: [{ id: "rareinsights", handle: "rareinsights", type: "existing" }],
         }),
         route("https://substack.com/api/v1/user/rareinsights", 200, {
           id: "not-a-number",
@@ -233,11 +220,9 @@ describe("readPublicProfile", () => {
       material(),
       "rareinsights",
       makeRouter([
-        route(
-          "https://substack.com/api/v1/user/rareinsights/public_profile",
-          403,
-          { error: "forbidden" },
-        ),
+        route("https://substack.com/api/v1/user/rareinsights/public_profile", 403, {
+          error: "forbidden",
+        }),
       ]),
     );
 
@@ -249,11 +234,10 @@ describe("readPublicProfile", () => {
       material(),
       "rareinsights",
       makeRouter([
-        route(
-          "https://substack.com/api/v1/user/rareinsights/public_profile",
-          200,
-          { name: 42, handle: true },
-        ),
+        route("https://substack.com/api/v1/user/rareinsights/public_profile", 200, {
+          name: 42,
+          handle: true,
+        }),
       ]),
     );
 
@@ -305,9 +289,7 @@ function route(url: string, status: number, body: unknown) {
   return { url, status, body };
 }
 
-function makeRouter(
-  routes: { url: string; status: number; body: unknown }[],
-): FetchLike {
+function makeRouter(routes: { url: string; status: number; body: unknown }[]): FetchLike {
   const map = new Map(routes.map((r) => [r.url, r]));
   return (input: string) => {
     const match = map.get(input);
@@ -316,10 +298,7 @@ function makeRouter(
   };
 }
 
-function response(
-  status: number,
-  body: unknown,
-): Awaited<ReturnType<FetchLike>> {
+function response(status: number, body: unknown): Awaited<ReturnType<FetchLike>> {
   return {
     status,
     text: () => Promise.resolve(JSON.stringify(body)),

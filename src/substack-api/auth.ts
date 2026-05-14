@@ -8,10 +8,7 @@ import {
   requestJson,
   type ApiReadStatus,
 } from "./client.js";
-import {
-  requirePublicationUrl,
-  type EffectiveConfig,
-} from "../config/store.js";
+import { requirePublicationUrl, type EffectiveConfig } from "../config/store.js";
 import { redact } from "../util/redact.js";
 
 export type ApiAuthSource = "env" | "local-profile";
@@ -62,11 +59,7 @@ export interface ApiAuthValidation {
   message: string;
 }
 
-const LIKELY_SESSION_COOKIE_NAMES = new Set([
-  "connect.sid",
-  "substack.sid",
-  "substack_session",
-]);
+const LIKELY_SESSION_COOKIE_NAMES = new Set(["connect.sid", "substack.sid", "substack_session"]);
 
 const HandleOptionsSchema = z.object({
   potentialHandles: z.array(
@@ -101,11 +94,7 @@ export async function resolveApiAuthMaterial(
   source: "auto" | ApiAuthSource = "auto",
 ): Promise<ApiAuthMaterial> {
   if ((source === "auto" || source === "env") && config.substackCookie) {
-    return materialFromCookieHeader(
-      config.substackCookie,
-      requirePublicationUrl(config),
-      "env",
-    );
+    return materialFromCookieHeader(config.substackCookie, requirePublicationUrl(config), "env");
   }
 
   if (source === "env") {
@@ -132,10 +121,7 @@ export async function extractApiAuthFromLocalProfile(
       // transient navigation failure occurs.
     }
 
-    const cookies = await session.context.cookies([
-      "https://substack.com",
-      publicationUrl,
-    ]);
+    const cookies = await session.context.cookies(["https://substack.com", publicationUrl]);
 
     return materialFromCookies(cookies, publicationUrl, "local-profile");
   } finally {
@@ -143,9 +129,7 @@ export async function extractApiAuthFromLocalProfile(
   }
 }
 
-export function summarizeApiAuthMaterial(
-  material: ApiAuthMaterial,
-): ApiAuthStatus {
+export function summarizeApiAuthMaterial(material: ApiAuthMaterial): ApiAuthStatus {
   return {
     source: material.source,
     publicationHost: new URL(material.publicationUrl).host,
@@ -163,11 +147,7 @@ export async function validateApiAuthMaterial(
   const checkedEndpoints = [handleOptionsEndpoint];
   const headers = apiHeaders(material);
 
-  const handleResponse = await requestJson(
-    fetchImpl,
-    handleOptionsEndpoint,
-    headers,
-  );
+  const handleResponse = await requestJson(fetchImpl, handleOptionsEndpoint, headers);
   if (handleResponse.status !== 200) {
     return validationFailure(handleResponse.status, checkedEndpoints);
   }
@@ -182,9 +162,8 @@ export async function validateApiAuthMaterial(
   }
 
   const handle =
-    handleOptions.data.potentialHandles.find(
-      (candidate) => candidate.type === "existing",
-    )?.handle ?? handleOptions.data.potentialHandles[0]?.handle;
+    handleOptions.data.potentialHandles.find((candidate) => candidate.type === "existing")
+      ?.handle ?? handleOptions.data.potentialHandles[0]?.handle;
 
   if (!handle) {
     return {
@@ -197,11 +176,7 @@ export async function validateApiAuthMaterial(
   const profileEndpoint = `https://substack.com/api/v1/user/${encodeURIComponent(handle)}/public_profile`;
   checkedEndpoints.push(profileEndpoint);
 
-  const profileResponse = await requestJson(
-    fetchImpl,
-    profileEndpoint,
-    headers,
-  );
+  const profileResponse = await requestJson(fetchImpl, profileEndpoint, headers);
   if (profileResponse.status !== 200) {
     return validationFailure(profileResponse.status, checkedEndpoints);
   }
@@ -216,9 +191,7 @@ export async function validateApiAuthMaterial(
     };
   }
 
-  const publicationSubdomain = new URL(material.publicationUrl).host.split(
-    ".",
-  )[0];
+  const publicationSubdomain = new URL(material.publicationUrl).host.split(".")[0];
   const publicationUser = profile.data.publicationUsers?.find(
     (candidate) => candidate.publication.subdomain === publicationSubdomain,
   );
@@ -280,9 +253,7 @@ export function materialFromCookies(
   const usableCookies = dedupeCookies(cookies).filter((cookie) =>
     isRelevantCookie(cookie, publicationUrl),
   );
-  const cookieHeader = usableCookies
-    .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join("; ");
+  const cookieHeader = usableCookies.map((cookie) => `${cookie.name}=${cookie.value}`).join("; ");
   const summaries = usableCookies.map(summarizeCookie);
 
   return {
@@ -308,9 +279,7 @@ function dedupeCookies(cookies: Cookie[]): Cookie[] {
 
 function isRelevantCookie(cookie: Cookie, publicationUrl: string): boolean {
   const publicationHost = new URL(publicationUrl).host;
-  const domain = cookie.domain.startsWith(".")
-    ? cookie.domain.slice(1)
-    : cookie.domain;
+  const domain = cookie.domain.startsWith(".") ? cookie.domain.slice(1) : cookie.domain;
 
   return (
     domain === "substack.com" ||
@@ -333,10 +302,7 @@ function summarizeCookie(cookie: Cookie): ApiCookieSummary {
   };
 }
 
-function validationFailure(
-  status: number,
-  checkedEndpoints: string[],
-): ApiAuthValidation {
+function validationFailure(status: number, checkedEndpoints: string[]): ApiAuthValidation {
   const failure = classifyFailure(
     status,
     checkedEndpoints[checkedEndpoints.length - 1] ?? "unknown",

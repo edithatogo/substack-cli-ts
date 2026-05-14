@@ -44,10 +44,7 @@ export async function listNotes(
   return notes;
 }
 
-export async function getNote(
-  material: ApiAuthMaterial,
-  id: number,
-): Promise<NoteDetail> {
+export async function getNote(material: ApiAuthMaterial, id: number): Promise<NoteDetail> {
   const client = createSubstackClient(material);
   const note = await client.noteForId(id);
   return {
@@ -65,11 +62,7 @@ export async function createNote(
 ): Promise<{ id: number; publishedAt: string }> {
   const client = createSubstackClient(material);
   const profile = await client.ownProfile();
-  const result = await profile
-    .newNote()
-    .paragraph()
-    .text(body)
-    .publish();
+  const result = await profile.newNote().paragraph().text(body).publish();
   return {
     id: result.id,
     publishedAt: result.date,
@@ -87,10 +80,7 @@ export async function deleteNote(
   return { status: result.status };
 }
 
-export async function likeNote(
-  material: ApiAuthMaterial,
-  id: number,
-): Promise<void> {
+export async function likeNote(material: ApiAuthMaterial, id: number): Promise<void> {
   const client = createSubstackClient(material);
   const note = await client.noteForId(id);
   await note.like();

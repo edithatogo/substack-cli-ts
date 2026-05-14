@@ -49,17 +49,9 @@ const SUPPORTED_NODE_TYPES = new Set([
   "text",
 ]);
 
-const SUPPORTED_MARK_TYPES = new Set([
-  "bold",
-  "code",
-  "italic",
-  "link",
-  "strike",
-]);
+const SUPPORTED_MARK_TYPES = new Set(["bold", "code", "italic", "link", "strike"]);
 
-export function buildSubstackDraftPayload(
-  post: ParsedPost,
-): SubstackDraftPayload {
+export function buildSubstackDraftPayload(post: ParsedPost): SubstackDraftPayload {
   const compatibility = validatePayloadCompatibility(post.document);
   if (!compatibility.ok) {
     throw new Error(

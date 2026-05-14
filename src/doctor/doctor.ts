@@ -151,8 +151,7 @@ export function checkSubstackCredentials(config: EffectiveConfig): DoctorCheck {
   return {
     name: "substack-login",
     status: "warn",
-    message:
-      "Substack login variables are not configured. Manual local login can still be used.",
+    message: "Substack login variables are not configured. Manual local login can still be used.",
     details: {
       emailConfigured: false,
       passwordConfigured: false,
@@ -161,9 +160,7 @@ export function checkSubstackCredentials(config: EffectiveConfig): DoctorCheck {
   };
 }
 
-async function checkApiReadiness(
-  config: EffectiveConfig,
-): Promise<DoctorCheck> {
+async function checkApiReadiness(config: EffectiveConfig): Promise<DoctorCheck> {
   const hasCookie = Boolean(config.substackCookie);
   const hasLocalProfile = await exists(localBrowserProfileDir());
 
@@ -267,8 +264,7 @@ async function checkGitignore(): Promise<DoctorCheck> {
     return {
       name: "gitignore",
       status: "error",
-      message:
-        "Missing required ignore patterns for local secrets or generated output.",
+      message: "Missing required ignore patterns for local secrets or generated output.",
       details: { missing },
     };
   }

@@ -34,19 +34,14 @@ describe("summarizeStatus", () => {
         { name: "b", status: "warn", message: "warn" },
       ],
     ],
-  ] satisfies Array<[DoctorStatus, DoctorCheck[]]>)(
-    "returns %s",
-    (expected, checks) => {
-      assert.equal(summarizeStatus(checks), expected);
-    },
-  );
+  ] satisfies Array<[DoctorStatus, DoctorCheck[]]>)("returns %s", (expected, checks) => {
+    assert.equal(summarizeStatus(checks), expected);
+  });
 });
 
 describe("doctor checks", () => {
   it("reports publication configuration without exposing the full URL", () => {
-    const check = checkPublication(
-      config({ publicationUrl: "https://example.substack.com" }),
-    );
+    const check = checkPublication(config({ publicationUrl: "https://example.substack.com" }));
 
     assert.equal(check.status, "ok");
     assert.deepEqual(check.details, { host: "example.substack.com" });
@@ -80,9 +75,7 @@ describe("doctor checks", () => {
   it("warns when no local API probe auth source is available", async () => {
     await withTempState(async () => {
       const check = await runDoctor();
-      const apiReadiness = check.checks.find(
-        (item) => item.name === "api-readiness",
-      );
+      const apiReadiness = check.checks.find((item) => item.name === "api-readiness");
 
       assert.ok(apiReadiness);
       assert.equal(apiReadiness.status, "warn");
@@ -124,10 +117,7 @@ describe("doctor checks", () => {
           "gitignore",
         ],
       );
-      assert.equal(
-        report.checks.find((check) => check.name === "publication")?.status,
-        "ok",
-      );
+      assert.equal(report.checks.find((check) => check.name === "publication")?.status, "ok");
     });
   });
 });

@@ -7,10 +7,7 @@ import {
   requirePublicationUrl,
   type EffectiveConfig,
 } from "../config/store.js";
-import {
-  SessionTimeoutError,
-  NavigationTimeoutError,
-} from "./errors.js";
+import { SessionTimeoutError, NavigationTimeoutError } from "./errors.js";
 
 async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -129,34 +126,23 @@ export async function createStagehandSession(
     page,
     publicationUrl,
     browserbaseSessionId:
-      config.browserRuntime === "browserbase"
-        ? stagehand.browserbaseSessionID
-        : undefined,
+      config.browserRuntime === "browserbase" ? stagehand.browserbaseSessionID : undefined,
     browserbaseSessionUrl:
-      config.browserRuntime === "browserbase"
-        ? stagehand.browserbaseSessionURL
-        : undefined,
+      config.browserRuntime === "browserbase" ? stagehand.browserbaseSessionURL : undefined,
     browserbaseDebugUrl:
-      config.browserRuntime === "browserbase"
-        ? stagehand.browserbaseDebugURL
-        : undefined,
+      config.browserRuntime === "browserbase" ? stagehand.browserbaseDebugURL : undefined,
     close: () => stagehand.close(),
   };
 }
 
-function createBrowserbaseOptions(
-  config: EffectiveConfig,
-  options: CreateStagehandSessionOptions,
-) {
+function createBrowserbaseOptions(config: EffectiveConfig, options: CreateStagehandSessionOptions) {
   requireBrowserbaseConfig(config);
 
   return {
     env: "BROWSERBASE" as const,
     apiKey: config.browserbaseApiKey!,
     projectId: config.browserbaseProjectId!,
-    ...(options.browserbaseSessionId
-      ? { browserbaseSessionID: options.browserbaseSessionId }
-      : {}),
+    ...(options.browserbaseSessionId ? { browserbaseSessionID: options.browserbaseSessionId } : {}),
     keepAlive: options.keepAlive ?? true,
     model: config.stagehandModel,
     cacheDir: cacheDir(),

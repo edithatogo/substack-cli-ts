@@ -92,8 +92,7 @@ export async function fetchIntegrations(
 
   return {
     status: "not-found",
-    message:
-      "No integrations endpoint found. Integration management may be dashboard-only.",
+    message: "No integrations endpoint found. Integration management may be dashboard-only.",
   };
 }
 
@@ -151,10 +150,7 @@ export async function importFromWordPress(
   fetchFn: FetchLike,
 ): Promise<ImportResult> {
   const headers = apiHeaders(material);
-  const endpoints = [
-    "/api/v1/import/wordpress",
-    "/api/v1/publication/import/wordpress",
-  ];
+  const endpoints = ["/api/v1/import/wordpress", "/api/v1/publication/import/wordpress"];
 
   for (const path of endpoints) {
     const url = new URL(path, publicationUrl).toString();
@@ -184,8 +180,7 @@ export async function importFromWordPress(
 
   return {
     status: "failed",
-    message:
-      "No WordPress import endpoint found. WordPress import may be dashboard-only.",
+    message: "No WordPress import endpoint found. WordPress import may be dashboard-only.",
   };
 }
 
@@ -196,10 +191,7 @@ export async function importFromRss(
   fetchFn: FetchLike,
 ): Promise<ImportResult> {
   const headers = apiHeaders(material);
-  const endpoints = [
-    "/api/v1/import/rss",
-    "/api/v1/publication/import/rss",
-  ];
+  const endpoints = ["/api/v1/import/rss", "/api/v1/publication/import/rss"];
 
   for (const path of endpoints) {
     const url = new URL(path, publicationUrl).toString();
@@ -229,8 +221,7 @@ export async function importFromRss(
 
   return {
     status: "failed",
-    message:
-      "No RSS import endpoint found. RSS import may be dashboard-only.",
+    message: "No RSS import endpoint found. RSS import may be dashboard-only.",
   };
 }
 
@@ -268,15 +259,16 @@ export async function fetchApiTokens(
 
   return {
     status: "not-found",
-    message:
-      "No API tokens endpoint found. Token management may be dashboard-only.",
+    message: "No API tokens endpoint found. Token management may be dashboard-only.",
   };
 }
 
 function parseIntegrations(body: unknown): IntegrationEntry[] | null {
   const items = Array.isArray(body)
     ? body
-    : body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).integrations)
+    : body &&
+        typeof body === "object" &&
+        Array.isArray((body as Record<string, unknown>).integrations)
       ? ((body as Record<string, unknown>).integrations as unknown[])
       : body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).data)
         ? ((body as Record<string, unknown>).data as unknown[])
@@ -301,8 +293,7 @@ function parseIntegrations(body: unknown): IntegrationEntry[] | null {
           : typeof record.type === "string"
             ? record.type
             : "Unknown";
-    const type =
-      typeof record.type === "string" ? record.type : "unknown";
+    const type = typeof record.type === "string" ? record.type : "unknown";
     const status =
       typeof record.status === "string"
         ? record.status
@@ -317,8 +308,7 @@ function parseIntegrations(body: unknown): IntegrationEntry[] | null {
         : typeof record.created_at === "string"
           ? record.created_at
           : null;
-    const description =
-      typeof record.description === "string" ? record.description : null;
+    const description = typeof record.description === "string" ? record.description : null;
 
     integrations.push({ id, name, type, status, configuredAt, description });
   }
@@ -361,9 +351,7 @@ function parseApiTokens(body: unknown): ApiTokenEntry[] | null {
             ? record.key
             : "";
     const tokenPreview =
-      tokenValue.length > 8
-        ? `${tokenValue.slice(0, 4)}...${tokenValue.slice(-4)}`
-        : "****";
+      tokenValue.length > 8 ? `${tokenValue.slice(0, 4)}...${tokenValue.slice(-4)}` : "****";
     const scopes = Array.isArray(record.scopes)
       ? record.scopes.filter((s): s is string => typeof s === "string")
       : [];

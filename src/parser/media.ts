@@ -1,10 +1,7 @@
 import { dirname, resolve } from "node:path";
 import type { MediaAsset, MediaManifest, ProseMirrorNode } from "../types.js";
 
-export function buildMediaManifest(
-  document: ProseMirrorNode,
-  sourceFile: string,
-): MediaManifest {
+export function buildMediaManifest(document: ProseMirrorNode, sourceFile: string): MediaManifest {
   const assets: MediaAsset[] = [];
 
   walk(document, (node) => {
@@ -21,8 +18,7 @@ export function buildMediaManifest(
     const asset: MediaAsset = {
       kind,
       source,
-      resolvedSource:
-        kind === "local" ? resolve(dirname(sourceFile), source) : source,
+      resolvedSource: kind === "local" ? resolve(dirname(sourceFile), source) : source,
       alt: readString(node.attrs?.alt),
       title: readString(node.attrs?.title),
       caption: readString(node.attrs?.caption) ?? readString(node.attrs?.title),
@@ -39,9 +35,7 @@ export function buildMediaManifest(
   };
 }
 
-export function summarizeMediaManifest(
-  manifest: MediaManifest,
-): Array<Record<string, unknown>> {
+export function summarizeMediaManifest(manifest: MediaManifest): Array<Record<string, unknown>> {
   return manifest.assets.map((asset) => ({
     kind: asset.kind,
     source:
@@ -54,18 +48,11 @@ export function summarizeMediaManifest(
     title: asset.title ?? null,
     caption: asset.caption ?? null,
     status:
-      asset.kind === "local"
-        ? "needs-upload"
-        : asset.kind === "data"
-          ? "inline-data"
-          : "remote-ok",
+      asset.kind === "local" ? "needs-upload" : asset.kind === "data" ? "inline-data" : "remote-ok",
   }));
 }
 
-function walk(
-  node: ProseMirrorNode,
-  visit: (node: ProseMirrorNode) => void,
-): void {
+function walk(node: ProseMirrorNode, visit: (node: ProseMirrorNode) => void): void {
   visit(node);
   node.content?.forEach((child) => walk(child, visit));
 }
@@ -81,9 +68,7 @@ function classifySource(source: string): MediaAsset["kind"] {
 
   try {
     const url = new URL(source);
-    return url.protocol === "http:" || url.protocol === "https:"
-      ? "remote"
-      : "local";
+    return url.protocol === "http:" || url.protocol === "https:" ? "remote" : "local";
   } catch {
     return "local";
   }

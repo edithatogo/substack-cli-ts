@@ -49,23 +49,10 @@ const CONFIDENCE_RANK: ConfidenceRank = {
 };
 
 const DraftContractMatrixRowSchema = z.object({
-  operation: z.union([
-    z.literal("create"),
-    z.literal("update"),
-    z.literal("fetch"),
-  ]),
-  method: z.union([
-    z.literal("GET"),
-    z.literal("POST"),
-    z.literal("PUT"),
-    z.literal("PATCH"),
-  ]),
+  operation: z.union([z.literal("create"), z.literal("update"), z.literal("fetch")]),
+  method: z.union([z.literal("GET"), z.literal("POST"), z.literal("PUT"), z.literal("PATCH")]),
   endpoint: z.string().min(1),
-  confidence: z.union([
-    z.literal("low"),
-    z.literal("medium"),
-    z.literal("high"),
-  ]),
+  confidence: z.union([z.literal("low"), z.literal("medium"), z.literal("high")]),
   occurrences: z.number().int().nonnegative(),
   sourceFiles: z.array(z.string()),
   evidence: z.array(z.string()),
@@ -112,10 +99,7 @@ export function buildDraftContractMatrix(
       }
 
       existing.occurrences += 1;
-      existing.confidence = strongerConfidence(
-        existing.confidence,
-        candidate.confidence,
-      );
+      existing.confidence = strongerConfidence(existing.confidence, candidate.confidence);
       if (!existing.sourceFiles.includes(input.sourceFile)) {
         existing.sourceFiles.push(input.sourceFile);
       }
@@ -130,8 +114,7 @@ export function buildDraftContractMatrix(
       return right.occurrences - left.occurrences;
     }
 
-    const confidenceDelta =
-      CONFIDENCE_RANK[right.confidence] - CONFIDENCE_RANK[left.confidence];
+    const confidenceDelta = CONFIDENCE_RANK[right.confidence] - CONFIDENCE_RANK[left.confidence];
     if (confidenceDelta !== 0) {
       return confidenceDelta;
     }
@@ -154,11 +137,7 @@ export async function writeDraftContractMatrixFixture(
   options: DraftContractMatrixFixtureOptions,
 ): Promise<DraftContractMatrixReport> {
   const report = buildDraftContractMatrix(inputs);
-  await writeFile(
-    options.outFile,
-    `${JSON.stringify(report, null, 2)}\n`,
-    "utf8",
-  );
+  await writeFile(options.outFile, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   return report;
 }
 
@@ -211,18 +190,8 @@ function diffDraftContractMatrixReports(
   const differences: string[] = [];
 
   compareField(differences, "status", expected.status, actual.status);
-  compareField(
-    differences,
-    "captureCount",
-    expected.captureCount,
-    actual.captureCount,
-  );
-  compareField(
-    differences,
-    "sourceFiles",
-    expected.sourceFiles,
-    actual.sourceFiles,
-  );
+  compareField(differences, "captureCount", expected.captureCount, actual.captureCount);
+  compareField(differences, "sourceFiles", expected.sourceFiles, actual.sourceFiles);
   compareField(differences, "rowCount", expected.rowCount, actual.rowCount);
   compareField(differences, "rows", expected.rows, actual.rows);
   compareField(differences, "note", expected.note, actual.note);
@@ -237,9 +206,7 @@ function compareField(
   actual: unknown,
 ): void {
   if (stableStringify(expected) !== stableStringify(actual)) {
-    differences.push(
-      `${name}: ${stableValue(expected)} != ${stableValue(actual)}`,
-    );
+    differences.push(`${name}: ${stableValue(expected)} != ${stableValue(actual)}`);
   }
 }
 

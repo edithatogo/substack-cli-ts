@@ -1,10 +1,5 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import {
-  apiHeaders,
-  classifyFailure,
-  type FetchLike,
-  requestJson,
-} from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
 
 export interface TeamMember {
   id: number;
@@ -33,10 +28,7 @@ export async function fetchTeamMembers(
   fetchFn: FetchLike,
 ): Promise<TeamResult> {
   const headers = apiHeaders(material);
-  const endpoint = new URL(
-    "/api/v1/publication/users",
-    publicationUrl,
-  ).toString();
+  const endpoint = new URL("/api/v1/publication/users", publicationUrl).toString();
   const response = await requestJson(fetchFn, endpoint, headers);
 
   if (response.status !== 200) {

@@ -35,9 +35,7 @@ describe("inferDraftContract", () => {
     });
 
     assert.equal(report.status, "inferred");
-    assert.ok(
-      report.candidates.some((candidate) => candidate.operation === "create"),
-    );
+    assert.ok(report.candidates.some((candidate) => candidate.operation === "create"));
     assert.ok(report.candidates[0]);
     const firstCandidate = report.candidates[0];
     assert.equal(firstCandidate.confidence, "high");

@@ -13,6 +13,7 @@ If you discover a security vulnerability in `substack-cli`, please report it pri
 **Do not open a public GitHub issue for security vulnerabilities.**
 
 Please include:
+
 - A description of the vulnerability
 - Steps to reproduce (if applicable)
 - The version(s) affected

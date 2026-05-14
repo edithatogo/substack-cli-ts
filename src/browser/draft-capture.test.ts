@@ -60,10 +60,7 @@ describe("reviewDraftCaptureArtifact", () => {
       assert.ok(firstResponse);
       assert.equal(firstRequest.method, "POST");
       assert.equal(firstResponse.slug, "example-draft");
-      assert.equal(
-        firstResponse.draftUrl,
-        "https://rareinsights.substack.com/publish/post/123",
-      );
+      assert.equal(firstResponse.draftUrl, "https://rareinsights.substack.com/publish/post/123");
     } finally {
       await rm(temp, { recursive: true, force: true });
     }
@@ -107,21 +104,10 @@ describe("reviewDraftCaptureArtifact", () => {
     };
 
     try {
-      await writeFile(
-        expectedFile,
-        JSON.stringify(expectedArtifact, null, 2),
-        "utf8",
-      );
-      await writeFile(
-        actualFile,
-        JSON.stringify(actualArtifact, null, 2),
-        "utf8",
-      );
+      await writeFile(expectedFile, JSON.stringify(expectedArtifact, null, 2), "utf8");
+      await writeFile(actualFile, JSON.stringify(actualArtifact, null, 2), "utf8");
 
-      const comparison = await compareDraftCaptureArtifacts(
-        expectedFile,
-        actualFile,
-      );
+      const comparison = await compareDraftCaptureArtifacts(expectedFile, actualFile);
 
       assert.equal(comparison.equal, true);
       assert.equal(comparison.differences.length, 0);

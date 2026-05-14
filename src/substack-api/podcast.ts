@@ -139,15 +139,13 @@ export async function fetchPodcastSection(
 
   for (const item of body) {
     const record = item as Record<string, unknown>;
-    const isPodcast =
-      typeof record.is_podcast === "boolean" && record.is_podcast;
+    const isPodcast = typeof record.is_podcast === "boolean" && record.is_podcast;
     if (!isPodcast) continue;
 
     const id = typeof record.id === "number" ? record.id : 0;
     const name = typeof record.name === "string" ? record.name : "";
     const slug = typeof record.slug === "string" ? record.slug : "";
-    const description =
-      typeof record.description === "string" ? record.description : null;
+    const description = typeof record.description === "string" ? record.description : null;
     const rssFeedUrl =
       typeof record.rss_feed_url === "string"
         ? record.rss_feed_url
@@ -175,10 +173,7 @@ export async function fetchPodcastEpisodes(
   limit: number = 20,
 ): Promise<PodcastEpisodesListResult> {
   const headers = apiHeaders(material);
-  const endpoints = [
-    "/api/v1/publication/podcast_episodes",
-    "/api/v1/podcast/episodes",
-  ];
+  const endpoints = ["/api/v1/publication/podcast_episodes", "/api/v1/podcast/episodes"];
 
   for (const path of endpoints) {
     const url = new URL(path, publicationUrl).toString();
@@ -202,8 +197,7 @@ export async function fetchPodcastEpisodes(
 
   return {
     status: "not-found",
-    message:
-      "No podcast episodes endpoint found. Podcast management may use the draft API.",
+    message: "No podcast episodes endpoint found. Podcast management may use the draft API.",
   };
 }
 
@@ -240,8 +234,7 @@ export async function fetchPodcastSettings(
 
   return {
     status: "not-found",
-    message:
-      "No podcast settings endpoint found. Distribution settings may be dashboard-only.",
+    message: "No podcast settings endpoint found. Distribution settings may be dashboard-only.",
   };
 }
 
@@ -332,10 +325,7 @@ export async function schedulePodcastEpisode(
   fetchFn: FetchLike,
 ): Promise<PodcastEpisodeScheduleResult> {
   const headers = apiHeaders(material);
-  const url = new URL(
-    `/api/v1/drafts/${draftId}/schedule`,
-    publicationUrl,
-  ).toString();
+  const url = new URL(`/api/v1/drafts/${draftId}/schedule`, publicationUrl).toString();
 
   const response = await requestWrite(fetchFn, url, "POST", headers, {
     draft_scheduled_at: scheduleAt,
@@ -464,10 +454,7 @@ export async function fetchVideoSettings(
   fetchFn: FetchLike,
 ): Promise<VideoSettingsResult> {
   const headers = apiHeaders(material);
-  const endpoints = [
-    `/api/v1/post/${postId}/video`,
-    `/api/v1/posts/${postId}/video`,
-  ];
+  const endpoints = [`/api/v1/post/${postId}/video`, `/api/v1/posts/${postId}/video`];
 
   for (const path of endpoints) {
     const url = new URL(path, publicationUrl).toString();
@@ -510,8 +497,7 @@ export async function fetchVideoSettings(
 
   return {
     status: "not-found",
-    message:
-      "No video settings endpoint found. Video settings may be dashboard-only.",
+    message: "No video settings endpoint found. Video settings may be dashboard-only.",
   };
 }
 
@@ -523,10 +509,7 @@ async function uploadAudioToDraft(
   fetchFn: FetchLike,
 ): Promise<{ status: "ok" | "failed"; url?: string; message: string }> {
   const headers = apiHeaders(material);
-  const endpoints = [
-    `/api/v1/drafts/${draftId}/audio`,
-    `/api/v1/drafts/${draftId}/podcast`,
-  ];
+  const endpoints = [`/api/v1/drafts/${draftId}/audio`, `/api/v1/drafts/${draftId}/podcast`];
 
   for (const path of endpoints) {
     const url = new URL(path, publicationUrl).toString();
@@ -636,8 +619,7 @@ function parseEpisodes(body: unknown, limit: number): PodcastEpisode[] | null {
         : typeof record.draft_podcast_duration === "number"
           ? record.draft_podcast_duration
           : null;
-    const status =
-      typeof record.status === "string" ? record.status : "unknown";
+    const status = typeof record.status === "string" ? record.status : "unknown";
     const scheduledAt =
       typeof record.scheduled_at === "string"
         ? record.scheduled_at
@@ -659,9 +641,7 @@ function parseEpisodes(body: unknown, limit: number): PodcastEpisode[] | null {
   return episodes.length > 0 ? episodes : null;
 }
 
-function mapPodcastSettings(
-  body: Record<string, unknown>,
-): PodcastDistributionSettings {
+function mapPodcastSettings(body: Record<string, unknown>): PodcastDistributionSettings {
   const spotifyUrl =
     typeof body.spotify_url === "string"
       ? body.spotify_url

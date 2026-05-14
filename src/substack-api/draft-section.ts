@@ -55,18 +55,11 @@ export function buildDraftSectionResolutionReport(
     input.inventory.sections ?? [],
     requestedSection,
     requestedSectionId,
-  ).sort(
-    (left, right) =>
-      right.score - left.score || left.name.localeCompare(right.name),
-  );
+  ).sort((left, right) => right.score - left.score || left.name.localeCompare(right.name));
 
   return {
     status:
-      candidates.length === 1
-        ? "resolved"
-        : candidates.length > 1
-          ? "ambiguous"
-          : "unresolved",
+      candidates.length === 1 ? "resolved" : candidates.length > 1 ? "ambiguous" : "unresolved",
     sourceFile: input.post.filePath,
     publicationUrl: input.inventory.configuredPublication?.subdomain
       ? `https://${input.inventory.configuredPublication.subdomain}.substack.com/`
@@ -100,18 +93,12 @@ function scoreSections(
     const normalizedName = normalizeText(section.name);
     const normalizedSlug = normalizeText(section.slug);
 
-    if (
-      normalizedRequestedSection &&
-      normalizedName === normalizedRequestedSection
-    ) {
+    if (normalizedRequestedSection && normalizedName === normalizedRequestedSection) {
       score = Math.max(score, 95);
       reasons.push("Section name matches the requested section exactly.");
     }
 
-    if (
-      normalizedRequestedSection &&
-      normalizedSlug === normalizedRequestedSection
-    ) {
+    if (normalizedRequestedSection && normalizedSlug === normalizedRequestedSection) {
       score = Math.max(score, 97);
       reasons.push("Section slug matches the requested section exactly.");
     }

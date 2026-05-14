@@ -1,11 +1,6 @@
 import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
-import {
-  apiHeaders,
-  classifyFailure,
-  type FetchLike,
-  requestJson,
-} from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
 
 const HandleResultSchema = z.object({
   potentialHandles: z.array(
@@ -130,16 +125,10 @@ export async function readOwnProfile(
   }
 
   const publicEndpoint = `https://substack.com/api/v1/user/${encodeURIComponent(handle)}/public_profile`;
-  const publicResponse = await requestJson(
-    fetchImpl,
-    publicEndpoint,
-    headers,
-  );
+  const publicResponse = await requestJson(fetchImpl, publicEndpoint, headers);
   let followerCount = ownParsed.data.subscriberCountNumber ?? 0;
   if (publicResponse.status === 200) {
-    const publicParsed = PublicProfileResponseSchema.safeParse(
-      publicResponse.body,
-    );
+    const publicParsed = PublicProfileResponseSchema.safeParse(publicResponse.body);
     if (publicParsed.success && publicParsed.data.subscriberCountNumber) {
       followerCount = publicParsed.data.subscriberCountNumber;
     }

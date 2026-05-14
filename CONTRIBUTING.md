@@ -92,6 +92,7 @@ Open an issue on [GitHub](https://github.com/edithatogo/substack-cli-ts/issues).
 ## Architecture Decisions
 
 Major design decisions are documented as ADRs in `docs/decisions/`:
+
 - `0001-quality-toolchain.md` — CI and quality tooling
 - `0002-transport-strategy.md` — Dual-transport design (browser + API)
 - `0003-reusable-module-boundaries.md` — Module structure

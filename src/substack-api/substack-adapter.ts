@@ -19,7 +19,5 @@ export function extractSessionToken(material: ApiAuthMaterial): string {
       return part.slice(eq + 1);
     }
   }
-  throw new Error(
-    "No session cookie (substack.sid or connect.sid) found in API auth material.",
-  );
+  throw new Error("No session cookie (substack.sid or connect.sid) found in API auth material.");
 }

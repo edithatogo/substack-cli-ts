@@ -27,7 +27,7 @@ async function findChromeBinary(): Promise<string> {
   } catch {
     throw new BrowserNotFoundError(
       "Chrome/Chromium browser binary not found. Install it with `npx playwright install chromium` " +
-      "or set the PLAYWRIGHT_BROWSERS_PATH environment variable.",
+        "or set the PLAYWRIGHT_BROWSERS_PATH environment variable.",
     );
   }
 }
@@ -36,14 +36,11 @@ export async function createLocalBrowserSession(): Promise<LocalBrowserSession> 
   await mkdir(localBrowserProfileDir(), { recursive: true });
   const executablePath = await findChromeBinary();
 
-  const context = await chromium.launchPersistentContext(
-    localBrowserProfileDir(),
-    {
-      executablePath,
-      headless: false,
-      args: ["--no-first-run", "--no-default-browser-check", "--disable-quic"],
-    },
-  );
+  const context = await chromium.launchPersistentContext(localBrowserProfileDir(), {
+    executablePath,
+    headless: false,
+    args: ["--no-first-run", "--no-default-browser-check", "--disable-quic"],
+  });
   const page = await context.newPage();
 
   return {
@@ -77,5 +74,3 @@ export async function createLocalBrowserSessionWithRetry(
 async function closeLocalBrowser(context: BrowserContext): Promise<void> {
   await context.close();
 }
-
-

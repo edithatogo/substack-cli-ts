@@ -1,10 +1,7 @@
 import type { Locator, Page } from "playwright-core";
 import { createLocalBrowserSession } from "../browser/local-browser.js";
 import { localBrowserProfileDir } from "../config/paths.js";
-import {
-  requirePublicationUrl,
-  type EffectiveConfig,
-} from "../config/store.js";
+import { requirePublicationUrl, type EffectiveConfig } from "../config/store.js";
 import type { PreparedPost } from "../types.js";
 import type {
   BrowserWorkflowResult,
@@ -47,12 +44,7 @@ export async function runLocalDraftWorkflow(
     }
 
     await record(trace, "fill-title", async () => {
-      const filled = await fillFirst(
-        browser.page,
-        titleLocators(browser.page),
-        title,
-        20000,
-      );
+      const filled = await fillFirst(browser.page, titleLocators(browser.page), title, 20000);
       return { filled, titleLength: title.length };
     });
 
@@ -91,7 +83,8 @@ export async function runLocalDraftWorkflow(
     });
 
     if (prepared.mode === "draft") {
-      const draftStatus = operation === "update" ? "draft-updated" as const : "draft-created" as const;
+      const draftStatus =
+        operation === "update" ? ("draft-updated" as const) : ("draft-created" as const);
       return {
         status: draftStatus,
         operation,
@@ -217,7 +210,10 @@ export async function runLocalDraftWorkflow(
       });
 
       return {
-        status: beforePublishUrl !== navigated.afterUrl ? "published" as const : "publish-clicked" as const,
+        status:
+          beforePublishUrl !== navigated.afterUrl
+            ? ("published" as const)
+            : ("publish-clicked" as const),
         operation,
         mode: prepared.mode,
         title,
@@ -320,13 +316,13 @@ export async function runLocalDraftWorkflow(
     }
 
     return {
-      status: operation === "update" ? "draft-updated" as const : "draft-created" as const,
+      status: operation === "update" ? ("draft-updated" as const) : ("draft-created" as const),
       operation,
       mode: prepared.mode,
       title,
       currentUrl: browser.page.url(),
       finalUrl: browser.page.url(),
-      finalState: operation === "update" ? "draft-updated" as const : "draft-created" as const,
+      finalState: operation === "update" ? ("draft-updated" as const) : ("draft-created" as const),
       publishedUrl: undefined,
       draftId: existingDraft?.draftId,
       draftUrl: existingDraft?.draftUrl,
@@ -361,10 +357,7 @@ export async function runLocalDraftWorkflow(
   }
 }
 
-function resolveDraftEditorUrl(
-  draftUrl: string,
-  draftId: string | undefined,
-): string {
+function resolveDraftEditorUrl(draftUrl: string, draftId: string | undefined): string {
   if (!draftId || !draftUrl) return draftUrl || "";
   const hasDraftId = /\/\d+$/.test(draftUrl);
   if (hasDraftId) return draftUrl;
@@ -372,11 +365,7 @@ function resolveDraftEditorUrl(
   return `${base}/${draftId}`;
 }
 
-async function clickIfVisible(
-  page: Page,
-  locator: Locator,
-  timeout: number,
-): Promise<boolean> {
+async function clickIfVisible(page: Page, locator: Locator, timeout: number): Promise<boolean> {
   const deadline = Date.now() + timeout;
   while (Date.now() < deadline) {
     try {
@@ -415,10 +404,7 @@ async function fillIfVisible(
   return false;
 }
 
-async function openSubstackEditor(
-  page: Page,
-  publicationUrl: string,
-): Promise<string> {
+async function openSubstackEditor(page: Page, publicationUrl: string): Promise<string> {
   const host = new URL(publicationUrl).host;
   const candidates = [
     `https://substack.com/publish/post?publication_url=${encodeURIComponent(publicationUrl)}`,
@@ -493,11 +479,7 @@ function tagLocators(page: Page): Locator[] {
   ];
 }
 
-async function fillBody(
-  page: Page,
-  html: string,
-  timeout: number,
-): Promise<boolean> {
+async function fillBody(page: Page, html: string, timeout: number): Promise<boolean> {
   const editor = await firstVisible(
     page,
     [
@@ -518,9 +500,7 @@ async function fillBody(
       return false;
     }
     document.execCommand("insertHTML", false, value);
-    target.dispatchEvent(
-      new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }),
-    );
+    target.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }));
     return true;
   }, html);
   return true;
@@ -528,9 +508,7 @@ async function fillBody(
 
 async function readEditorText(page: Page): Promise<string> {
   return page.evaluate(() => {
-    const nodes = Array.from(
-      document.querySelectorAll("[contenteditable='true']"),
-    );
+    const nodes = Array.from(document.querySelectorAll("[contenteditable='true']"));
     return nodes
       .map((node) => node.textContent)
       .join("\n")
@@ -575,11 +553,7 @@ async function firstVisible(
   return null;
 }
 
-async function clickFirst(
-  page: Page,
-  locators: Locator[],
-  timeout: number,
-): Promise<boolean> {
+async function clickFirst(page: Page, locators: Locator[], timeout: number): Promise<boolean> {
   const target = await firstVisible(page, locators, timeout);
   if (!target) {
     return false;

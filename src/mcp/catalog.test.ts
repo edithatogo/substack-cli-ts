@@ -1,10 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import {
-  buildMcpToolDescriptors,
-  buildMcpToolGroups,
-  registerMcpTools,
-} from "./catalog.js";
+import { buildMcpToolDescriptors, buildMcpToolGroups, registerMcpTools } from "./catalog.js";
 
 describe("McpToolDescriptors", () => {
   it("returns all 17 tool descriptors", () => {

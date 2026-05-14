@@ -57,16 +57,13 @@ Hello **world**.
 
   it("preserves arbitrary plain text in a paragraph", async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.stringMatching(/^[A-Za-z0-9]{1,80}$/),
-        async (text) => {
-          const markdown = `Paragraph ${text}`;
-          const parsed = await parseMarkdownString(markdown);
-          const rendered = JSON.stringify(parsed.document);
+      fc.asyncProperty(fc.stringMatching(/^[A-Za-z0-9]{1,80}$/), async (text) => {
+        const markdown = `Paragraph ${text}`;
+        const parsed = await parseMarkdownString(markdown);
+        const rendered = JSON.stringify(parsed.document);
 
-          expect(rendered).toContain(JSON.stringify(markdown).slice(1, -1));
-        },
-      ),
+        expect(rendered).toContain(JSON.stringify(markdown).slice(1, -1));
+      }),
       { numRuns: 50 },
     );
   });
@@ -185,17 +182,13 @@ Hello **world**.
     });
 
     it("parses images without alt text", async () => {
-      const parsed = await parseMarkdownString(
-        "![](https://example.com/banner.jpg)",
-      );
+      const parsed = await parseMarkdownString("![](https://example.com/banner.jpg)");
       const images = findNodes(parsed.document, "image");
       assert.equal(images.length, 1);
     });
 
     it("parses local image paths", async () => {
-      const parsed = await parseMarkdownString(
-        "![Local](./assets/photo.png)",
-      );
+      const parsed = await parseMarkdownString("![Local](./assets/photo.png)");
       const images = findNodes(parsed.document, "image");
       assert.equal(images.length, 1);
       assert.equal(images[0]?.attrs?.src, "./assets/photo.png");
@@ -219,9 +212,7 @@ Hello **world**.
       const tables = findNodes(parsed.document, "table");
       assert.equal(tables.length, 1);
       const table = tables[0]!;
-      const rows = table.content?.filter(
-        (n) => n.type === "tableRow" || n.type === "tableHeader",
-      );
+      const rows = table.content?.filter((n) => n.type === "tableRow" || n.type === "tableHeader");
       assert.ok(rows, "table should contain rows");
       // GFM table generates: thead > tr > th, tbody > tr > td
       // The table extension may parse this differently
@@ -261,25 +252,18 @@ Hello **world**.
       const embeds = findNodes(parsed.document, "embedNode");
       assert.equal(embeds.length, 1);
       assert.equal(embeds[0]?.attrs?.embedType, "youtube");
-      assert.equal(
-        embeds[0]?.attrs?.url,
-        "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      );
+      assert.equal(embeds[0]?.attrs?.url, "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
     });
 
     it("parses a generic URL embed shortcode", async () => {
-      const parsed = await parseMarkdownString(
-        "{{embed: https://example.com/article}}",
-      );
+      const parsed = await parseMarkdownString("{{embed: https://example.com/article}}");
       const embeds = findNodes(parsed.document, "embedNode");
       assert.equal(embeds.length, 1);
       assert.equal(embeds[0]?.attrs?.embedType, "embed");
     });
 
     it("parses a podcast embed shortcode", async () => {
-      const parsed = await parseMarkdownString(
-        "{{podcast: https://open.spotify.com/episode/123}}",
-      );
+      const parsed = await parseMarkdownString("{{podcast: https://open.spotify.com/episode/123}}");
       const embeds = findNodes(parsed.document, "embedNode");
       assert.equal(embeds.length, 1);
       assert.equal(embeds[0]?.attrs?.embedType, "podcast");
@@ -291,9 +275,7 @@ Hello **world**.
       );
       const embeds = findNodes(parsed.document, "embedNode");
       assert.equal(embeds.length, 1);
-      const paras = parsed.document.content?.filter(
-        (n) => n.type === "paragraph",
-      );
+      const paras = parsed.document.content?.filter((n) => n.type === "paragraph");
       assert.ok(paras && paras.length >= 2);
     });
   });

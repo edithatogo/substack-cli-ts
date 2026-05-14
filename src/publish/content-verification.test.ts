@@ -22,9 +22,7 @@ Hello **world**.
     const report = verifyDraftContent(parsed);
     assert.equal(report.ok, false);
     assert.equal(report.hasTitle, false);
-    const titleIssue = report.issues.find(
-      (i) => i.path === "metadata.title",
-    );
+    const titleIssue = report.issues.find((i) => i.path === "metadata.title");
     assert.ok(titleIssue);
     assert.equal(titleIssue?.severity, "error");
   });
@@ -70,9 +68,7 @@ title: "Table Test"
 | 1 | 2 |
 `);
     const report = verifyDraftContent(parsed);
-    const tableIssue = report.issues.find(
-      (i) => i.path === "document.tables",
-    );
+    const tableIssue = report.issues.find((i) => i.path === "document.tables");
     assert.ok(tableIssue);
     assert.equal(tableIssue?.severity, "warning");
   });

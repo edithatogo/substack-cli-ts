@@ -1,10 +1,6 @@
 import { buildSubstackDraftPayload } from "./payload.js";
 import type { DraftMapping } from "./draft-mappings.js";
-import type {
-  ApiReadInventory,
-  PostSummary,
-  SectionSummary,
-} from "./read-model.js";
+import type { ApiReadInventory, PostSummary, SectionSummary } from "./read-model.js";
 import type { ParsedPost } from "../types.js";
 
 export type DraftDuplicateSource = "inventory" | "mapping";
@@ -62,11 +58,7 @@ export function buildDraftDuplicateLookupReport(
   const payload = buildSubstackDraftPayload(input.post);
   const candidates = [
     ...findInventoryCandidates(payload, input.inventory),
-    ...findMappingCandidates(
-      payload,
-      input.mappings ?? [],
-      input.post.filePath,
-    ),
+    ...findMappingCandidates(payload, input.mappings ?? [], input.post.filePath),
   ].sort((left, right) => {
     if (right.score !== left.score) {
       return right.score - left.score;
@@ -98,9 +90,7 @@ function findInventoryCandidates(
   const candidates: DraftDuplicateCandidate[] = [];
 
   for (const post of posts) {
-    candidates.push(
-      ...scorePostCandidate(post, sections, payload.title, payload.slug),
-    );
+    candidates.push(...scorePostCandidate(post, sections, payload.title, payload.slug));
   }
 
   return candidates;
@@ -195,9 +185,7 @@ function scorePostCandidate(
       };
     } else {
       candidate.score = Math.min(candidate.score + 2, 100);
-      candidate.reasons.push(
-        "Inventory title matches the prepared draft title exactly.",
-      );
+      candidate.reasons.push("Inventory title matches the prepared draft title exactly.");
     }
   }
 
@@ -220,14 +208,10 @@ function scorePostCandidate(
     };
   }
 
-  const sectionName = sections.find(
-    (section) => section.id === post.sectionId,
-  )?.name;
+  const sectionName = sections.find((section) => section.id === post.sectionId)?.name;
   if (sectionName && candidate !== null) {
     candidate.score = Math.min(candidate.score + 5, 100);
-    candidate.reasons.push(
-      `Inventory post belongs to the ${sectionName} section.`,
-    );
+    candidate.reasons.push(`Inventory post belongs to the ${sectionName} section.`);
   }
 
   return candidate === null ? [] : [candidate];

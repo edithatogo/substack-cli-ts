@@ -1,8 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import {
-  buildMcpSurfaceManifest,
-  buildMcpSummaryResource,
-} from "./manifest.js";
+import { buildMcpSurfaceManifest, buildMcpSummaryResource } from "./manifest.js";
 
 export function registerMcpResources(server: McpServer): void {
   server.registerResource(

@@ -44,13 +44,9 @@ export const SubscribeWidget = Node.create({
     return {
       label: {
         default: "Subscribe",
-        parseHTML: (element) =>
-          element.getAttribute("data-label") ?? "Subscribe",
+        parseHTML: (element) => element.getAttribute("data-label") ?? "Subscribe",
         renderHTML: (attributes) => ({
-          "data-label":
-            typeof attributes.label === "string"
-              ? attributes.label
-              : "Subscribe",
+          "data-label": typeof attributes.label === "string" ? attributes.label : "Subscribe",
         }),
       },
     };
@@ -100,8 +96,7 @@ export const SubstackImage = Node.create({
       },
       caption: {
         default: null,
-        parseHTML: (element: HTMLElement) =>
-          element.getAttribute("data-caption"),
+        parseHTML: (element: HTMLElement) => element.getAttribute("data-caption"),
         renderHTML: (attributes: SubstackImageAttributes) => ({
           "data-caption": normalizeAttribute(attributes.caption),
         }),
@@ -134,8 +129,7 @@ export const EmbedNode = Node.create({
       },
       embedType: {
         default: "url",
-        parseHTML: (element: HTMLElement) =>
-          element.getAttribute("data-embed-type") ?? "url",
+        parseHTML: (element: HTMLElement) => element.getAttribute("data-embed-type") ?? "url",
         renderHTML: (attributes: EmbedNodeAttributes) => ({
           "data-embed-type": attributes.embedType ?? "url",
         }),

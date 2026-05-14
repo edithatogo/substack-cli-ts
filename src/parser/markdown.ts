@@ -40,23 +40,15 @@ export function htmlToProseMirrorJson(html: string): ProseMirrorNode {
 
 function normalizeSubstackShortcodes(markdown: string): string {
   return markdown
-    .replace(
-      /^\s*(?:<!--\s*paywall\s*-->|{{\s*paywall\s*}})\s*$/gim,
-      paywallHtml(),
-    )
-    .replace(
-      /^\s*{{\s*subscribe(?::([^}]+))?\s*}}\s*$/gim,
-      (_match, label: string | undefined) =>
-        subscribeHtml(
-          typeof label === "string" && label.trim().length > 0
-            ? label.trim()
-            : "Subscribe",
-        ),
+    .replace(/^\s*(?:<!--\s*paywall\s*-->|{{\s*paywall\s*}})\s*$/gim, paywallHtml())
+    .replace(/^\s*{{\s*subscribe(?::([^}]+))?\s*}}\s*$/gim, (_match, label: string | undefined) =>
+      subscribeHtml(
+        typeof label === "string" && label.trim().length > 0 ? label.trim() : "Subscribe",
+      ),
     )
     .replace(
       /^\s*{{\s*(youtube|embed|podcast)\s*[:|]\s*(https?:\/\/\S+?)\s*}}\s*$/gim,
-      (_match, type: string, url: string) =>
-        embedHtml(type.toLowerCase(), url.trim()),
+      (_match, type: string, url: string) => embedHtml(type.toLowerCase(), url.trim()),
     );
 }
 

@@ -5,15 +5,13 @@ import type { McpPromptDescriptor } from "./types.js";
 const MCP_PROMPT_DESCRIPTORS: McpPromptDescriptor[] = [
   {
     name: "mcp.surface.overview",
-    description:
-      "Describe the current MCP surface and how to use the read-only tools.",
+    description: "Describe the current MCP surface and how to use the read-only tools.",
     redacted: true,
     register(server) {
       server.registerPrompt(
         "mcp.surface.overview",
         {
-          description:
-            "Describe the current MCP surface and how to use the read-only tools.",
+          description: "Describe the current MCP surface and how to use the read-only tools.",
         },
         () => ({
           messages: [
@@ -31,15 +29,13 @@ const MCP_PROMPT_DESCRIPTORS: McpPromptDescriptor[] = [
   },
   {
     name: "mcp.workflow.review",
-    description:
-      "Provide a redacted review checklist for Substack workflow artifacts.",
+    description: "Provide a redacted review checklist for Substack workflow artifacts.",
     redacted: true,
     register(server) {
       server.registerPrompt(
         "mcp.workflow.review",
         {
-          description:
-            "Provide a redacted review checklist for Substack workflow artifacts.",
+          description: "Provide a redacted review checklist for Substack workflow artifacts.",
         },
         () => ({
           messages: [

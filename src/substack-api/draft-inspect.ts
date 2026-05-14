@@ -1,7 +1,4 @@
-import {
-  buildSubstackDraftPayload,
-  validatePayloadCompatibility,
-} from "./payload.js";
+import { buildSubstackDraftPayload, validatePayloadCompatibility } from "./payload.js";
 import type { DraftMapping } from "./draft-mappings.js";
 import type { ApiReadInventory } from "./read-model.js";
 import {
@@ -38,9 +35,7 @@ export interface DraftInspectionReport {
   note: string;
 }
 
-export function buildDraftInspectionReport(
-  input: DraftInspectionInput,
-): DraftInspectionReport {
+export function buildDraftInspectionReport(input: DraftInspectionInput): DraftInspectionReport {
   const compatibility = validatePayloadCompatibility(input.post.document);
   const section = buildDraftSectionResolutionReport({
     post: input.post,
@@ -68,16 +63,11 @@ export function buildDraftInspectionReport(
 
   const plannedPost = applyResolvedSectionId(input.post, section);
   const payload = buildSubstackDraftPayload(plannedPost);
-  const plan = planCreateDraft(
-    plannedPost,
-    input.publicationUrl,
-    input.existingDraft ?? undefined,
-  );
+  const plan = planCreateDraft(plannedPost, input.publicationUrl, input.existingDraft ?? undefined);
 
   return {
     status:
-      section.status === "resolved" &&
-      duplicates.status !== "inventory-unavailable"
+      section.status === "resolved" && duplicates.status !== "inventory-unavailable"
         ? "ready"
         : "partial",
     sourceFile: input.post.filePath,

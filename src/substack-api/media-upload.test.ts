@@ -6,8 +6,7 @@ import { describe, it } from "vitest";
 import { uploadDraftMedia } from "./media-upload.js";
 import type { ProseMirrorNode } from "../types.js";
 
-const dummyFetch: typeof fetch = async () =>
-  new Response(null, { status: 200 });
+const dummyFetch: typeof fetch = async () => new Response(null, { status: 200 });
 
 function makeDoc(images: Array<{ src: string; alt?: string }>): ProseMirrorNode {
   return {
@@ -52,10 +51,7 @@ describe("uploadDraftMedia", () => {
     assert.equal(result.report.uploaded, 0);
     assert.equal(result.report.failed, 1);
     assert.equal(result.report.assets.length, 1);
-    assert.match(
-      result.report.assets[0]!.result.error ?? "",
-      /Unsupported image format.*\.pdf/,
-    );
+    assert.match(result.report.assets[0]!.result.error ?? "", /Unsupported image format.*\.pdf/);
   });
 
   it("fails with file not found for missing local images", async () => {
@@ -72,10 +68,7 @@ describe("uploadDraftMedia", () => {
     assert.equal(result.report.uploaded, 0);
     assert.equal(result.report.failed, 1);
     assert.equal(result.report.assets.length, 1);
-    assert.match(
-      result.report.assets[0]!.result.error ?? "",
-      /File not found/,
-    );
+    assert.match(result.report.assets[0]!.result.error ?? "", /File not found/);
   });
 
   it("returns no-op for empty document with no image nodes", async () => {
@@ -123,17 +116,13 @@ describe("uploadDraftMedia", () => {
       const localImage = join(temp, "mixing.png");
       await writeFile(localImage, Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
 
-      const doc = makeDoc([
-        { src: localImage },
-        { src: "https://example.com/remote-banner.jpg" },
-      ]);
+      const doc = makeDoc([{ src: localImage }, { src: "https://example.com/remote-banner.jpg" }]);
 
       const fetchSpy = async (url: string) => {
         assert.ok(url.includes("/api/v1/image"));
         return {
           status: 200,
-          text: async () =>
-            JSON.stringify({ url: "https://substack.com/hosted/mixing.png" }),
+          text: async () => JSON.stringify({ url: "https://substack.com/hosted/mixing.png" }),
         };
       };
 
@@ -163,7 +152,9 @@ describe("uploadDraftMedia", () => {
 
   it("skips data URI images without attempting upload", async () => {
     const doc = makeDoc([
-      { src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" },
+      {
+        src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+      },
     ]);
 
     const result = await uploadDraftMedia(
@@ -195,10 +186,7 @@ describe("uploadDraftMedia", () => {
     assert.equal(result.report.failed, 1);
     assert.equal(result.report.assets.length, 1);
     assert.equal(result.report.assets[0]!.asset.kind, "local");
-    assert.match(
-      result.report.assets[0]!.result.error ?? "",
-      /File not found/,
-    );
+    assert.match(result.report.assets[0]!.result.error ?? "", /File not found/);
   });
 
   it("attempts upload for a valid local image file", async () => {
@@ -215,8 +203,7 @@ describe("uploadDraftMedia", () => {
         assert.ok(url.includes("/api/v1/image"));
         return {
           status: 200,
-          text: async () =>
-            JSON.stringify({ url: "https://substack.com/hosted/img.png" }),
+          text: async () => JSON.stringify({ url: "https://substack.com/hosted/img.png" }),
         };
       };
 

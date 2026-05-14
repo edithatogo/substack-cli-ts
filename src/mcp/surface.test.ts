@@ -5,9 +5,7 @@ import { buildMcpSurfaceManifest } from "./surface.js";
 describe("buildMcpSurfaceManifest", () => {
   it("lists redacted read and review tools for the MCP surface", () => {
     const manifest = buildMcpSurfaceManifest();
-    const toolNames = manifest.groups.flatMap((group) =>
-      group.tools.map((tool) => tool.name),
-    );
+    const toolNames = manifest.groups.flatMap((group) => group.tools.map((tool) => tool.name));
     const resourceNames = manifest.resources.map((resource) => resource.name);
     const promptNames = manifest.prompts.map((prompt) => prompt.name);
 
@@ -21,11 +19,7 @@ describe("buildMcpSurfaceManifest", () => {
     assert.ok(resourceNames.includes("mcp.summary"));
     assert.ok(promptNames.includes("mcp.surface.overview"));
     assert.ok(promptNames.includes("mcp.workflow.review"));
-    assert.ok(
-      manifest.groups.every((group) =>
-        group.tools.every((tool) => tool.redacted),
-      ),
-    );
+    assert.ok(manifest.groups.every((group) => group.tools.every((tool) => tool.redacted)));
     assert.ok(manifest.resources.every((resource) => resource.redacted));
     assert.ok(manifest.prompts.every((prompt) => prompt.redacted));
   });

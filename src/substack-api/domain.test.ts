@@ -63,10 +63,7 @@ describe("fetchDomainStatus", () => {
     assert.equal(result.domain?.dnsInstructions.length, 1);
     assert.equal(result.domain?.dnsInstructions[0]?.type, "CNAME");
     assert.equal(result.domain?.dnsInstructions[0]?.name, "newsletter");
-    assert.equal(
-      result.domain?.dnsInstructions[0]?.target,
-      "rareinsights.substack.com",
-    );
+    assert.equal(result.domain?.dnsInstructions[0]?.target, "rareinsights.substack.com");
     assert.equal(result.domain?.dnsInstructions[0]?.ttl, "3600");
   });
 
@@ -97,10 +94,7 @@ describe("fetchDomainStatus", () => {
     assert.equal(result.domain?.dnsInstructions.length, 1);
     assert.equal(result.domain?.dnsInstructions[0]?.type, "CNAME");
     assert.equal(result.domain?.dnsInstructions[0]?.name, "@");
-    assert.equal(
-      result.domain?.dnsInstructions[0]?.target,
-      "rareinsights.substack.com",
-    );
+    assert.equal(result.domain?.dnsInstructions[0]?.target, "rareinsights.substack.com");
   });
 
   it("maps ssl status values correctly", async () => {
@@ -139,10 +133,8 @@ describe("fetchDomainStatus", () => {
   });
 
   it("classifies read failures", async () => {
-    const result = await fetchDomainStatus(
-      "https://rareinsights.substack.com",
-      material(),
-      () => Promise.resolve(response(403, { error: "forbidden" })),
+    const result = await fetchDomainStatus("https://rareinsights.substack.com", material(), () =>
+      Promise.resolve(response(403, { error: "forbidden" })),
     );
 
     assert.equal(result.status, "forbidden");
@@ -150,10 +142,8 @@ describe("fetchDomainStatus", () => {
   });
 
   it("classifies network errors", async () => {
-    const result = await fetchDomainStatus(
-      "https://rareinsights.substack.com",
-      material(),
-      () => Promise.resolve(response(0, null)),
+    const result = await fetchDomainStatus("https://rareinsights.substack.com", material(), () =>
+      Promise.resolve(response(0, null)),
     );
 
     assert.equal(result.status, "network-error");
@@ -246,27 +236,20 @@ describe("fetchDomainStatus", () => {
     assert.equal(result.domain?.dnsInstructions.length, 1);
     assert.equal(result.domain?.dnsInstructions[0]?.type, "CNAME");
     assert.equal(result.domain?.dnsInstructions[0]?.name, "blog");
-    assert.equal(
-      result.domain?.dnsInstructions[0]?.target,
-      "rareinsights.substack.com",
-    );
+    assert.equal(result.domain?.dnsInstructions[0]?.target, "rareinsights.substack.com");
   });
 
   it("classifies 401 as unauthenticated", async () => {
-    const result = await fetchDomainStatus(
-      "https://rareinsights.substack.com",
-      material(),
-      () => Promise.resolve(response(401, { error: "unauthorized" })),
+    const result = await fetchDomainStatus("https://rareinsights.substack.com", material(), () =>
+      Promise.resolve(response(401, { error: "unauthorized" })),
     );
 
     assert.equal(result.status, "unauthenticated");
   });
 
   it("classifies 500 as schema-drift", async () => {
-    const result = await fetchDomainStatus(
-      "https://rareinsights.substack.com",
-      material(),
-      () => Promise.resolve(response(500, { error: "server error" })),
+    const result = await fetchDomainStatus("https://rareinsights.substack.com", material(), () =>
+      Promise.resolve(response(500, { error: "server error" })),
     );
 
     assert.equal(result.status, "schema-drift");
@@ -313,10 +296,7 @@ function fakeFetch(routes: Map<string, unknown>): FetchLike {
   };
 }
 
-function response(
-  status: number,
-  body: unknown,
-): Awaited<ReturnType<FetchLike>> {
+function response(status: number, body: unknown): Awaited<ReturnType<FetchLike>> {
   return {
     status,
     text: () => Promise.resolve(JSON.stringify(body)),

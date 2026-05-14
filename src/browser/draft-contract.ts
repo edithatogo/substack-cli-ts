@@ -24,9 +24,7 @@ export interface DraftContractReport {
   note: string;
 }
 
-export function inferDraftContract(
-  review: DraftCaptureReview,
-): DraftContractReport {
+export function inferDraftContract(review: DraftCaptureReview): DraftContractReport {
   const candidates = review.requestEndpoints.flatMap((request) =>
     inferCandidatesFromRequest(request, review.responseEndpoints),
   );
@@ -124,9 +122,7 @@ function hasDraftishKeys(keys: string[]): boolean {
   );
 }
 
-function dedupeCandidates(
-  candidates: DraftContractCandidate[],
-): DraftContractCandidate[] {
+function dedupeCandidates(candidates: DraftContractCandidate[]): DraftContractCandidate[] {
   const seen = new Set<string>();
 
   return candidates.filter((candidate) => {

@@ -15,9 +15,7 @@ export interface PageDiagnostics {
   textSample: string;
 }
 
-export async function captureLocalDiagnostics(
-  url: string,
-): Promise<PageDiagnostics> {
+export async function captureLocalDiagnostics(url: string): Promise<PageDiagnostics> {
   const browser = await createLocalBrowserSession();
 
   try {
@@ -26,8 +24,7 @@ export async function captureLocalDiagnostics(
     await page.waitForTimeout(3000);
 
     return await page.evaluate(() => {
-      const clean = (value: string | null | undefined) =>
-        (value ?? "").replace(/\s+/g, " ").trim();
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
 
       return {
         url: location.href,
@@ -39,9 +36,7 @@ export async function captureLocalDiagnostics(
           }))
           .filter((link) => link.text || link.href)
           .slice(0, 80),
-        buttons: Array.from(
-          document.querySelectorAll<HTMLButtonElement>("button"),
-        )
+        buttons: Array.from(document.querySelectorAll<HTMLButtonElement>("button"))
           .map((button) => clean(button.textContent))
           .filter(Boolean)
           .slice(0, 80),
@@ -53,8 +48,7 @@ export async function captureLocalDiagnostics(
             valuePresent: Boolean(input.value),
           }))
           .slice(0, 40),
-        editableCount: document.querySelectorAll("[contenteditable='true']")
-          .length,
+        editableCount: document.querySelectorAll("[contenteditable='true']").length,
         textSample: clean(document.body.textContent).slice(0, 2000),
       };
     });
@@ -87,18 +81,21 @@ export async function capturePublishScreenDiagnostics(
     await page.waitForTimeout(5000);
 
     return await page.evaluate(() => {
-      const clean = (value: string | null | undefined) =>
-        (value ?? "").replace(/\s+/g, " ").trim();
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
 
-      const allButtons = Array.from(document.querySelectorAll("button, [role='button'], a[class*='btn'], a[class*='button']"));
+      const allButtons = Array.from(
+        document.querySelectorAll("button, [role='button'], a[class*='btn'], a[class*='button']"),
+      );
 
       return {
         url: location.href,
-        buttons: allButtons.map((btn) => ({
-          text: clean(btn.textContent),
-          visible: btn.checkVisibility(),
-          role: btn.getAttribute("role"),
-        })).filter((b) => b.text),
+        buttons: allButtons
+          .map((btn) => ({
+            text: clean(btn.textContent),
+            visible: btn.checkVisibility(),
+            role: btn.getAttribute("role"),
+          }))
+          .filter((b) => b.text),
         headings: Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading']"))
           .map((h) => clean(h.textContent))
           .filter(Boolean),
@@ -110,13 +107,21 @@ export async function capturePublishScreenDiagnostics(
             placeholder: f.getAttribute("placeholder"),
           })),
         })),
-        confirmationElements: Array.from(document.querySelectorAll("[class*='confirm'], [class*='publish'], [class*='review'], [class*='dialog'], [role='dialog']"))
+        confirmationElements: Array.from(
+          document.querySelectorAll(
+            "[class*='confirm'], [class*='publish'], [class*='review'], [class*='dialog'], [role='dialog']",
+          ),
+        )
           .map((el) => ({
             text: clean(el.textContent),
             tag: el.tagName.toLowerCase(),
           }))
           .filter((e) => e.text),
-        dialogs: Array.from(document.querySelectorAll("[role='dialog'], [role='alertdialog'], [class*='modal'], [class*='overlay']"))
+        dialogs: Array.from(
+          document.querySelectorAll(
+            "[role='dialog'], [role='alertdialog'], [class*='modal'], [class*='overlay']",
+          ),
+        )
           .map((el) => ({
             text: clean(el.textContent),
             role: el.getAttribute("role"),
@@ -155,7 +160,9 @@ export async function captureReviewOverlayDiagnostics(
       await page.waitForTimeout(3000);
 
       await page.evaluate(() => {
-        const buttons = document.querySelectorAll<HTMLElement>("button, [role='button'], a[class*='btn'], a[class*='button']");
+        const buttons = document.querySelectorAll<HTMLElement>(
+          "button, [role='button'], a[class*='btn'], a[class*='button']",
+        );
         for (const btn of buttons) {
           const text = (btn.textContent ?? "").replace(/\s+/g, " ").trim();
           if (/continue/i.test(text)) {
@@ -171,15 +178,24 @@ export async function captureReviewOverlayDiagnostics(
     }
 
     return await page.evaluate(() => {
-      const clean = (value: string | null | undefined) =>
-        (value ?? "").replace(/\s+/g, " ").trim();
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
 
       const buildSelector = (el: Element): string => {
         const tag = el.tagName.toLowerCase();
         if (el.id) return `${tag}#${el.id}`;
-        const classes = Array.from(el.classList).filter((c) => !c.startsWith("_")).join(".");
+        const classes = Array.from(el.classList)
+          .filter((c) => !c.startsWith("_"))
+          .join(".");
         const attrs: string[] = [];
-        const candidates = ["data-testid", "data-test", "data-qa", "name", "type", "aria-label", "role"];
+        const candidates = [
+          "data-testid",
+          "data-test",
+          "data-qa",
+          "name",
+          "type",
+          "aria-label",
+          "role",
+        ];
         for (const attr of candidates) {
           const val = el.getAttribute(attr);
           if (val) {
@@ -192,7 +208,9 @@ export async function captureReviewOverlayDiagnostics(
         return tag;
       };
 
-      const allButtons = Array.from(document.querySelectorAll("button, [role='button'], a[class*='btn'], a[class*='button']"));
+      const allButtons = Array.from(
+        document.querySelectorAll("button, [role='button'], a[class*='btn'], a[class*='button']"),
+      );
 
       return {
         url: location.href,
@@ -207,7 +225,11 @@ export async function captureReviewOverlayDiagnostics(
         headings: Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6, [role='heading']"))
           .map((h) => clean(h.textContent))
           .filter(Boolean),
-        dialogs: Array.from(document.querySelectorAll("[role='dialog'], [role='alertdialog'], [class*='modal'], [class*='overlay']"))
+        dialogs: Array.from(
+          document.querySelectorAll(
+            "[role='dialog'], [role='alertdialog'], [class*='modal'], [class*='overlay']",
+          ),
+        )
           .map((el) => ({
             text: clean(el.textContent),
             role: el.getAttribute("role"),
@@ -221,7 +243,11 @@ export async function captureReviewOverlayDiagnostics(
           }))
           .filter((link) => link.text || link.href)
           .slice(0, 80),
-        confirmationElements: Array.from(document.querySelectorAll("[class*='confirm'], [class*='publish'], [class*='review'], [class*='dialog'], [role='dialog']"))
+        confirmationElements: Array.from(
+          document.querySelectorAll(
+            "[class*='confirm'], [class*='publish'], [class*='review'], [class*='dialog'], [role='dialog']",
+          ),
+        )
           .map((el) => ({
             text: clean(el.textContent),
             tag: el.tagName.toLowerCase(),
@@ -282,15 +308,19 @@ export async function captureAnalyticsDiagnostics(
     }
 
     return await page.evaluate(() => {
-      const clean = (value: string | null | undefined) =>
-        (value ?? "").replace(/\s+/g, " ").trim();
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
 
       const statSelectors = [
-        '[class*="stat"]', '[class*="Stat"]',
-        '[class*="metric"]', '[class*="Metric"]',
-        '[class*="count"]', '[class*="Count"]',
-        '[data-testid*="stat"]', '[data-testid*="stat-value"]',
-        '[class*="subscriberCount"]', '[class*="subscriber-count"]',
+        '[class*="stat"]',
+        '[class*="Stat"]',
+        '[class*="metric"]',
+        '[class*="Metric"]',
+        '[class*="count"]',
+        '[class*="Count"]',
+        '[data-testid*="stat"]',
+        '[data-testid*="stat-value"]',
+        '[class*="subscriberCount"]',
+        '[class*="subscriber-count"]',
         '[class*="email-count"]',
         "strong, .number, [class*='value']",
       ];
@@ -302,9 +332,11 @@ export async function captureAnalyticsDiagnostics(
           const text = clean(el.textContent);
           if (text && /\d/.test(text) && text.length < 60) {
             const label = clean(
-              el.getAttribute("aria-label")
-              ?? el.closest("[class*='stat'], [class*='Stat'], [class*='metric'], [class*='Metric']")?.getAttribute("aria-label")
-              ?? "",
+              el.getAttribute("aria-label") ??
+                el
+                  .closest("[class*='stat'], [class*='Stat'], [class*='metric'], [class*='Metric']")
+                  ?.getAttribute("aria-label") ??
+                "",
             );
             if (!stats.some((s) => s.value === text)) {
               stats.push({ label, value: text });
@@ -335,7 +367,11 @@ export async function captureAnalyticsDiagnostics(
 export interface SubscriberDiagnostics {
   url: string;
   totalCount: string | null;
-  listItems: Array<{ email: string | undefined; status: string | undefined; date: string | undefined }>;
+  listItems: Array<{
+    email: string | undefined;
+    status: string | undefined;
+    date: string | undefined;
+  }>;
   textSample: string;
 }
 
@@ -353,14 +389,13 @@ export async function captureSubscriberDiagnostics(
     await page.waitForTimeout(5000);
 
     return await page.evaluate(() => {
-      const clean = (value: string | null | undefined) =>
-        (value ?? "").replace(/\s+/g, " ").trim();
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
 
       const countEl = document.querySelector<HTMLElement>(
         '[class*="subscriber-count"], [class*="subscriberCount"], [class*="total-count"], [data-testid*="subscriber-count"], h1, h2, [class*="header"] strong',
       );
       const totalCount = countEl
-        ? clean(countEl.textContent)?.match(/[\d,]+/)?.[0] ?? null
+        ? (clean(countEl.textContent)?.match(/[\d,]+/)?.[0] ?? null)
         : null;
 
       const rows = document.querySelectorAll<HTMLElement>(
@@ -372,18 +407,9 @@ export async function captureSubscriberDiagnostics(
           if (!text || text.length < 5) return null;
           const cells = row.querySelectorAll("td, [class*='cell'], [class*='col-']");
           return {
-            email:
-              cells[0]?.textContent
-                ? clean(cells[0].textContent)
-                : undefined,
-            status:
-              cells[1]?.textContent
-                ? clean(cells[1].textContent)
-                : undefined,
-            date:
-              cells[2]?.textContent
-                ? clean(cells[2].textContent)
-                : undefined,
+            email: cells[0]?.textContent ? clean(cells[0].textContent) : undefined,
+            status: cells[1]?.textContent ? clean(cells[1].textContent) : undefined,
+            date: cells[2]?.textContent ? clean(cells[2].textContent) : undefined,
           };
         })
         .filter((item): item is NonNullable<typeof item> => item !== null)
@@ -452,13 +478,14 @@ export async function captureSettingsDiagnostics(
     }
 
     return await page.evaluate(() => {
-      const clean = (value: string | null | undefined) =>
-        (value ?? "").replace(/\s+/g, " ").trim();
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
 
       const buildSelector = (el: Element): string => {
         const tag = el.tagName.toLowerCase();
         if (el.id) return `${tag}#${el.id}`;
-        const classes = Array.from(el.classList).filter((c) => !c.startsWith("_")).join(".");
+        const classes = Array.from(el.classList)
+          .filter((c) => !c.startsWith("_"))
+          .join(".");
         const attrs: string[] = [];
         const candidates = ["data-testid", "data-test", "name", "type", "aria-label", "role"];
         for (const attr of candidates) {
@@ -507,11 +534,9 @@ export async function captureSettingsDiagnostics(
           "[class*='section'], section, fieldset, [class*='setting-group']",
         );
         const fields = parent
-          ? Array.from(
-              parent.querySelectorAll(
-                "input:not([type='hidden']), select, textarea",
-              ),
-            ).map((f) => f.getAttribute("name") ?? f.getAttribute("type") ?? f.tagName.toLowerCase())
+          ? Array.from(parent.querySelectorAll("input:not([type='hidden']), select, textarea")).map(
+              (f) => f.getAttribute("name") ?? f.getAttribute("type") ?? f.tagName.toLowerCase(),
+            )
           : [];
         sections.push({ heading: text, fields });
       }
@@ -566,43 +591,58 @@ export async function captureScheduleScreenDiagnostics(
     await page.waitForTimeout(5000);
 
     return await page.evaluate(() => {
-      const clean = (value: string | null | undefined) =>
-        (value ?? "").replace(/\s+/g, " ").trim();
+      const clean = (value: string | null | undefined) => (value ?? "").replace(/\s+/g, " ").trim();
 
       return {
         url: location.href,
-        dateInputs: Array.from(document.querySelectorAll("input[type='date'], input[type='datetime-local'], input[placeholder*='date' i], input[aria-label*='date' i]"))
-          .map((el) => ({
-            type: el.getAttribute("type"),
-            placeholder: el.getAttribute("placeholder"),
-            name: el.getAttribute("name"),
-            value: (el as HTMLInputElement).value ?? null,
-          })),
-        timeInputs: Array.from(document.querySelectorAll("input[type='time'], input[placeholder*='time' i], input[aria-label*='time' i]"))
-          .map((el) => ({
-            type: el.getAttribute("type"),
-            placeholder: el.getAttribute("placeholder"),
-            name: el.getAttribute("name"),
-            value: (el as HTMLInputElement).value ?? null,
-          })),
-        selectors: Array.from(document.querySelectorAll("select, [role='listbox'], [role='combobox']"))
-          .map((sel) => ({
-            options: Array.from(sel.querySelectorAll("option, [role='option']")).map((o) => clean(o.textContent)).filter(Boolean),
-            currentValue: sel.getAttribute("value") ?? (sel as HTMLSelectElement).value ?? null,
-            name: sel.getAttribute("name"),
-          })),
+        dateInputs: Array.from(
+          document.querySelectorAll(
+            "input[type='date'], input[type='datetime-local'], input[placeholder*='date' i], input[aria-label*='date' i]",
+          ),
+        ).map((el) => ({
+          type: el.getAttribute("type"),
+          placeholder: el.getAttribute("placeholder"),
+          name: el.getAttribute("name"),
+          value: (el as HTMLInputElement).value ?? null,
+        })),
+        timeInputs: Array.from(
+          document.querySelectorAll(
+            "input[type='time'], input[placeholder*='time' i], input[aria-label*='time' i]",
+          ),
+        ).map((el) => ({
+          type: el.getAttribute("type"),
+          placeholder: el.getAttribute("placeholder"),
+          name: el.getAttribute("name"),
+          value: (el as HTMLInputElement).value ?? null,
+        })),
+        selectors: Array.from(
+          document.querySelectorAll("select, [role='listbox'], [role='combobox']"),
+        ).map((sel) => ({
+          options: Array.from(sel.querySelectorAll("option, [role='option']"))
+            .map((o) => clean(o.textContent))
+            .filter(Boolean),
+          currentValue: sel.getAttribute("value") ?? (sel as HTMLSelectElement).value ?? null,
+          name: sel.getAttribute("name"),
+        })),
         buttons: Array.from(document.querySelectorAll("button, [role='button']"))
           .map((btn) => ({
             text: clean(btn.textContent),
             visible: btn.checkVisibility(),
           }))
           .filter((b) => b.text),
-        timezoneElements: Array.from(document.querySelectorAll("[class*='timezone' i], [class*='time-zone' i], [data-timezone], [aria-label*='timezone' i]"))
-          .map((el) => ({
-            text: clean(el.textContent),
-            tag: el.tagName.toLowerCase(),
-          })),
-        errorElements: Array.from(document.querySelectorAll("[class*='error' i], [class*='alert' i], [role='alert'], [aria-live='assertive']"))
+        timezoneElements: Array.from(
+          document.querySelectorAll(
+            "[class*='timezone' i], [class*='time-zone' i], [data-timezone], [aria-label*='timezone' i]",
+          ),
+        ).map((el) => ({
+          text: clean(el.textContent),
+          tag: el.tagName.toLowerCase(),
+        })),
+        errorElements: Array.from(
+          document.querySelectorAll(
+            "[class*='error' i], [class*='alert' i], [role='alert'], [aria-live='assertive']",
+          ),
+        )
           .map((el) => ({
             text: clean(el.textContent),
             role: el.getAttribute("role"),

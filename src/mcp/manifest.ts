@@ -1,10 +1,6 @@
 import { buildMcpToolGroups, buildMcpToolDescriptors } from "./catalog.js";
 import { buildMcpPromptSurfaceDescriptors } from "./prompts.js";
-import type {
-  McpResourceSurface,
-  McpSurfaceManifest,
-  McpSurfaceGroup,
-} from "./types.js";
+import type { McpResourceSurface, McpSurfaceManifest, McpSurfaceGroup } from "./types.js";
 
 const MCP_RESOURCE_DESCRIPTORS: McpResourceSurface[] = [
   {
@@ -44,9 +40,7 @@ export function buildMcpSurfaceManifest(): McpSurfaceManifest {
   };
 }
 
-export function summarizeMcpSurface(
-  manifest: McpSurfaceManifest,
-): McpSurfaceManifest {
+export function summarizeMcpSurface(manifest: McpSurfaceManifest): McpSurfaceManifest {
   return manifest;
 }
 

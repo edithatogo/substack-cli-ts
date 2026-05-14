@@ -29,8 +29,7 @@ export async function evaluateDistributionPolicy(
     JSON.parse(await readFile(join(projectRoot, "package.json"), "utf8")),
   );
   const licenseFilePresent =
-    (await exists(join(projectRoot, "LICENSE"))) ||
-    (await exists(join(projectRoot, "LICENSE.md")));
+    (await exists(join(projectRoot, "LICENSE"))) || (await exists(join(projectRoot, "LICENSE.md")));
   const nonRegistryDependencies = findNonRegistryDependencies(packageJson);
   const privatePackage = packageJson.private === true;
   const distributable = !privatePackage;
@@ -43,16 +42,11 @@ export async function evaluateDistributionPolicy(
       license: packageJson.license,
       licenseFilePresent,
       nonRegistryDependencies,
-      message:
-        "Package is marked private; distributability policy is recorded but not enforced.",
+      message: "Package is marked private; distributability policy is recorded but not enforced.",
     };
   }
 
-  if (
-    !packageJson.license ||
-    !licenseFilePresent ||
-    nonRegistryDependencies.length > 0
-  ) {
+  if (!packageJson.license || !licenseFilePresent || nonRegistryDependencies.length > 0) {
     return {
       status: "warn",
       privatePackage,
@@ -72,14 +66,11 @@ export async function evaluateDistributionPolicy(
     license: packageJson.license,
     licenseFilePresent,
     nonRegistryDependencies,
-    message:
-      "Package is public and has basic distribution policy metadata in place.",
+    message: "Package is public and has basic distribution policy metadata in place.",
   };
 }
 
-function findNonRegistryDependencies(
-  packageJson: z.infer<typeof PackageJsonSchema>,
-): string[] {
+function findNonRegistryDependencies(packageJson: z.infer<typeof PackageJsonSchema>): string[] {
   return [
     ...Object.entries(packageJson.dependencies),
     ...Object.entries(packageJson.optionalDependencies),
@@ -106,8 +97,6 @@ async function exists(path: string): Promise<boolean> {
   }
 }
 
-export function summarizeDistributionPolicy(
-  report: DistributionPolicyReport,
-): unknown {
+export function summarizeDistributionPolicy(report: DistributionPolicyReport): unknown {
   return report;
 }

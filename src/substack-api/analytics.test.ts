@@ -54,12 +54,7 @@ describe("fetchPostAnalytics", () => {
       }),
     );
 
-    const result = await fetchPostAnalytics(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchPostAnalytics("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.analytics?.postId, 42);
@@ -85,12 +80,7 @@ describe("fetchPostAnalytics", () => {
       }),
     );
 
-    const result = await fetchPostAnalytics(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchPostAnalytics("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.analytics?.title, "Alt Post");
@@ -103,12 +93,7 @@ describe("fetchPostAnalytics", () => {
   it("returns defaults for missing fields", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({}));
 
-    const result = await fetchPostAnalytics(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchPostAnalytics("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.analytics?.views, 0);
@@ -121,12 +106,7 @@ describe("fetchPostAnalytics", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchPostAnalytics(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchPostAnalytics("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -134,12 +114,7 @@ describe("fetchPostAnalytics", () => {
   it("returns unauthenticated on 401", async () => {
     const fetchFn = fakeFetch(401, JSON.stringify({ error: "unauthorized" }));
 
-    const result = await fetchPostAnalytics(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchPostAnalytics("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -147,12 +122,7 @@ describe("fetchPostAnalytics", () => {
   it("returns forbidden on 403", async () => {
     const fetchFn = fakeFetch(403, JSON.stringify({}));
 
-    const result = await fetchPostAnalytics(
-      "https://test.substack.com",
-      42,
-      material,
-      fetchFn,
-    );
+    const result = await fetchPostAnalytics("https://test.substack.com", 42, material, fetchFn);
 
     assert.equal(result.status, "forbidden");
   });
@@ -172,11 +142,7 @@ describe("fetchSubscriberGrowth", () => {
       }),
     );
 
-    const result = await fetchSubscriberGrowth(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberGrowth("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.growth?.period, "2026-05");
@@ -200,11 +166,7 @@ describe("fetchSubscriberGrowth", () => {
       }),
     );
 
-    const result = await fetchSubscriberGrowth(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberGrowth("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.growth?.totalSubscribers, 3000);
@@ -215,11 +177,7 @@ describe("fetchSubscriberGrowth", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchSubscriberGrowth(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberGrowth("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -227,11 +185,7 @@ describe("fetchSubscriberGrowth", () => {
   it("returns unauthenticated on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await fetchSubscriberGrowth(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberGrowth("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -257,11 +211,7 @@ describe("fetchEmailPerformance", () => {
       ]),
     );
 
-    const result = await fetchEmailPerformance(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchEmailPerformance("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.emails?.length, 1);
@@ -292,11 +242,7 @@ describe("fetchEmailPerformance", () => {
       }),
     );
 
-    const result = await fetchEmailPerformance(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchEmailPerformance("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.emails?.length, 1);
@@ -318,12 +264,7 @@ describe("fetchEmailPerformance", () => {
 
     const fetchFn = fakeFetch(200, JSON.stringify(items));
 
-    const result = await fetchEmailPerformance(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-      3,
-    );
+    const result = await fetchEmailPerformance("https://test.substack.com", material, fetchFn, 3);
 
     assert.equal(result.status, "ok");
     assert.equal(result.emails?.length, 3);
@@ -332,11 +273,7 @@ describe("fetchEmailPerformance", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchEmailPerformance(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchEmailPerformance("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -355,11 +292,7 @@ describe("fetchRevenueAnalytics", () => {
       }),
     );
 
-    const result = await fetchRevenueAnalytics(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchRevenueAnalytics("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.revenue?.period, "2026-05");
@@ -381,11 +314,7 @@ describe("fetchRevenueAnalytics", () => {
       }),
     );
 
-    const result = await fetchRevenueAnalytics(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchRevenueAnalytics("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.revenue?.newPaidSubscribers, 30);
@@ -404,11 +333,7 @@ describe("fetchRevenueAnalytics", () => {
       }),
     );
 
-    const result = await fetchRevenueAnalytics(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchRevenueAnalytics("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.revenue?.mrr, null);
@@ -418,11 +343,7 @@ describe("fetchRevenueAnalytics", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchRevenueAnalytics(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchRevenueAnalytics("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -431,10 +352,7 @@ describe("fetchRevenueAnalytics", () => {
 describe("fetchAnalyticsInventory", () => {
   it("probes all analytics endpoints", async () => {
     const routes = new Map<string, unknown>([
-      [
-        "https://test.substack.com/api/v1/post/42/analytics",
-        { views: 100, read_rate: 0.5 },
-      ],
+      ["https://test.substack.com/api/v1/post/42/analytics", { views: 100, read_rate: 0.5 }],
       [
         "https://test.substack.com/api/v1/publication/analytics/subscribers",
         { total_subscribers: 5000, net_change: 100 },

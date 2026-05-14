@@ -20,10 +20,7 @@ Hello world.
     assert.equal(plan.status, "planned");
     assert.equal(plan.operation, "create");
     assert.equal(plan.method, "POST");
-    assert.equal(
-      plan.endpoint,
-      "https://rareinsights.substack.com/api/v1/drafts",
-    );
+    assert.equal(plan.endpoint, "https://rareinsights.substack.com/api/v1/drafts");
     assert.equal(plan.payload.title, "Planned Draft");
     assert.equal(plan.duplicateKey.slug, "planned-draft");
     assert.equal(plan.duplicateKey.sourceFile, "planned.md");
@@ -51,14 +48,8 @@ Hello world.
 
     assert.equal(plan.operation, "update");
     assert.equal(plan.method, "PUT");
-    assert.equal(
-      plan.endpoint,
-      "https://rareinsights.substack.com/api/v1/drafts/123",
-    );
-    assert.equal(
-      plan.draftUrl,
-      "https://rareinsights.substack.com/publish/post/123",
-    );
+    assert.equal(plan.endpoint, "https://rareinsights.substack.com/api/v1/drafts/123");
+    assert.equal(plan.draftUrl, "https://rareinsights.substack.com/publish/post/123");
   });
 
   it("applies a resolved section to the planned payload", async () => {
@@ -72,36 +63,31 @@ Hello world.
       "section.md",
     );
 
-    const plan = planCreateDraft(
-      post,
-      "https://rareinsights.substack.com/",
-      null,
-      {
-        status: "resolved",
-        sourceFile: "section.md",
-        publicationUrl: "https://rareinsights.substack.com/",
-        requestedSection: "news",
-        requestedSectionId: undefined,
-        resolvedSection: {
+    const plan = planCreateDraft(post, "https://rareinsights.substack.com/", null, {
+      status: "resolved",
+      sourceFile: "section.md",
+      publicationUrl: "https://rareinsights.substack.com/",
+      requestedSection: "news",
+      requestedSectionId: undefined,
+      resolvedSection: {
+        id: 42,
+        name: "News",
+        slug: "news",
+        score: 100,
+        reasons: ["Section slug matches the requested section exactly."],
+      },
+      candidateCount: 1,
+      candidates: [
+        {
           id: 42,
           name: "News",
           slug: "news",
           score: 100,
           reasons: ["Section slug matches the requested section exactly."],
         },
-        candidateCount: 1,
-        candidates: [
-          {
-            id: 42,
-            name: "News",
-            slug: "news",
-            score: 100,
-            reasons: ["Section slug matches the requested section exactly."],
-          },
-        ],
-        note: "test",
-      },
-    );
+      ],
+      note: "test",
+    });
 
     assert.equal(plan.sectionResolutionApplied, true);
     assert.equal(plan.resolvedSectionId, 42);

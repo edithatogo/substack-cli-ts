@@ -1,10 +1,5 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import {
-  apiHeaders,
-  classifyFailure,
-  type FetchLike,
-  requestJson,
-} from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
 import { fetchPublication } from "./publication.js";
 
 export type BillingReadStatus =
@@ -104,8 +99,7 @@ export async function fetchSubscriptionTiers(
 
   return {
     status: "not-found",
-    message:
-      "No subscription tiers endpoint found. Tier management may be dashboard-only.",
+    message: "No subscription tiers endpoint found. Tier management may be dashboard-only.",
   };
 }
 
@@ -145,8 +139,7 @@ export async function fetchPayoutHistory(
   return {
     status: "not-found",
     nextPayout: null,
-    message:
-      "No payout history endpoint found. Payout data may be dashboard-only.",
+    message: "No payout history endpoint found. Payout data may be dashboard-only.",
   };
 }
 
@@ -184,8 +177,7 @@ export async function fetchTaxFormStatus(
 
   return {
     status: "not-found",
-    message:
-      "No tax form endpoint found. Tax data may be dashboard-only.",
+    message: "No tax form endpoint found. Tax data may be dashboard-only.",
   };
 }
 
@@ -207,9 +199,7 @@ export async function fetchBillingSummary(
   const taxes = await fetchTaxFormStatus(publicationUrl, material, fetchFn);
 
   const allNotFound =
-    tiers.status === "not-found" &&
-    payouts.status === "not-found" &&
-    taxes.status === "not-found";
+    tiers.status === "not-found" && payouts.status === "not-found" && taxes.status === "not-found";
 
   return {
     status: allNotFound ? "not-found" : "ok",
@@ -263,10 +253,8 @@ function parseTiers(body: unknown): SubscriptionTier[] | null {
         : typeof record.yearly_price === "number"
           ? record.yearly_price
           : null;
-    const currency =
-      typeof record.currency === "string" ? record.currency : "usd";
-    const description =
-      typeof record.description === "string" ? record.description : null;
+    const currency = typeof record.currency === "string" ? record.currency : "usd";
+    const description = typeof record.description === "string" ? record.description : null;
     const isActive =
       typeof record.is_active === "boolean"
         ? record.is_active
@@ -282,9 +270,7 @@ function parseTiers(body: unknown): SubscriptionTier[] | null {
   return tiers.length > 0 ? tiers : null;
 }
 
-function parsePayouts(
-  body: unknown,
-): { payouts: PayoutEntry[]; nextPayout: string | null } | null {
+function parsePayouts(body: unknown): { payouts: PayoutEntry[]; nextPayout: string | null } | null {
   const items = Array.isArray(body)
     ? body
     : body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).payouts)
@@ -310,10 +296,8 @@ function parsePayouts(
         : typeof record.amount_cents === "number"
           ? record.amount_cents / 100
           : null;
-    const currency =
-      typeof record.currency === "string" ? record.currency : "usd";
-    const status =
-      typeof record.status === "string" ? record.status : "unknown";
+    const currency = typeof record.currency === "string" ? record.currency : "usd";
+    const status = typeof record.status === "string" ? record.status : "unknown";
     const period =
       typeof record.period === "string"
         ? record.period
@@ -376,8 +360,7 @@ function parseTaxForms(body: unknown): TaxFormStatus[] | null {
         : typeof record.year === "number"
           ? record.year
           : null;
-    const status =
-      typeof record.status === "string" ? record.status : "unknown";
+    const status = typeof record.status === "string" ? record.status : "unknown";
     const filedAt =
       typeof record.filed_at === "string"
         ? record.filed_at

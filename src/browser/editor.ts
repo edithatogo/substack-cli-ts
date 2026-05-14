@@ -62,10 +62,7 @@ export async function pasteHtmlIntoEditor(
     }
 
     const inserted = insertHtml(html);
-    target.setAttribute(
-      "data-substack-cli-last-payload",
-      JSON.stringify(document),
-    );
+    target.setAttribute("data-substack-cli-last-payload", JSON.stringify(document));
     dispatchInput(target);
 
     return inserted
@@ -114,18 +111,14 @@ function findMainEditor(): HTMLElement | null {
     candidates
       .map((element) => ({
         element,
-        score:
-          element.textContent.length + element.getBoundingClientRect().height,
+        score: element.textContent.length + element.getBoundingClientRect().height,
       }))
       .sort((a, b) => b.score - a.score)[0]?.element ?? null
   );
 }
 
 function selectExistingContent(target: HTMLElement): void {
-  if (
-    target instanceof HTMLInputElement ||
-    target instanceof HTMLTextAreaElement
-  ) {
+  if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) {
     target.select();
     return;
   }
@@ -145,10 +138,7 @@ function insertHtml(html: string): boolean {
   return document.execCommand("insertHTML", false, html);
 }
 
-function tryCreateClipboardData(
-  html: string,
-  markdown: string,
-): DataTransfer | null {
+function tryCreateClipboardData(html: string, markdown: string): DataTransfer | null {
   try {
     const data = new DataTransfer();
     data.setData("text/html", html);
@@ -160,9 +150,7 @@ function tryCreateClipboardData(
 }
 
 function dispatchInput(target: HTMLElement): void {
-  target.dispatchEvent(
-    new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }),
-  );
+  target.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }));
   target.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
@@ -178,9 +166,6 @@ function isVisible(element: HTMLElement): boolean {
   const style = window.getComputedStyle(element);
   const rect = element.getBoundingClientRect();
   return (
-    style.display !== "none" &&
-    style.visibility !== "hidden" &&
-    rect.width > 0 &&
-    rect.height > 0
+    style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0
   );
 }

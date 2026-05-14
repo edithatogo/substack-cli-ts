@@ -49,11 +49,7 @@ const BrowserWorkflowResultSchema = z.object({
     z.literal("published"),
     z.literal("scheduled"),
   ]),
-  mode: z.union([
-    z.literal("draft"),
-    z.literal("publish"),
-    z.literal("schedule"),
-  ]),
+  mode: z.union([z.literal("draft"), z.literal("publish"), z.literal("schedule")]),
   title: z.string().min(1),
   currentUrl: z.string().min(1),
   finalUrl: z.string().min(1),
@@ -62,11 +58,7 @@ const BrowserWorkflowResultSchema = z.object({
   scheduleAt: z.string().optional(),
   editorTextLength: z.number().int().nonnegative().optional(),
   transport: z.object({
-    requested: z.union([
-      z.literal("browser"),
-      z.literal("api"),
-      z.literal("auto"),
-    ]),
+    requested: z.union([z.literal("browser"), z.literal("api"), z.literal("auto")]),
     selected: z.union([z.literal("browser"), z.literal("api")]),
     fallbackReason: z.string().optional(),
   }),
@@ -86,11 +78,7 @@ const WorkflowTraceReviewSchema = z.object({
     z.literal("published"),
     z.literal("scheduled"),
   ]),
-  mode: z.union([
-    z.literal("draft"),
-    z.literal("publish"),
-    z.literal("schedule"),
-  ]),
+  mode: z.union([z.literal("draft"), z.literal("publish"), z.literal("schedule")]),
   title: z.string().min(1),
   currentUrl: z.string().min(1),
   finalUrl: z.string().min(1),
@@ -98,11 +86,7 @@ const WorkflowTraceReviewSchema = z.object({
   publishedUrl: z.string().min(1).optional(),
   scheduleAt: z.string().optional(),
   editorTextLength: z.number().int().nonnegative().optional(),
-  transportRequested: z.union([
-    z.literal("browser"),
-    z.literal("api"),
-    z.literal("auto"),
-  ]),
+  transportRequested: z.union([z.literal("browser"), z.literal("api"), z.literal("auto")]),
   transportSelected: z.union([z.literal("browser"), z.literal("api")]),
   fallbackReason: z.string().optional(),
   traceCount: z.number().int().nonnegative(),
@@ -112,9 +96,7 @@ const WorkflowTraceReviewSchema = z.object({
   note: z.string().min(1),
 });
 
-export async function reviewWorkflowTraceArtifact(
-  filePath: string,
-): Promise<WorkflowTraceReview> {
+export async function reviewWorkflowTraceArtifact(filePath: string): Promise<WorkflowTraceReview> {
   return loadWorkflowTraceReview(filePath);
 }
 
@@ -171,9 +153,7 @@ export function summarizeWorkflowTrace(review: WorkflowTraceReview): Record<stri
   };
 }
 
-async function loadWorkflowTraceReview(
-  filePath: string,
-): Promise<WorkflowTraceReview> {
+async function loadWorkflowTraceReview(filePath: string): Promise<WorkflowTraceReview> {
   const raw = await readFile(filePath, "utf8");
   const json = JSON.parse(raw) as unknown;
   const review = WorkflowTraceReviewSchema.safeParse(json);
@@ -219,37 +199,12 @@ function diffWorkflowTraceReviews(
   compareField(differences, "status", expected.status, actual.status);
   compareField(differences, "mode", expected.mode, actual.mode);
   compareField(differences, "title", expected.title, actual.title);
-  compareField(
-    differences,
-    "currentUrl",
-    expected.currentUrl,
-    actual.currentUrl,
-  );
+  compareField(differences, "currentUrl", expected.currentUrl, actual.currentUrl);
   compareField(differences, "finalUrl", expected.finalUrl, actual.finalUrl);
-  compareField(
-    differences,
-    "finalState",
-    expected.finalState,
-    actual.finalState,
-  );
-  compareField(
-    differences,
-    "publishedUrl",
-    expected.publishedUrl,
-    actual.publishedUrl,
-  );
-  compareField(
-    differences,
-    "scheduleAt",
-    expected.scheduleAt,
-    actual.scheduleAt,
-  );
-  compareField(
-    differences,
-    "editorTextLength",
-    expected.editorTextLength,
-    actual.editorTextLength,
-  );
+  compareField(differences, "finalState", expected.finalState, actual.finalState);
+  compareField(differences, "publishedUrl", expected.publishedUrl, actual.publishedUrl);
+  compareField(differences, "scheduleAt", expected.scheduleAt, actual.scheduleAt);
+  compareField(differences, "editorTextLength", expected.editorTextLength, actual.editorTextLength);
   compareField(
     differences,
     "transport.requested",
@@ -268,19 +223,9 @@ function diffWorkflowTraceReviews(
     expected.fallbackReason,
     actual.fallbackReason,
   );
-  compareField(
-    differences,
-    "traceCount",
-    expected.traceCount,
-    actual.traceCount,
-  );
+  compareField(differences, "traceCount", expected.traceCount, actual.traceCount);
   compareField(differences, "stepNames", expected.stepNames, actual.stepNames);
-  compareField(
-    differences,
-    "failedStepNames",
-    expected.failedStepNames,
-    actual.failedStepNames,
-  );
+  compareField(differences, "failedStepNames", expected.failedStepNames, actual.failedStepNames);
   compareField(
     differences,
     "browserSessionPresent",
@@ -298,9 +243,7 @@ function compareField(
   actual: unknown,
 ): void {
   if (stableStringify(expected) !== stableStringify(actual)) {
-    differences.push(
-      `${name}: ${stableValue(expected)} != ${stableValue(actual)}`,
-    );
+    differences.push(`${name}: ${stableValue(expected)} != ${stableValue(actual)}`);
   }
 }
 

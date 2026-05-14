@@ -4,10 +4,7 @@ import { materialFromCookieHeader } from "./auth.js";
 import { type FetchLike } from "./client.js";
 import { fetchSubscriberList } from "./subscriber-list.js";
 
-function fakeFetch(
-  status: number,
-  body: string,
-): FetchLike {
+function fakeFetch(status: number, body: string): FetchLike {
   return () =>
     Promise.resolve({
       status,
@@ -31,11 +28,7 @@ describe("fetchSubscriberList", () => {
       ]),
     );
 
-    const result = await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberList("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.entries!.length, 2);
@@ -51,11 +44,7 @@ describe("fetchSubscriberList", () => {
   it("returns empty entries for empty response", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify([]));
 
-    const result = await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberList("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.entries!.length, 0);
@@ -64,26 +53,15 @@ describe("fetchSubscriberList", () => {
   it("returns schema-drift for non-array response body", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({ not: "array" }));
 
-    const result = await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberList("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "schema-drift");
   });
 
   it("returns unauthenticated on 401", async () => {
-    const fetchFn = fakeFetch(
-      401,
-      JSON.stringify({ error: "unauthorized" }),
-    );
+    const fetchFn = fakeFetch(401, JSON.stringify({ error: "unauthorized" }));
 
-    const result = await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberList("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -91,11 +69,7 @@ describe("fetchSubscriberList", () => {
   it("returns forbidden on 403", async () => {
     const fetchFn = fakeFetch(403, JSON.stringify({}));
 
-    const result = await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberList("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "forbidden");
   });
@@ -103,24 +77,15 @@ describe("fetchSubscriberList", () => {
   it("returns not-found on 404", async () => {
     const fetchFn = fakeFetch(404, JSON.stringify({}));
 
-    const result = await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberList("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
 
   it("returns network-error when fetch throws", async () => {
-    const fetchFn: FetchLike = () =>
-      Promise.reject(new Error("Network failure"));
+    const fetchFn: FetchLike = () => Promise.reject(new Error("Network failure"));
 
-    const result = await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriberList("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "network-error");
   });
@@ -128,12 +93,10 @@ describe("fetchSubscriberList", () => {
   it("passes limit and offset as query parameters", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify([]));
 
-    await fetchSubscriberList(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-      { limit: 50, offset: 100 },
-    );
+    await fetchSubscriberList("https://test.substack.com", material, fetchFn, {
+      limit: 50,
+      offset: 100,
+    });
 
     assert.ok(true);
   });

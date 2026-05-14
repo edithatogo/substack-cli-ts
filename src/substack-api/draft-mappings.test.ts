@@ -3,11 +3,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, it } from "vitest";
-import {
-  findDraftMapping,
-  loadDraftMappings,
-  saveDraftMapping,
-} from "./draft-mappings.js";
+import { findDraftMapping, loadDraftMappings, saveDraftMapping } from "./draft-mappings.js";
 
 describe("draft mappings", () => {
   it("saves and replaces mappings by source file and publication", async () => {
@@ -31,20 +27,14 @@ describe("draft mappings", () => {
       });
 
       const mappings = await loadDraftMappings();
-      const mapping = await findDraftMapping(
-        "post.md",
-        "https://rareinsights.substack.com",
-      );
+      const mapping = await findDraftMapping("post.md", "https://rareinsights.substack.com");
 
       assert.equal(mappings.length, 1);
       assert.ok(mapping);
       assert.equal(mapping.draftId, "456");
       assert.equal(mapping.title, "Updated title");
       assert.equal(mapping.sourceFile, resolve("post.md"));
-      assert.equal(
-        mapping.publicationUrl,
-        "https://rareinsights.substack.com/",
-      );
+      assert.equal(mapping.publicationUrl, "https://rareinsights.substack.com/");
     });
   });
 });

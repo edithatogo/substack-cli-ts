@@ -22,7 +22,9 @@ export interface DraftWriteResult {
   error?: string | undefined;
   mediaUploaded?: number | undefined;
   mediaFailed?: number | undefined;
-  mediaDetails?: Array<{ source: string; url: string | undefined; error: string | undefined }> | undefined;
+  mediaDetails?:
+    | Array<{ source: string; url: string | undefined; error: string | undefined }>
+    | undefined;
 }
 
 export interface DraftWritePlan {
@@ -56,17 +58,13 @@ export function planCreateDraft(
   const payload = buildSubstackDraftPayload(plannedPost);
   const draftId = existingDraft?.draftId;
   const endpoint = new URL(
-    draftId
-      ? `/api/v1/drafts/${encodeURIComponent(draftId)}`
-      : "/api/v1/drafts",
+    draftId ? `/api/v1/drafts/${encodeURIComponent(draftId)}` : "/api/v1/drafts",
     publicationUrl,
   ).toString();
   const draftUrl =
     existingDraft?.draftUrl ??
     new URL(
-      draftId
-        ? `/publish/post/${encodeURIComponent(draftId)}`
-        : "/publish/post",
+      draftId ? `/publish/post/${encodeURIComponent(draftId)}` : "/publish/post",
       publicationUrl,
     ).toString();
 
@@ -124,13 +122,7 @@ export async function executeDraftWrite(
     serverUpdatedAt,
   );
 
-  const response = await requestWrite(
-    fetchImpl,
-    plan.endpoint,
-    plan.method,
-    headers,
-    requestBody,
-  );
+  const response = await requestWrite(fetchImpl, plan.endpoint, plan.method, headers, requestBody);
 
   if (response.status === 0) {
     return {
@@ -165,7 +157,11 @@ export async function executeDraftWrite(
       error: "HTTP 409 (optimistic concurrency conflict)",
       mediaUploaded: media.report.uploaded,
       mediaFailed: media.report.failed,
-      mediaDetails: media.report.assets.map((a) => ({ source: a.asset.source, url: a.result.status === "ok" ? a.result.url : undefined, error: a.result.status === "failed" ? a.result.error : undefined })),
+      mediaDetails: media.report.assets.map((a) => ({
+        source: a.asset.source,
+        url: a.result.status === "ok" ? a.result.url : undefined,
+        error: a.result.status === "failed" ? a.result.error : undefined,
+      })),
     };
   }
 
@@ -181,7 +177,11 @@ export async function executeDraftWrite(
       error: `HTTP ${response.status}`,
       mediaUploaded: media.report.uploaded,
       mediaFailed: media.report.failed,
-      mediaDetails: media.report.assets.map((a) => ({ source: a.asset.source, url: a.result.status === "ok" ? a.result.url : undefined, error: a.result.status === "failed" ? a.result.error : undefined })),
+      mediaDetails: media.report.assets.map((a) => ({
+        source: a.asset.source,
+        url: a.result.status === "ok" ? a.result.url : undefined,
+        error: a.result.status === "failed" ? a.result.error : undefined,
+      })),
     };
   }
 
@@ -193,22 +193,23 @@ export async function executeDraftWrite(
       method: plan.method,
       endpoint: plan.endpoint,
       draftUrl: plan.draftUrl,
-      message:
-        "Substack responded 200 but no draft ID was found in the response.",
+      message: "Substack responded 200 but no draft ID was found in the response.",
       existingDraft: plan.existingDraft,
       error: "Missing draft ID",
       mediaUploaded: media.report.uploaded,
       mediaFailed: media.report.failed,
-      mediaDetails: media.report.assets.map((a) => ({ source: a.asset.source, url: a.result.status === "ok" ? a.result.url : undefined, error: a.result.status === "failed" ? a.result.error : undefined })),
+      mediaDetails: media.report.assets.map((a) => ({
+        source: a.asset.source,
+        url: a.result.status === "ok" ? a.result.url : undefined,
+        error: a.result.status === "failed" ? a.result.error : undefined,
+      })),
     };
   }
 
   // Extract server's updated_at from response body for optimistic concurrency
   const bodyRecord = response.body as Record<string, unknown> | undefined;
   const responseServerUpdatedAt =
-    typeof bodyRecord?.draft_updated_at === "string"
-      ? bodyRecord.draft_updated_at
-      : undefined;
+    typeof bodyRecord?.draft_updated_at === "string" ? bodyRecord.draft_updated_at : undefined;
 
   // Persist the draft mapping
   const mappingInput: SaveDraftMappingInput = {
@@ -247,10 +248,7 @@ function applyResolvedSectionId(
   post: ParsedPost,
   sectionResolution: DraftSectionResolutionReport | null | undefined,
 ): ParsedPost {
-  if (
-    sectionResolution?.status !== "resolved" ||
-    post.metadata.sectionId !== undefined
-  ) {
+  if (sectionResolution?.status !== "resolved" || post.metadata.sectionId !== undefined) {
     return post;
   }
 

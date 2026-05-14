@@ -184,18 +184,12 @@ export async function readApiInventory(
   const handleOptionsEndpoint = "https://substack.com/api/v1/handle/options";
   endpoints.push(handleOptionsEndpoint);
 
-  const handleOptionsResponse = await requestJson(
-    fetchImpl,
-    handleOptionsEndpoint,
-    headers,
-  );
+  const handleOptionsResponse = await requestJson(fetchImpl, handleOptionsEndpoint, headers);
   if (handleOptionsResponse.status !== 200) {
     return failureInventory(handleOptionsResponse.status, endpoints);
   }
 
-  const handleOptions = HandleOptionsSchema.safeParse(
-    handleOptionsResponse.body,
-  );
+  const handleOptions = HandleOptionsSchema.safeParse(handleOptionsResponse.body);
   if (!handleOptions.success) {
     return {
       status: "schema-drift",
@@ -205,9 +199,8 @@ export async function readApiInventory(
   }
 
   const handle =
-    handleOptions.data.potentialHandles.find(
-      (candidate) => candidate.type === "existing",
-    )?.handle ?? handleOptions.data.potentialHandles[0]?.handle;
+    handleOptions.data.potentialHandles.find((candidate) => candidate.type === "existing")
+      ?.handle ?? handleOptions.data.potentialHandles[0]?.handle;
 
   if (!handle) {
     return {
@@ -219,11 +212,7 @@ export async function readApiInventory(
 
   const profileEndpoint = `https://substack.com/api/v1/user/${encodeURIComponent(handle)}/public_profile`;
   endpoints.push(profileEndpoint);
-  const profileResponse = await requestJson(
-    fetchImpl,
-    profileEndpoint,
-    headers,
-  );
+  const profileResponse = await requestJson(fetchImpl, profileEndpoint, headers);
   if (profileResponse.status !== 200) {
     return failureInventory(profileResponse.status, endpoints);
   }
@@ -237,16 +226,9 @@ export async function readApiInventory(
     };
   }
 
-  const publicationEndpoint = new URL(
-    "/api/v1/publication",
-    material.publicationUrl,
-  ).toString();
+  const publicationEndpoint = new URL("/api/v1/publication", material.publicationUrl).toString();
   endpoints.push(publicationEndpoint);
-  const publicationResponse = await requestJson(
-    fetchImpl,
-    publicationEndpoint,
-    headers,
-  );
+  const publicationResponse = await requestJson(fetchImpl, publicationEndpoint, headers);
   if (publicationResponse.status !== 200) {
     return failureInventory(publicationResponse.status, endpoints);
   }
@@ -256,8 +238,7 @@ export async function readApiInventory(
     return {
       status: "schema-drift",
       endpoints,
-      message:
-        "The configured publication response did not match the expected shape.",
+      message: "The configured publication response did not match the expected shape.",
     };
   }
 
@@ -295,13 +276,7 @@ export async function readApiInventory(
       paymentsState: publication.data.payments_state,
     },
     sections: await readSections(material, fetchImpl, headers, endpoints),
-    posts: await readPosts(
-      material,
-      fetchImpl,
-      headers,
-      endpoints,
-      options.postLimit ?? 10,
-    ),
+    posts: await readPosts(material, fetchImpl, headers, endpoints, options.postLimit ?? 10),
     drafts: draftsResult.items,
     draftHasMore: draftsResult.hasMore,
     message: "Read-only API inventory completed.",
@@ -315,13 +290,7 @@ async function fetchDrafts(
   endpoints: string[],
   limit: number,
 ): Promise<{ items: DraftSummary[]; hasMore: boolean }> {
-  const result = await readDrafts(
-    material,
-    fetchImpl,
-    headers,
-    endpoints,
-    limit,
-  );
+  const result = await readDrafts(material, fetchImpl, headers, endpoints, limit);
   if (!result) {
     return { items: [], hasMore: false };
   }
@@ -334,10 +303,7 @@ async function readSections(
   headers: Record<string, string>,
   endpoints: string[],
 ): Promise<SectionSummary[]> {
-  const endpoint = new URL(
-    "/api/v1/publication/sections",
-    material.publicationUrl,
-  ).toString();
+  const endpoint = new URL("/api/v1/publication/sections", material.publicationUrl).toString();
   endpoints.push(endpoint);
   const response = await requestJson(fetchImpl, endpoint, headers);
   if (response.status !== 200) {
@@ -430,14 +396,8 @@ async function readDrafts(
   };
 }
 
-function failureInventory(
-  status: number,
-  endpoints: string[],
-): ApiReadInventory {
-  const failure = classifyFailure(
-    status,
-    endpoints[endpoints.length - 1] ?? "unknown",
-  );
+function failureInventory(status: number, endpoints: string[]): ApiReadInventory {
+  const failure = classifyFailure(status, endpoints[endpoints.length - 1] ?? "unknown");
 
   return {
     status: failure.status,

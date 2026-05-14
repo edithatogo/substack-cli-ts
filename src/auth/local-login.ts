@@ -25,19 +25,14 @@ export interface LocalLoginResult {
   };
 }
 
-export async function runLocalLogin(
-  options: LocalLoginOptions,
-): Promise<LocalLoginResult> {
+export async function runLocalLogin(options: LocalLoginOptions): Promise<LocalLoginResult> {
   await mkdir(localBrowserProfileDir(), { recursive: true });
 
-  const context = await chromium.launchPersistentContext(
-    localBrowserProfileDir(),
-    {
-      executablePath: getChromePath(),
-      headless: false,
-      args: ["--no-first-run", "--no-default-browser-check"],
-    },
-  );
+  const context = await chromium.launchPersistentContext(localBrowserProfileDir(), {
+    executablePath: getChromePath(),
+    headless: false,
+    args: ["--no-first-run", "--no-default-browser-check"],
+  });
 
   try {
     const page = await context.newPage();
@@ -170,9 +165,7 @@ async function attemptPasswordLogin(
     10000,
   );
   await Promise.race([
-    page
-      .waitForLoadState("domcontentloaded", { timeout: 15000 })
-      .catch(() => undefined),
+    page.waitForLoadState("domcontentloaded", { timeout: 15000 }).catch(() => undefined),
     page.waitForTimeout(5000),
   ]);
 
@@ -224,11 +217,7 @@ async function firstVisible(
   return null;
 }
 
-async function clickFirst(
-  page: Page,
-  locators: Locator[],
-  timeout: number,
-): Promise<boolean> {
+async function clickFirst(page: Page, locators: Locator[], timeout: number): Promise<boolean> {
   const target = await firstVisible(page, locators, timeout);
 
   if (!target) {

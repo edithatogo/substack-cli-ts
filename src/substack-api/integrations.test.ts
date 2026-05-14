@@ -53,11 +53,7 @@ describe("fetchIntegrations", () => {
       ]),
     );
 
-    const result = await fetchIntegrations(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchIntegrations("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.integrations?.length, 1);
@@ -71,17 +67,11 @@ describe("fetchIntegrations", () => {
     const fetchFn = fakeFetch(
       200,
       JSON.stringify({
-        integrations: [
-          { id: "int-2", name: "Discord", type: "chat", connected: true },
-        ],
+        integrations: [{ id: "int-2", name: "Discord", type: "chat", connected: true }],
       }),
     );
 
-    const result = await fetchIntegrations(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchIntegrations("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.integrations?.length, 1);
@@ -91,16 +81,10 @@ describe("fetchIntegrations", () => {
   it("handles connected boolean as status", async () => {
     const fetchFn = fakeFetch(
       200,
-      JSON.stringify([
-        { id: "int-3", name: "Slack", type: "chat", connected: false },
-      ]),
+      JSON.stringify([{ id: "int-3", name: "Slack", type: "chat", connected: false }]),
     );
 
-    const result = await fetchIntegrations(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchIntegrations("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.integrations?.[0]?.status, "disconnected");
@@ -109,11 +93,7 @@ describe("fetchIntegrations", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchIntegrations(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchIntegrations("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -121,11 +101,7 @@ describe("fetchIntegrations", () => {
   it("returns unauthenticated on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await fetchIntegrations(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchIntegrations("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -135,13 +111,7 @@ describe("crossPost", () => {
   it("returns ok on successful cross-post", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({ status: "ok" }));
 
-    const result = await crossPost(
-      "https://test.substack.com",
-      42,
-      "twitter",
-      material,
-      fetchFn,
-    );
+    const result = await crossPost("https://test.substack.com", 42, "twitter", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.postId, 42);
@@ -152,13 +122,7 @@ describe("crossPost", () => {
   it("returns failed on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await crossPost(
-      "https://test.substack.com",
-      42,
-      "bluesky",
-      material,
-      fetchFn,
-    );
+    const result = await crossPost("https://test.substack.com", 42, "bluesky", material, fetchFn);
 
     assert.equal(result.status, "failed");
   });
@@ -166,13 +130,7 @@ describe("crossPost", () => {
   it("returns failed when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await crossPost(
-      "https://test.substack.com",
-      42,
-      "mastodon",
-      material,
-      fetchFn,
-    );
+    const result = await crossPost("https://test.substack.com", 42, "mastodon", material, fetchFn);
 
     assert.equal(result.status, "failed");
     assert.match(result.message, /No cross-post endpoint found/);
@@ -181,10 +139,7 @@ describe("crossPost", () => {
 
 describe("importFromWordPress", () => {
   it("returns ok with import id on success", async () => {
-    const fetchFn = fakeFetch(
-      200,
-      JSON.stringify({ import_id: "wp-123" }),
-    );
+    const fetchFn = fakeFetch(200, JSON.stringify({ import_id: "wp-123" }));
 
     const result = await importFromWordPress(
       "https://test.substack.com",
@@ -241,10 +196,7 @@ describe("importFromWordPress", () => {
 
 describe("importFromRss", () => {
   it("returns ok with import id on success", async () => {
-    const fetchFn = fakeFetch(
-      200,
-      JSON.stringify({ import_id: "rss-456" }),
-    );
+    const fetchFn = fakeFetch(200, JSON.stringify({ import_id: "rss-456" }));
 
     const result = await importFromRss(
       "https://test.substack.com",
@@ -301,11 +253,7 @@ describe("fetchApiTokens", () => {
       ]),
     );
 
-    const result = await fetchApiTokens(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchApiTokens("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.tokens?.length, 1);
@@ -321,17 +269,11 @@ describe("fetchApiTokens", () => {
     const fetchFn = fakeFetch(
       200,
       JSON.stringify({
-        tokens: [
-          { id: "t2", label: "App 2", key: "short", scopes: [] },
-        ],
+        tokens: [{ id: "t2", label: "App 2", key: "short", scopes: [] }],
       }),
     );
 
-    const result = await fetchApiTokens(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchApiTokens("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.tokens?.length, 1);
@@ -339,16 +281,9 @@ describe("fetchApiTokens", () => {
   });
 
   it("redacts short tokens as ****", async () => {
-    const fetchFn = fakeFetch(
-      200,
-      JSON.stringify([{ id: "t1", name: "Test", token: "abc" }]),
-    );
+    const fetchFn = fakeFetch(200, JSON.stringify([{ id: "t1", name: "Test", token: "abc" }]));
 
-    const result = await fetchApiTokens(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchApiTokens("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.tokens?.[0]?.tokenPreview, "****");
@@ -357,11 +292,7 @@ describe("fetchApiTokens", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchApiTokens(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchApiTokens("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -369,11 +300,7 @@ describe("fetchApiTokens", () => {
   it("returns unauthenticated on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await fetchApiTokens(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchApiTokens("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });

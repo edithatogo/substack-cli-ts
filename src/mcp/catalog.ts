@@ -68,8 +68,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
       server.registerTool(
         "api.inventory",
         {
-          description:
-            "Inspect the current publication and recent post inventory.",
+          description: "Inspect the current publication and recent post inventory.",
           inputSchema: ReadInventoryArgs,
           annotations: {
             title: "API Inventory",
@@ -84,10 +83,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
             postLimit: postLimit ?? 10,
           });
 
-          return jsonResult(
-            toJsonRecord(inventory),
-            "Read-only API inventory completed.",
-          );
+          return jsonResult(toJsonRecord(inventory), "Read-only API inventory completed.");
         },
       );
     },
@@ -95,16 +91,14 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   {
     group: "read",
     name: "api.auth.status",
-    description:
-      "Summarize the current local auth material without revealing cookie values.",
+    description: "Summarize the current local auth material without revealing cookie values.",
     cliCommand: "api auth status --source local-profile",
     redacted: true,
     register(server) {
       server.registerTool(
         "api.auth.status",
         {
-          description:
-            "Summarize the current local auth material without revealing cookie values.",
+          description: "Summarize the current local auth material without revealing cookie values.",
           annotations: {
             title: "API Auth Status",
             readOnlyHint: true,
@@ -147,10 +141,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         },
         async ({ file }) => {
           const summary = await validateSchemaFile(String(file));
-          return jsonResult(
-            toJsonRecord(summary),
-            "Schema validation completed.",
-          );
+          return jsonResult(toJsonRecord(summary), "Schema validation completed.");
         },
       );
     },
@@ -209,10 +200,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         },
         async ({ file }) => {
           const review = await reviewWorkflowTraceArtifact(String(file));
-          return jsonResult(
-            toJsonRecord(review),
-            "Workflow trace review completed.",
-          );
+          return jsonResult(toJsonRecord(review), "Workflow trace review completed.");
         },
       );
     },
@@ -253,16 +241,14 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   {
     group: "review",
     name: "policy",
-    description:
-      "Review distribution and dependency hygiene for the repository.",
+    description: "Review distribution and dependency hygiene for the repository.",
     cliCommand: "policy",
     redacted: true,
     register(server) {
       server.registerTool(
         "policy",
         {
-          description:
-            "Review distribution and dependency hygiene for the repository.",
+          description: "Review distribution and dependency hygiene for the repository.",
           annotations: {
             title: "Distribution Policy",
             readOnlyHint: true,
@@ -271,10 +257,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         },
         async () => {
           const policy = await evaluateDistributionPolicy();
-          return jsonResult(
-            toJsonRecord(policy),
-            "Distribution policy review completed.",
-          );
+          return jsonResult(toJsonRecord(policy), "Distribution policy review completed.");
         },
       );
     },
@@ -282,16 +265,14 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   {
     group: "review",
     name: "doctor",
-    description:
-      "Check local configuration, transport readiness, and ignored runtime files.",
+    description: "Check local configuration, transport readiness, and ignored runtime files.",
     cliCommand: "doctor",
     redacted: true,
     register(server) {
       server.registerTool(
         "doctor",
         {
-          description:
-            "Check local configuration, transport readiness, and ignored runtime files.",
+          description: "Check local configuration, transport readiness, and ignored runtime files.",
           annotations: {
             title: "Doctor Diagnostics",
             readOnlyHint: true,
@@ -300,10 +281,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         },
         async () => {
           const report = await runDoctor();
-          return jsonResult(
-            toJsonRecord(report),
-            "Doctor diagnostics completed.",
-          );
+          return jsonResult(toJsonRecord(report), "Doctor diagnostics completed.");
         },
       );
     },
@@ -331,10 +309,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         async ({ file }) => {
           const review = await reviewDraftCaptureArtifact(String(file));
           const report = inferDraftContract(review);
-          return jsonResult(
-            toJsonRecord(report),
-            "Draft contract inference completed.",
-          );
+          return jsonResult(toJsonRecord(report), "Draft contract inference completed.");
         },
       );
     },
@@ -342,16 +317,14 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   {
     group: "capture",
     name: "api.draft.contract.matrix",
-    description:
-      "Merge multiple draft capture artifacts into one inferred contract matrix.",
+    description: "Merge multiple draft capture artifacts into one inferred contract matrix.",
     cliCommand: "api draft contract-matrix <files...>",
     redacted: true,
     register(server) {
       server.registerTool(
         "api.draft.contract.matrix",
         {
-          description:
-            "Merge multiple draft capture artifacts into one inferred contract matrix.",
+          description: "Merge multiple draft capture artifacts into one inferred contract matrix.",
           inputSchema: {
             files: z.array(z.string().min(1)).min(1),
           },
@@ -369,10 +342,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
             })),
           );
           const report = buildDraftContractMatrix(inputs);
-          return jsonResult(
-            toJsonRecord(report),
-            "Draft contract matrix completed.",
-          );
+          return jsonResult(toJsonRecord(report), "Draft contract matrix completed.");
         },
       );
     },
@@ -381,8 +351,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
     group: "capture",
     name: "api.draft.contract.matrix.compare",
     description: "Compare two draft contract matrix fixtures.",
-    cliCommand:
-      "api draft contract-matrix-compare <expected-file> <actual-file>",
+    cliCommand: "api draft contract-matrix-compare <expected-file> <actual-file>",
     redacted: true,
     register(server) {
       server.registerTool(
@@ -397,10 +366,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           },
         },
         async ({ expectedFile, actualFile }) => {
-          const comparison = await compareDraftContractMatrixArtifacts(
-            expectedFile,
-            actualFile,
-          );
+          const comparison = await compareDraftContractMatrixArtifacts(expectedFile, actualFile);
           return jsonResult(
             toJsonRecord(comparison),
             "Draft contract matrix comparison completed.",
@@ -437,10 +403,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           });
 
           if (inventory.status !== "ok") {
-            return jsonResult(
-              toJsonRecord(inventory),
-              "Draft duplicate lookup could not run.",
-            );
+            return jsonResult(toJsonRecord(inventory), "Draft duplicate lookup could not run.");
           }
 
           const prepared = await preparePost(String(file), { mode: "draft" });
@@ -451,10 +414,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
             mappings,
           });
 
-          return jsonResult(
-            toJsonRecord(report),
-            "Draft duplicate lookup completed.",
-          );
+          return jsonResult(toJsonRecord(report), "Draft duplicate lookup completed.");
         },
       );
     },
@@ -462,16 +422,14 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   {
     group: "capture",
     name: "api.draft.section",
-    description:
-      "Resolve a draft section against the current read-only inventory.",
+    description: "Resolve a draft section against the current read-only inventory.",
     cliCommand: "api draft section <file>",
     redacted: true,
     register(server) {
       server.registerTool(
         "api.draft.section",
         {
-          description:
-            "Resolve a draft section against the current read-only inventory.",
+          description: "Resolve a draft section against the current read-only inventory.",
           inputSchema: FileArg,
           annotations: {
             title: "Draft Section Resolution",
@@ -487,10 +445,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           });
 
           if (inventory.status !== "ok") {
-            return jsonResult(
-              toJsonRecord(inventory),
-              "Draft section resolution could not run.",
-            );
+            return jsonResult(toJsonRecord(inventory), "Draft section resolution could not run.");
           }
 
           const prepared = await preparePost(String(file), { mode: "draft" });
@@ -499,10 +454,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
             inventory,
           });
 
-          return jsonResult(
-            toJsonRecord(report),
-            "Draft section resolution completed.",
-          );
+          return jsonResult(toJsonRecord(report), "Draft section resolution completed.");
         },
       );
     },
@@ -580,10 +532,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         },
         async ({ file }) => {
           const review = await reviewDraftCaptureArtifact(String(file));
-          return jsonResult(
-            toJsonRecord(review),
-            "Draft capture review completed.",
-          );
+          return jsonResult(toJsonRecord(review), "Draft capture review completed.");
         },
       );
     },
@@ -640,14 +589,8 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           },
         },
         async ({ file, out }) => {
-          const fixture = await writeDraftCaptureFixture(
-            String(file),
-            String(out),
-          );
-          return jsonResult(
-            toJsonRecord(fixture),
-            "Draft capture fixture written.",
-          );
+          const fixture = await writeDraftCaptureFixture(String(file), String(out));
+          return jsonResult(toJsonRecord(fixture), "Draft capture fixture written.");
         },
       );
     },
@@ -705,10 +648,7 @@ function groupDescription(group: McpToolDescriptor["group"]): string {
   }
 }
 
-function jsonResult(
-  structuredContent: Record<string, unknown>,
-  message: string,
-): JsonToolResult {
+function jsonResult(structuredContent: Record<string, unknown>, message: string): JsonToolResult {
   return {
     content: [
       {

@@ -17,37 +17,23 @@ export async function performSubstackLogin(
     timeout: 60000,
   });
 
-  await session.stagehand.act(
-    "Focus the email address input field for signing in.",
-    {
-      timeout: 60000,
-    },
-  );
-  const emailResult = await insertTextIntoActiveElement(
-    session.page,
-    credentials.email,
-  );
+  await session.stagehand.act("Focus the email address input field for signing in.", {
+    timeout: 60000,
+  });
+  const emailResult = await insertTextIntoActiveElement(session.page, credentials.email);
 
   if (!emailResult.ok) {
-    throw new Error(
-      `Could not insert Substack email: ${emailResult.reason ?? "unknown error"}`,
-    );
+    throw new Error(`Could not insert Substack email: ${emailResult.reason ?? "unknown error"}`);
   }
 
   await session.stagehand.act("Continue to the next login step.", {
     timeout: 60000,
   });
 
-  await session.stagehand.act(
-    "Focus the password input field if one is shown.",
-    {
-      timeout: 60000,
-    },
-  );
-  const passwordResult = await insertTextIntoActiveElement(
-    session.page,
-    credentials.password,
-  );
+  await session.stagehand.act("Focus the password input field if one is shown.", {
+    timeout: 60000,
+  });
+  const passwordResult = await insertTextIntoActiveElement(session.page, credentials.password);
 
   if (!passwordResult.ok) {
     return {

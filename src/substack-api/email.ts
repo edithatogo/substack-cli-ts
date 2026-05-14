@@ -92,8 +92,7 @@ export async function fetchEmailTemplate(
 
   return {
     status: "not-found",
-    message:
-      "No email template endpoint found. Email design may be dashboard-only.",
+    message: "No email template endpoint found. Email design may be dashboard-only.",
   };
 }
 
@@ -132,8 +131,7 @@ export async function fetchBroadcastHistory(
 
   return {
     status: "not-found",
-    message:
-      "No broadcast history endpoint found. Broadcast data may be dashboard-only.",
+    message: "No broadcast history endpoint found. Broadcast data may be dashboard-only.",
   };
 }
 
@@ -218,9 +216,7 @@ export async function sendTestEmail(
   };
 }
 
-function mapEmailTemplate(
-  body: Record<string, unknown>,
-): EmailTemplateSettings {
+function mapEmailTemplate(body: Record<string, unknown>): EmailTemplateSettings {
   const headerHtml =
     typeof body.header_html === "string"
       ? body.header_html
@@ -277,13 +273,12 @@ function mapEmailTemplate(
   };
 }
 
-function parseBroadcasts(
-  body: unknown,
-  limit: number,
-): BroadcastEntry[] | null {
+function parseBroadcasts(body: unknown, limit: number): BroadcastEntry[] | null {
   const items = Array.isArray(body)
     ? body
-    : body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).broadcasts)
+    : body &&
+        typeof body === "object" &&
+        Array.isArray((body as Record<string, unknown>).broadcasts)
       ? ((body as Record<string, unknown>).broadcasts as unknown[])
       : body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).data)
         ? ((body as Record<string, unknown>).data as unknown[])
@@ -322,8 +317,7 @@ function parseBroadcasts(
           : typeof record.scheduled_at === "string"
             ? record.scheduled_at
             : null;
-    const status =
-      typeof record.status === "string" ? record.status : "unknown";
+    const status = typeof record.status === "string" ? record.status : "unknown";
     const postId =
       typeof record.post_id === "number"
         ? record.post_id

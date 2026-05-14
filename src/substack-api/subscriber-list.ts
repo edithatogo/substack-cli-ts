@@ -1,11 +1,6 @@
 import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
-import {
-  apiHeaders,
-  classifyFailure,
-  type FetchLike,
-  requestJson,
-} from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
 
 export interface SubscriberListEntry {
   email: string;
@@ -78,12 +73,8 @@ export async function fetchSubscriberList(
   }));
 
   const rawBody = response.body as Record<string, unknown> | undefined;
-  const hasMore =
-    typeof rawBody?.has_more === "boolean" ? rawBody.has_more : undefined;
-  const nextOffset =
-    typeof rawBody?.next_offset === "number"
-      ? rawBody.next_offset
-      : undefined;
+  const hasMore = typeof rawBody?.has_more === "boolean" ? rawBody.has_more : undefined;
+  const nextOffset = typeof rawBody?.next_offset === "number" ? rawBody.next_offset : undefined;
 
   return {
     status: "ok",

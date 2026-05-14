@@ -69,16 +69,9 @@ describe("compareDraftContractMatrixArtifacts", () => {
       "utf8",
     );
 
-    const comparison = await compareDraftContractMatrixArtifacts(
-      expectedFile,
-      actualFile,
-    );
+    const comparison = await compareDraftContractMatrixArtifacts(expectedFile, actualFile);
 
     assert.equal(comparison.equal, false);
-    assert.ok(
-      comparison.differences.some((difference) =>
-        difference.includes("confidence"),
-      ),
-    );
+    assert.ok(comparison.differences.some((difference) => difference.includes("confidence")));
   });
 });

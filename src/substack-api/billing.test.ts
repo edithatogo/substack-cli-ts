@@ -62,11 +62,7 @@ describe("fetchSubscriptionTiers", () => {
       ]),
     );
 
-    const result = await fetchSubscriptionTiers(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriptionTiers("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.tiers?.length, 2);
@@ -81,17 +77,11 @@ describe("fetchSubscriptionTiers", () => {
     const fetchFn = fakeFetch(
       200,
       JSON.stringify({
-        tiers: [
-          { id: "t1", name: "Tier 1", monthly_price: 10, yearly_price: 100 },
-        ],
+        tiers: [{ id: "t1", name: "Tier 1", monthly_price: 10, yearly_price: 100 }],
       }),
     );
 
-    const result = await fetchSubscriptionTiers(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriptionTiers("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.tiers?.length, 1);
@@ -102,11 +92,7 @@ describe("fetchSubscriptionTiers", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchSubscriptionTiers(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriptionTiers("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -114,11 +100,7 @@ describe("fetchSubscriptionTiers", () => {
   it("returns unauthenticated on 401", async () => {
     const fetchFn = fakeFetch(401, "{}");
 
-    const result = await fetchSubscriptionTiers(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchSubscriptionTiers("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -141,11 +123,7 @@ describe("fetchPayoutHistory", () => {
       ]),
     );
 
-    const result = await fetchPayoutHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPayoutHistory("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.payouts?.length, 1);
@@ -157,16 +135,10 @@ describe("fetchPayoutHistory", () => {
   it("parses amount_cents into amount", async () => {
     const fetchFn = fakeFetch(
       200,
-      JSON.stringify([
-        { id: "p1", amount_cents: 50000, currency: "usd", status: "pending" },
-      ]),
+      JSON.stringify([{ id: "p1", amount_cents: 50000, currency: "usd", status: "pending" }]),
     );
 
-    const result = await fetchPayoutHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPayoutHistory("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.payouts?.[0]?.amount, 500);
@@ -178,11 +150,7 @@ describe("fetchPayoutHistory", () => {
       JSON.stringify({ payouts: [], next_payout: "2026-06-01T00:00:00Z" }),
     );
 
-    const result = await fetchPayoutHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPayoutHistory("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.nextPayout, "2026-06-01T00:00:00Z");
@@ -191,11 +159,7 @@ describe("fetchPayoutHistory", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchPayoutHistory(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchPayoutHistory("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
@@ -215,11 +179,7 @@ describe("fetchTaxFormStatus", () => {
       ]),
     );
 
-    const result = await fetchTaxFormStatus(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchTaxFormStatus("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.forms?.length, 1);
@@ -236,11 +196,7 @@ describe("fetchTaxFormStatus", () => {
       }),
     );
 
-    const result = await fetchTaxFormStatus(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchTaxFormStatus("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.forms?.length, 1);
@@ -250,11 +206,7 @@ describe("fetchTaxFormStatus", () => {
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
-    const result = await fetchTaxFormStatus(
-      "https://test.substack.com",
-      material,
-      fetchFn,
-    );
+    const result = await fetchTaxFormStatus("https://test.substack.com", material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });

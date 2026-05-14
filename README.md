@@ -57,6 +57,7 @@ substack-cli publish post.md --yes
 # 5. Schedule
 substack-cli schedule post.md --at "2026-06-01T09:00:00Z" --yes
 ```
+
 - Final publish and schedule button flows.
 
 ## Setup

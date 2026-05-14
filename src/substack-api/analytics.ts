@@ -1,10 +1,5 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import {
-  apiHeaders,
-  classifyFailure,
-  type FetchLike,
-  requestJson,
-} from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
 
 export type AnalyticsReadStatus =
   | "ok"
@@ -136,8 +131,7 @@ export async function fetchPostAnalytics(
 
   return {
     status: "not-found",
-    message:
-      "No post analytics endpoint found. Substack analytics may be dashboard-only.",
+    message: "No post analytics endpoint found. Substack analytics may be dashboard-only.",
   };
 }
 
@@ -174,8 +168,7 @@ export async function fetchSubscriberGrowth(
 
   return {
     status: "not-found",
-    message:
-      "No subscriber growth endpoint found. This data may be dashboard-only.",
+    message: "No subscriber growth endpoint found. This data may be dashboard-only.",
   };
 }
 
@@ -214,8 +207,7 @@ export async function fetchEmailPerformance(
 
   return {
     status: "not-found",
-    message:
-      "No email performance endpoint found. This data may be dashboard-only.",
+    message: "No email performance endpoint found. This data may be dashboard-only.",
   };
 }
 
@@ -252,8 +244,7 @@ export async function fetchRevenueAnalytics(
 
   return {
     status: "not-found",
-    message:
-      "No revenue analytics endpoint found. This data may be dashboard-only.",
+    message: "No revenue analytics endpoint found. This data may be dashboard-only.",
   };
 }
 
@@ -303,10 +294,7 @@ export async function fetchAnalyticsInventory(
   };
 }
 
-function mapPostAnalytics(
-  postId: number,
-  body: Record<string, unknown>,
-): PostAnalytics {
+function mapPostAnalytics(postId: number, body: Record<string, unknown>): PostAnalytics {
   const title =
     typeof body.title === "string"
       ? body.title
@@ -366,9 +354,7 @@ function mapPostAnalytics(
   return { postId, title, views, readRate, emailOpens, emailClicks, referrers };
 }
 
-function mapSubscriberGrowth(
-  body: Record<string, unknown>,
-): SubscriberGrowth {
+function mapSubscriberGrowth(body: Record<string, unknown>): SubscriberGrowth {
   const period =
     typeof body.period === "string"
       ? body.period
@@ -413,10 +399,7 @@ function mapSubscriberGrowth(
   return { period, totalSubscribers, netChange, freeSubscribers, paidSubscribers, churned };
 }
 
-function parseEmailPerformance(
-  body: unknown,
-  limit: number,
-): EmailPerformance[] | null {
+function parseEmailPerformance(body: unknown, limit: number): EmailPerformance[] | null {
   const items = Array.isArray(body)
     ? body
     : body && typeof body === "object" && Array.isArray((body as Record<string, unknown>).emails)
@@ -454,10 +437,7 @@ function parseEmailPerformance(
         : typeof record.total_recipients === "number"
           ? record.total_recipients
           : 0;
-    const delivered =
-      typeof record.delivered === "number"
-        ? record.delivered
-        : recipients;
+    const delivered = typeof record.delivered === "number" ? record.delivered : recipients;
     const opens =
       typeof record.opens === "number"
         ? record.opens
@@ -483,9 +463,9 @@ function parseEmailPerformance(
         ? record.click_rate
         : typeof record.clickRate === "number"
           ? record.clickRate
-        : delivered > 0
-          ? clicks / delivered
-          : 0;
+          : delivered > 0
+            ? clicks / delivered
+            : 0;
     const unsubscribes =
       typeof record.unsubscribes === "number"
         ? record.unsubscribes
@@ -510,9 +490,7 @@ function parseEmailPerformance(
   return results.length > 0 ? results : null;
 }
 
-function mapRevenueAnalytics(
-  body: Record<string, unknown>,
-): RevenueAnalytics {
+function mapRevenueAnalytics(body: Record<string, unknown>): RevenueAnalytics {
   const period =
     typeof body.period === "string"
       ? body.period

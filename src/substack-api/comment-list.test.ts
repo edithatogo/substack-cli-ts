@@ -2,16 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import { type FetchLike } from "./client.js";
-import {
-  fetchCommentsForPost,
-  moderateComment,
-  replyToComment,
-} from "./comment-list.js";
+import { fetchCommentsForPost, moderateComment, replyToComment } from "./comment-list.js";
 
-function fakeFetch(
-  status: number,
-  body: string,
-): FetchLike {
+function fakeFetch(status: number, body: string): FetchLike {
   return () =>
     Promise.resolve({
       status,
@@ -51,12 +44,7 @@ describe("fetchCommentsForPost", () => {
       ]),
     );
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.comments!.length, 2);
@@ -74,12 +62,7 @@ describe("fetchCommentsForPost", () => {
   it("returns empty comments for empty response", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify([]));
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.comments!.length, 0);
@@ -88,28 +71,15 @@ describe("fetchCommentsForPost", () => {
   it("returns schema-drift for non-array response body", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({ not: "array" }));
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "schema-drift");
   });
 
   it("returns unauthenticated on 401", async () => {
-    const fetchFn = fakeFetch(
-      401,
-      JSON.stringify({ error: "unauthorized" }),
-    );
+    const fetchFn = fakeFetch(401, JSON.stringify({ error: "unauthorized" }));
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "unauthenticated");
   });
@@ -117,12 +87,7 @@ describe("fetchCommentsForPost", () => {
   it("returns forbidden on 403", async () => {
     const fetchFn = fakeFetch(403, JSON.stringify({}));
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "forbidden");
   });
@@ -130,26 +95,15 @@ describe("fetchCommentsForPost", () => {
   it("returns not-found on 404", async () => {
     const fetchFn = fakeFetch(404, JSON.stringify({}));
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "not-found");
   });
 
   it("returns network-error when fetch throws", async () => {
-    const fetchFn: FetchLike = () =>
-      Promise.reject(new Error("Network failure"));
+    const fetchFn: FetchLike = () => Promise.reject(new Error("Network failure"));
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "network-error");
   });
@@ -169,12 +123,7 @@ describe("fetchCommentsForPost", () => {
       ]),
     );
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.comments![0]!.id, 42);
@@ -211,13 +160,9 @@ describe("fetchCommentsForPost", () => {
       ]),
     );
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-      { limit: 2 },
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn, {
+      limit: 2,
+    });
 
     assert.equal(result.status, "ok");
     assert.equal(result.comments!.length, 2);
@@ -229,17 +174,19 @@ describe("fetchCommentsForPost", () => {
     const fetchFn = fakeFetch(
       200,
       JSON.stringify([
-        { id: null, body: "NoId", author_name: "X", author_handle: "x", published_at: "", status: "" },
+        {
+          id: null,
+          body: "NoId",
+          author_name: "X",
+          author_handle: "x",
+          published_at: "",
+          status: "",
+        },
         { body: "MissingId", author_name: "Y", author_handle: "y", published_at: "", status: "" },
       ]),
     );
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.comments!.length, 0);
@@ -259,12 +206,7 @@ describe("fetchCommentsForPost", () => {
       ]),
     );
 
-    const result = await fetchCommentsForPost(
-      "https://test.substack.com",
-      100,
-      material,
-      fetchFn,
-    );
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.comments![0]!.authorName, "NestedAuthor");
@@ -309,13 +251,7 @@ describe("moderateComment", () => {
   it("returns ok on successful pin", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify({}));
 
-    const result = await moderateComment(
-      "https://test.substack.com",
-      42,
-      "pin",
-      material,
-      fetchFn,
-    );
+    const result = await moderateComment("https://test.substack.com", 42, "pin", material, fetchFn);
 
     assert.equal(result.status, "ok");
     assert.equal(result.action, "pin");
@@ -356,21 +292,14 @@ describe("moderateComment", () => {
   it("returns failed on 404", async () => {
     const fetchFn = fakeFetch(404, JSON.stringify({}));
 
-    const result = await moderateComment(
-      "https://test.substack.com",
-      42,
-      "pin",
-      material,
-      fetchFn,
-    );
+    const result = await moderateComment("https://test.substack.com", 42, "pin", material, fetchFn);
 
     assert.equal(result.status, "failed");
     assert.equal(result.action, "pin");
   });
 
   it("returns failed when fetch throws", async () => {
-    const fetchFn: FetchLike = () =>
-      Promise.reject(new Error("Network failure"));
+    const fetchFn: FetchLike = () => Promise.reject(new Error("Network failure"));
 
     const result = await moderateComment(
       "https://test.substack.com",
@@ -451,8 +380,7 @@ describe("replyToComment", () => {
   });
 
   it("returns failed when fetch throws", async () => {
-    const fetchFn: FetchLike = () =>
-      Promise.reject(new Error("Network failure"));
+    const fetchFn: FetchLike = () => Promise.reject(new Error("Network failure"));
 
     const result = await replyToComment(
       "https://test.substack.com",

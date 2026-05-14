@@ -1,11 +1,6 @@
 import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
-import {
-  apiHeaders,
-  requestWrite,
-  uploadImage,
-  type FetchLike,
-} from "./client.js";
+import { apiHeaders, requestWrite, uploadImage, type FetchLike } from "./client.js";
 import { fetchPublication } from "./publication.js";
 
 const NavigationLinkSchema = z.object({
@@ -117,11 +112,10 @@ export async function updatePublicationSettings(
   updates: PublicationSettingsUpdate,
   options: { confirm?: boolean | undefined; dryRun?: boolean | undefined } = {},
 ): Promise<UpdatePublicationSettingsResult> {
-  const current = (await fetchPublication(
-    publicationUrl,
-    material,
-    fetchFn,
-  )) as unknown as Record<string, unknown>;
+  const current = (await fetchPublication(publicationUrl, material, fetchFn)) as unknown as Record<
+    string,
+    unknown
+  >;
 
   const merged: Record<string, unknown> = { ...current };
   for (const [key, value] of Object.entries(updates)) {
@@ -142,18 +136,9 @@ export async function updatePublicationSettings(
   }
 
   const headers = apiHeaders(material);
-  const endpoint = new URL(
-    "/api/v1/publication/update",
-    publicationUrl,
-  ).toString();
+  const endpoint = new URL("/api/v1/publication/update", publicationUrl).toString();
 
-  const response = await requestWrite(
-    fetchFn,
-    endpoint,
-    "POST",
-    headers,
-    merged,
-  );
+  const response = await requestWrite(fetchFn, endpoint, "POST", headers, merged);
 
   if (response.status < 200 || response.status >= 300) {
     return {
@@ -179,20 +164,14 @@ export async function uploadPublicationLogo(
   if (!options.yes) {
     return {
       status: "failed",
-      message:
-        "Logo upload requires confirmation. Pass { yes: true } to proceed.",
+      message: "Logo upload requires confirmation. Pass { yes: true } to proceed.",
     };
   }
 
   const headers = apiHeaders(material);
   const uploadUrl = new URL("/api/v1/image", publicationUrl).toString();
 
-  const uploadResult = await uploadImage(
-    fetchFn,
-    uploadUrl,
-    imagePath,
-    headers,
-  );
+  const uploadResult = await uploadImage(fetchFn, uploadUrl, imagePath, headers);
 
   if (uploadResult.status !== "ok" || !uploadResult.url) {
     return {
@@ -234,20 +213,14 @@ export async function uploadPublicationFavicon(
   if (!options.yes) {
     return {
       status: "failed",
-      message:
-        "Favicon upload requires confirmation. Pass { yes: true } to proceed.",
+      message: "Favicon upload requires confirmation. Pass { yes: true } to proceed.",
     };
   }
 
   const headers = apiHeaders(material);
   const uploadUrl = new URL("/api/v1/image", publicationUrl).toString();
 
-  const uploadResult = await uploadImage(
-    fetchFn,
-    uploadUrl,
-    imagePath,
-    headers,
-  );
+  const uploadResult = await uploadImage(fetchFn, uploadUrl, imagePath, headers);
 
   if (uploadResult.status !== "ok" || !uploadResult.url) {
     return {

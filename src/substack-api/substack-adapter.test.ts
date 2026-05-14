@@ -1,13 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import {
-  materialFromCookieHeader,
-  materialFromCookies,
-} from "./auth.js";
-import {
-  createSubstackClient,
-  extractSessionToken,
-} from "./substack-adapter.js";
+import { materialFromCookieHeader, materialFromCookies } from "./auth.js";
+import { createSubstackClient, extractSessionToken } from "./substack-adapter.js";
 
 describe("extractSessionToken", () => {
   it("extracts substack.sid from cookie header", () => {
@@ -77,27 +71,13 @@ describe("extractSessionToken", () => {
   });
 
   it("throws when cookie header is empty string", () => {
-    const material = materialFromCookieHeader(
-      "",
-      "https://test.substack.com",
-      "env",
-    );
-    assert.throws(
-      () => extractSessionToken(material),
-      /No session cookie/,
-    );
+    const material = materialFromCookieHeader("", "https://test.substack.com", "env");
+    assert.throws(() => extractSessionToken(material), /No session cookie/);
   });
 
   it("throws when cookies array is empty", () => {
-    const material = materialFromCookies(
-      [],
-      "https://test.substack.com",
-      "local-profile",
-    );
-    assert.throws(
-      () => extractSessionToken(material),
-      /No session cookie/,
-    );
+    const material = materialFromCookies([], "https://test.substack.com", "local-profile");
+    assert.throws(() => extractSessionToken(material), /No session cookie/);
   });
 
   it("creates client with publication URL containing a path", () => {

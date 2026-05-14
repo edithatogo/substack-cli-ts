@@ -139,11 +139,7 @@ export async function observeDraftTraffic(
   const requests: DraftRequestCapture[] = [];
   const responses: DraftResponseCapture[] = [];
 
-  const onRequest = (request: {
-    url(): string;
-    method(): string;
-    postData(): string | null;
-  }) => {
+  const onRequest = (request: { url(): string; method(): string; postData(): string | null }) => {
     if (!DRAFT_ENDPOINT.test(request.url())) {
       return;
     }
@@ -205,17 +201,11 @@ export async function observeDraftTraffic(
     `${capturedAt.replaceAll(":", "-")}-draft-capture.json`,
   );
 
-  await writeFile(
-    artifactFile,
-    `${JSON.stringify(artifact, null, 2)}\n`,
-    "utf8",
-  );
+  await writeFile(artifactFile, `${JSON.stringify(artifact, null, 2)}\n`, "utf8");
 
   return {
     status:
-      artifact.requests.length > 0 || artifact.responses.length > 0
-        ? "captured"
-        : "timed-out",
+      artifact.requests.length > 0 || artifact.responses.length > 0 ? "captured" : "timed-out",
     artifactFile,
     publicationUrl: options.publicationUrl,
     pageUrl: page.url(),
@@ -243,10 +233,7 @@ export async function compareDraftCaptureArtifacts(
 
   const expectedComparable = comparableReview(expected);
   const actualComparable = comparableReview(actual);
-  const differences = diffComparableReview(
-    expectedComparable,
-    actualComparable,
-  );
+  const differences = diffComparableReview(expectedComparable, actualComparable);
 
   return {
     equal: differences.length === 0,
@@ -279,9 +266,7 @@ function classifyBody(body: string): "json" | "text" | "empty" {
   }
 }
 
-async function loadDraftCaptureReview(
-  artifactFile: string,
-): Promise<DraftCaptureReview> {
+async function loadDraftCaptureReview(artifactFile: string): Promise<DraftCaptureReview> {
   const raw = await readFile(artifactFile, "utf8");
   const json = JSON.parse(raw) as unknown;
 
@@ -415,10 +400,7 @@ function extractInterestingFields(
   }
 }
 
-function pickValue(
-  record: Record<string, unknown>,
-  keys: string[],
-): string | number | undefined {
+function pickValue(record: Record<string, unknown>, keys: string[]): string | number | undefined {
   for (const key of keys) {
     const value = record[key];
     if (typeof value === "string" || typeof value === "number") {
@@ -429,10 +411,7 @@ function pickValue(
   return undefined;
 }
 
-function pickString(
-  record: Record<string, unknown>,
-  keys: string[],
-): string | undefined {
+function pickString(record: Record<string, unknown>, keys: string[]): string | undefined {
   for (const key of keys) {
     const value = record[key];
     if (typeof value === "string" && value.length > 0) {
