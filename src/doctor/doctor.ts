@@ -1,4 +1,4 @@
-import { access, readFile, stat } from "node:fs/promises";
+﻿import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { loadSession } from "../auth/session-store.js";
 import {
@@ -94,7 +94,7 @@ export function checkTransport(config: EffectiveConfig): DoctorCheck {
         name: "transport",
         status: "error",
         message: `Browserbase runtime is selected but missing ${missing.map(([name]) => name).join(", ")}.`,
-        details: { runtime: config.browserRuntime },
+        details: { runtime: config.browserRuntime, runtimeSource: "default-or-config" },
       };
     }
   }
@@ -105,15 +105,18 @@ export function checkTransport(config: EffectiveConfig): DoctorCheck {
       status: "warn",
       message:
         "Camoufox runtime is planned but not fully validated; use local runtime for current live drafting.",
-      details: { runtime: config.browserRuntime },
+      details: { runtime: config.browserRuntime, runtimeSource: "config" },
     };
   }
 
   return {
     name: "transport",
     status: "ok",
-    message: `${config.browserRuntime} runtime is configured.`,
-    details: { runtime: config.browserRuntime },
+    message:
+      config.browserRuntime === "local"
+        ? "Browser runtime is explicitly set to local."
+        : "Browser runtime defaults to browserbase.",
+    details: { runtime: config.browserRuntime, runtimeSource: "default-or-config" },
   };
 }
 
@@ -240,7 +243,7 @@ async function checkLocalProfile(): Promise<DoctorCheck> {
     name: "local-browser-profile",
     status: hasLockFile ? "warn" : "ok",
     message: hasLockFile
-      ? "Local browser profile exists but has a chrome.pid lock file. If Chrome is closed, remove the stale lock."
+      ? "Local browser profile exists but has a chrome.pid lock file. If Chrome is closed, remove the stale or sync lock, or move the profile off OneDrive if needed."
       : "Local browser profile exists.",
     details: { profileDir, lockFilePresent: hasLockFile },
   };

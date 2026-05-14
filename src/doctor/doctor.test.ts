@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -70,6 +70,7 @@ describe("doctor checks", () => {
     const check = checkTransport(config({ browserRuntime: "local" }));
 
     assert.equal(check.status, "ok");
+    assert.match(check.message, /explicitly set to local/i);
   });
 
   it("warns when no local API probe auth source is available", async () => {
@@ -104,7 +105,7 @@ describe("doctor checks", () => {
 
       const report = await runDoctor();
 
-      assert.equal(report.status, "warn");
+      assert.equal(report.status, "error");
       assert.deepEqual(
         report.checks.map((check) => check.name),
         [
@@ -167,3 +168,4 @@ function restoreEnv(name: string, value: string | undefined): void {
 
   process.env[name] = value;
 }
+
