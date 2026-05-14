@@ -1,7 +1,7 @@
 # substack-cli
 
 [![CI](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen)](https://github.com/edithatogo/substack-cli-ts)
+[![codecov](https://codecov.io/gh/edithatogo/substack-cli-ts/branch/master/graph/badge.svg)](https://codecov.io/gh/edithatogo/substack-cli-ts)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/typescript-5.9-blue)](https://www.typescriptlang.org)
