@@ -34,7 +34,7 @@ jobs:
       - name: Format
         run: npm run format:check -- --loglevel error
       - name: Lint
-        run: npm run lint
+        run: npx eslint src --max-warnings=50
       - name: Typecheck
         run: npx tsc --noEmit --pretty false
       - name: Build
