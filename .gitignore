@@ -1,5 +1,6 @@
 node_modules/
 dist/
+!vendor/substack-api/dist/
 coverage/
 .env
 .env.*
