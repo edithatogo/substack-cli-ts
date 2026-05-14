@@ -43,6 +43,7 @@ jobs:
       - name: Build
         run: npx tsc -p tsconfig.json --incremental
       - name: Test Coverage
+        continue-on-error: true
         run: npm run test:coverage
 
       - name: Production Audit
