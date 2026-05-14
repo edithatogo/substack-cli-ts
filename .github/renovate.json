@@ -47,7 +47,6 @@
     "automerge": true,
     "schedule": ["before 9am on Monday"]
   },
-  "ignoreDeps": ["camoufox-js"],
   "ignorePaths": ["vendor/**"],
   "rebaseWhen": "conflicted",
   "prCreation": "immediate",
