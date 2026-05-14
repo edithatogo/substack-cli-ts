@@ -1,7 +1,7 @@
 {
   "name": "substack-cli",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "type": "module",
   "engines": {
     "node": ">=18.0.0"
@@ -18,7 +18,7 @@
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:mutation": "stryker run",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
