@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [master, main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,7 +26,7 @@ jobs:
           cache: npm
 
       - name: Engines Check
-        run: node -e "process.exitCode=require('semver').satisfies(process.version.slice(1),require('./package.json').engines.node)?0:1"
+        run: node -e "const m=process.version.slice(1).split('.').map(Number),r=require('./package.json').engines.node.replace(/[>= ]+/g,'').split('.').map(Number);process.exitCode=m[0]>=r[0]&&m[1]>=r[1]?0:1"
 
       - name: Install
         run: npm ci
@@ -72,7 +73,7 @@ jobs:
           if-no-files-found: ignore
 
   # Manual-only E2E job: requires live Substack credentials and a Chromium
-  # browser binary.  Trigger with workflow_dispatch from the Actions tab.
+  # browser binary. Trigger with workflow_dispatch from the Actions tab.
   e2e:
     name: E2E
     runs-on: ubuntu-latest
