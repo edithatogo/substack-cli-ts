@@ -1,0 +1,19 @@
+﻿# MCP Publish Helper
+
+The repository uses `registry.server.json` as the registry-ready metadata artifact.
+
+## Helper command
+
+Create a simple manual publish flow by running:
+
+```bash
+mcp-publisher publish --file registry.server.json
+```
+
+If the official CLI uses a different option shape, update this helper after confirming the installed version.
+
+## Purpose
+
+- Keep the registry submission step explicit.
+- Avoid coupling registry publication to the main CLI runtime.
+- Provide a single source of truth for the registry payload.
