@@ -98,7 +98,7 @@ jobs:
         run: npm run test:mutation
       - name: Upload Mutation Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mutation-report
           path: reports/mutation
