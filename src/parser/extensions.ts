@@ -1,8 +1,8 @@
-import { mergeAttributes, Node } from "@tiptap/core";
+import { Node, mergeAttributes } from "@tiptap/core";
 import { Table } from "@tiptap/extension-table";
-import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
+import { TableRow } from "@tiptap/extension-table-row";
 
 interface SubstackImageAttributes {
   src: string | null;

@@ -2,9 +2,9 @@ import {
   buildSubstackDraftPayload,
   validatePayloadCompatibility,
 } from "../substack-api/payload.js";
-import { resolvePostTitle } from "./title.js";
-import type { PreparedPost } from "../types.js";
 import type { SubstackDraftPayload } from "../substack-api/payload.js";
+import type { PreparedPost } from "../types.js";
+import { resolvePostTitle } from "./title.js";
 
 export interface PrepublishReport {
   status: "ready" | "blocked";

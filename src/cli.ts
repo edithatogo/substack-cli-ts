@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+import { appendFileSync, existsSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 import { Command } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
 import {
@@ -8,8 +10,6 @@ import {
   saveSession,
 } from "./auth/session-store.js";
 import { performSubstackLogin } from "./auth/substack-login.js";
-import { createLocalBrowserSession } from "./browser/local-browser.js";
-import { createStagehandSession } from "./browser/stagehand.js";
 import {
   captureLocalDiagnostics,
   capturePublishScreenDiagnostics,
@@ -21,22 +21,22 @@ import {
   observeDraftTraffic,
   writeDraftCaptureFixture,
 } from "./browser/draft-capture.js";
-import { inferDraftContract } from "./browser/draft-contract.js";
+import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
 import {
   buildDraftContractMatrix,
   compareDraftContractMatrixArtifacts,
   writeDraftContractMatrixFixture,
 } from "./browser/draft-contract-matrix.js";
-import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
-import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
-import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
+import { inferDraftContract } from "./browser/draft-contract.js";
+import { createLocalBrowserSession } from "./browser/local-browser.js";
+import { createStagehandSession } from "./browser/stagehand.js";
 import {
-  stateDir,
+  analyticsSnapshotsDir,
   configFilePath,
   draftMappingsFilePath,
-  sessionFilePath,
   localBrowserProfileDir,
-  analyticsSnapshotsDir,
+  sessionFilePath,
+  stateDir,
 } from "./config/paths.js";
 import {
   loadConfig,
@@ -45,15 +45,23 @@ import {
   requireSubstackCredentials,
   updateConfig,
 } from "./config/store.js";
+import { runDoctor } from "./doctor/doctor.js";
+import { runMcpServer } from "./mcp/server.js";
+import {
+  buildMcpSummaryResource,
+  buildMcpSurfaceManifest,
+  summarizeMcpSurface,
+} from "./mcp/surface.js";
+import { summarizeMediaManifest } from "./parser/media.js";
+import { evaluateDistributionPolicy, summarizeDistributionPolicy } from "./policy/distribution.js";
 import {
   maybeWriteTrace,
   printPreparedPost,
   runBrowserWorkflow,
 } from "./publish/browser-workflow.js";
-import { runDoctor } from "./doctor/doctor.js";
+import { preparePost } from "./publish/prepare.js";
 import { prepublishPost } from "./publish/prepublish.js";
 import { resolvePostTitle } from "./publish/title.js";
-import { preparePost } from "./publish/prepare.js";
 import { resolveTransport } from "./publish/transport.js";
 import {
   compareWorkflowTraceArtifacts,
@@ -61,83 +69,75 @@ import {
   summarizeWorkflowTrace,
   writeWorkflowTraceFixture,
 } from "./publish/workflow-trace.js";
-import { evaluateDistributionPolicy, summarizeDistributionPolicy } from "./policy/distribution.js";
+import { captureFixture, compareFixture, validateSchemaFile } from "./schema/fixtures.js";
 import {
-  buildMcpSummaryResource,
-  buildMcpSurfaceManifest,
-  summarizeMcpSurface,
-} from "./mcp/surface.js";
-import { runMcpServer } from "./mcp/server.js";
-import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
+  fetchAnalyticsInventory,
+  fetchEmailPerformance,
+  fetchPostAnalytics,
+  fetchRevenueAnalytics,
+  fetchSubscriberGrowth,
+} from "./substack-api/analytics.js";
 import {
+  type ApiAuthSource,
   resolveApiAuthMaterial,
   summarizeApiAuthMaterial,
   validateApiAuthMaterial,
-  type ApiAuthSource,
 } from "./substack-api/auth.js";
+import {
+  fetchBillingSummary,
+  fetchPayoutHistory,
+  fetchSubscriptionTiers,
+  fetchTaxFormStatus,
+} from "./substack-api/billing.js";
+import { fetchDomainStatus } from "./substack-api/domain.js";
+import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
+import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
 import {
   findDraftMapping,
   loadDraftMappings,
   saveDraftMapping,
 } from "./substack-api/draft-mappings.js";
+import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
 import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
-import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
-import { buildSubstackDraftPayload } from "./substack-api/payload.js";
-import { readApiInventory } from "./substack-api/read-model.js";
-import { captureFixture, compareFixture, validateSchemaFile } from "./schema/fixtures.js";
-import { summarizeMediaManifest } from "./parser/media.js";
-import { redact, redactUrl } from "./util/redact.js";
 import {
-  fetchPostAnalytics,
-  fetchSubscriberGrowth,
-  fetchEmailPerformance,
-  fetchRevenueAnalytics,
-  fetchAnalyticsInventory,
-} from "./substack-api/analytics.js";
-import {
-  fetchSubscriptionTiers,
-  fetchPayoutHistory,
-  fetchTaxFormStatus,
-  fetchBillingSummary,
-} from "./substack-api/billing.js";
-import {
-  fetchEmailTemplate,
-  fetchBroadcastHistory,
   cancelScheduledBroadcast,
+  fetchBroadcastHistory,
+  fetchEmailTemplate,
   sendTestEmail,
 } from "./substack-api/email.js";
 import {
-  fetchPodcastSection,
-  fetchPodcastEpisodes,
-  fetchPodcastSettings,
+  crossPost,
+  fetchApiTokens,
+  fetchIntegrations,
+  importFromRss,
+  importFromWordPress,
+} from "./substack-api/integrations.js";
+import { createNote, getNote, listNotes } from "./substack-api/notes.js";
+import { buildSubstackDraftPayload } from "./substack-api/payload.js";
+import {
   createPodcastEpisode,
+  fetchPodcastEpisodes,
+  fetchPodcastSection,
+  fetchPodcastSettings,
+  fetchVideoSettings,
   schedulePodcastEpisode,
   uploadVideo,
-  fetchVideoSettings,
 } from "./substack-api/podcast.js";
-import {
-  fetchIntegrations,
-  crossPost,
-  importFromWordPress,
-  importFromRss,
-  fetchApiTokens,
-} from "./substack-api/integrations.js";
-import { fetchPublication } from "./substack-api/publication.js";
+import { readOwnProfile, readPublicProfile } from "./substack-api/profile.js";
 import {
   fetchPublicationSettings,
   updatePublicationSettings,
-  uploadPublicationLogo,
   uploadPublicationFavicon,
+  uploadPublicationLogo,
 } from "./substack-api/publication-settings.js";
-import { fetchDomainStatus } from "./substack-api/domain.js";
-import { fetchTeamMembers } from "./substack-api/team.js";
-import { getSubscriberCount } from "./substack-api/subscriber.js";
-import { readOwnProfile, readPublicProfile } from "./substack-api/profile.js";
-import { listNotes, getNote, createNote } from "./substack-api/notes.js";
-import { createSubstackClient } from "./substack-api/substack-adapter.js";
+import { fetchPublication } from "./substack-api/publication.js";
+import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
+import { readApiInventory } from "./substack-api/read-model.js";
 import { fetchSubscriberList } from "./substack-api/subscriber-list.js";
-import { appendFileSync, existsSync, mkdirSync } from "node:fs";
-import { join } from "node:path";
+import { getSubscriberCount } from "./substack-api/subscriber.js";
+import { createSubstackClient } from "./substack-api/substack-adapter.js";
+import { fetchTeamMembers } from "./substack-api/team.js";
+import { redact, redactUrl } from "./util/redact.js";
 
 const program = new Command();
 
@@ -1774,7 +1774,7 @@ apiAnalytics
 
       const date = new Date().toISOString().slice(0, 10);
       const file = join(snapshotsDir, `${options.interval}-${date}.jsonl`);
-      appendFileSync(file, JSON.stringify(snapshot) + "\n");
+      appendFileSync(file, `${JSON.stringify(snapshot)}\n`);
 
       console.log(
         JSON.stringify(

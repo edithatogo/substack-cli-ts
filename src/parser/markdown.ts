@@ -2,11 +2,11 @@ import { readFile } from "node:fs/promises";
 import { generateJSON } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import { marked } from "marked";
-import { parseFrontmatter } from "./frontmatter.js";
+import type { ParsedPost, ProseMirrorNode } from "../types.js";
 import { getTiptapExtensions } from "./extensions.js";
+import { parseFrontmatter } from "./frontmatter.js";
 import { buildMediaManifest } from "./media.js";
 import { validateProseMirrorDocument } from "./schema.js";
-import type { ParsedPost, ProseMirrorNode } from "../types.js";
 
 export async function parseMarkdownFile(filePath: string): Promise<ParsedPost> {
   const markdown = await readFile(filePath, "utf8");

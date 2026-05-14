@@ -1,5 +1,5 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import { apiHeaders, requestDelete, requestWrite, type FetchLike } from "./client.js";
+import { type FetchLike, apiHeaders, requestDelete, requestWrite } from "./client.js";
 import { createSubstackClient } from "./substack-adapter.js";
 
 export interface NoteSummary {

@@ -1,15 +1,15 @@
 import type { Cookie } from "playwright-core";
 import { z } from "zod";
 import { createLocalBrowserSession } from "../browser/local-browser.js";
+import { type EffectiveConfig, requirePublicationUrl } from "../config/store.js";
+import { redact } from "../util/redact.js";
 import {
+  type ApiReadStatus,
+  type FetchLike,
   apiHeaders,
   classifyFailure,
-  type FetchLike,
   requestJson,
-  type ApiReadStatus,
 } from "./client.js";
-import { requirePublicationUrl, type EffectiveConfig } from "../config/store.js";
-import { redact } from "../util/redact.js";
 
 export type ApiAuthSource = "env" | "local-profile";
 

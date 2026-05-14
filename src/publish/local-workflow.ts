@@ -1,17 +1,17 @@
 import type { Locator, Page } from "playwright-core";
 import { createLocalBrowserSession } from "../browser/local-browser.js";
 import { localBrowserProfileDir } from "../config/paths.js";
-import { requirePublicationUrl, type EffectiveConfig } from "../config/store.js";
+import { type EffectiveConfig, requirePublicationUrl } from "../config/store.js";
+import type { DraftMapping } from "../substack-api/draft-mappings.js";
 import type { PreparedPost } from "../types.js";
 import type {
-  BrowserWorkflowResult,
   BrowserWorkflowOptions,
+  BrowserWorkflowResult,
   DraftOperation,
   WorkflowStep,
 } from "./browser-workflow.js";
-import type { TransportResolution } from "./transport.js";
-import type { DraftMapping } from "../substack-api/draft-mappings.js";
 import { resolvePostTitle } from "./title.js";
+import type { TransportResolution } from "./transport.js";
 
 export async function runLocalDraftWorkflow(
   prepared: PreparedPost,

@@ -1,9 +1,9 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
-import { draftCaptureDir } from "../config/paths.js";
-import { redactUrl } from "../util/redact.js";
 import type { Page } from "playwright-core";
 import { z } from "zod";
+import { draftCaptureDir } from "../config/paths.js";
+import { redactUrl } from "../util/redact.js";
 
 export interface DraftCaptureOptions {
   timeoutMs: number;

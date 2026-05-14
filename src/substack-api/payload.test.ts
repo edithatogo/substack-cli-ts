@@ -4,8 +4,8 @@ import { fc, test as fcTest } from "vitest/fast-check";
 import { parseMarkdownString } from "../parser/markdown.js";
 import type { ProseMirrorNode } from "../types.js";
 import {
-  buildSubstackDraftPayload,
   buildDraftWriteRequestBody,
+  buildSubstackDraftPayload,
   validatePayloadCompatibility,
 } from "./payload.js";
 
@@ -272,7 +272,7 @@ describe("validatePayloadCompatibility", () => {
 });
 
 describe("buildDraftWriteRequestBody", () => {
-  it("builds create request body with correct fields", () => {
+  it("builds create request body with correct fields", async () => {
     const { buildDraftWriteRequestBody } = await import("./payload.js");
     const payload = buildSubstackDraftPayload({
       filePath: "test.md",

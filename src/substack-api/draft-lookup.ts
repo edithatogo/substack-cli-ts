@@ -1,7 +1,7 @@
-import { buildSubstackDraftPayload } from "./payload.js";
-import type { DraftMapping } from "./draft-mappings.js";
-import type { ApiReadInventory, PostSummary, SectionSummary } from "./read-model.js";
 import type { ParsedPost } from "../types.js";
+import type { DraftMapping } from "./draft-mappings.js";
+import { buildSubstackDraftPayload } from "./payload.js";
+import type { ApiReadInventory, PostSummary, SectionSummary } from "./read-model.js";
 
 export type DraftDuplicateSource = "inventory" | "mapping";
 

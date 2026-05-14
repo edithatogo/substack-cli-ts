@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { parseMarkdownString } from "./markdown.js";
 import { preparePost } from "../publish/prepare.js";
 import type { ProseMirrorNode } from "../types.js";
+import { parseMarkdownString } from "./markdown.js";
 
 function findNodes(root: ProseMirrorNode, type: string): ProseMirrorNode[] {
   const found: ProseMirrorNode[] = [];

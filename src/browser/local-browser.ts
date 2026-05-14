@@ -1,7 +1,7 @@
-import { mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { mkdir } from "node:fs/promises";
 import { getChromePath } from "chrome-launcher";
-import { chromium, type BrowserContext, type Page } from "playwright-core";
+import { type BrowserContext, type Page, chromium } from "playwright-core";
 import { localBrowserProfileDir } from "../config/paths.js";
 import { BrowserNotFoundError } from "./errors.js";
 

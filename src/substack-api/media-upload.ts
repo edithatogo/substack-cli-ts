@@ -1,5 +1,5 @@
 import { access } from "node:fs/promises";
-import { extname, resolve, dirname } from "node:path";
+import { dirname, extname, resolve } from "node:path";
 import type { ProseMirrorNode } from "../types.js";
 import type { FetchLike } from "./client.js";
 import { uploadImage } from "./client.js";

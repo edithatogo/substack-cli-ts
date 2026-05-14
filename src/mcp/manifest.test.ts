@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import {
+  buildMcpResourceDescriptors,
+  buildMcpSummaryResource,
+  buildMcpSurfaceGroups,
   buildMcpSurfaceManifest,
   summarizeMcpSurface,
-  buildMcpSummaryResource,
-  buildMcpResourceDescriptors,
-  buildMcpSurfaceGroups,
 } from "./manifest.js";
 
 describe("buildMcpSurfaceManifest", () => {

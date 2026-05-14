@@ -3,16 +3,16 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
+import { type EffectiveConfig, updateConfig } from "../config/store.js";
 import {
+  type DoctorCheck,
+  type DoctorStatus,
   checkPublication,
   checkSubstackCredentials,
   checkTransport,
   runDoctor,
   summarizeStatus,
-  type DoctorCheck,
-  type DoctorStatus,
 } from "./doctor.js";
-import { updateConfig, type EffectiveConfig } from "../config/store.js";
 
 describe("summarizeStatus", () => {
   it.each([

@@ -1,27 +1,27 @@
 import { writeFile } from "node:fs/promises";
-import type { PreparedPost } from "../types.js";
-import { loadSession, saveSession, createStoredSession } from "../auth/session-store.js";
+import { createStoredSession, loadSession, saveSession } from "../auth/session-store.js";
 import {
+  getEditorText,
   insertTextIntoActiveElement,
   pasteHtmlIntoEditor,
-  getEditorText,
 } from "../browser/editor.js";
+import { CaptchaDetectedError } from "../browser/errors.js";
 import {
+  type StagehandSession,
   createStagehandSession,
   withStagehandRetry,
-  type StagehandSession,
 } from "../browser/stagehand.js";
-import { CaptchaDetectedError } from "../browser/errors.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
+import type { DraftMapping } from "../substack-api/draft-mappings.js";
+import { validatePayloadCompatibility } from "../substack-api/payload.js";
+import type { PreparedPost } from "../types.js";
 import { runLocalDraftWorkflow } from "./local-workflow.js";
+import { resolvePostTitle } from "./title.js";
 import {
-  resolveTransport,
   type TransportPreference,
   type TransportResolution,
+  resolveTransport,
 } from "./transport.js";
-import { resolvePostTitle } from "./title.js";
-import { validatePayloadCompatibility } from "../substack-api/payload.js";
-import type { DraftMapping } from "../substack-api/draft-mappings.js";
 
 export interface WorkflowStep {
   name: string;

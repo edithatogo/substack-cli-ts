@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import {
+  EmbedNode,
   PaywallDivider,
   SubscribeWidget,
   SubstackImage,
-  EmbedNode,
   getTiptapExtensions,
 } from "./extensions.js";
 
@@ -115,7 +115,7 @@ describe("SubstackImage", () => {
     const addAttrs = SubstackImage.addAttributes;
     assert.ok(addAttrs);
     const attrs = addAttrs();
-    const el = { getAttribute: () => null } as HTMLElement;
+    const _el = { getAttribute: () => null } as HTMLElement;
 
     assert.equal(attrs.src.renderHTML({ src: null }), undefined);
     assert.equal(attrs.alt.renderHTML({ alt: null }), undefined);

@@ -3,8 +3,8 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
-import { uploadDraftMedia } from "./media-upload.js";
 import type { ProseMirrorNode } from "../types.js";
+import { uploadDraftMedia } from "./media-upload.js";
 
 const dummyFetch: typeof fetch = async () => new Response(null, { status: 200 });
 
@@ -197,9 +197,9 @@ describe("uploadDraftMedia", () => {
 
       const doc = makeDoc([{ src: imagePath }]);
 
-      let capturedBody: unknown;
+      let _capturedBody: unknown;
       const fetchSpy = async (url: string, init?: Record<string, unknown>) => {
-        capturedBody = init?.body;
+        _capturedBody = init?.body;
         assert.ok(url.includes("/api/v1/image"));
         return {
           status: 200,

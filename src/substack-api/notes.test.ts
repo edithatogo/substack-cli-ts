@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it, vi } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
-import { createSubstackClient } from "./substack-adapter.js";
 import { type FetchLike } from "./client.js";
+import { createSubstackClient } from "./substack-adapter.js";
 
 vi.mock("./substack-adapter.js", () => ({
   createSubstackClient: vi.fn(),

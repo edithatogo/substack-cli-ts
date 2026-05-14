@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { planPublishWrite, executePublishWrite } from "./publish-write.js";
 import type { ApiAuthMaterial } from "./auth.js";
+import { executePublishWrite, planPublishWrite } from "./publish-write.js";
 
 const dummyMaterial: ApiAuthMaterial = {
   source: "env",
@@ -61,7 +61,7 @@ describe("executePublishWrite", () => {
       "https://test.substack.com",
     );
 
-    const mockFetch = async (url: string, init?: Record<string, unknown>) => ({
+    const mockFetch = async (_url: string, _init?: Record<string, unknown>) => ({
       status: 200,
       text: async () =>
         JSON.stringify({

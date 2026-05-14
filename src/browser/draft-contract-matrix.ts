@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { z } from "zod";
 import type { DraftCaptureReview } from "./draft-capture.js";
 import { inferDraftContract } from "./draft-contract.js";
-import { z } from "zod";
 
 export interface DraftContractMatrixInput {
   sourceFile: string;

@@ -134,7 +134,7 @@ describe("requireBrowserbaseConfig", () => {
     );
   });
 
-  it("passes when both are present", () => {
+  it("passes when both are present", async () => {
     const { requireBrowserbaseConfig } = await import("./store.js");
     assert.doesNotThrow(() =>
       requireBrowserbaseConfig({
@@ -150,7 +150,7 @@ describe("loadConfig error handling", () => {
     const { loadConfig } = await import("./store.js");
     // Mock readFile to throw a non-ENOENT error
     const { readFile } = await import("node:fs/promises");
-    const original = readFile;
+    const _original = readFile;
     // Just verify the function exists and errors propagate
     assert.ok(typeof loadConfig === "function");
   });

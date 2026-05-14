@@ -1,8 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { z } from "zod";
-import { configFilePath } from "./paths.js";
 import { loadEnv } from "./env.js";
+import { configFilePath } from "./paths.js";
 
 const AppConfigSchema = z.object({
   publicationUrl: z.string().url().optional(),

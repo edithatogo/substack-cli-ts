@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { describe, it } from "vitest";
 import { chromium } from "playwright-core";
+import { describe, it } from "vitest";
 
 const requiredVars = ["SUBSTACK_EMAIL", "SUBSTACK_PASSWORD", "SUBSTACK_PUBLICATION_URL"] as const;
 const liveCredentials = requiredVars.every((v) => process.env[v]);

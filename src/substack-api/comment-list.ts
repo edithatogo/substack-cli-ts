@@ -1,8 +1,8 @@
 import type { ApiAuthMaterial } from "./auth.js";
 import {
+  type FetchLike,
   apiHeaders,
   classifyFailure,
-  type FetchLike,
   requestJson,
   requestWrite,
 } from "./client.js";

@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
+import {
+  fetchAnalyticsInventory,
+  fetchEmailPerformance,
+  fetchPostAnalytics,
+  fetchRevenueAnalytics,
+  fetchSubscriberGrowth,
+} from "./analytics.js";
 import { materialFromCookieHeader } from "./auth.js";
 import { type FetchLike } from "./client.js";
-import {
-  fetchPostAnalytics,
-  fetchSubscriberGrowth,
-  fetchEmailPerformance,
-  fetchRevenueAnalytics,
-  fetchAnalyticsInventory,
-} from "./analytics.js";
 
 function fakeFetch(status: number, body: string): FetchLike {
   return () =>

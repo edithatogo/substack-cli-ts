@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
-import { type FetchLike } from "./client.js";
 import {
-  fetchSubscriptionTiers,
-  fetchPayoutHistory,
-  fetchTaxFormStatus,
   fetchBillingSummary,
+  fetchPayoutHistory,
+  fetchSubscriptionTiers,
+  fetchTaxFormStatus,
 } from "./billing.js";
+import { type FetchLike } from "./client.js";
 
 function fakeFetch(status: number, body: string): FetchLike {
   return () =>

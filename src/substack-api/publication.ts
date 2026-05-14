@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
-import { apiHeaders, requestJson, type FetchLike } from "./client.js";
+import { type FetchLike, apiHeaders, requestJson } from "./client.js";
 
 const ColorsSchema = z
   .object({

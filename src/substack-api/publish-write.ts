@@ -1,7 +1,7 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import type { DraftMapping } from "./draft-mappings.js";
 import type { FetchLike } from "./client.js";
 import { apiHeaders, requestWrite } from "./client.js";
+import type { DraftMapping } from "./draft-mappings.js";
 
 export interface PublishWritePlan {
   status: "planned";
@@ -27,7 +27,7 @@ export interface PublishWriteResult {
   error?: string | undefined;
 }
 
-const PREPUBLISH_PATH = "/api/v1/drafts/{id}/prepublish";
+const _PREPUBLISH_PATH = "/api/v1/drafts/{id}/prepublish";
 const PUBLISH_PATH = "/api/v1/drafts/{id}/publish";
 const SCHEDULE_PATH = "/api/v1/drafts/{id}/schedule";
 

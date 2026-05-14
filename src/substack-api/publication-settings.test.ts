@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
-import { writeFileSync, unlinkSync } from "node:fs";
+import { unlinkSync, writeFileSync } from "node:fs";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import type { FetchLike } from "./client.js";
 import {
+  computeSettingsDiff,
   fetchPublicationSettings,
   updatePublicationSettings,
   uploadPublicationFavicon,
   uploadPublicationLogo,
-  computeSettingsDiff,
 } from "./publication-settings.js";
 
 describe("fetchPublicationSettings", () => {

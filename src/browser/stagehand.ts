@@ -1,13 +1,13 @@
-import type { Stagehand as StagehandClass } from "@browserbasehq/stagehand";
 import { mkdir } from "node:fs/promises";
+import type { Stagehand as StagehandClass } from "@browserbasehq/stagehand";
 import { cacheDir, localBrowserProfileDir } from "../config/paths.js";
 import {
+  type EffectiveConfig,
   loadEffectiveConfig,
   requireBrowserbaseConfig,
   requirePublicationUrl,
-  type EffectiveConfig,
 } from "../config/store.js";
-import { SessionTimeoutError, NavigationTimeoutError } from "./errors.js";
+import { NavigationTimeoutError, SessionTimeoutError } from "./errors.js";
 
 async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
-import { apiHeaders, requestWrite, uploadImage, type FetchLike } from "./client.js";
+import { type FetchLike, apiHeaders, requestWrite, uploadImage } from "./client.js";
 import { fetchPublication } from "./publication.js";
 
 const NavigationLinkSchema = z.object({

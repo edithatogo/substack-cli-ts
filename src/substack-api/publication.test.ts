@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
-import { fetchPublication, fetchPublicationChecklist } from "./publication.js";
 import type { FetchLike } from "./client.js";
+import { fetchPublication, fetchPublicationChecklist } from "./publication.js";
 
 describe("fetchPublication", () => {
   it("returns publication details with branding fields", async () => {

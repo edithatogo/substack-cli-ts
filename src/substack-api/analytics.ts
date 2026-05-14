@@ -1,5 +1,5 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
+import { type FetchLike, apiHeaders, classifyFailure, requestJson } from "./client.js";
 
 export type AnalyticsReadStatus =
   | "ok"
@@ -254,7 +254,7 @@ export async function fetchAnalyticsInventory(
   fetchFn: FetchLike,
   postId?: number,
 ): Promise<AnalyticsInventoryResult> {
-  const headers = apiHeaders(material);
+  const _headers = apiHeaders(material);
   const endpoints: string[] = [];
   let postAnalytics: PostAnalyticsResult | null = null;
   let subscriberGrowth: SubscriberGrowthResult | null = null;

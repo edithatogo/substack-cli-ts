@@ -7,7 +7,7 @@ import {
   sessionFilePath,
   stateDir,
 } from "../config/paths.js";
-import { loadEffectiveConfig, type EffectiveConfig } from "../config/store.js";
+import { type EffectiveConfig, loadEffectiveConfig } from "../config/store.js";
 
 export type DoctorStatus = "ok" | "warn" | "error";
 

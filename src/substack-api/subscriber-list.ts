@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
-import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
+import { type FetchLike, apiHeaders, classifyFailure, requestJson } from "./client.js";
 
 export interface SubscriberListEntry {
   email: string;

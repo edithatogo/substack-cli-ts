@@ -1,5 +1,5 @@
-import type { ApiReadInventory, SectionSummary } from "./read-model.js";
 import type { ParsedPost } from "../types.js";
+import type { ApiReadInventory, SectionSummary } from "./read-model.js";
 
 export type DraftSectionResolutionStatus =
   | "resolved"

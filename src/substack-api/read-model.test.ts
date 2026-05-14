@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
-import { readApiInventory } from "./read-model.js";
 import type { FetchLike } from "./client.js";
+import { readApiInventory } from "./read-model.js";
 
 describe("readApiInventory", () => {
   it("returns a typed user and configured publication inventory", async () => {

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
-import { readOwnProfile, readPublicProfile } from "./profile.js";
 import type { FetchLike } from "./client.js";
+import { readOwnProfile, readPublicProfile } from "./profile.js";
 
 describe("readOwnProfile", () => {
   it("returns own profile data with follower count from public profile", async () => {

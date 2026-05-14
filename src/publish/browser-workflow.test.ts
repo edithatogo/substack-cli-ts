@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { shouldOpenPublishReview, runBrowserWorkflow } from "./browser-workflow.js";
 import { parseMarkdownString } from "../parser/markdown.js";
+import { runBrowserWorkflow, shouldOpenPublishReview } from "./browser-workflow.js";
 
 describe("shouldOpenPublishReview", () => {
   it("returns true only when review-only is enabled", () => {

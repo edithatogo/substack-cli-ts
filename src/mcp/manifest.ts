@@ -1,6 +1,6 @@
-import { buildMcpToolGroups, buildMcpToolDescriptors } from "./catalog.js";
+import { buildMcpToolDescriptors, buildMcpToolGroups } from "./catalog.js";
 import { buildMcpPromptSurfaceDescriptors } from "./prompts.js";
-import type { McpResourceSurface, McpSurfaceManifest, McpSurfaceGroup } from "./types.js";
+import type { McpResourceSurface, McpSurfaceGroup, McpSurfaceManifest } from "./types.js";
 
 const MCP_RESOURCE_DESCRIPTORS: McpResourceSurface[] = [
   {
