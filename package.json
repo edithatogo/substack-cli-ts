@@ -35,7 +35,7 @@
     "completions": "substack-cli completion bash > scripts/completions.bash && substack-cli completion zsh > scripts/completions.zsh && substack-cli completion powershell > scripts/completions.ps1"
   },
   "dependencies": {
-    "@browserbasehq/stagehand": "^3.0.0",
+    "@browserbasehq/stagehand": "^3.4.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@tiptap/core": "^3.0.0",
     "@tiptap/extension-table": "^3.22.4",
