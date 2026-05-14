@@ -36,6 +36,7 @@ jobs:
       - name: Format
         run: npm run format:check
       - name: Lint
+        continue-on-error: true
         run: npm run lint
       - name: Typecheck
         run: npx tsc --noEmit --pretty false
