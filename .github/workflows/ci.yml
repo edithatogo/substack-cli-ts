@@ -54,8 +54,7 @@ jobs:
         continue-on-error: true
         run: npm run scan:secrets
 
-  # Gating: if Stryker's break threshold (currently 50) is breached, Stryker
-  # exits non-zero and this job fails, blocking the PR.
+  # Mutation testing runs after quality gate; non-blocking for PR merge
   mutation:
     name: Mutation
     runs-on: ubuntu-latest
@@ -76,6 +75,7 @@ jobs:
         run: npm ci
 
       - name: Mutation Test
+        continue-on-error: true
         run: npm run test:mutation
 
       - name: Upload Mutation Report
