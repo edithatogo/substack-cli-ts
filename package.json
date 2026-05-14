@@ -32,7 +32,11 @@
     "quality": "npm run ci && npm run knip && npm run typecheck && npm run build && npm run test:coverage",
     "audit:prod": "npm audit --omit=dev",
     "knip": "knip",
-    "completions": "substack-cli completion bash > scripts/completions.bash && substack-cli completion zsh > scripts/completions.zsh && substack-cli completion powershell > scripts/completions.ps1"
+    "completions": "substack-cli completion bash > scripts/completions.bash && substack-cli completion zsh > scripts/completions.zsh && substack-cli completion powershell > scripts/completions.ps1",
+    "bench": "node --experimental-vm-modules node_modules/.bin/vitest run src/benchmark",
+    "bench:parse": "node dist/cli.js inspect examples/basic.md",
+    "profile:cpu": "node --cpu-prof --cpu-prof-dir=reports/profiling dist/cli.js inspect examples/basic.md",
+    "profile:heap": "node --heap-prof --heap-prof-dir=reports/profiling dist/cli.js inspect examples/basic.md"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.0.0",
