@@ -29,10 +29,18 @@ jobs:
         run: node -e "const m=process.version.slice(1).split('.').map(Number),r=require('./package.json').engines.node.replace(/[>= ]+/g,'').split('.').map(Number);process.exitCode=m[0]>=r[0]&&m[1]>=r[1]?0:1"
 
       - name: Install
-        run: npm ci
+        run: rm -rf node_modules && npm ci --cache /tmp/npm-cache
 
-      - name: Quality Gate
-        run: npm run quality
+      - name: Format
+        run: npm run format:check -- --loglevel error
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npx tsc --noEmit --pretty false
+      - name: Build
+        run: npx tsc -p tsconfig.json --incremental
+      - name: Test Coverage
+        run: npm run test:coverage
 
       - name: Production Audit
         run: npm run audit:prod
