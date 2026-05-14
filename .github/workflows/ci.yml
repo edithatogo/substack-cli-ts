@@ -33,11 +33,8 @@ jobs:
 
       - name: Format
         run: npm run format:check -- --loglevel error
-      - name: Format
-        run: npm run format:check
-      - name: Lint
-        continue-on-error: true
-        run: npm run lint
+      - name: Lint & Format (Biome)
+        run: npm run ci
       - name: Typecheck
         run: npx tsc --noEmit --pretty false
       - name: Build
