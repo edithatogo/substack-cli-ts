@@ -1,4 +1,4 @@
-﻿import { readFile, writeFile } from "node:fs/promises";
+﻿import { access, readFile, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { loadSession } from "../auth/session-store.js";
 import {
@@ -301,3 +301,4 @@ async function readFileIfExists(path: string): Promise<string | null> {
     return null;
   }
 }
+
