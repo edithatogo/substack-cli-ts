@@ -31,7 +31,7 @@ Hello **world**.
     assert.equal(parsed.document.content?.[0]?.type, "heading");
   });
 
-  it("documents block-list frontmatter tags as unsupported", async () => {
+  it("parses block-list frontmatter tags", async () => {
     const parsed = await parseMarkdownString(`---
 title: Example
 tags:
@@ -41,8 +41,8 @@ tags:
 Body
 `);
 
-    assert.deepEqual(parsed.metadata.tags, []);
-    assert.ok(parsed.warnings?.some((warning) => warning.includes("Block-list frontmatter tags")));
+    assert.deepEqual(parsed.metadata.tags, ["Policy That Thinks", "New Zealand policy"]);
+    assert.deepEqual(parsed.warnings ?? [], []);
   });
 
   it("maps Substack shortcodes to custom Tiptap nodes", async () => {
@@ -290,3 +290,5 @@ Body
     });
   });
 });
+
+

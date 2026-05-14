@@ -33,13 +33,7 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
 
   const raw = parseSimpleYaml(match[1] ?? "");
   const parsed = MetadataSchema.parse(raw);
-  const tags = Array.isArray(parsed.tags)
-    ? parsed.tags.map((tag) => tag.trim()).filter(Boolean)
-    : parsed.tags
-      ? parsed.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
-      : [];
-
-  const warnings = collectFrontmatterWarnings(match[1] ?? "");
+  const tags = normalizeTags(parsed.tags);
 
   return {
     metadata: {
@@ -55,24 +49,18 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
       shouldSendEmail: parsed.shouldSendEmail,
     },
     body: markdown.slice(match[0].length),
-    warnings,
+    warnings: [],
   };
-}
-
-function collectFrontmatterWarnings(source: string): string[] {
-  const warnings: string[] = [];
-  if (/^\s*tags:\s*$/m.test(source) && /^\s*-\s+/m.test(source)) {
-    warnings.push("Block-list frontmatter tags are not currently parsed; use a bracketed array or comma-delimited string.");
-  }
-  return warnings;
 }
 
 function parseSimpleYaml(source: string): Record<string, unknown> {
   const output: Record<string, unknown> = {};
+  const lines = source.split(/\r?\n/);
 
-  for (const rawLine of source.split(/\r?\n/)) {
+  for (let index = 0; index < lines.length; index += 1) {
+    const rawLine = lines[index] ?? "";
     const line = rawLine.trim();
-    if (!line || line.startsWith("#")) {
+    if (!line || line.startsWith("#") || line.startsWith("-")) {
       continue;
     }
 
@@ -83,10 +71,53 @@ function parseSimpleYaml(source: string): Record<string, unknown> {
 
     const key = line.slice(0, separator).trim();
     const value = line.slice(separator + 1).trim();
+
+    if (!value) {
+      const blockList = collectBlockList(lines, index + 1);
+      output[key] = blockList.length > 0 ? blockList : "";
+      continue;
+    }
+
     output[key] = parseScalar(value);
   }
 
   return output;
+}
+
+function collectBlockList(lines: string[], startIndex: number): string[] {
+  const items: string[] = [];
+
+  for (let index = startIndex; index < lines.length; index += 1) {
+    const rawLine = lines[index] ?? "";
+    const trimmed = rawLine.trim();
+
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+
+    if (!trimmed.startsWith("-")) {
+      break;
+    }
+
+    const item = stripQuotes(trimmed.slice(1).trim());
+    if (item) {
+      items.push(item);
+    }
+  }
+
+  return items;
+}
+
+function normalizeTags(tags: string[] | string | undefined): string[] {
+  if (Array.isArray(tags)) {
+    return tags.map((tag) => tag.trim()).filter(Boolean);
+  }
+
+  if (tags) {
+    return tags.split(",").map((tag) => tag.trim()).filter(Boolean);
+  }
+
+  return [];
 }
 
 function parseScalar(value: string): unknown {
