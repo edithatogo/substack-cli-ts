@@ -72,12 +72,37 @@ async function attemptPasswordLogin(
   await clickFirst(
     page,
     [
-      page.getByRole("button", { name: /sign in/i }),
-      page.getByRole("link", { name: /sign in/i }),
-      page.locator("text=/sign in/i"),
+      page.getByRole("button", { name: /^no thanks$/i }),
+      page.getByRole("button", { name: /^not now$/i }),
+      page.getByRole("button", { name: /^maybe later$/i }),
+    ],
+    3000,
+  );
+
+  const clickedSignIn = await clickFirst(
+    page,
+    [
+      page.getByRole("button", { name: /^sign in$/i }),
+      page.getByRole("link", { name: /^sign in$/i }),
+      page.locator("button").filter({ hasText: /^sign in$/i }),
+      page.locator("a").filter({ hasText: /^sign in$/i }),
     ],
     10000,
   );
+
+  if (clickedSignIn) {
+    await page.waitForLoadState("domcontentloaded", { timeout: 10000 }).catch(() => undefined);
+    await page.waitForTimeout(750);
+  }
+
+  if (!/\/sign-in\b/i.test(new URL(page.url()).pathname)) {
+    const current = new URL(page.url());
+    const forPub = current.hostname.split(".")[0] || "";
+    await page.goto(
+      `https://substack.com/sign-in?redirect=%2F&for_pub=${encodeURIComponent(forPub)}`,
+      { waitUntil: "domcontentloaded", timeout: 60000 },
+    );
+  }
 
   await choosePasswordLogin(page);
 
@@ -177,18 +202,49 @@ async function attemptPasswordLogin(
 }
 
 async function choosePasswordLogin(page: Page): Promise<boolean> {
-  return clickFirst(
+  const clicked = await clickFirst(
     page,
     [
+      page.locator("[role='button']").filter({ hasText: /password/i }),
+      page.locator("[role='link']").filter({ hasText: /password/i }),
+      page.locator("button").filter({ hasText: /password/i }),
+      page.locator("a").filter({ hasText: /password/i }),
       page.getByRole("button", { name: /password/i }),
       page.getByRole("link", { name: /password/i }),
       page.getByText(/use .*password/i),
       page.getByText(/sign in .*password/i),
       page.getByText(/log in .*password/i),
       page.getByText(/enter .*password/i),
+      page.locator("text=/password/i"),
     ],
     15000,
   );
+
+  if (clicked) {
+    await page.waitForTimeout(750);
+    return true;
+  }
+
+  return page.evaluate(() => {
+    const candidates = Array.from(
+      document.querySelectorAll<HTMLElement>("button, a, [role='button'], [role='link'], div, span"),
+    );
+    const target = candidates.find((node) => {
+      const text = (node.innerText || node.textContent || "").trim();
+      if (!/password/i.test(text)) return false;
+      const style = window.getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return (
+        style.visibility !== "hidden" &&
+        style.display !== "none" &&
+        rect.width > 0 &&
+        rect.height > 0
+      );
+    });
+    if (!target) return false;
+    target.click();
+    return true;
+  });
 }
 
 async function firstVisible(
