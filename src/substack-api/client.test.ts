@@ -72,7 +72,7 @@ describe("substack-api client helpers", () => {
     assert.equal(result.status, 500);
     assert.equal(result.body, null);
   });
-});
+
   it("handles non-JSON parse failure in requestJson gracefully", async () => {
     const nonJsonFetch = () =>
       Promise.resolve({

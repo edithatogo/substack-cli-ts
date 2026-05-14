@@ -247,8 +247,6 @@ describe("validatePayloadCompatibility", () => {
     assert.equal(report.ok, true);
     assert.equal(report.issues.length, 0);
   });
-});
-
 
   it("reports ok for documents with only supported types", () => {
     const document = {
