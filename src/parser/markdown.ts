@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+﻿import { readFile } from "node:fs/promises";
 import { generateJSON } from "@tiptap/html";
 import StarterKit from "@tiptap/starter-kit";
 import { marked } from "marked";
@@ -17,7 +17,7 @@ export async function parseMarkdownString(
   markdown: string,
   filePath = "<memory>",
 ): Promise<ParsedPost> {
-  const { metadata, body } = parseFrontmatter(markdown);
+  const { metadata, body, warnings } = parseFrontmatter(markdown);
   const normalized = normalizeSubstackShortcodes(body);
   const html = String(await marked.parse(normalized, { gfm: true }));
   const document = htmlToProseMirrorJson(html);
@@ -30,7 +30,8 @@ export async function parseMarkdownString(
     html,
     document,
     media,
-  };
+    warnings,
+  } as ParsedPost;
 }
 
 export function htmlToProseMirrorJson(html: string): ProseMirrorNode {

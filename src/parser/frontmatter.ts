@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 import type { PostMetadata } from "../types.js";
 
 const MetadataSchema = z.object({
@@ -17,6 +17,7 @@ const MetadataSchema = z.object({
 export interface FrontmatterResult {
   metadata: PostMetadata;
   body: string;
+  warnings: string[];
 }
 
 export function parseFrontmatter(markdown: string): FrontmatterResult {
@@ -26,19 +27,19 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
     return {
       metadata: { tags: [] },
       body: markdown,
+      warnings: [],
     };
   }
 
   const raw = parseSimpleYaml(match[1] ?? "");
   const parsed = MetadataSchema.parse(raw);
   const tags = Array.isArray(parsed.tags)
-    ? parsed.tags
+    ? parsed.tags.map((tag) => tag.trim()).filter(Boolean)
     : parsed.tags
-      ? parsed.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter(Boolean)
+      ? parsed.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
       : [];
+
+  const warnings = collectFrontmatterWarnings(match[1] ?? "");
 
   return {
     metadata: {
@@ -54,7 +55,16 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
       shouldSendEmail: parsed.shouldSendEmail,
     },
     body: markdown.slice(match[0].length),
+    warnings,
   };
+}
+
+function collectFrontmatterWarnings(source: string): string[] {
+  const warnings: string[] = [];
+  if (/^\s*tags:\s*$/m.test(source) && /^\s*-\s+/m.test(source)) {
+    warnings.push("Block-list frontmatter tags are not currently parsed; use a bracketed array or comma-delimited string.");
+  }
+  return warnings;
 }
 
 function parseSimpleYaml(source: string): Record<string, unknown> {

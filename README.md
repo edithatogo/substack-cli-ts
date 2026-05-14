@@ -243,3 +243,6 @@ $ substack-cli inspect examples/formatting.md
 }
 ```
 
+# README window note
+
+On Windows, prefer a repo path outside OneDrive. If OneDrive is unavoidable, relocate npm cache and CLI state to `%LOCALAPPDATA%` to avoid cleanup/cache-lock issues.
