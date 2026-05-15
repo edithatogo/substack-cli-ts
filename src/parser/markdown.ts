@@ -18,7 +18,7 @@ export async function parseMarkdownString(
   filePath = "<memory>",
 ): Promise<ParsedPost> {
   const { metadata, body, warnings } = parseFrontmatter(markdown);
-  const normalized = normalizeSubstackShortcodes(body);
+  const normalized = normalizeMarkdownImages(normalizeSubstackShortcodes(body));
   const html = String(await marked.parse(normalized, { gfm: true }));
   const document = htmlToProseMirrorJson(html);
   const media = buildMediaManifest(document, filePath);
@@ -51,6 +51,16 @@ function normalizeSubstackShortcodes(markdown: string): string {
       /^\s*{{\s*(youtube|embed|podcast)\s*[:|]\s*(https?:\/\/\S+?)\s*}}\s*$/gim,
       (_match, type: string, url: string) => embedHtml(type.toLowerCase(), url.trim()),
     );
+}
+
+function normalizeMarkdownImages(markdown: string): string {
+  return markdown.replace(
+    /!\[([^\]]*)\]\((\S+?)(?:\s+"([^"]*)")?\)/g,
+    (_match, alt: string, src: string, title: string | undefined) => {
+      const titleAttribute = title === undefined ? "" : ` title="${escapeHtml(title)}"`;
+      return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}"${titleAttribute}>`;
+    },
+  );
 }
 
 function embedHtml(type: string, url: string): string {

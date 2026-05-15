@@ -204,13 +204,23 @@ Body
       assert.equal(images.length, 3);
     });
 
-    it("documents quoted image alt text as truncated by current parser", async () => {
+    it("preserves quoted image alt text and title metadata", async () => {
       const parsed = await parseMarkdownString(
         '![Policy That Thinks "Policy" title](https://example.com/img.png "Caption title")',
       );
       const images = findNodes(parsed.document, "image");
       assert.equal(images.length, 1);
-      assert.equal(images[0]?.attrs?.alt, 'Policy That Thinks "');
+      assert.equal(images[0]?.attrs?.alt, 'Policy That Thinks "Policy" title');
+      assert.equal(images[0]?.attrs?.title, "Caption title");
+    });
+
+    it("preserves smart quotes in image alt text", async () => {
+      const parsed = await parseMarkdownString(
+        '![Policy That Thinks “Policy” title](https://example.com/img.png "Caption title")',
+      );
+      const images = findNodes(parsed.document, "image");
+      assert.equal(images.length, 1);
+      assert.equal(images[0]?.attrs?.alt, "Policy That Thinks “Policy” title");
       assert.equal(images[0]?.attrs?.title, "Caption title");
     });
   });
