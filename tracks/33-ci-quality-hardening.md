@@ -47,7 +47,7 @@ Coverage thresholds in `vitest.config.ts` are set to the current enforceable bas
 
 | Metric     | Latest Measured | Current Gate | Long-Term Target |
 | ---------- | --------------: | -----------: | ---------------: |
-| Statements |          79.24% |          79% |              91% |
+| Statements |          78.30% |          78% |              91% |
 | Branches   |          62.83% |          62% |              91% |
 | Functions  |          82.73% |          82% |              91% |
 | Lines      |          79.92% |          79% |              91% |

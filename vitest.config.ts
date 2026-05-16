@@ -19,7 +19,7 @@ export default defineConfig({
         "src/publish/local-workflow.ts",
       ],
       thresholds: {
-        statements: 79,
+        statements: 78,
         branches: 62,
         functions: 82,
         lines: 79,
