@@ -1,17 +1,44 @@
 {
   "name": "@edithatogo/substack-cli",
   "version": "0.1.0",
+  "description": "Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.",
   "private": false,
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/edithatogo/substack-cli-ts#readme",
+  "bugs": {
+    "url": "https://github.com/edithatogo/substack-cli-ts/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/edithatogo/substack-cli-ts.git"
+    "url": "git+https://github.com/edithatogo/substack-cli-ts.git"
   },
+  "keywords": [
+    "substack",
+    "markdown",
+    "cli",
+    "mcp",
+    "model-context-protocol",
+    "publishing",
+    "newsletter"
+  ],
   "type": "module",
+  "main": "dist/cli.js",
   "engines": {
     "node": ">=18.0.0"
   },
   "bin": {
     "substack-cli": "dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "registry.server.json"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json --incremental",

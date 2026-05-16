@@ -40,13 +40,16 @@ describe("config store", () => {
     await withTempCwd(async () => {
       await updateConfig({ publicationUrl: "https://local.substack.com" });
       const previous = process.env.SUBSTACK_PUBLICATION_URL;
+      const previousEmail = process.env.SUBSTACK_EMAIL;
       process.env.SUBSTACK_PUBLICATION_URL = "https://env.substack.com";
+      delete process.env.SUBSTACK_EMAIL;
 
       try {
         const effective = await loadEffectiveConfig();
         assert.equal(effective.publicationUrl, "https://env.substack.com");
       } finally {
         restoreEnv("SUBSTACK_PUBLICATION_URL", previous);
+        restoreEnv("SUBSTACK_EMAIL", previousEmail);
       }
     });
   });
@@ -54,13 +57,16 @@ describe("config store", () => {
     await withTempCwd(async () => {
       await updateConfig({ publicationUrl: "https://local.substack.com" });
       const previous = process.env.SUBSTACK_PUBLICATION_URL;
+      const previousEmail = process.env.SUBSTACK_EMAIL;
       process.env.SUBSTACK_PUBLICATION_URL = "https://env.substack.com";
+      delete process.env.SUBSTACK_EMAIL;
 
       try {
         const effective = await loadEffectiveConfig();
         assert.equal(effective.publicationUrl, "https://env.substack.com");
       } finally {
         restoreEnv("SUBSTACK_PUBLICATION_URL", previous);
+        restoreEnv("SUBSTACK_EMAIL", previousEmail);
       }
     });
   });
@@ -176,13 +182,22 @@ describe("session store", () => {
 
 async function withTempCwd(run: () => Promise<void>): Promise<void> {
   const previousStateDir = process.env.SUBSTACK_CLI_STATE_DIR;
+  const previousEmail = process.env.SUBSTACK_EMAIL;
+  const previousPassword = process.env.SUBSTACK_PASSWORD;
+  const previousCookie = process.env.SUBSTACK_COOKIE;
   const temp = await mkdtemp(join(tmpdir(), "substack-cli-test-"));
 
   try {
     process.env.SUBSTACK_CLI_STATE_DIR = join(temp, ".substack-cli");
+    delete process.env.SUBSTACK_EMAIL;
+    delete process.env.SUBSTACK_PASSWORD;
+    delete process.env.SUBSTACK_COOKIE;
     await run();
   } finally {
     restoreEnv("SUBSTACK_CLI_STATE_DIR", previousStateDir);
+    restoreEnv("SUBSTACK_EMAIL", previousEmail);
+    restoreEnv("SUBSTACK_PASSWORD", previousPassword);
+    restoreEnv("SUBSTACK_COOKIE", previousCookie);
     await rm(temp, { recursive: true, force: true });
   }
 }

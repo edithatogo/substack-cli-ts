@@ -10,4 +10,8 @@ Before cutting a release:
 6. Confirm `git status` is clean
 7. Verify the GitHub Actions checks are green
 8. Verify the release notes and npm version are correct
-9. Publish the tag and confirm the GitHub Release is created
+9. Run `npm pack --dry-run --json` and verify the package only includes `dist/`, metadata, docs, and registry metadata
+10. Bump `package.json` to a version that has not already been published to npm
+11. Publish the tag and confirm the GitHub Release is created
+12. Confirm npm publication of `@edithatogo/substack-cli`
+13. Submit/update MCP registry and Smithery metadata for the published version

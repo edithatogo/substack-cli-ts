@@ -25,11 +25,15 @@ export type RegistryServerMetadata = {
   };
 };
 
-export function loadRegistryServerMetadata(filePath = resolve(process.cwd(), "registry.server.json")): RegistryServerMetadata {
+export function loadRegistryServerMetadata(
+  filePath = resolve(process.cwd(), "registry.server.json"),
+): RegistryServerMetadata {
   return JSON.parse(readFileSync(filePath, "utf8")) as RegistryServerMetadata;
 }
 
-export function summarizeRegistryServerMetadata(metadata: RegistryServerMetadata): Record<string, unknown> {
+export function summarizeRegistryServerMetadata(
+  metadata: RegistryServerMetadata,
+): Record<string, unknown> {
   return {
     name: metadata.name,
     version: metadata.version,

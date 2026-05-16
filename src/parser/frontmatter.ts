@@ -36,7 +36,10 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
   const tags = Array.isArray(parsed.tags)
     ? parsed.tags.map((tag) => tag.trim()).filter(Boolean)
     : parsed.tags
-      ? parsed.tags.split(",").map((tag) => tag.trim()).filter(Boolean)
+      ? parsed.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter(Boolean)
       : [];
 
   const warnings = collectFrontmatterWarnings(match[1] ?? "");
@@ -62,7 +65,9 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
 function collectFrontmatterWarnings(source: string): string[] {
   const warnings: string[] = [];
   if (/^\s*tags:\s*$/m.test(source) && /^\s*-\s+/m.test(source)) {
-    warnings.push("Block-list frontmatter tags are not currently parsed; use a bracketed array or comma-delimited string.");
+    warnings.push(
+      "Block-list frontmatter tags are not currently parsed; use a bracketed array or comma-delimited string.",
+    );
   }
   return warnings;
 }

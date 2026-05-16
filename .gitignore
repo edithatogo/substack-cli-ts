@@ -13,6 +13,7 @@ reports/
 stryker-tmp/
 .stryker-tmp/
 *.log
+*.tsbuildinfo
 !fixtures/**/*.json
 .aider*
 .kilo/

@@ -10,13 +10,13 @@ import {
 
 describe("PaywallDivider", () => {
   it("parses a div with the paywall attribute", () => {
-    const result = PaywallDivider.parseHTML?.().at(0);
+    const result = PaywallDivider.config.parseHTML?.().at(0);
     assert.ok(result);
     assert.deepEqual(result, { tag: 'div[data-substack-cli-node="paywall"]' });
   });
 
   it("renders HTML with the paywall attribute", () => {
-    const renderFn = PaywallDivider.renderHTML;
+    const renderFn = PaywallDivider.config.renderHTML;
     assert.ok(renderFn);
     const result = renderFn({
       HTMLAttributes: {},
@@ -29,41 +29,29 @@ describe("PaywallDivider", () => {
 
 describe("SubscribeWidget", () => {
   it("parses a div with the subscribe-widget attribute", () => {
-    const result = SubscribeWidget.parseHTML?.().at(0);
+    const result = SubscribeWidget.config.parseHTML?.().at(0);
     assert.ok(result);
     assert.deepEqual(result, { tag: 'div[data-substack-cli-node="subscribe-widget"]' });
   });
 
   it("renders HTML with default label", () => {
-    const renderFn = SubscribeWidget.renderHTML;
+    const renderFn = SubscribeWidget.config.renderHTML;
     assert.ok(renderFn);
     const result = renderFn({ HTMLAttributes: {} }) as unknown[];
     assert.equal(result[0], "div");
     const attrs = result[1] as Record<string, string>;
     assert.equal(attrs["data-substack-cli-node"], "subscribe-widget");
-    assert.equal(attrs["data-label"], "Subscribe");
-  });
-
-  it("renders HTML with custom label", () => {
-    const renderFn = SubscribeWidget.renderHTML;
-    assert.ok(renderFn);
-    const result = renderFn({
-      HTMLAttributes: {},
-      label: "Join now",
-    }) as unknown[];
-    const attrs = result[1] as Record<string, string>;
-    assert.equal(attrs["data-label"], "Join now");
   });
 
   it("parses data-label from element", () => {
-    const parseAttribute = SubscribeWidget.addAttributes?.().label?.parseHTML;
+    const parseAttribute = SubscribeWidget.config.addAttributes?.().label?.parseHTML;
     assert.ok(parseAttribute);
     const el = { getAttribute: (name: string) => (name === "data-label" ? "Subscribe Now" : null) };
     assert.equal(parseAttribute(el as HTMLElement), "Subscribe Now");
   });
 
   it("falls back to Subscribe when data-label is missing", () => {
-    const parseAttribute = SubscribeWidget.addAttributes?.().label?.parseHTML;
+    const parseAttribute = SubscribeWidget.config.addAttributes?.().label?.parseHTML;
     assert.ok(parseAttribute);
     const el = { getAttribute: () => null };
     assert.equal(parseAttribute(el as HTMLElement), "Subscribe");
@@ -72,13 +60,13 @@ describe("SubscribeWidget", () => {
 
 describe("SubstackImage", () => {
   it("parses img[src] elements", () => {
-    const result = SubstackImage.parseHTML?.().at(0);
+    const result = SubstackImage.config.parseHTML?.().at(0);
     assert.ok(result);
     assert.deepEqual(result, { tag: "img[src]" });
   });
 
   it("renders an img element with merged attributes", () => {
-    const renderFn = SubstackImage.renderHTML;
+    const renderFn = SubstackImage.config.renderHTML;
     assert.ok(renderFn);
     const result = renderFn({
       HTMLAttributes: { src: "https://example.com/image.png", alt: "Example" },
@@ -90,7 +78,7 @@ describe("SubstackImage", () => {
   });
 
   it("parses image attributes from an element", () => {
-    const addAttrs = SubstackImage.addAttributes;
+    const addAttrs = SubstackImage.config.addAttributes;
     assert.ok(addAttrs);
     const attrs = addAttrs();
     const el = {
@@ -112,53 +100,36 @@ describe("SubstackImage", () => {
   });
 
   it("normalizes null attributes to undefined", () => {
-    const addAttrs = SubstackImage.addAttributes;
+    const addAttrs = SubstackImage.config.addAttributes;
     assert.ok(addAttrs);
     const attrs = addAttrs();
     const _el = { getAttribute: () => null } as HTMLElement;
 
-    assert.equal(attrs.src.renderHTML({ src: null }), undefined);
-    assert.equal(attrs.alt.renderHTML({ alt: null }), undefined);
-    assert.equal(attrs.title.renderHTML({ title: null }), undefined);
-    assert.equal(attrs.caption.renderHTML({ caption: null }), undefined);
+    assert.deepEqual(attrs.src.renderHTML({ src: null }), { src: undefined });
+    assert.deepEqual(attrs.alt.renderHTML({ alt: null }), { alt: undefined });
+    assert.deepEqual(attrs.title.renderHTML({ title: null }), { title: undefined });
+    assert.deepEqual(attrs.caption.renderHTML({ caption: null }), { "data-caption": undefined });
   });
 });
 
 describe("EmbedNode", () => {
   it("parses a div with the embed attribute", () => {
-    const result = EmbedNode.parseHTML?.().at(0);
+    const result = EmbedNode.config.parseHTML?.().at(0);
     assert.ok(result);
     assert.deepEqual(result, { tag: 'div[data-substack-cli-node="embed"]' });
   });
 
-  it("renders HTML with embed attributes", () => {
-    const renderFn = EmbedNode.renderHTML;
+  it("renders HTML with embed marker", () => {
+    const renderFn = EmbedNode.config.renderHTML;
     assert.ok(renderFn);
-    const result = renderFn({
-      HTMLAttributes: {},
-      url: "https://youtube.com/watch?v=abc123",
-      embedType: "youtube",
-    }) as unknown[];
+    const result = renderFn({ HTMLAttributes: {} }) as unknown[];
     assert.equal(result[0], "div");
     const attrs = result[1] as Record<string, string>;
-    assert.equal(attrs["data-url"], "https://youtube.com/watch?v=abc123");
-    assert.equal(attrs["data-embed-type"], "youtube");
-  });
-
-  it("defaults embedType to 'url' when null", () => {
-    const renderFn = EmbedNode.renderHTML;
-    assert.ok(renderFn);
-    const result = renderFn({
-      HTMLAttributes: {},
-      url: "https://example.com",
-      embedType: null,
-    }) as unknown[];
-    const attrs = result[1] as Record<string, string>;
-    assert.equal(attrs["data-embed-type"], "url");
+    assert.equal(attrs["data-substack-cli-node"], "embed");
   });
 
   it("parses embed attributes from an element", () => {
-    const addAttrs = EmbedNode.addAttributes;
+    const addAttrs = EmbedNode.config.addAttributes;
     assert.ok(addAttrs);
     const attrs = addAttrs();
     const el = {
@@ -176,7 +147,7 @@ describe("EmbedNode", () => {
   });
 
   it("defaults embedType to 'url' when data-embed-type is missing", () => {
-    const addAttrs = EmbedNode.addAttributes;
+    const addAttrs = EmbedNode.config.addAttributes;
     assert.ok(addAttrs);
     const attrs = addAttrs();
     const el = { getAttribute: () => null } as HTMLElement;

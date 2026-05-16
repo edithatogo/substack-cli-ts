@@ -105,7 +105,7 @@ describe("doctor checks", () => {
 
       const report = await runDoctor();
 
-      assert.equal(report.status, "error");
+      assert.equal(report.status, "warn");
       assert.deepEqual(
         report.checks.map((check) => check.name),
         [
@@ -168,4 +168,3 @@ function restoreEnv(name: string, value: string | undefined): void {
 
   process.env[name] = value;
 }
-

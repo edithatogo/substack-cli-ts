@@ -192,7 +192,7 @@ formatCheck: ✅ (Prettier passes)
 lint: ✅ (ESLint @ zero warnings)
 typeCheck: ✅ (tsc --noEmit)
 build: ✅ (tsc -p tsconfig.json)
-testCoverage: statements ≥ 91%, branches ≥ 91%, functions ≥ 91%, lines ≥ 91%
+testCoverage: current enforced baseline in `vitest.config.ts`; long-term target is statements/branches/functions/lines ≥ 91%
 mutationBreak ≥ 50
 auditProd: ✅
 secretScan: ✅ (no false positives)

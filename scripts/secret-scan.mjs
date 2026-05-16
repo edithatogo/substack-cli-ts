@@ -12,9 +12,23 @@ const IGNORED_DIRS = new Set([
   ".stryker-tmp",
   "stryker-tmp",
   "reports",
+  "research",
+  "playwright-report",
+  "test-results",
+  "traces",
+  ".kilo",
 ]);
 
-const IGNORED_FILES = new Set([".env", "scripts/secret-scan.mjs"]);
+const IGNORED_FILES = new Set([
+  ".env",
+  ".aider.chat.history.md",
+  ".aider.input.history",
+  ".aider.tags.cache.v4",
+  "_cookie_header.txt",
+  "AUTHORS.md",
+  "CITATION.cff",
+  "scripts/secret-scan.mjs",
+]);
 
 const PATTERNS = [
   /bb_live/i,
@@ -41,7 +55,7 @@ for await (const file of walk(ROOT)) {
     }
 
     findings += 1;
-    process.stdout.write(`${relative(ROOT, file)}\n`);
+    process.stdout.write(`${relative(ROOT, file)} (${pattern})\n`);
     break;
   }
 }

@@ -2,6 +2,8 @@
 
 How much of Substack's platform surface the CLI can interact with.
 
+Percentages are qualitative estimates, not audited API parity guarantees. Rows labeled as probes or read-only mean the CLI attempts known/likely internal endpoints and returns graceful unsupported/not-found results when Substack does not expose that capability to the current session.
+
 ## Coverage by Domain
 
 | Domain | Coverage | CLI Capabilities |
@@ -17,14 +19,14 @@ How much of Substack's platform surface the CLI can interact with.
 | **Sections** | ~40% | List sections, assign post to section. Missing: create, update, delete sections |
 | **Subscribers** | ~15% | Subscriber count via publication checklist, subscriber list with pagination. Missing: CSV import/export, segments, suppression, gift subscriptions |
 | **Comments** | ~25% | Comment list, moderation (approve/delete/pin/reply). Missing: spam detection, quarantine, commenter management |
-| **Analytics** | ~10% | Post analytics probe, subscriber growth probe, email performance probe, revenue analytics probe, snapshot store. Missing: dashboard-only features |
+| **Analytics** | ~10% | Probe-only: post analytics, subscriber growth, email performance, revenue analytics, snapshot store. Missing: dashboard-only features and guaranteed endpoint parity |
 | **Recommendations** | ~0% | Not supported |
 | **Team** | ~15% | Read-only team member list. Missing: invite/remove, role changes |
-| **Billing** | ~10% | Read-only payments_state, subscription tiers probe, payout history probe, tax form probe. Missing: tier write, refunds, boosted posts |
-| **Podcast** | ~15% | Podcast section read, episode list probe, distribution settings probe, episode create/schedule, video upload/settings probe. Missing: RSS feed management, episode write |
-| **Video** | ~10% | Video upload probe, video settings probe. Missing: native hosting, transcoding, thumbnails |
+| **Billing** | ~10% | Read/probe-only: payments_state, subscription tiers, payout history, tax form status. Missing: tier write, refunds, boosted posts |
+| **Podcast** | ~15% | Probe-heavy: podcast section read, episode list probe, distribution settings probe, episode create/schedule paths, video upload/settings probe. Missing: verified RSS/feed/platform parity |
+| **Video** | ~10% | Probe-only: video upload and settings paths. Missing: verified native hosting, transcoding, thumbnails |
 | **Notes/social** | ~15% | Notes list/get/create, following list, like/reshare/delete. Missing: chat/DM (WebSocket) |
-| **Cross-posting** | ~5% | Cross-post probe, WordPress import probe, RSS import probe, API token listing. Missing: actual cross-posting (dashboard-only) |
+| **Cross-posting** | ~5% | Probe-only: cross-post, WordPress import, RSS import, API token listing. Missing: verified actual cross-posting when dashboard-only |
 | **Auth** | ~80% | Cookie, email/password, session validation, multi-publication. Missing: OAuth, 2FA |
 
 ## What the CLI Focuses On
@@ -114,4 +116,4 @@ Known Substack internal API endpoints the CLI does NOT use:
 
 ## Summary
 
-The CLI achieves **~90% coverage of the core publishing pipeline** (write → draft → review → publish/schedule) but **<5% coverage of Substack's broader platform** (dashboard, subscribers, analytics, design, community, financial). This is intentional — the CLI serves as a local-first authoring tool, not a Substack management console. The MCP surface enables AI agents to participate in the review and validation stages of the pipeline without exposing write authority.
+The CLI achieves high coverage of the core publishing pipeline (write → draft → review → publish/schedule) but only narrow, often read-only or probe-only coverage of Substack's broader platform (dashboard, subscribers, analytics, design, community, financial). This is intentional — the CLI serves as a local-first authoring tool, not a Substack management console. The MCP surface enables AI agents to participate in review and validation stages without exposing broad write authority.

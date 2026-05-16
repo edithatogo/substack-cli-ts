@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T10:22:36.416Z",
+  "generatedAt": "2026-05-15T07:13:32.386Z",
   "sourceFile": "examples/media.md",
   "mode": "draft",
   "metadata": {
@@ -14,9 +14,6 @@
     "type": "doc",
     "content": [
       {
-        "type": "paragraph"
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "https://example.com/image.png",
@@ -24,9 +21,6 @@
           "title": "Remote caption",
           "caption": null
         }
-      },
-      {
-        "type": "paragraph"
       },
       {
         "type": "image",
@@ -43,8 +37,7 @@
     "valid": true,
     "nodeTypes": [
       "doc",
-      "image",
-      "paragraph"
+      "image"
     ],
     "markTypes": []
   }

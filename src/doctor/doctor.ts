@@ -301,4 +301,3 @@ async function readFileIfExists(path: string): Promise<string | null> {
     return null;
   }
 }
-
