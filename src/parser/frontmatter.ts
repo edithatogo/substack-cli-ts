@@ -114,7 +114,10 @@ function normalizeTags(tags: string[] | string | undefined): string[] {
   }
 
   if (tags) {
-    return tags.split(",").map((tag) => tag.trim()).filter(Boolean);
+    return tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
   }
 
   return [];
