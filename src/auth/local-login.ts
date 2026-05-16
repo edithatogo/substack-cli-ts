@@ -227,7 +227,9 @@ async function choosePasswordLogin(page: Page): Promise<boolean> {
 
   return page.evaluate(() => {
     const candidates = Array.from(
-      document.querySelectorAll<HTMLElement>("button, a, [role='button'], [role='link'], div, span"),
+      document.querySelectorAll<HTMLElement>(
+        "button, a, [role='button'], [role='link'], div, span",
+      ),
     );
     const target = candidates.find((node) => {
       const text = (node.innerText || node.textContent || "").trim();
