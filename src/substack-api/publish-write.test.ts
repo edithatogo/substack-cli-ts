@@ -96,6 +96,26 @@ describe("executePublishWrite", () => {
 
     assert.equal(result.status, "scheduled");
     assert.equal(result.operation, "schedule");
+    assert.equal(result.retryAttempts, 0);
+  });
+
+  it("surfaces write retry attempts", async () => {
+    const plan = planPublishWrite(
+      "123",
+      "https://test.substack.com/publish/post/123",
+      "schedule",
+      "https://test.substack.com",
+      "2026-06-01T09:00:00Z",
+    );
+
+    const mockFetch = async () => ({
+      status: 200,
+      text: async () => JSON.stringify({ id: 123 }),
+    });
+
+    const result = await executePublishWrite(plan, dummyMaterial, mockFetch);
+
+    assert.equal(result.retryAttempts, 0);
   });
 
   it("fails on HTTP error", async () => {

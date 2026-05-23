@@ -22,6 +22,7 @@ export interface DraftWriteResult {
   error?: string | undefined;
   mediaUploaded?: number | undefined;
   mediaFailed?: number | undefined;
+  retryAttempts?: number | undefined;
   mediaDetails?:
     | Array<{ source: string; url: string | undefined; error: string | undefined }>
     | undefined;
@@ -136,6 +137,7 @@ export async function executeDraftWrite(
       error: "Network error",
       mediaUploaded: media.report.uploaded,
       mediaFailed: media.report.failed,
+      retryAttempts: response.retryAttempts,
       mediaDetails: media.report.assets.map((a) => ({
         source: a.asset.source,
         url: a.result.status === "ok" ? a.result.url : undefined,
@@ -157,6 +159,7 @@ export async function executeDraftWrite(
       error: "HTTP 409 (optimistic concurrency conflict)",
       mediaUploaded: media.report.uploaded,
       mediaFailed: media.report.failed,
+      retryAttempts: response.retryAttempts,
       mediaDetails: media.report.assets.map((a) => ({
         source: a.asset.source,
         url: a.result.status === "ok" ? a.result.url : undefined,
@@ -177,6 +180,7 @@ export async function executeDraftWrite(
       error: `HTTP ${response.status}`,
       mediaUploaded: media.report.uploaded,
       mediaFailed: media.report.failed,
+      retryAttempts: response.retryAttempts,
       mediaDetails: media.report.assets.map((a) => ({
         source: a.asset.source,
         url: a.result.status === "ok" ? a.result.url : undefined,
@@ -198,6 +202,7 @@ export async function executeDraftWrite(
       error: "Missing draft ID",
       mediaUploaded: media.report.uploaded,
       mediaFailed: media.report.failed,
+      retryAttempts: response.retryAttempts,
       mediaDetails: media.report.assets.map((a) => ({
         source: a.asset.source,
         url: a.result.status === "ok" ? a.result.url : undefined,
@@ -236,6 +241,7 @@ export async function executeDraftWrite(
     mappingSaved,
     mediaUploaded: media.report.uploaded,
     mediaFailed: media.report.failed,
+    retryAttempts: response.retryAttempts,
     mediaDetails: media.report.assets.map((a) => ({
       source: a.asset.source,
       url: a.result.status === "ok" ? a.result.url : undefined,

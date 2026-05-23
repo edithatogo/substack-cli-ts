@@ -24,7 +24,7 @@ type FetchInit = Record<string, any>;
 export type FetchLike = (
   input: string,
   init?: FetchInit,
-) => Promise<Pick<Response, "status" | "text">>;
+) => Promise<Pick<Response, "status" | "text"> & Partial<Pick<Response, "headers">>>;
 
 export function apiHeaders(material: ApiAuthMaterial): Record<string, string> {
   const publicationUrl = new URL(material.publicationUrl);
@@ -119,6 +119,7 @@ export interface WriteResponse {
   body: unknown;
   draftId?: number | undefined;
   draftUrl?: string | undefined;
+  retryAttempts?: number | undefined;
 }
 
 export async function requestDelete(
@@ -148,41 +149,94 @@ export async function requestWrite(
   method: "POST" | "PUT",
   headers: Record<string, string>,
   body: Record<string, unknown>,
+  retryOptions: RetryOptions = {
+    maxRetries: 3,
+    baseDelayMs: 1000,
+    maxDelayMs: 10000,
+  },
 ): Promise<WriteResponse> {
-  try {
-    const response = await fetchImpl(url, {
-      method,
-      headers: { ...headers, "content-type": "application/json" },
-      body: JSON.stringify(body),
-    });
+  let retryAttempts = 0;
 
-    const text = await response.text();
-    let parsed: unknown;
-
+  for (let attempt = 0; attempt <= retryOptions.maxRetries; attempt += 1) {
     try {
-      parsed = JSON.parse(text);
+      const response = await fetchImpl(url, {
+        method,
+        headers: { ...headers, "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const text = await response.text();
+
+      if (isRetryableStatus(response.status) && attempt < retryOptions.maxRetries) {
+        retryAttempts += 1;
+        await delay(resolveRetryDelayMs(response, attempt, retryOptions));
+        continue;
+      }
+
+      let parsed: unknown;
+
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        return { status: response.status, body: null, retryAttempts };
+      }
+
+      const record = parsed as Record<string, unknown> | undefined;
+      const draftId =
+        typeof record?.id === "number"
+          ? record.id
+          : typeof record?.id === "string"
+            ? Number(record.id)
+            : undefined;
+      const draftUrl =
+        typeof record?.draft_url === "string"
+          ? record.draft_url
+          : typeof record?.url === "string"
+            ? record.url
+            : undefined;
+
+      return { status: response.status, body: parsed, draftId, draftUrl, retryAttempts };
     } catch {
-      return { status: response.status, body: null };
+      if (attempt < retryOptions.maxRetries) {
+        retryAttempts += 1;
+        await delay(resolveBackoffDelayMs(attempt, retryOptions));
+        continue;
+      }
+
+      return { status: 0, body: null, retryAttempts };
     }
-
-    const record = parsed as Record<string, unknown> | undefined;
-    const draftId =
-      typeof record?.id === "number"
-        ? record.id
-        : typeof record?.id === "string"
-          ? Number(record.id)
-          : undefined;
-    const draftUrl =
-      typeof record?.draft_url === "string"
-        ? record.draft_url
-        : typeof record?.url === "string"
-          ? record.url
-          : undefined;
-
-    return { status: response.status, body: parsed, draftId, draftUrl };
-  } catch {
-    return { status: 0, body: null };
   }
+
+  return { status: 0, body: null, retryAttempts };
+}
+
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status >= 500;
+}
+
+function resolveRetryDelayMs(
+  response: Pick<Response, "status" | "text"> & Partial<Pick<Response, "headers">>,
+  attempt: number,
+  options: RetryOptions,
+): number {
+  const retryAfter = response.headers?.get("retry-after");
+
+  if (retryAfter) {
+    const parsed = Number(retryAfter);
+    if (Number.isFinite(parsed) && parsed >= 0) {
+      return Math.min(parsed * 1000, options.maxDelayMs);
+    }
+  }
+
+  return resolveBackoffDelayMs(attempt, options);
+}
+
+function resolveBackoffDelayMs(attempt: number, options: RetryOptions): number {
+  return Math.min(options.baseDelayMs * 2 ** attempt, options.maxDelayMs);
+}
+
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export interface UploadImageResult {
