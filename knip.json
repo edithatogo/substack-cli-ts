@@ -3,7 +3,7 @@
   "entry": ["src/benchmark/**/*.ts"],
   "project": ["src/**/*.ts"],
   "ignoreDependencies": ["prettier", "substack-api"],
-  "ignoreBinaries": ["biome", "playwright", "substack-cli"],
+  "ignoreBinaries": ["playwright", "substack-cli"],
   "ignoreIssues": {
     "src/**/*.ts": ["exports", "types"]
   },

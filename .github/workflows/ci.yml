@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Biome (Lint & Format)
-        run: npx -p @biomejs/biome biome ci src
+        run: npx biome ci src
 
       - name: Knip (Dead Code Detection)
         run: npm run knip
