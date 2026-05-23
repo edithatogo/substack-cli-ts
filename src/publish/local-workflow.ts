@@ -13,6 +13,17 @@ import type {
 import { resolvePostTitle } from "./title.js";
 import type { TransportResolution } from "./transport.js";
 
+export class LocalWorkflowError extends Error {
+  constructor(
+    message: string,
+    readonly trace: WorkflowStep[],
+    options?: ErrorOptions,
+  ) {
+    super(message, options);
+    this.name = "LocalWorkflowError";
+  }
+}
+
 export async function runLocalDraftWorkflow(
   prepared: PreparedPost,
   config: EffectiveConfig,
@@ -348,10 +359,7 @@ export async function runLocalDraftWorkflow(
         currentUrl: browser.page.url(),
       },
     });
-    throw new Error(
-      `${message}\n${JSON.stringify({ status: "validation-failed", trace }, null, 2)}`,
-      { cause: error },
-    );
+    throw new LocalWorkflowError(message, trace, { cause: error });
   } finally {
     await browser.close();
   }
@@ -412,9 +420,11 @@ async function openSubstackEditor(page: Page, publicationUrl: string): Promise<s
     `https://${host}/publish/post`,
     publicationUrl,
   ];
+  const attempts: Array<{ requestedUrl: string; finalUrl: string }> = [];
 
   for (const url of candidates) {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+    attempts.push({ requestedUrl: url, finalUrl: page.url() });
 
     if (await hasEditor(page)) {
       return url;
@@ -436,9 +446,20 @@ async function openSubstackEditor(page: Page, publicationUrl: string): Promise<s
     }
   }
 
-  throw new Error(
+  throw new EditorOpenError(
     "Could not open a Substack editor. Confirm the local profile is logged in and has publication access.",
+    attempts,
   );
+}
+
+class EditorOpenError extends Error {
+  constructor(
+    message: string,
+    readonly attempts: Array<{ requestedUrl: string; finalUrl: string }>,
+  ) {
+    super(message);
+    this.name = "EditorOpenError";
+  }
 }
 
 async function hasEditor(page: Page): Promise<boolean> {
@@ -579,11 +600,14 @@ async function record<T extends Record<string, unknown>>(
     });
     return details;
   } catch (error) {
+    const details =
+      error instanceof EditorOpenError ? { attemptedEditorUrls: error.attempts } : undefined;
     trace.push({
       name,
       status: "error",
       startedAt,
       endedAt: new Date().toISOString(),
+      details,
       error: error instanceof Error ? error.message : String(error),
     });
     throw error;
