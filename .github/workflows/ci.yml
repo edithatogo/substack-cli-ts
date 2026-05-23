@@ -102,6 +102,7 @@ jobs:
         with:
           name: mutation-report
           path: reports/mutation
+          archive: true
           if-no-files-found: ignore
 
   e2e:
