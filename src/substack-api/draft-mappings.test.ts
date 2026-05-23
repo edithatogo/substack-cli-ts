@@ -3,7 +3,13 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, it } from "vitest";
-import { findDraftMapping, loadDraftMappings, saveDraftMapping } from "./draft-mappings.js";
+import {
+  findDraftMapping,
+  loadDraftMappings,
+  normalizePublicationUrl,
+  normalizeSourceFile,
+  saveDraftMapping,
+} from "./draft-mappings.js";
 
 describe("draft mappings", () => {
   it("saves and replaces mappings by source file and publication", async () => {
@@ -37,6 +43,20 @@ describe("draft mappings", () => {
       assert.equal(mapping.publicationUrl, "https://rareinsights.substack.com/");
     });
   });
+
+  it("loads an empty list when the mappings file is missing", async () => {
+    await withTempState(async () => {
+      assert.deepEqual(await loadDraftMappings(), []);
+    });
+  });
+
+  it("normalizes source file and publication URL inputs", () => {
+    assert.equal(normalizeSourceFile("post.md").endsWith("post.md"), true);
+    assert.equal(
+      normalizePublicationUrl("https://rareinsights.substack.com/p/post?view=web#comments"),
+      "https://rareinsights.substack.com/",
+    );
+  });
 });
 
 async function withTempState(run: () => Promise<void>): Promise<void> {
@@ -48,7 +68,7 @@ async function withTempState(run: () => Promise<void>): Promise<void> {
     await run();
   } finally {
     if (previousStateDir === undefined) {
-      delete process.env.SUBSTACK_CLI_STATE_DIR;
+      Reflect.deleteProperty(process.env, "SUBSTACK_CLI_STATE_DIR");
     } else {
       process.env.SUBSTACK_CLI_STATE_DIR = previousStateDir;
     }

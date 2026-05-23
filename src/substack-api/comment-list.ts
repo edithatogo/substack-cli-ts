@@ -44,7 +44,7 @@ function parseCommentRecord(record: Record<string, unknown>): CommentListEntry |
       ? record.id
       : typeof record.id === "string"
         ? Number(record.id)
-        : NaN;
+        : Number.NaN;
 
   if (Number.isNaN(id)) {
     return null;

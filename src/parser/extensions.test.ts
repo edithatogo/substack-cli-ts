@@ -43,6 +43,15 @@ describe("SubscribeWidget", () => {
     assert.equal(attrs["data-substack-cli-node"], "subscribe-widget");
   });
 
+  it("falls back to Subscribe when rendering a non-string label", () => {
+    const renderFn = SubscribeWidget.config.addAttributes?.().label?.renderHTML;
+    assert.ok(renderFn);
+
+    assert.deepEqual(renderFn({ label: 123 as never }), {
+      "data-label": "Subscribe",
+    });
+  });
+
   it("parses data-label from element", () => {
     const parseAttribute = SubscribeWidget.config.addAttributes?.().label?.parseHTML;
     assert.ok(parseAttribute);
@@ -152,6 +161,15 @@ describe("EmbedNode", () => {
     const attrs = addAttrs();
     const el = { getAttribute: () => null } as HTMLElement;
     assert.equal(attrs.embedType.parseHTML(el), "url");
+  });
+
+  it("renders a default embedType when omitted", () => {
+    const renderFn = EmbedNode.config.addAttributes?.().embedType?.renderHTML;
+    assert.ok(renderFn);
+
+    assert.deepEqual(renderFn({ embedType: undefined }), {
+      "data-embed-type": "url",
+    });
   });
 });
 

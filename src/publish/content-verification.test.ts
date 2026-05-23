@@ -85,4 +85,58 @@ Paragraph with **bold** text.
     assert.ok(report.totalNodes > 0);
     assert.ok(report.textLength > 0);
   });
+
+  it("reports broken links", () => {
+    const parsed = {
+      metadata: {
+        title: "Broken Links",
+      },
+      markdown: "Body text.\n",
+      document: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
+            content: [
+              {
+                type: "text",
+                text: "broken",
+                marks: [{ type: "link", attrs: { href: "" } }],
+              },
+            ],
+          },
+        ],
+      },
+    } as Parameters<typeof verifyDraftContent>[0];
+
+    const report = verifyDraftContent(parsed);
+
+    assert.equal(report.brokenLinkCount, 1);
+    assert.equal(report.hasBody, true);
+    assert.ok(report.issues.some((issue) => issue.path === "document.links"));
+  });
+
+  it("rejects heading-only bodies", () => {
+    const parsed = {
+      metadata: {
+        title: "Heading only",
+      },
+      markdown: "# Heading only\n",
+      document: {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: { level: 1 },
+            content: [{ type: "text", text: "Heading only" }],
+          },
+        ],
+      },
+    } as Parameters<typeof verifyDraftContent>[0];
+
+    const report = verifyDraftContent(parsed);
+
+    assert.equal(report.hasBody, false);
+    assert.ok(report.issues.some((issue) => issue.path === "markdown"));
+  });
 });

@@ -23,10 +23,7 @@ export interface NoteDetail {
   likesCount: number;
 }
 
-export async function listNotes(
-  material: ApiAuthMaterial,
-  limit: number = 10,
-): Promise<NoteSummary[]> {
+export async function listNotes(material: ApiAuthMaterial, limit = 10): Promise<NoteSummary[]> {
   const client = createSubstackClient(material);
   const profile = await client.ownProfile();
   const notes: NoteSummary[] = [];

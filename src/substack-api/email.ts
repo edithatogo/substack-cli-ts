@@ -100,7 +100,7 @@ export async function fetchBroadcastHistory(
   publicationUrl: string,
   material: ApiAuthMaterial,
   fetchFn: FetchLike,
-  limit: number = 20,
+  limit = 20,
 ): Promise<BroadcastListResult> {
   const headers = apiHeaders(material);
   const endpoints = [

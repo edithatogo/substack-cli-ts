@@ -143,11 +143,11 @@ async function withTempState(run: () => Promise<void>): Promise<void> {
 
   try {
     process.env.SUBSTACK_CLI_STATE_DIR = join(temp, ".substack-cli");
-    delete process.env.SUBSTACK_PUBLICATION_URL;
-    delete process.env.SUBSTACK_EMAIL;
-    delete process.env.SUBSTACK_PASSWORD;
-    delete process.env.BROWSERBASE_API_KEY;
-    delete process.env.BROWSERBASE_PROJECT_ID;
+    Reflect.deleteProperty(process.env, "SUBSTACK_PUBLICATION_URL");
+    Reflect.deleteProperty(process.env, "SUBSTACK_EMAIL");
+    Reflect.deleteProperty(process.env, "SUBSTACK_PASSWORD");
+    Reflect.deleteProperty(process.env, "BROWSERBASE_API_KEY");
+    Reflect.deleteProperty(process.env, "BROWSERBASE_PROJECT_ID");
     await run();
   } finally {
     restoreEnv("SUBSTACK_CLI_STATE_DIR", previousStateDir);
@@ -162,7 +162,7 @@ async function withTempState(run: () => Promise<void>): Promise<void> {
 
 function restoreEnv(name: string, value: string | undefined): void {
   if (value === undefined) {
-    delete process.env[name];
+    Reflect.deleteProperty(process.env, name);
     return;
   }
 

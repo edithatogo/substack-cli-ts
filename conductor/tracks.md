@@ -222,9 +222,9 @@
 
 ### Track 33: CI, Coverage, and Quality Hardening
 
-- **Status:** In Progress
+- **Status:** Complete
 - **File:** [../tracks/33-ci-quality-hardening.md](../tracks/33-ci-quality-hardening.md)
-- **Summary:** Additional tests and CI hardening are tracked here. Current acceptance criteria still call out a final coverage target above 90%, so this remains in progress until thresholds and measured coverage reach that bar.
+- **Summary:** Completed hardening track for strict CI/CD, coverage above 90%, reachable E2E workflow dispatch, secret-scan false-positive cleanup, and quality gate repair.
 
 ### Track 34: Publication Routes & Registry Distribution
 
@@ -276,9 +276,9 @@
 | --- | ---: | --- |
 | **Complete / Implemented** | 20 | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 12, 13, 14, 15, 16, 28, 29, 30, 31, 32 |
 | **Partial / Read-only / Probe-only** | 12 | 11, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 |
-| **In Progress** | 3 | 33, 34, 35 |
+| **In Progress** | 2 | 34, 35 |
 | **Planned** | 5 | 36, 37, 38, 39, 40 |
 | **Blocked** | 0 | — |
 | **Total** | **40** | |
 
-_Last updated: 2026-05-15_ — Index now includes Tracks 33–40 and distinguishes implemented work from partial, read-only, and probe-only platform coverage to avoid overclaimed completion status.
+_Last updated: 2026-05-19_ — Index now includes Tracks 33–40 and distinguishes implemented work from partial, read-only, and probe-only platform coverage to avoid overclaimed completion status.

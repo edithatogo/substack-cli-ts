@@ -408,7 +408,7 @@ async function openSubstackEditor(page: Page, publicationUrl: string): Promise<s
   const host = new URL(publicationUrl).host;
   const candidates = [
     `https://substack.com/publish/post?publication_url=${encodeURIComponent(publicationUrl)}`,
-    `https://substack.com/home/post`,
+    "https://substack.com/home/post",
     `https://${host}/publish/post`,
     publicationUrl,
   ];

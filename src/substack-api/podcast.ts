@@ -170,7 +170,7 @@ export async function fetchPodcastEpisodes(
   publicationUrl: string,
   material: ApiAuthMaterial,
   fetchFn: FetchLike,
-  limit: number = 20,
+  limit = 20,
 ): Promise<PodcastEpisodesListResult> {
   const headers = apiHeaders(material);
   const endpoints = ["/api/v1/publication/podcast_episodes", "/api/v1/podcast/episodes"];
