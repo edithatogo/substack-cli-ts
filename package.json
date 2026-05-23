@@ -101,7 +101,7 @@
     "knip": "^5.0.0",
     "prettier": "^3.6.0",
     "typescript": "^5.9.0",
-    "typescript-eslint": "^8.59.1",
+    "typescript-eslint": "^8.59.4",
     "vitest": "^4.1.5"
   }
 }
