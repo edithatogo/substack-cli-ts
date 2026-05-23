@@ -12,6 +12,7 @@ export interface PrepublishReport {
   filePath: string;
   title: string;
   scheduleAt?: string | undefined;
+  warnings: string[];
   compatibility: ReturnType<typeof validatePayloadCompatibility>;
   payload?: SubstackDraftPayload | undefined;
   message: string;
@@ -28,6 +29,7 @@ export function prepublishPost(prepared: PreparedPost): PrepublishReport {
       filePath: prepared.post.filePath,
       title,
       scheduleAt: prepared.scheduleAt,
+      warnings: prepared.post.warnings,
       compatibility,
       message: "Prepublish blocked because the post contains unsupported Substack payload content.",
     };
@@ -39,6 +41,7 @@ export function prepublishPost(prepared: PreparedPost): PrepublishReport {
     filePath: prepared.post.filePath,
     title,
     scheduleAt: prepared.scheduleAt,
+    warnings: prepared.post.warnings,
     compatibility,
     payload: buildSubstackDraftPayload(prepared.post),
     message:

@@ -489,6 +489,8 @@ export function printPreparedPost(prepared: PreparedPost): void {
         metadata: post.metadata,
         html: post.html,
         document: post.document,
+        media: post.media,
+        warnings: post.warnings,
         compatibility: {
           ok: compatibility.ok,
           supportedNodeTypes: compatibility.nodeTypes,

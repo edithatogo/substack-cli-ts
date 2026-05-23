@@ -167,7 +167,12 @@ Media examples:
 ```markdown
 ![Remote alt](https://example.com/image.png "Remote caption")
 ![Local alt](./assets/local-image.png "Local caption")
+<img src="https://example.com/native.png" alt="Native alt" data-caption="Native caption">
 ```
+
+`inspect` prints a `media` manifest for every image. Markdown image titles and inline HTML
+`data-caption` values are recorded there as caption metadata; a normal paragraph after an
+image stays visible paragraph text and is not treated as native caption metadata.
 
 Supported custom markers:
 
@@ -192,7 +197,7 @@ Supported custom markers:
 | `blockquote`                                       | `> `                                         | Nested blockquotes supported            |
 | `codeBlock`                                        | ` ``` ` or ` ```language `                   | Language annotation preserved           |
 | `horizontalRule`                                   | `---`                                        | Thematic break                          |
-| `image`                                            | `![alt](src)` or `<img>`                     | Captions via `data-caption`, alt, title |
+| `image`                                            | `![alt](src)` or `<img>`                     | Caption metadata via `data-caption` or Markdown title |
 | `embedNode`                                        | `{{youtube:}}`, `{{embed:}}`, `{{podcast:}}` | URL and embed type stored               |
 | `paywallDivider`                                   | `{{paywall}}`                                | Atom block, no content                  |
 | `subscribeWidget`                                  | `{{subscribe: label}}`                       | Label attribute                         |
