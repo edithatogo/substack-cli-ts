@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     include: ["src/**/*.test.ts"],
-    exclude: ["src/test/**"],
+    exclude: ["src/test/e2e/**"],
     pool: "threads",
     testTimeout: 30_000,
     coverage: {

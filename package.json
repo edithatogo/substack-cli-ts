@@ -44,7 +44,7 @@
     "build": "tsc -p tsconfig.json --incremental",
     "dev": "npm run build -- --watch",
     "inspect": "npm run build && node dist/cli.js inspect",
-    "test": "vitest run",
+    "test": "npm run build && vitest run",
     "test:coverage": "vitest run --coverage --configLoader native",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:mutation": "stryker run",

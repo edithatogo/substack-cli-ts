@@ -30,6 +30,8 @@ Bring CI/CD, documentation checks, testing, automation, and code-quality gates u
 - [x] Expand `src/mcp/resources.test.ts` — adds registerMcpResources test.
 - [x] Expand `src/mcp/prompts.test.ts` — adds registerMcpPrompts test.
 - [x] Set enforceable coverage thresholds in `vitest.config.ts` at the current measured baseline.
+- [x] Keep smoke tests in the default Vitest suite while excluding only credential-backed E2E tests.
+- [x] Make `npm test` build the CLI before running tests so CLI smoke tests exercise current compiled output.
 
 ## Acceptance Criteria
 
@@ -52,4 +54,6 @@ Coverage thresholds in `vitest.config.ts` are set to 91% for statements, branche
 | Functions  |          96.36% |          91% |
 | Lines      |          95.81% |          91% |
 
-The remaining low-coverage files are intentionally excluded from the unit gate because they are runtime-only browser, smoke, or integration surfaces.
+The remaining low-coverage files are intentionally excluded from the unit gate because they are runtime-only browser or live Substack integration surfaces. Smoke tests are included in the default Vitest suite; credential-backed E2E tests remain in `npm run test:e2e` so CI can run them only when the required secrets are available.
+
+Knip receives the CLI entry point from `package.json#bin`. The explicit `knip.json` entry covers benchmark scripts because they are script-only surfaces that are not reachable from the published CLI entry point.
