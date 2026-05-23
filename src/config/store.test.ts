@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
@@ -42,7 +42,7 @@ describe("config store", () => {
       const previous = process.env.SUBSTACK_PUBLICATION_URL;
       const previousEmail = process.env.SUBSTACK_EMAIL;
       process.env.SUBSTACK_PUBLICATION_URL = "https://env.substack.com";
-      delete process.env.SUBSTACK_EMAIL;
+      Reflect.deleteProperty(process.env, "SUBSTACK_EMAIL");
 
       try {
         const effective = await loadEffectiveConfig();
@@ -59,7 +59,7 @@ describe("config store", () => {
       const previous = process.env.SUBSTACK_PUBLICATION_URL;
       const previousEmail = process.env.SUBSTACK_EMAIL;
       process.env.SUBSTACK_PUBLICATION_URL = "https://env.substack.com";
-      delete process.env.SUBSTACK_EMAIL;
+      Reflect.deleteProperty(process.env, "SUBSTACK_EMAIL");
 
       try {
         const effective = await loadEffectiveConfig();
@@ -152,13 +152,13 @@ describe("requireBrowserbaseConfig", () => {
 });
 
 describe("loadConfig error handling", () => {
-  it("throws on non-ENOENT errors", async () => {
-    const { loadConfig } = await import("./store.js");
-    // Mock readFile to throw a non-ENOENT error
-    const { readFile } = await import("node:fs/promises");
-    const _original = readFile;
-    // Just verify the function exists and errors propagate
-    assert.ok(typeof loadConfig === "function");
+  it("throws on invalid JSON", async () => {
+    await withTempCwd(async () => {
+      await mkdir(join(configFilePath(), ".."), { recursive: true });
+      await writeFile(configFilePath(), "{not-json}", "utf8");
+
+      await assert.rejects(() => loadConfig(), /Unexpected token|JSON/);
+    });
   });
 });
 
@@ -189,9 +189,9 @@ async function withTempCwd(run: () => Promise<void>): Promise<void> {
 
   try {
     process.env.SUBSTACK_CLI_STATE_DIR = join(temp, ".substack-cli");
-    delete process.env.SUBSTACK_EMAIL;
-    delete process.env.SUBSTACK_PASSWORD;
-    delete process.env.SUBSTACK_COOKIE;
+    Reflect.deleteProperty(process.env, "SUBSTACK_EMAIL");
+    Reflect.deleteProperty(process.env, "SUBSTACK_PASSWORD");
+    Reflect.deleteProperty(process.env, "SUBSTACK_COOKIE");
     await run();
   } finally {
     restoreEnv("SUBSTACK_CLI_STATE_DIR", previousStateDir);
@@ -204,7 +204,7 @@ async function withTempCwd(run: () => Promise<void>): Promise<void> {
 
 function restoreEnv(name: string, value: string | undefined): void {
   if (value === undefined) {
-    delete process.env[name];
+    Reflect.deleteProperty(process.env, name);
     return;
   }
 

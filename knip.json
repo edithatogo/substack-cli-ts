@@ -1,7 +1,14 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/cli.ts"],
+  "entry": ["src/benchmark/**/*.ts"],
   "project": ["src/**/*.ts"],
-  "ignoreDependencies": [],
-  "ignore": ["src/test/**", "src/**/*.test.ts", "vendor/**"]
+  "ignoreDependencies": ["prettier", "substack-api"],
+  "ignoreBinaries": ["playwright", "substack-cli"],
+  "ignoreIssues": {
+    "src/**/*.ts": ["exports", "types"]
+  },
+  "rules": {
+    "exports": "off",
+    "types": "off"
+  }
 }
