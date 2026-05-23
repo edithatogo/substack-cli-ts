@@ -69,6 +69,16 @@ npm test
 npm run quality
 ```
 
+Windows/OneDrive-safe install:
+
+```powershell
+npm install --cache .npm-cache --prefer-online
+```
+
+The repository includes the same npm cache settings in `.npmrc`, and `.npm-cache/` is
+ignored. This avoids global cache rename collisions and cleanup locks commonly seen in
+OneDrive or SharePoint-synced workspaces.
+
 Create a local `.env` from `.env.example`:
 
 ```powershell
@@ -250,4 +260,7 @@ $ substack-cli inspect examples/formatting.md
 
 # README window note
 
-On Windows, prefer a repo path outside OneDrive. If OneDrive is unavoidable, relocate npm cache and CLI state to `%LOCALAPPDATA%` to avoid cleanup/cache-lock issues.
+On Windows, prefer a repo path outside OneDrive. If OneDrive is unavoidable, use the
+repo-local `.npm-cache/` configured by `.npmrc`, and set `SUBSTACK_CLI_STATE_DIR` to a
+non-synced path such as `%LOCALAPPDATA%\substack-cli-state` when browser-profile locks
+or sync cleanup interfere with local runtime state.

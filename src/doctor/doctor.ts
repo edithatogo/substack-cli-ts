@@ -27,6 +27,7 @@ const REQUIRED_IGNORES = [
   ".env",
   ".env.*",
   ".substack-cli/",
+  ".npm-cache/",
   "dist/",
   "node_modules/",
   "coverage/",
