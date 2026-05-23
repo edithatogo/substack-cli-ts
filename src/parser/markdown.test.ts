@@ -202,6 +202,8 @@ Body
       );
       const images = findNodes(parsed.document, "image");
       assert.equal(images.length, 3);
+      assert.equal(parsed.warnings.length, 2);
+      assert.match(parsed.warnings[0]!, /Adjacent image and image blocks/);
     });
 
     it("preserves quoted image alt text and title metadata", async () => {
@@ -297,6 +299,34 @@ Body
       assert.equal(embeds.length, 1);
       const paras = parsed.document.content?.filter((n) => n.type === "paragraph");
       assert.ok(paras && paras.length >= 2);
+    });
+
+    it("warns when image, custom nodes, and horizontal rules are adjacent", async () => {
+      const parsed = await parseMarkdownString(`![Hero](https://example.com/hero.png)
+
+---
+
+{{subscribe: Join now}}
+`);
+
+      assert.deepEqual(
+        parsed.warnings.map((warning) => warning.replace(/positions \d+-\d+/, "positions X-X")),
+        [
+          "Adjacent image and horizontalRule blocks at positions X-X may render unpredictably in Substack; add a paragraph or spacer between them before publishing.",
+          "Adjacent horizontalRule and custom subscribeWidget blocks at positions X-X may render unpredictably in Substack; add a paragraph or spacer between them before publishing.",
+        ],
+      );
+    });
+
+    it("does not warn when text separates risky blocks", async () => {
+      const parsed = await parseMarkdownString(`![Hero](https://example.com/hero.png)
+
+Caption paragraph.
+
+{{subscribe: Join now}}
+`);
+
+      assert.deepEqual(parsed.warnings, []);
     });
   });
 });
