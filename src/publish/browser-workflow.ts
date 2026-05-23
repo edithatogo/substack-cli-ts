@@ -1,4 +1,5 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 import { createStoredSession, loadSession, saveSession } from "../auth/session-store.js";
 import {
   getEditorText,
@@ -15,7 +16,7 @@ import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import type { DraftMapping } from "../substack-api/draft-mappings.js";
 import { validatePayloadCompatibility } from "../substack-api/payload.js";
 import type { PreparedPost } from "../types.js";
-import { runLocalDraftWorkflow } from "./local-workflow.js";
+import { LocalWorkflowError, runLocalDraftWorkflow } from "./local-workflow.js";
 import { resolvePostTitle } from "./title.js";
 import {
   type TransportPreference,
@@ -113,15 +114,24 @@ export async function runBrowserWorkflow(
   const transport = resolveTransport(options.transport ?? "auto");
 
   if (config.browserRuntime === "local") {
-    const result = await runLocalDraftWorkflow(
-      prepared,
-      config,
-      transport,
-      options.draftMapping,
-      options,
-    );
-    await maybeWriteTrace(result, options.traceOut);
-    console.log(JSON.stringify(result, null, 2));
+    try {
+      const result = await runLocalDraftWorkflow(
+        prepared,
+        config,
+        transport,
+        options.draftMapping,
+        options,
+      );
+      await maybeWriteTrace(result, options.traceOut);
+      console.log(JSON.stringify(result, null, 2));
+    } catch (error) {
+      if (error instanceof LocalWorkflowError) {
+        const result = buildFailedWorkflowResult(error, prepared, transport);
+        await maybeWriteTrace(result, options.traceOut);
+        console.error(JSON.stringify(result, null, 2));
+      }
+      throw error;
+    }
     return;
   }
 
@@ -150,20 +160,16 @@ export async function runBrowserWorkflow(
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
       if (error instanceof BrowserWorkflowError) {
-        console.error(
-          JSON.stringify(
-            {
-              status: "validation-failed",
-              message: error.message,
-              trace: error.trace,
-              browserbaseSessionId: session.browserbaseSessionId,
-              browserbaseSessionUrl: session.browserbaseSessionUrl,
-              browserbaseDebugUrl: session.browserbaseDebugUrl,
-            },
-            null,
-            2,
-          ),
-        );
+        const result = {
+          status: "validation-failed",
+          message: error.message,
+          trace: error.trace,
+          browserbaseSessionId: session.browserbaseSessionId,
+          browserbaseSessionUrl: session.browserbaseSessionUrl,
+          browserbaseDebugUrl: session.browserbaseDebugUrl,
+        };
+        await maybeWriteTrace(result, options.traceOut);
+        console.error(JSON.stringify(result, null, 2));
       }
 
       throw error;
@@ -615,5 +621,31 @@ export async function maybeWriteTrace(
     return;
   }
 
+  const parent = dirname(traceOut);
+  if (parent !== ".") {
+    await mkdir(parent, { recursive: true });
+  }
+
   await writeFile(traceOut, `${JSON.stringify(result, null, 2)}\n`, "utf8");
+}
+
+function buildFailedWorkflowResult(
+  error: LocalWorkflowError,
+  prepared: PreparedPost,
+  transport: TransportResolution,
+): Record<string, unknown> {
+  return {
+    status: "validation-failed",
+    message: error.message,
+    mode: prepared.mode,
+    title: resolvePostTitle(prepared.post),
+    metadata: {
+      subtitle: prepared.post.metadata.subtitle,
+      tags: prepared.post.metadata.tags,
+      audience: prepared.post.metadata.audience,
+      section: prepared.post.metadata.section,
+    },
+    transport,
+    trace: error.trace,
+  };
 }

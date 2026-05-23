@@ -43,6 +43,7 @@ export async function runDoctor(): Promise<DoctorReport> {
     await checkApiReadiness(config),
     await checkSession(),
     await checkLocalProfile(),
+    await checkEditorWriteReadiness(config),
     await checkGitignore(),
   ];
 
@@ -93,7 +94,7 @@ export function checkTransport(config: EffectiveConfig): DoctorCheck {
       return {
         name: "transport",
         status: "error",
-        message: `Browserbase runtime is selected but missing ${missing.map(([name]) => name).join(", ")}.`,
+        message: `Browserbase runtime is selected but missing ${missing.map(([name]) => name).join(", ")}. If you want to use a local browser profile, run \`substack-cli config set-runtime local\`.`,
         details: { runtime: config.browserRuntime, runtimeSource: "default-or-config" },
       };
     }
@@ -249,6 +250,55 @@ async function checkLocalProfile(): Promise<DoctorCheck> {
   };
 }
 
+async function checkEditorWriteReadiness(config: EffectiveConfig): Promise<DoctorCheck> {
+  const profileDir = localBrowserProfileDir();
+  const hasLocalProfile = await exists(profileDir);
+  const publicationUrl = config.publicationUrl;
+  const candidateEditorUrls = publicationUrl ? buildEditorUrlCandidates(publicationUrl) : [];
+
+  if (!publicationUrl) {
+    return {
+      name: "editor-write-readiness",
+      status: "error",
+      message:
+        "Draft/editor write readiness cannot be checked until a publication URL is configured.",
+      details: { profileDir, candidateEditorUrls },
+    };
+  }
+
+  if (config.browserRuntime === "local" && !hasLocalProfile) {
+    return {
+      name: "editor-write-readiness",
+      status: "warn",
+      message:
+        "Draft/editor write access is not ready: no local browser profile exists yet. Run `substack-cli auth login` with local runtime, then retry with `--trace-out` if editor opening fails.",
+      details: { profileDir, candidateEditorUrls },
+    };
+  }
+
+  if (config.browserRuntime === "local") {
+    return {
+      name: "editor-write-readiness",
+      status: "warn",
+      message:
+        "A local browser profile exists, but offline doctor cannot prove editor-write access. Live failures will include attempted editor URLs in the trace; run a draft command with `--trace-out` to verify.",
+      details: { profileDir, candidateEditorUrls, authBoundary: "substack-editor" },
+    };
+  }
+
+  return {
+    name: "editor-write-readiness",
+    status: "warn",
+    message:
+      "Editor-write access depends on the selected browser runtime session and is verified during draft, publish, or schedule commands.",
+    details: {
+      runtime: config.browserRuntime,
+      candidateEditorUrls,
+      authBoundary: "substack-editor",
+    },
+  };
+}
+
 async function checkGitignore(): Promise<DoctorCheck> {
   const raw = await readFileIfExists(".gitignore");
 
@@ -282,6 +332,16 @@ async function checkGitignore(): Promise<DoctorCheck> {
       requiredPatterns: REQUIRED_IGNORES,
     },
   };
+}
+
+function buildEditorUrlCandidates(publicationUrl: string): string[] {
+  const host = new URL(publicationUrl).host;
+  return [
+    `https://substack.com/publish/post?publication_url=${encodeURIComponent(publicationUrl)}`,
+    "https://substack.com/home/post",
+    `https://${host}/publish/post`,
+    publicationUrl,
+  ];
 }
 
 async function exists(path: string): Promise<boolean> {
