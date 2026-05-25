@@ -16,6 +16,7 @@ import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import type { DraftMapping } from "../substack-api/draft-mappings.js";
 import { validatePayloadCompatibility } from "../substack-api/payload.js";
 import type { PreparedPost } from "../types.js";
+import { resolveDraftEditorUrl } from "./draft-url.js";
 import { LocalWorkflowError, runLocalDraftWorkflow } from "./local-workflow.js";
 import { resolvePostTitle } from "./title.js";
 import {
@@ -95,12 +96,6 @@ export interface BrowserWorkflowOptions {
 
 export function shouldOpenPublishReview(options: BrowserWorkflowOptions): boolean {
   return options.reviewOnly === true;
-}
-
-export function resolveDraftEditorUrl(draftUrl: string, draftId: string | undefined): string {
-  if (!draftId || !draftUrl) return draftUrl || "";
-  if (/\/\d+$/.test(draftUrl)) return draftUrl;
-  return `${draftUrl.replace(/\/+$/, "")}/${draftId}`;
 }
 
 export async function runBrowserWorkflow(
