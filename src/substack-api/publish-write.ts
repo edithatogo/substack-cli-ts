@@ -25,6 +25,7 @@ export interface PublishWriteResult {
   message: string;
   existingDraft?: DraftMapping | undefined;
   error?: string | undefined;
+  retryAttempts?: number | undefined;
 }
 
 const _PREPUBLISH_PATH = "/api/v1/drafts/{id}/prepublish";
@@ -81,6 +82,7 @@ export async function executePublishWrite(
       message: `Substack returned HTTP ${response.status}.`,
       existingDraft: plan.existingDraft,
       error: `HTTP ${response.status}`,
+      retryAttempts: response.retryAttempts,
     };
   }
 
@@ -93,6 +95,7 @@ export async function executePublishWrite(
       draftId: plan.draftId,
       message: `Prepublish validation passed for draft ${plan.draftId}.`,
       existingDraft: plan.existingDraft,
+      retryAttempts: response.retryAttempts,
     };
   }
 
@@ -117,5 +120,6 @@ export async function executePublishWrite(
     postUrl,
     message: `Draft ${plan.operation === "schedule" ? "scheduled" : "published"} (ID: ${plan.draftId}).`,
     existingDraft: plan.existingDraft,
+    retryAttempts: response.retryAttempts,
   };
 }

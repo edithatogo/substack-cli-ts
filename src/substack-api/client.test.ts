@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
-import { describe, it } from "vitest";
+import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import { apiHeaders, classifyFailure, requestJson } from "./client.js";
+
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe("substack-api client helpers", () => {
   it("builds browser-like headers from auth material", () => {
@@ -149,6 +157,7 @@ describe("requestWrite", () => {
       "POST",
       {},
       {},
+      { maxRetries: 0, baseDelayMs: 1, maxDelayMs: 1 },
     );
     assert.equal(result.status, 0);
     assert.equal(result.body, null);
@@ -165,6 +174,101 @@ describe("requestWrite", () => {
     );
     assert.equal(result.status, 201);
     assert.equal(result.body, null);
+  });
+
+  it("retries rate-limited write requests before returning success", async () => {
+    const { requestWrite } = await import("./client.js");
+    const retryText = vi.fn(async () => JSON.stringify({ error: "rate limited" }));
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 429,
+        headers: new Headers({ "retry-after": "1" }),
+        text: retryText,
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        text: async () => JSON.stringify({ id: 789 }),
+      });
+
+    const resultPromise = requestWrite(
+      fetchImpl,
+      "https://substack.com/api/v1/drafts",
+      "POST",
+      {},
+      {},
+      { maxRetries: 2, baseDelayMs: 5, maxDelayMs: 1000 },
+    );
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    const result = await resultPromise;
+    assert.equal(result.status, 200);
+    assert.equal(result.draftId, 789);
+    assert.equal(result.retryAttempts, 1);
+    assert.equal(fetchImpl.mock.calls.length, 2);
+    assert.equal(retryText.mock.calls.length, 0);
+  });
+
+  it("honors HTTP-date Retry-After values for write retries", async () => {
+    vi.setSystemTime(new Date("2026-05-26T00:00:00.000Z"));
+    const { requestWrite } = await import("./client.js");
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 503,
+        headers: new Headers({ "retry-after": "Tue, 26 May 2026 00:00:02 GMT" }),
+        text: vi.fn(async () => JSON.stringify({ error: "temporarily unavailable" })),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        text: async () => JSON.stringify({ id: 790 }),
+      });
+
+    const resultPromise = requestWrite(
+      fetchImpl,
+      "https://substack.com/api/v1/drafts",
+      "POST",
+      {},
+      {},
+      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5000 },
+    );
+
+    await vi.advanceTimersByTimeAsync(1999);
+    assert.equal(fetchImpl.mock.calls.length, 1);
+    await vi.advanceTimersByTimeAsync(1);
+
+    const result = await resultPromise;
+    assert.equal(result.status, 200);
+    assert.equal(result.draftId, 790);
+    assert.equal(result.retryAttempts, 1);
+  });
+
+  it("retries transient network write failures", async () => {
+    const { requestWrite } = await import("./client.js");
+    const fetchImpl = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("socket closed"))
+      .mockResolvedValueOnce({
+        status: 200,
+        text: async () => JSON.stringify({ id: 101 }),
+      });
+
+    const resultPromise = requestWrite(
+      fetchImpl,
+      "https://substack.com/api/v1/drafts",
+      "POST",
+      {},
+      {},
+      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5 },
+    );
+
+    await vi.advanceTimersByTimeAsync(5);
+
+    const result = await resultPromise;
+    assert.equal(result.status, 200);
+    assert.equal(result.draftId, 101);
+    assert.equal(result.retryAttempts, 1);
   });
 });
 
