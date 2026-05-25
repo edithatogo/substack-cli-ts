@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
-import { type FetchLike } from "./client.js";
+import type { FetchLike } from "./client.js";
 import { fetchCommentsForPost, moderateComment, replyToComment } from "./comment-list.js";
 
 function fakeFetch(status: number, body: string): FetchLike {
@@ -211,6 +211,31 @@ describe("fetchCommentsForPost", () => {
     assert.equal(result.status, "ok");
     assert.equal(result.comments![0]!.authorName, "NestedAuthor");
     assert.equal(result.comments![0]!.authorHandle, "nested");
+  });
+
+  it("parses alternate comment fields", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([
+        {
+          id: "7",
+          body: "Alt",
+          author: { name: "NestedName", handle: "nested-handle" },
+          date: "2025-01-04T00:00:00Z",
+          status: "flagged",
+          post_id: "101",
+        },
+      ]),
+    );
+
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.comments![0]!.id, 7);
+    assert.equal(result.comments![0]!.authorName, "NestedName");
+    assert.equal(result.comments![0]!.authorHandle, "nested-handle");
+    assert.equal(result.comments![0]!.publishedAt, "2025-01-04T00:00:00Z");
+    assert.equal(result.comments![0]!.postId, 101);
   });
 });
 

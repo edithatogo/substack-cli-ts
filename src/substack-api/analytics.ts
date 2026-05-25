@@ -176,7 +176,7 @@ export async function fetchEmailPerformance(
   publicationUrl: string,
   material: ApiAuthMaterial,
   fetchFn: FetchLike,
-  limit: number = 10,
+  limit = 10,
 ): Promise<EmailPerformanceResult> {
   const headers = apiHeaders(material);
   const endpoints = [

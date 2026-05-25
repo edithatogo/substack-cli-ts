@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Biome (Lint & Format)
-        run: npx -p @biomejs/biome biome ci src
+        run: npx biome ci src
 
       - name: Knip (Dead Code Detection)
         run: npm run knip
@@ -72,8 +72,8 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -87,8 +87,8 @@ jobs:
     needs: quality
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -98,10 +98,11 @@ jobs:
         run: npm run test:mutation
       - name: Upload Mutation Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mutation-report
           path: reports/mutation
+          archive: true
           if-no-files-found: ignore
 
   e2e:
@@ -111,8 +112,8 @@ jobs:
     if: github.event_name == 'workflow_dispatch'
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -124,4 +125,3 @@ jobs:
           SUBSTACK_PASSWORD: ${{ secrets.SUBSTACK_PASSWORD }}
           SUBSTACK_PUBLICATION_URL: ${{ secrets.SUBSTACK_PUBLICATION_URL }}
         run: npm run test:e2e
-

@@ -241,4 +241,52 @@ describe("reviewWorkflowTraceArtifact", () => {
       await rm(temp, { recursive: true, force: true });
     }
   });
+
+  it("falls back to browser workflow normalization when needed", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-trace-"));
+    const file = join(temp, "browser.json");
+
+    await writeFile(
+      file,
+      JSON.stringify(
+        {
+          status: "published",
+          mode: "publish",
+          title: "Browser Title",
+          currentUrl: "https://rareinsights.substack.com/publish/post/123",
+          finalUrl: "https://rareinsights.substack.com/p/my-post",
+          finalState: "published",
+          publishedUrl: "https://rareinsights.substack.com/p/my-post",
+          transport: {
+            requested: "browser",
+            selected: "browser",
+            fallbackReason: "No API session was available.",
+          },
+          trace: [
+            {
+              name: "submit",
+              status: "ok",
+              startedAt: "2026-04-28T00:00:00.000Z",
+              endedAt: "2026-04-28T00:00:01.000Z",
+            },
+          ],
+        },
+        null,
+        2,
+      ),
+      "utf8",
+    );
+
+    try {
+      const review = await reviewWorkflowTraceArtifact(file);
+
+      assert.equal(review.status, "published");
+      assert.equal(review.traceCount, 1);
+      assert.equal(review.transportRequested, "browser");
+      assert.equal(review.transportSelected, "browser");
+      assert.equal(review.browserSessionPresent, false);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
 });

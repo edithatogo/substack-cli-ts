@@ -66,4 +66,33 @@ describe("evaluateDistributionPolicy", () => {
       await rm(temp, { recursive: true, force: true });
     }
   });
+
+  it("reports public packages with license metadata as ready", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-policy-"));
+
+    try {
+      await writeFile(
+        join(temp, "package.json"),
+        JSON.stringify(
+          {
+            private: false,
+            license: "MIT",
+            dependencies: {},
+          },
+          null,
+          2,
+        ),
+        "utf8",
+      );
+      await writeFile(join(temp, "LICENSE"), "MIT\n", "utf8");
+
+      const report = await evaluateDistributionPolicy(temp);
+
+      assert.equal(report.status, "ok");
+      assert.equal(report.license, "MIT");
+      assert.equal(report.licenseFilePresent, true);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
 });

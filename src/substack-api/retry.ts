@@ -19,7 +19,7 @@ export async function withRetry<T>(
     } catch (error) {
       lastError = error;
       if (attempt < options.maxRetries) {
-        const delay = Math.min(options.baseDelayMs * Math.pow(2, attempt), options.maxDelayMs);
+        const delay = Math.min(options.baseDelayMs * 2 ** attempt, options.maxDelayMs);
         console.warn(
           `Request failed (attempt ${attempt + 1}/${options.maxRetries + 1}), retrying in ${delay}ms: ${error instanceof Error ? error.message : String(error)}`,
         );

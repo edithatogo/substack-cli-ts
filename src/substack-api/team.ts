@@ -55,7 +55,7 @@ export async function fetchTeamMembers(
         ? record.id
         : typeof record.id === "string"
           ? Number(record.id)
-          : NaN;
+          : Number.NaN;
     const role = typeof record.role === "string" ? record.role : "";
     const name =
       typeof record.name === "string"
