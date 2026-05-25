@@ -84,6 +84,6 @@ The following three code gaps were fixed:
 
 - ~~**Publish click doesn't reliably trigger navigation**~~: **Resolved.** Substack's publish flow requires a two-step sequence: first click **"Continue"** (`button#publish`) to open the review overlay, then click **"Send to everyone now"** to trigger the actual publish and navigate to `/p/{slug}`. Both `local-workflow.ts` and `browser-workflow.ts` now implement this two-step flow. The `click-final-publish` step targets `button:has-text('Send to everyone now')` as its primary selector. The `waitForURL` / polling logic in both workflows correctly captures the published post URL after the second click. The `--review-only` validation confirmed that clicking Continue opens the review overlay successfully.
 
-## Remaining Work
+## Completed Work
 
-None.
+All planned prepublish, publish, and schedule tasks have been completed and validated.

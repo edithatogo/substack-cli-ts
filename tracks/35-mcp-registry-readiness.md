@@ -40,7 +40,7 @@ Prepare the existing MCP server and related metadata for publication to the curr
 - Official MCP documentation now references a community-driven registry service.
 - The registry submission route still needs to be completed against the live registry process.
 
-## Remaining Work
+## Completed Work
 
 - [x] Add local registry metadata files.
 - [x] Add publish/packaging docs for the MCP server.
@@ -62,5 +62,4 @@ Prepare the existing MCP server and related metadata for publication to the curr
 - Added `scripts/validate-registry-metadata.mjs`.
 - Added `scripts/mcp-publisher-helper.mjs`.
 - Local verification now passes without warnings; final live publish remains an external gate.
-
 

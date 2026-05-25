@@ -75,7 +75,7 @@ Audit results comparing the MCP tool surface against the CLI command surface:
 **Read flows not yet covered**:
 - `api payload <file>` — builds the Substack draft payload from a Markdown file without network access. Currently CLI-only. Candidate for an MCP `review`-group tool (`api.payload`). Low priority since the same information is available through `api draft inspect` and `schema validate` which already have MCP equivalents.
 
-## Remaining Work
+## Maintenance Notes
 
 - Keep the surface intentionally narrow around tools, read-only resources, and redacted prompts.
 - Keep MCP output aligned with the CLI summaries used by the existing tracks.

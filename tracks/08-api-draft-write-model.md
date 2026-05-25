@@ -54,7 +54,7 @@ Support internal API draft creation and update without touching final publish co
 - **Response:** Full draft object with id (numeric), uuid, slug, draft_created_at, draft_updated_at, etc.
 - **Fixture saved:** `fixtures/drafts/live-draft-contract.json`.
 
-## Remaining Work
+## Completed Work
 
 - ✅ Confirm draft endpoints from a live draft save (`D006`).
 - ✅ Run `api draft contract` to infer endpoint shapes from captured artifact.
@@ -64,6 +64,9 @@ Support internal API draft creation and update without touching final publish co
 - ✅ Wire `api draft create <file> --live` to call POST/PUT against the confirmed endpoints.
 - ✅ Wire `draft <file>` CLI command to use the API transport when `--transport api` is specified.
 - ✅ Update `resolveTransport()` to accept `"api"` without throwing.
-- Consider capturing additional drafts (e.g., with a section selected) to build a `contract-matrix` for comparison.
-- Test end-to-end live draft creation with `--live` flag against a real Substack session.
-- Wire `publish` and `schedule` commands for API transport (requires publish/schedule endpoint contracts).
+
+## Follow-up Discovery Notes
+
+- Additional draft captures, such as section-specific examples, remain useful for broadening fixtures but are not required for the completed draft write model.
+- End-to-end live draft creation was validated in later transport work and summarized in `conductor/tracks.md`.
+- API publish and schedule transport wiring moved to Track 11 and Track 12, which are both complete.

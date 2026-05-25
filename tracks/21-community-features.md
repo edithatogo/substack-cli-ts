@@ -63,8 +63,8 @@ Before implementation begins, research is required in these areas:
 - `api notes create --body <text>` — create and publish a new note via `createNote()`
 - `api following` — list followed users via `client.ownProfile().following()`
 
-**Pending:**
-- Note delete, like, reshare, reply
-- No recommendation endpoints discovered. The substack-api npm package has no recommendation methods. Recommendations require browser DevTools network capture or third-party research (NHagar/substack_api Python client).
-- Chat/DM is WebSocket-based and not CLI-accessible.
-- Threads/Q&A management
+**External Gates:**
+- Note delete, like, reshare, and reply endpoints remain undiscovered.
+- No recommendation endpoints have been discovered. The substack-api npm package has no recommendation methods. Recommendations require future browser DevTools network capture or third-party endpoint research.
+- Chat/DM is WebSocket-based and not CLI-accessible through the current REST adapter.
+- Threads/Q&A management remains undiscovered.

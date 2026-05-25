@@ -61,12 +61,8 @@ Before implementation begins, research is required in these areas:
 - Subscriber list via `fetchSubscriberList()` from `GET /api/v1/publication/subscribers` (discovered externally via tap-substack)
 - `api subscriber list` CLI command with `--limit` and `--offset` pagination
 
-**Not CLI-accessible (no endpoints discovered):**
+**External Gates (not CLI-accessible with the discovered API surface):**
 - CSV import/export — dashboard UI only
 - Subscriber segments/groups — no endpoints discovered
 - Suppression list management — no endpoints discovered
 - Gift subscriptions — no endpoints discovered
-- CSV import/export
-- Suppression list management
-- Segments/groups
-- Gift subscriptions

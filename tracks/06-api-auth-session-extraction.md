@@ -37,6 +37,6 @@ Create a safe authentication layer for internal API probes without committing or
 - Added redacted cookie summaries and session-cookie detection tests.
 - Added read-only validation through `/api/v1/handle/options` and `/api/v1/user/{handle}/public_profile`.
 
-## Remaining Work
+## Completed Work
 
-- None for the local Conductor scope. Later tracks added shared API response classification, redacted failures, and a local typed read model while preserving `substack-api` where it is useful.
+- All planned tasks for the local Conductor scope are complete. Later tracks added shared API response classification, redacted failures, and a local typed read model while preserving `substack-api` where it is useful.
