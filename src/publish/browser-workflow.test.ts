@@ -51,6 +51,7 @@ describe("resolveDraftEditorUrl", () => {
   it("normalizes non-absolute editor URL strings", () => {
     assert.equal(resolveDraftEditorUrl("/publish/post", "123"), "/publish/post/123");
     assert.equal(resolveDraftEditorUrl("/publish/post/123/", "123"), "/publish/post/123/");
+    assert.equal(resolveDraftEditorUrl("/publish/post/456", "123"), "/publish/post/456");
   });
 
   it("keeps URLs unchanged when no draft ID is available", () => {
@@ -58,6 +59,7 @@ describe("resolveDraftEditorUrl", () => {
       resolveDraftEditorUrl("https://rareinsights.substack.com/publish/post", undefined),
       "https://rareinsights.substack.com/publish/post",
     );
+    assert.equal(resolveDraftEditorUrl("", "123"), "");
   });
 });
 
