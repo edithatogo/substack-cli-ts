@@ -24,12 +24,12 @@ See `research/substack-project-matrix.md` for the current comparison of listed G
 4. Which Substack surfaces are read-only research aids versus write paths to avoid?
 5. What fixture examples can be created without storing private content or session data?
 
-## Next Tasks
+## Completed Tasks
 
-1. Review source and docs for the initial leads and record feature inventory in this file. Done for the first matrix pass; continue with source-level review for the most relevant projects.
-2. Convert useful findings into issues or tasks under tracks 01-04.
-3. Add attribution links in `README.md` for design references where appropriate.
-4. Avoid importing code from incompatible licenses or unstable endpoint wrappers.
+1. Reviewed source and docs for the initial leads and recorded the feature inventory in `research/substack-project-matrix.md`.
+2. Converted useful findings into follow-up track work for parser, browser, and API transport behavior.
+3. Added attribution and rationale in repository docs where external design references shaped implementation.
+4. Avoided importing code from incompatible licenses or unstable endpoint wrappers.
 
 ## Acceptance Criteria
 

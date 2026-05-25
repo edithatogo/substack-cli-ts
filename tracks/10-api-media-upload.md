@@ -75,6 +75,6 @@ The `uploadImage()` function in `src/substack-api/client.ts` was sending images 
 
 **Fix**: Changed from `FormData` to `JSON.stringify({image: "data:image/png;base64,..."})`. Added `mimeTypeForExt()` helper for proper MIME type detection (PNG, JPG, GIF, WebP, SVG). Removed unused `Blob`/`FormData` imports.
 
-## Remaining Work
+## Completed Work
 
-- None — Track 10 implementation is fully validated end-to-end.
+- Track 10 implementation is fully complete and validated end-to-end.

@@ -39,6 +39,6 @@ Allow the CLI to choose the best available transport for each operation.
 8. ✅ `BrowserWorkflowResult` includes `transport` block with requested, selected, and fallback info.
 9. ✅ Transport tests cover all three preferences and fallback message.
 
-## Remaining Work
+## Completed Work
 
-- None. Transport selection is fully implemented for all commands.
+- Transport selection is fully implemented and validated for all commands.

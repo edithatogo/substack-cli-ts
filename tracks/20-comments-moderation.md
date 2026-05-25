@@ -64,11 +64,7 @@ Before implementation begins, research is required in these areas:
 - `api comment approve <id> --yes`, `api comment delete <id> --yes`, `api comment pin <id> --yes`, `api comment reply <id> <text> --yes`
 - Existing `api comment get <id>` via substack-api `client.commentForId()`
 
-**Not CLI-accessible (no endpoints discovered):**
-- Spam detection and quarantine management
-- Commenter management (mute, ban, approve)
-- Comment settings per post and globally
-- All moderation operations (approve, delete, pin, reply)
+**External Gates (not CLI-accessible with the discovered API surface):**
 - Spam detection and quarantine management
 - Commenter management (mute, ban, approve)
 - Comment settings per post and globally

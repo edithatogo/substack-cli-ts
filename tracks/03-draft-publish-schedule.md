@@ -100,9 +100,9 @@ The following was completed against the live Substack publication at `https://ra
 
 2. ~~**`draftUrl` mapping missing draft ID**~~: **Resolved.** Both local and Stagehand browser workflows normalize mapped editor URLs with the stored draft ID before navigation, so mappings like `https://rareinsights.substack.com/publish/post` resolve to `/publish/post/{id}`.
 
-## Remaining Work
+## Completed Work
 
-None.
+All planned workflow tasks have been completed and validated.
 
 ## Acceptance Criteria
 

@@ -66,5 +66,5 @@ Enable programmatic management of Substack publication settings — branding, la
   - `computeSettingsDiff()` — shallow diff for preview output
 - `src/substack-api/publication-settings.test.ts` — 18 test cases covering fetch, update, preview, logo/favicon upload, diff, and edge cases
 
-**Pending:**
+**Completed Work:**
 - None. Track 17 is complete.

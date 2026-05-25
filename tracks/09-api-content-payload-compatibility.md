@@ -46,6 +46,6 @@ Translate the existing Markdown/Tiptap pipeline into the payload shape expected 
 7. ✅ Unsupported content throws before any write request (tested).
 8. ✅ Browser and API transports share the same parsed source model (both call `preparePost`/`parseMarkdownFile`).
 
-## Remaining Work
+## Completed Work
 
-- None for the local Conductor scope. Track 10 completed media upload mapping, and unsupported content behavior is covered by payload validation plus the platform-gap documentation.
+- All planned tasks for the local Conductor scope are complete. Track 10 completed media upload mapping, and unsupported content behavior is covered by payload validation plus the platform-gap documentation.

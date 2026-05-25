@@ -32,6 +32,6 @@ Map the read-side Substack entities needed for export, diagnostics, and safe wri
 - Added typed read model for authenticated handle/profile, publication list, configured publication, sections, and recent posts.
 - Added shared API response classification for unauthenticated, forbidden, not found, schema drift, and network failures.
 
-## Remaining Work
+## Completed Work
 
-- None for the local Conductor scope. Draft inventory, bounded pagination metadata, and domain/redirect-adjacent diagnostics are covered by later read-model and domain tracks; unsupported dashboard-only surfaces are tracked in Track 31.
+- All planned tasks for the local Conductor scope are complete. Draft inventory, bounded pagination metadata, and domain/redirect-adjacent diagnostics are covered by later read-model and domain tracks; unsupported dashboard-only surfaces are tracked in Track 31.

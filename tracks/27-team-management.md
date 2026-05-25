@@ -8,8 +8,9 @@
 - `api team list` CLI command — reads team members via `fetchTeamMembers()` from `GET /api/v1/publication/users`
 - Team member schema with id, name, email, role
 
-**Pending:**
-- No invite/remove/role-change endpoints discovered. Only `GET /api/v1/publication/users` is available. Team write operations require browser DevTools network capture.
+**External Gates:**
+- No invite/remove/role-change endpoints have been discovered. Only `GET /api/v1/publication/users` is available.
+- Team write operations require future browser DevTools network capture or official endpoint documentation before they can be safely implemented.
 
 ## Goal
 
