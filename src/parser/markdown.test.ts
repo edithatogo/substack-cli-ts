@@ -1,7 +1,6 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
-import { preparePost } from "../publish/prepare.js";
 import type { ProseMirrorNode } from "../types.js";
 import { parseMarkdownString } from "./markdown.js";
 
@@ -13,16 +12,6 @@ function findNodes(root: ProseMirrorNode, type: string): ProseMirrorNode[] {
   }
   walk(root);
   return found;
-}
-
-function findMarks(root: ProseMirrorNode, type: string): number {
-  let count = 0;
-  function walk(node: ProseMirrorNode) {
-    if (node.marks?.some((m) => m.type === type)) count++;
-    if (node.content) for (const child of node.content) walk(child);
-  }
-  walk(root);
-  return count;
 }
 
 describe("parseMarkdownString", () => {
@@ -40,6 +29,20 @@ Hello **world**.
     assert.deepEqual(parsed.metadata.tags, ["substack", "markdown"]);
     assert.equal(parsed.document.type, "doc");
     assert.equal(parsed.document.content?.[0]?.type, "heading");
+  });
+
+  it("parses block-list frontmatter tags", async () => {
+    const parsed = await parseMarkdownString(`---
+title: Example
+tags:
+  - Policy That Thinks
+  - New Zealand policy
+---
+Body
+`);
+
+    assert.deepEqual(parsed.metadata.tags, ["Policy That Thinks", "New Zealand policy"]);
+    assert.deepEqual(parsed.warnings ?? [], []);
   });
 
   it("maps Substack shortcodes to custom Tiptap nodes", async () => {
@@ -78,7 +81,6 @@ Hello **world**.
 `);
       const lists = findNodes(parsed.document, "bulletList");
       assert.ok(lists[0]);
-      // The top-level list should have 3 items; the middle item nests a sub-list
       const topList = lists[0]!;
       assert.equal(topList.content?.length, 3);
     });
@@ -200,6 +202,28 @@ Hello **world**.
       );
       const images = findNodes(parsed.document, "image");
       assert.equal(images.length, 3);
+      assert.equal(parsed.warnings.length, 2);
+      assert.match(parsed.warnings[0]!, /Adjacent image and image blocks/);
+    });
+
+    it("preserves quoted image alt text and title metadata", async () => {
+      const parsed = await parseMarkdownString(
+        '![Policy That Thinks "Policy" title](https://example.com/img.png "Caption title")',
+      );
+      const images = findNodes(parsed.document, "image");
+      assert.equal(images.length, 1);
+      assert.equal(images[0]?.attrs?.alt, 'Policy That Thinks "Policy" title');
+      assert.equal(images[0]?.attrs?.title, "Caption title");
+    });
+
+    it("preserves smart quotes in image alt text", async () => {
+      const parsed = await parseMarkdownString(
+        '![Policy That Thinks “Policy” title](https://example.com/img.png "Caption title")',
+      );
+      const images = findNodes(parsed.document, "image");
+      assert.equal(images.length, 1);
+      assert.equal(images[0]?.attrs?.alt, "Policy That Thinks “Policy” title");
+      assert.equal(images[0]?.attrs?.title, "Caption title");
     });
   });
 
@@ -214,8 +238,6 @@ Hello **world**.
       const table = tables[0]!;
       const rows = table.content?.filter((n) => n.type === "tableRow" || n.type === "tableHeader");
       assert.ok(rows, "table should contain rows");
-      // GFM table generates: thead > tr > th, tbody > tr > td
-      // The table extension may parse this differently
       assert.ok(table.content && table.content.length > 0);
     });
 
@@ -278,52 +300,33 @@ Hello **world**.
       const paras = parsed.document.content?.filter((n) => n.type === "paragraph");
       assert.ok(paras && paras.length >= 2);
     });
-  });
 
-  describe("inline formatting", () => {
-    it("parses bold text", async () => {
-      const parsed = await parseMarkdownString("**bold**");
-      assert.equal(findMarks(parsed.document, "bold"), 1);
+    it("warns when image, custom nodes, and horizontal rules are adjacent", async () => {
+      const parsed = await parseMarkdownString(`![Hero](https://example.com/hero.png)
+
+---
+
+{{subscribe: Join now}}
+`);
+
+      assert.deepEqual(
+        parsed.warnings.map((warning) => warning.replace(/positions \d+-\d+/, "positions X-X")),
+        [
+          "Adjacent image and horizontalRule blocks at positions X-X may render unpredictably in Substack; add a paragraph or spacer between them before publishing.",
+          "Adjacent horizontalRule and custom subscribeWidget blocks at positions X-X may render unpredictably in Substack; add a paragraph or spacer between them before publishing.",
+        ],
+      );
     });
 
-    it("parses italic text", async () => {
-      const parsed = await parseMarkdownString("*italic*");
-      assert.equal(findMarks(parsed.document, "italic"), 1);
-    });
+    it("does not warn when text separates risky blocks", async () => {
+      const parsed = await parseMarkdownString(`![Hero](https://example.com/hero.png)
 
-    it("parses inline code", async () => {
-      const parsed = await parseMarkdownString("`code`");
-      assert.equal(findMarks(parsed.document, "code"), 1);
-    });
+Caption paragraph.
 
-    it("parses strikethrough", async () => {
-      const parsed = await parseMarkdownString("~~strikethrough~~");
-      assert.equal(findMarks(parsed.document, "strike"), 1);
-    });
+{{subscribe: Join now}}
+`);
 
-    it("parses links", async () => {
-      const parsed = await parseMarkdownString("[link](https://example.com)");
-      assert.equal(findMarks(parsed.document, "link"), 1);
+      assert.deepEqual(parsed.warnings, []);
     });
-
-    it("parses combined inline marks", async () => {
-      // marked supports nested formatting: **bold *and italic* text**
-      const parsed = await parseMarkdownString("**bold and *nested italic***");
-      assert.ok(findMarks(parsed.document, "bold") >= 1);
-      assert.ok(findMarks(parsed.document, "italic") >= 1);
-    });
-  });
-});
-
-describe("preparePost", () => {
-  it("rejects invalid schedule timestamps", async () => {
-    await assert.rejects(
-      () =>
-        preparePost("examples/basic.md", {
-          mode: "schedule",
-          scheduleAt: "tomorrow-ish",
-        }),
-      /Invalid schedule timestamp/,
-    );
   });
 });

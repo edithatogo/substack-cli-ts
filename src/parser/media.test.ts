@@ -74,4 +74,44 @@ title: Media test
     assert.equal(parsed.media.remoteCount, 3);
     assert.equal(parsed.media.assets[1]?.caption, "B");
   });
+
+  it("redacts query strings from remote URLs in the summary", () => {
+    const summary = summarizeMediaManifest({
+      assets: [
+        {
+          kind: "remote",
+          source: "https://example.com/image.png?token=secret#fragment",
+          resolvedSource: "https://example.com/image.png?token=secret#fragment",
+          alt: "Alt",
+          title: "Title",
+          caption: "Caption",
+        },
+      ],
+      localCount: 0,
+      remoteCount: 1,
+      dataCount: 0,
+    });
+
+    assert.equal(summary[0]?.source, "https://example.com/image.png");
+  });
+
+  it("keeps invalid remote URLs intact in the summary", () => {
+    const summary = summarizeMediaManifest({
+      assets: [
+        {
+          kind: "remote",
+          source: "not a url",
+          resolvedSource: "not a url",
+          alt: null,
+          title: null,
+          caption: null,
+        },
+      ],
+      localCount: 0,
+      remoteCount: 1,
+      dataCount: 0,
+    });
+
+    assert.equal(summary[0]?.source, "not a url");
+  });
 });

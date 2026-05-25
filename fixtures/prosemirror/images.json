@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T10:22:36.422Z",
+  "generatedAt": "2026-05-15T07:13:32.454Z",
   "sourceFile": "examples/images.md",
   "mode": "draft",
   "metadata": {
@@ -27,9 +27,6 @@
         ]
       },
       {
-        "type": "paragraph"
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "https://example.com/mountains.jpg",
@@ -51,9 +48,6 @@
         ]
       },
       {
-        "type": "paragraph"
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "https://example.com/team.png",
@@ -73,9 +67,6 @@
             "text": "Image with Local Path"
           }
         ]
-      },
-      {
-        "type": "paragraph"
       },
       {
         "type": "image",
@@ -120,9 +111,6 @@
         ]
       },
       {
-        "type": "paragraph"
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "https://example.com/banner.jpg",
@@ -142,9 +130,6 @@
             "text": "Multiple Images in Sequence"
           }
         ]
-      },
-      {
-        "type": "paragraph"
       },
       {
         "type": "image",
@@ -181,7 +166,6 @@
       "doc",
       "heading",
       "image",
-      "paragraph",
       "text"
     ],
     "markTypes": []

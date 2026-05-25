@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Install: `npm install -g substack-cli`
+- Install: `npm install -g @edithatogo/substack-cli`
 - Configure: `substack-cli config set-publication https://your.substack.com`
 - Auth: `substack-cli auth login`
 

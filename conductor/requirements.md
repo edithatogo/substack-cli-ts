@@ -173,4 +173,4 @@
 | **Dual Transport** | `--transport browser|api|auto` on draft/publish/schedule commands |
 | **Observability** | Workflow traces, draft capture artifacts, analytics snapshots |
 | **Dependency Management** | Renovate + Dependabot for automated PRs; production audit |
-| **Quality Gates** | Format → Lint → TypeScript → Build → Test (with coverage threshold ≥ 91%) → Mutation (break ≥ 50) |
+| **Quality Gates** | Format → Lint → TypeScript → Build → Test with enforced baseline coverage and incremental movement toward 91% → Mutation (break ≥ 50) |

@@ -1,0 +1,12 @@
+﻿{
+  "name": "substack-cli-copilot",
+  "version": "0.1.0",
+  "description": "Copilot integration docs for the Substack CLI MCP server",
+  "private": true,
+  "mcpServers": {
+    "substack-cli": {
+      "command": "node",
+      "args": ["dist/cli.js", "mcp", "serve"]
+    }
+  }
+}

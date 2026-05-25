@@ -6,7 +6,7 @@
 
 ## Goal
 
-Prepare `substack-cli` for publication to the npm registry, making it installable via `npm install -g substack-cli` and usable as a library dependency.
+Prepare `@edithatogo/substack-cli` for publication to the npm registry, making it installable via `npm install -g @edithatogo/substack-cli` and usable as a CLI package.
 
 ## Completed Items
 

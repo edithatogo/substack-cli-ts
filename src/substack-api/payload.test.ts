@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
+import fc from "fast-check";
 import { describe, it } from "vitest";
-import { fc, test as fcTest } from "vitest/fast-check";
 import { parseMarkdownString } from "../parser/markdown.js";
 import type { ProseMirrorNode } from "../types.js";
 import {
@@ -78,6 +78,7 @@ const value = 1;
             remoteCount: 0,
             dataCount: 0,
           },
+          warnings: [],
         }),
       /Unsupported Substack payload content/,
     );
@@ -317,59 +318,71 @@ describe("validatePayloadCompatibility (property-based)", () => {
 
   const knownSupportedMarks = ["bold", "code", "italic", "link", "strike"];
 
-  fcTest.prop({
-    nodeType: fc.string({ minLength: 1, maxLength: 30 }),
-    markType: fc.string({ minLength: 1, maxLength: 20 }),
-  })("identifies unsupported node and mark types", ({ nodeType, markType }) => {
-    fc.pre(!knownSupportedNodes.includes(nodeType));
-    fc.pre(!knownSupportedMarks.includes(markType));
+  it("identifies unsupported node and mark types", () => {
+    fc.assert(
+      fc.property(
+        fc.string({ minLength: 1, maxLength: 30 }),
+        fc.string({ minLength: 1, maxLength: 20 }),
+        (nodeType, markType) => {
+          fc.pre(!knownSupportedNodes.includes(nodeType));
+          fc.pre(!knownSupportedMarks.includes(markType));
 
-    const document: ProseMirrorNode = {
-      type: "doc",
-      content: [
-        {
-          type: nodeType as unknown as ProseMirrorNode["type"],
-          content: [
-            {
-              type: "text",
-              text: "Hello",
-              marks: [{ type: markType as unknown as ProseMirrorNode["marks"][number]["type"] }],
-            },
-          ],
-        },
-      ],
-    };
-
-    const report = validatePayloadCompatibility(document);
-    assert.equal(report.ok, false);
-    assert.ok(report.nodeTypes.includes(nodeType) || report.markTypes.includes(markType));
-    assert.ok(report.issues.length >= 1);
-  });
-
-  fcTest.prop({
-    nodeType: fc.constantFrom(...knownSupportedNodes),
-    markType: fc.constantFrom(...knownSupportedMarks),
-  })("accepts supported node and mark types", ({ nodeType, markType }) => {
-    const doc: ProseMirrorNode = {
-      type: "doc",
-      content:
-        nodeType === "text"
-          ? [{ type: "text", text: "Hello" }]
-          : [
+          const document: ProseMirrorNode = {
+            type: "doc",
+            content: [
               {
-                type: nodeType as ProseMirrorNode["type"],
+                type: nodeType as unknown as ProseMirrorNode["type"],
                 content: [
                   {
                     type: "text",
-                    text: "Hi",
-                    marks: [{ type: markType as ProseMirrorNode["marks"][number]["type"] }],
+                    text: "Hello",
+                    marks: [
+                      { type: markType as unknown as ProseMirrorNode["marks"][number]["type"] },
+                    ],
                   },
                 ],
               },
             ],
-    };
+          };
 
-    const report = validatePayloadCompatibility(doc);
-    assert.equal(report.issues.length, 0);
+          const report = validatePayloadCompatibility(document);
+          assert.equal(report.ok, false);
+          assert.ok(report.nodeTypes.includes(nodeType) || report.markTypes.includes(markType));
+          assert.ok(report.issues.length >= 1);
+        },
+      ),
+    );
+  });
+
+  it("accepts supported node and mark types", () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom(...knownSupportedNodes),
+        fc.constantFrom(...knownSupportedMarks),
+        (nodeType, markType) => {
+          const doc: ProseMirrorNode = {
+            type: "doc",
+            content:
+              nodeType === "text"
+                ? [{ type: "text", text: "Hello" }]
+                : [
+                    {
+                      type: nodeType as ProseMirrorNode["type"],
+                      content: [
+                        {
+                          type: "text",
+                          text: "Hi",
+                          marks: [{ type: markType as ProseMirrorNode["marks"][number]["type"] }],
+                        },
+                      ],
+                    },
+                  ],
+          };
+
+          const report = validatePayloadCompatibility(doc);
+          assert.equal(report.issues.length, 0);
+        },
+      ),
+    );
   });
 });

@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import type { ApiAuthMaterial } from "./auth.js";
-import { RateLimiter } from "./rate-limit.js";
+import type { RateLimiter } from "./rate-limit.js";
 import type { RetryOptions } from "./retry.js";
 import { withRetry } from "./retry.js";
 

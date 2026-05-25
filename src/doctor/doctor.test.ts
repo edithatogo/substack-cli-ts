@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -58,6 +58,7 @@ describe("doctor checks", () => {
 
     assert.equal(check.status, "error");
     assert.match(check.message, /BROWSERBASE_API_KEY/);
+    assert.match(check.message, /config set-runtime local/);
   });
 
   it("warns for Camoufox because it is not validated", () => {
@@ -70,6 +71,7 @@ describe("doctor checks", () => {
     const check = checkTransport(config({ browserRuntime: "local" }));
 
     assert.equal(check.status, "ok");
+    assert.match(check.message, /explicitly set to local/i);
   });
 
   it("warns when no local API probe auth source is available", async () => {
@@ -114,10 +116,21 @@ describe("doctor checks", () => {
           "api-readiness",
           "browserbase-session",
           "local-browser-profile",
+          "editor-write-readiness",
           "gitignore",
         ],
       );
       assert.equal(report.checks.find((check) => check.name === "publication")?.status, "ok");
+      assert.equal(
+        report.checks.find((check) => check.name === "editor-write-readiness")?.status,
+        "warn",
+      );
+      assert.ok(
+        (
+          report.checks.find((check) => check.name === "gitignore")?.details
+            ?.requiredPatterns as string[]
+        ).includes(".npm-cache/"),
+      );
     });
   });
 });
@@ -142,11 +155,11 @@ async function withTempState(run: () => Promise<void>): Promise<void> {
 
   try {
     process.env.SUBSTACK_CLI_STATE_DIR = join(temp, ".substack-cli");
-    delete process.env.SUBSTACK_PUBLICATION_URL;
-    delete process.env.SUBSTACK_EMAIL;
-    delete process.env.SUBSTACK_PASSWORD;
-    delete process.env.BROWSERBASE_API_KEY;
-    delete process.env.BROWSERBASE_PROJECT_ID;
+    Reflect.deleteProperty(process.env, "SUBSTACK_PUBLICATION_URL");
+    Reflect.deleteProperty(process.env, "SUBSTACK_EMAIL");
+    Reflect.deleteProperty(process.env, "SUBSTACK_PASSWORD");
+    Reflect.deleteProperty(process.env, "BROWSERBASE_API_KEY");
+    Reflect.deleteProperty(process.env, "BROWSERBASE_PROJECT_ID");
     await run();
   } finally {
     restoreEnv("SUBSTACK_CLI_STATE_DIR", previousStateDir);
@@ -161,7 +174,7 @@ async function withTempState(run: () => Promise<void>): Promise<void> {
 
 function restoreEnv(name: string, value: string | undefined): void {
   if (value === undefined) {
-    delete process.env[name];
+    Reflect.deleteProperty(process.env, name);
     return;
   }
 

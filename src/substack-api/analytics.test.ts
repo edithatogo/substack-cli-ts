@@ -8,7 +8,7 @@ import {
   fetchSubscriberGrowth,
 } from "./analytics.js";
 import { materialFromCookieHeader } from "./auth.js";
-import { type FetchLike } from "./client.js";
+import type { FetchLike } from "./client.js";
 
 function fakeFetch(status: number, body: string): FetchLike {
   return () =>

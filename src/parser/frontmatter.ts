@@ -1,4 +1,4 @@
-import { z } from "zod";
+﻿import { z } from "zod";
 import type { PostMetadata } from "../types.js";
 
 const MetadataSchema = z.object({
@@ -17,6 +17,7 @@ const MetadataSchema = z.object({
 export interface FrontmatterResult {
   metadata: PostMetadata;
   body: string;
+  warnings: string[];
 }
 
 export function parseFrontmatter(markdown: string): FrontmatterResult {
@@ -26,19 +27,13 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
     return {
       metadata: { tags: [] },
       body: markdown,
+      warnings: [],
     };
   }
 
   const raw = parseSimpleYaml(match[1] ?? "");
   const parsed = MetadataSchema.parse(raw);
-  const tags = Array.isArray(parsed.tags)
-    ? parsed.tags
-    : parsed.tags
-      ? parsed.tags
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter(Boolean)
-      : [];
+  const tags = normalizeTags(parsed.tags);
 
   return {
     metadata: {
@@ -54,15 +49,18 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
       shouldSendEmail: parsed.shouldSendEmail,
     },
     body: markdown.slice(match[0].length),
+    warnings: [],
   };
 }
 
 function parseSimpleYaml(source: string): Record<string, unknown> {
   const output: Record<string, unknown> = {};
+  const lines = source.split(/\r?\n/);
 
-  for (const rawLine of source.split(/\r?\n/)) {
+  for (let index = 0; index < lines.length; index += 1) {
+    const rawLine = lines[index] ?? "";
     const line = rawLine.trim();
-    if (!line || line.startsWith("#")) {
+    if (!line || line.startsWith("#") || line.startsWith("-")) {
       continue;
     }
 
@@ -73,10 +71,56 @@ function parseSimpleYaml(source: string): Record<string, unknown> {
 
     const key = line.slice(0, separator).trim();
     const value = line.slice(separator + 1).trim();
+
+    if (!value) {
+      const blockList = collectBlockList(lines, index + 1);
+      output[key] = blockList.length > 0 ? blockList : "";
+      continue;
+    }
+
     output[key] = parseScalar(value);
   }
 
   return output;
+}
+
+function collectBlockList(lines: string[], startIndex: number): string[] {
+  const items: string[] = [];
+
+  for (let index = startIndex; index < lines.length; index += 1) {
+    const rawLine = lines[index] ?? "";
+    const trimmed = rawLine.trim();
+
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
+
+    if (!trimmed.startsWith("-")) {
+      break;
+    }
+
+    const item = stripQuotes(trimmed.slice(1).trim());
+    if (item) {
+      items.push(item);
+    }
+  }
+
+  return items;
+}
+
+function normalizeTags(tags: string[] | string | undefined): string[] {
+  if (Array.isArray(tags)) {
+    return tags.map((tag) => tag.trim()).filter(Boolean);
+  }
+
+  if (tags) {
+    return tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+
+  return [];
 }
 
 function parseScalar(value: string): unknown {

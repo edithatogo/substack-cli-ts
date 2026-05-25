@@ -9,6 +9,7 @@ import {
   loadSession,
   saveSession,
 } from "./auth/session-store.js";
+import { buildAuthStatusReport, readLocalProfileReadiness } from "./auth/status.js";
 import { performSubstackLogin } from "./auth/substack-login.js";
 import {
   captureLocalDiagnostics,
@@ -2354,32 +2355,12 @@ auth
   .command("status")
   .description("Show configured publication and browser environment status.")
   .action(async () => {
-    const [effective, session] = await Promise.all([loadEffectiveConfig(), loadSession()]);
-    console.log(
-      JSON.stringify(
-        {
-          publicationUrl: effective.publicationUrl ?? null,
-          browserRuntime: effective.browserRuntime,
-          browserbaseConfigured:
-            effective.browserRuntime === "browserbase"
-              ? Boolean(effective.browserbaseApiKey && effective.browserbaseProjectId)
-              : null,
-          stagehandModel: effective.stagehandModel,
-          substackLoginConfigured: Boolean(effective.substackEmail && effective.substackPassword),
-          session: session
-            ? {
-                browserbaseSessionId: redact(session.browserbaseSessionId),
-                publicationUrl: session.publicationUrl,
-                updatedAt: session.updatedAt,
-                browserbaseSessionUrl: redactUrl(session.browserbaseSessionUrl),
-                browserbaseDebugUrl: redactUrl(session.browserbaseDebugUrl),
-              }
-            : null,
-        },
-        null,
-        2,
-      ),
-    );
+    const [effective, session, localProfile] = await Promise.all([
+      loadEffectiveConfig(),
+      loadSession(),
+      readLocalProfileReadiness(),
+    ]);
+    console.log(JSON.stringify(buildAuthStatusReport(effective, session, localProfile), null, 2));
   });
 
 auth

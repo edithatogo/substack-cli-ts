@@ -11,16 +11,18 @@ export interface LocalLoginOptions {
 }
 
 export interface LocalLoginResult {
-  status: "local-session-started";
+  status: "local-session-started" | "authentication-failed";
   publicationUrl: string;
   profileDir: string;
   finalUrl: string;
   signInStillVisible: boolean;
   autoLogin: null | {
     emailInserted: boolean;
+    passwordOptionSelected?: boolean | undefined;
     passwordInserted: boolean;
     submitted: boolean;
     pausedBeforePassword?: boolean | undefined;
+    failureReason?: "password_option_not_found" | "post_login_authentication_failed" | undefined;
     note?: string | undefined;
   };
 }
@@ -51,12 +53,24 @@ export async function runLocalLogin(options: LocalLoginOptions): Promise<LocalLo
       await page.waitForTimeout(options.waitSeconds * 1000);
     }
 
+    const finalUrl = page.url();
+    const signInStillVisible =
+      (await isSignInVisible(page)) || isAuthenticationFailureUrl(finalUrl);
+    const authenticationFailed =
+      Boolean(autoLogin?.submitted) && Boolean(autoLogin?.passwordInserted) && signInStillVisible;
+
+    if (authenticationFailed && autoLogin) {
+      autoLogin.failureReason = "post_login_authentication_failed";
+      autoLogin.note =
+        "Password login was submitted, but the browser is still on a sign-in or recovery page. Complete any verification step manually in the opened browser.";
+    }
+
     return {
-      status: "local-session-started",
+      status: authenticationFailed ? "authentication-failed" : "local-session-started",
       publicationUrl: options.publicationUrl,
       profileDir: localBrowserProfileDir(),
-      finalUrl: page.url(),
-      signInStillVisible: await isSignInVisible(page),
+      finalUrl,
+      signInStillVisible,
       autoLogin,
     };
   } finally {
@@ -72,14 +86,39 @@ async function attemptPasswordLogin(
   await clickFirst(
     page,
     [
-      page.getByRole("button", { name: /sign in/i }),
-      page.getByRole("link", { name: /sign in/i }),
-      page.locator("text=/sign in/i"),
+      page.getByRole("button", { name: /^no thanks$/i }),
+      page.getByRole("button", { name: /^not now$/i }),
+      page.getByRole("button", { name: /^maybe later$/i }),
+    ],
+    3000,
+  );
+
+  const clickedSignIn = await clickFirst(
+    page,
+    [
+      page.getByRole("button", { name: /^sign in$/i }),
+      page.getByRole("link", { name: /^sign in$/i }),
+      page.locator("button").filter({ hasText: /^sign in$/i }),
+      page.locator("a").filter({ hasText: /^sign in$/i }),
     ],
     10000,
   );
 
-  await choosePasswordLogin(page);
+  if (clickedSignIn) {
+    await page.waitForLoadState("domcontentloaded", { timeout: 10000 }).catch(() => undefined);
+    await page.waitForTimeout(750);
+  }
+
+  if (!/\/sign-in\b/i.test(new URL(page.url()).pathname)) {
+    const current = new URL(page.url());
+    const forPub = current.hostname.split(".")[0] || "";
+    await page.goto(
+      `https://substack.com/sign-in?redirect=%2F&for_pub=${encodeURIComponent(forPub)}`,
+      { waitUntil: "domcontentloaded", timeout: 60000 },
+    );
+  }
+
+  let passwordOptionSelected = await choosePasswordLogin(page);
 
   const email = await firstVisible(
     page,
@@ -102,7 +141,7 @@ async function attemptPasswordLogin(
   }
 
   await email.fill(credentials.email);
-  await choosePasswordLogin(page);
+  passwordOptionSelected = (await choosePasswordLogin(page)) || passwordOptionSelected;
 
   let password = await firstVisible(
     page,
@@ -123,7 +162,7 @@ async function attemptPasswordLogin(
       ],
       10000,
     );
-    await choosePasswordLogin(page);
+    passwordOptionSelected = (await choosePasswordLogin(page)) || passwordOptionSelected;
     password = await firstVisible(
       page,
       [
@@ -138,9 +177,13 @@ async function attemptPasswordLogin(
   if (!password) {
     return {
       emailInserted: true,
+      passwordOptionSelected,
       passwordInserted: false,
       submitted: false,
-      note: "Email was submitted, but no password field appeared. Complete magic-link or verification login manually.",
+      failureReason: passwordOptionSelected ? undefined : "password_option_not_found",
+      note: passwordOptionSelected
+        ? "Email was submitted, but no password field appeared. Complete magic-link or verification login manually."
+        : "Email was submitted, but no password-login option was found. Complete magic-link or verification login manually.",
     };
   }
 
@@ -148,6 +191,7 @@ async function attemptPasswordLogin(
     await password.click();
     return {
       emailInserted: true,
+      passwordOptionSelected,
       passwordInserted: false,
       submitted: false,
       pausedBeforePassword: true,
@@ -171,24 +215,58 @@ async function attemptPasswordLogin(
 
   return {
     emailInserted: true,
+    passwordOptionSelected,
     passwordInserted: true,
     submitted: true,
   };
 }
 
 async function choosePasswordLogin(page: Page): Promise<boolean> {
-  return clickFirst(
+  const clicked = await clickFirst(
     page,
     [
+      page.locator("[role='button']").filter({ hasText: /password/i }),
+      page.locator("[role='link']").filter({ hasText: /password/i }),
+      page.locator("button").filter({ hasText: /password/i }),
+      page.locator("a").filter({ hasText: /password/i }),
       page.getByRole("button", { name: /password/i }),
       page.getByRole("link", { name: /password/i }),
       page.getByText(/use .*password/i),
       page.getByText(/sign in .*password/i),
       page.getByText(/log in .*password/i),
       page.getByText(/enter .*password/i),
+      page.locator("text=/password/i"),
     ],
     15000,
   );
+
+  if (clicked) {
+    await page.waitForTimeout(750);
+    return true;
+  }
+
+  return page.evaluate(() => {
+    const candidates = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        "button, a, [role='button'], [role='link'], div, span",
+      ),
+    );
+    const target = candidates.find((node) => {
+      const text = (node.innerText || node.textContent || "").trim();
+      if (!/password/i.test(text)) return false;
+      const style = window.getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return (
+        style.visibility !== "hidden" &&
+        style.display !== "none" &&
+        rect.width > 0 &&
+        rect.height > 0
+      );
+    });
+    if (!target) return false;
+    target.click();
+    return true;
+  });
 }
 
 async function firstVisible(
@@ -240,6 +318,15 @@ async function isSignInVisible(page: Page): Promise<boolean> {
         .first()
         .isVisible({ timeout: 1000 }))
     );
+  } catch {
+    return false;
+  }
+}
+
+export function isAuthenticationFailureUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return /\/(sign-in|login|account-recovery|recover|reset-password)\b/i.test(parsed.pathname);
   } catch {
     return false;
   }

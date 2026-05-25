@@ -1,4 +1,5 @@
 node_modules/
+.npm-cache/
 dist/
 !vendor/substack-api/dist/
 coverage/
@@ -13,6 +14,7 @@ reports/
 stryker-tmp/
 .stryker-tmp/
 *.log
+*.tsbuildinfo
 !fixtures/**/*.json
 .aider*
 .kilo/

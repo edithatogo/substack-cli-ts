@@ -1,0 +1,26 @@
+﻿{
+  "name": "substack-cli-vscode",
+  "displayName": "Substack CLI MCP Helper",
+  "description": "Launch and configure the Substack CLI MCP server from VS Code.",
+  "version": "0.1.0",
+  "publisher": "edithatogo",
+  "engines": {
+    "vscode": ">=1.90.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Substack CLI MCP Helper",
+      "properties": {
+        "substackCli.mcpCommand": {
+          "type": "string",
+          "default": "node dist/cli.js mcp serve",
+          "description": "Command used to launch the local Substack CLI MCP server."
+        }
+      }
+    }
+  }
+}
+

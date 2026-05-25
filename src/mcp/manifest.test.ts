@@ -42,7 +42,7 @@ describe("buildMcpSummaryResource", () => {
     assert.equal(summary.redactedToolCount, 17);
     assert.equal(summary.resourceCount, 2);
     assert.equal(summary.promptCount, 2);
-    assert.deepEqual(summary.groups, ["capture", "read", "review"]);
+    assert.deepEqual(summary.groups, ["read", "review", "capture"]);
     assert.ok(Array.isArray(summary.promptNames));
     assert.equal(summary.promptNames.length, 2);
   });

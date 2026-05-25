@@ -17,24 +17,24 @@ TypeScript CLI for publishing local Markdown files to a user-owned Substack publ
 
 ## Features
 
-- âœ… **Markdown â†’ ProseMirror** â€” Parse Markdown with front matter into Substack-compatible JSON
-- âœ… **Dual Transport** â€” `--transport api` for API-driven or `--transport browser` for full editor interaction
-- âœ… **API Publishing** â€” Create, update, publish, and schedule drafts via Substack's API
-- âœ… **Browser Automation** â€” Local Chrome or Browserbase remote sessions
-- âœ… **Media Upload** â€” Upload images via base64 data URLs
-- âœ… **MCP Server** â€” 17 tools, 2 resources, 2 prompts for AI agents
-- âœ… **Rich Content** â€” Tables, embeds, paywall, subscribe, code blocks, blockquotes
-- âœ… **Draft Management** â€” Mappings, optimistic concurrency, section resolution, duplicates
-- âœ… **Workflow Traces** â€” Capture, review, and compare browser artifacts
-- âœ… **Quality Gates** â€” Format â†’ Lint â†’ TypeScript â†’ Build â†’ Test (â‰¥91% coverage) â†’ Mutation
+- ✅ **Markdown → ProseMirror** — Parse Markdown with front matter into Substack-compatible JSON
+- ✅ **Dual Transport** — `--transport api` for API-driven or `--transport browser` for full editor interaction
+- ✅ **API Publishing** — Create, update, publish, and schedule drafts via Substack's API
+- ✅ **Browser Automation** — Local Chrome or Browserbase remote sessions
+- ✅ **Media Upload** — Upload images via base64 data URLs
+- ✅ **MCP Server** — 17 tools, 2 resources, 2 prompts for AI agents
+- ✅ **Rich Content** — Tables, embeds, paywall, subscribe, code blocks, blockquotes
+- ✅ **Draft Management** — Mappings, optimistic concurrency, section resolution, duplicates
+- ✅ **Workflow Traces** — Capture, review, and compare browser artifacts
+- ✅ **Quality Gates** — Format → Lint → TypeScript → Build → Test with enforced baseline coverage → Mutation
 
 ---
 
 ## Installation
 
 ```bash
-npm install -g substack-cli
-npx substack-cli inspect examples/basic.md
+npm install -g @edithatogo/substack-cli
+npx @edithatogo/substack-cli inspect examples/basic.md
 ```
 
 ---
@@ -68,6 +68,16 @@ npm run build
 npm test
 npm run quality
 ```
+
+Windows/OneDrive-safe install:
+
+```powershell
+npm install --cache .npm-cache --prefer-online
+```
+
+The repository includes the same npm cache settings in `.npmrc`, and `.npm-cache/` is
+ignored. This avoids global cache rename collisions and cleanup locks commonly seen in
+OneDrive or SharePoint-synced workspaces.
 
 Create a local `.env` from `.env.example`:
 
@@ -167,7 +177,12 @@ Media examples:
 ```markdown
 ![Remote alt](https://example.com/image.png "Remote caption")
 ![Local alt](./assets/local-image.png "Local caption")
+<img src="https://example.com/native.png" alt="Native alt" data-caption="Native caption">
 ```
+
+`inspect` prints a `media` manifest for every image. Markdown image titles and inline HTML
+`data-caption` values are recorded there as caption metadata; a normal paragraph after an
+image stays visible paragraph text and is not treated as native caption metadata.
 
 Supported custom markers:
 
@@ -192,7 +207,7 @@ Supported custom markers:
 | `blockquote`                                       | `> `                                         | Nested blockquotes supported            |
 | `codeBlock`                                        | ` ``` ` or ` ```language `                   | Language annotation preserved           |
 | `horizontalRule`                                   | `---`                                        | Thematic break                          |
-| `image`                                            | `![alt](src)` or `<img>`                     | Captions via `data-caption`, alt, title |
+| `image`                                            | `![alt](src)` or `<img>`                     | Caption metadata via `data-caption` or Markdown title |
 | `embedNode`                                        | `{{youtube:}}`, `{{embed:}}`, `{{podcast:}}` | URL and embed type stored               |
 | `paywallDivider`                                   | `{{paywall}}`                                | Atom block, no content                  |
 | `subscribeWidget`                                  | `{{subscribe: label}}`                       | Label attribute                         |
@@ -243,3 +258,9 @@ $ substack-cli inspect examples/formatting.md
 }
 ```
 
+# README window note
+
+On Windows, prefer a repo path outside OneDrive. If OneDrive is unavoidable, use the
+repo-local `.npm-cache/` configured by `.npmrc`, and set `SUBSTACK_CLI_STATE_DIR` to a
+non-synced path such as `%LOCALAPPDATA%\substack-cli-state` when browser-profile locks
+or sync cleanup interfere with local runtime state.
