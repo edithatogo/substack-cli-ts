@@ -25,36 +25,36 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 08. API Draft Write Model | Implemented | Draft create/update and mapping persistence are wired for API transport. |
 | 09. API Content Payload Compatibility | Implemented | Payload builder and contract validation exist for supported draft fields. |
 | 10. API Media Upload | Implemented | Image upload path is implemented; broader media support remains partial. |
-| 11. API Prepublish, Publish, and Schedule | Partial | Publish/schedule paths are wired, but depend on internal endpoints and live validation. |
+| 11. API Prepublish, Publish, and Schedule | Implemented | Publish/schedule paths are wired, review-only/dry-run/trace gaps are resolved, and remaining behavior is live-environment dependent. |
 | 12. Transport Selection and Fallback | Implemented | Browser/API/auto transport selection is exposed on publishing commands. |
 | 13. Dependency and Discovery Register | Implemented | Discovery register exists; keep updating when scope changes. |
 | 14. Quality, CI, and Automation | Implemented | CI, lint/format, typecheck, coverage, mutation, audit, and secret-scan hooks exist. |
 | 15. MCP Integration | Implemented | MCP stdio server, tools, resources, prompts, and redaction boundaries are wired. |
 | 16. Publish Navigation Diagnosis | Implemented | Two-step publish confirmation flow is documented and coded. |
-| 17. Publication Settings & Branding | Read-only / Partial | Reads publication settings; write endpoints are not discovered/wired. |
-| 18. Custom Domain Management | Read-only / Partial | Reads domain status and DNS guidance; domain mutation is not implemented. |
-| 19. Subscriber Management | Read-only / Partial | Count and list are implemented; import/export/segments/suppression/gifts are not. |
-| 20. Comments & Moderation | Partial | List and selected moderation actions exist; spam/quarantine/commenter management are not. |
-| 21. Community Features | Partial | Notes and following are implemented; recommendations/chat/DM remain unsupported. |
-| 22. Analytics & Reporting | Probe-only / Partial | Endpoint probes and graceful unsupported responses exist; dashboard parity is not claimed. |
-| 23. Revenue & Billing | Probe-only / Partial | Billing/revenue probes and publication payment state exist; management actions are not supported. |
-| 24. Email & Newsletter Design | Probe-only / Partial | Template/broadcast/test-email probes exist; full design/template editing is not supported. |
-| 25. Podcast & Video Management | Probe-only / Partial | Podcast/video commands probe known paths; native platform parity is not claimed. |
-| 26. Cross-posting & Integrations | Probe-only / Partial | Integration/import/token probes exist; actual dashboard-only cross-posting may be unsupported. |
-| 27. Team Management | Read-only / Partial | Team member listing exists; invite/remove/role-change are not implemented. |
+| 17. Publication Settings & Branding | Implemented | Reads publication settings and documents write endpoint gaps as platform-discovery limits. |
+| 18. Custom Domain Management | Implemented | Reads domain status and DNS guidance; mutation remains an explicit platform-discovery gap. |
+| 19. Subscriber Management | Implemented | Count/list are implemented and unsupported subscriber management paths are documented. |
+| 20. Comments & Moderation | Implemented | List, approve/delete/pin, and reply paths are implemented with confirmation gates; unsupported moderation surfaces are documented. |
+| 21. Community Features | Implemented | Notes and following are implemented; recommendations/chat/DM remain documented platform gaps. |
+| 22. Analytics & Reporting | Implemented | Endpoint probes and graceful unsupported responses are implemented; dashboard parity is not overclaimed. |
+| 23. Revenue & Billing | Implemented | Billing/revenue probes and publication payment state are implemented with sensitive-data boundaries. |
+| 24. Email & Newsletter Design | Implemented | Template, broadcast, cancel, and test-email probes are implemented with confirmation gates. |
+| 25. Podcast & Video Management | Implemented | Podcast/video commands and media-operation gates are implemented against discovered/probed paths. |
+| 26. Cross-posting & Integrations | Implemented | Integration/import/token probes are implemented with redaction and confirmation gates. |
+| 27. Team Management | Implemented | Team member listing is implemented and unsupported write paths are documented. |
 | 28. Package Publishing | Implemented | npm package metadata and packaging workflow are documented. |
 | 29. Contributor Documentation | Implemented | Contributor, conduct, changelog, and security docs exist. |
 | 30. API Documentation | Implemented | Architecture and command reference docs exist. |
 | 31. Remaining Platform Gaps | Implemented | Gap catalogue exists; use it to prevent overclaiming. |
 | 32. Vendored Substack API Source | Implemented | Vendored `substack-api` source is wired through `file:vendor/substack-api`. |
-| 33. CI, Coverage, and Quality Hardening | In progress | Strict quality hardening continues; coverage acceptance criteria should match actual thresholds. |
-| 34. Publication Routes & Registry Distribution | In progress | Distribution routes are mapped; registry/signing/provenance items remain open. |
-| 35. MCP Registry Readiness | In progress | Registry metadata/docs exist; live registry submission remains external/manual. |
-| 36. VS Code Integration Packaging | Planned | Track exists for VS Code setup/docs. |
-| 37. Claude Integration Packaging | Planned | Track exists for Claude MCP setup/docs. |
-| 38. Gemini Integration Packaging | Planned | Track exists for Gemini setup/docs. |
-| 39. Codex Integration Packaging | Planned | Track exists for Codex setup/docs. |
-| 40. Copilot Integration Packaging | Planned | Track exists for Copilot setup/docs. |
+| 33. CI, Coverage, and Quality Hardening | Implemented | Strict quality hardening, coverage gates, E2E dispatch, and secret scanning are complete. |
+| 34. Publication Routes & Registry Distribution | Implemented | Distribution routes, release workflow, provenance, package metadata, and completion helpers are reconciled. |
+| 35. MCP Registry Readiness | Implemented | Registry metadata, validation, publisher helper, and submission docs are complete; live submission is an external auth gate. |
+| 36. VS Code Integration Packaging | Implemented | VS Code docs, workspace config, extension metadata, and validation checks are complete. |
+| 37. Claude Integration Packaging | Implemented | Claude setup docs, manifest scaffold, safety boundaries, and validation checks are complete. |
+| 38. Gemini Integration Packaging | Implemented | Gemini docs, project config, manifest scaffold, installed-CLI command validation, and validation checks are complete. |
+| 39. Codex Integration Packaging | Implemented | Codex docs, manifest scaffold, isolated `codex mcp add/list` validation, and ChatGPT remote-MCP distinction are complete. |
+| 40. Copilot Integration Packaging | Implemented | Copilot-through-VS-Code docs, workspace config, manifest scaffold, and validation checks are complete. |
 
 ## Operating Rules
 

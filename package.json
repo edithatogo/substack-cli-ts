@@ -1,6 +1,7 @@
 {
   "name": "@edithatogo/substack-cli",
   "version": "0.1.0",
+  "mcpName": "io.github.edithatogo/substack-cli",
   "description": "Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.",
   "private": false,
   "license": "Apache-2.0",
@@ -35,7 +36,10 @@
     "LICENSE",
     "SECURITY.md",
     "CHANGELOG.md",
-    "registry.server.json"
+    "registry.server.json",
+    "docs/api/commands.md",
+    "scripts/install-completions.sh",
+    "scripts/install-completions.ps1"
   ],
   "publishConfig": {
     "access": "public"
@@ -56,10 +60,15 @@
     "check": "biome check --write .",
     "ci": "biome ci .",
     "scan:secrets": "node scripts/secret-scan.mjs",
+    "registry:summary": "npm run build && node scripts/registry-summary.mjs",
+    "registry:validate": "node scripts/validate-registry-metadata.mjs",
+    "registry:publisher": "node scripts/mcp-publisher-helper.mjs",
+    "registry:publisher:dry-run": "node scripts/mcp-publisher-helper.mjs dry-run",
+    "integrations:validate": "node scripts/validate-client-integrations.mjs",
     "quality": "npm run ci && npm run knip && npm run typecheck && npm run build && npm run test:coverage",
     "audit:prod": "npm audit --omit=dev",
     "knip": "knip",
-    "completions": "substack-cli completion bash > scripts/completions.bash && substack-cli completion zsh > scripts/completions.zsh && substack-cli completion powershell > scripts/completions.ps1",
+    "completions": "node dist/cli.js completion bash > scripts/completions.bash && node dist/cli.js completion zsh > scripts/completions.zsh && node dist/cli.js completion powershell > scripts/completions.ps1",
     "bench": "node --experimental-vm-modules node_modules/.bin/vitest run src/benchmark",
     "bench:parse": "node dist/cli.js inspect examples/basic.md",
     "profile:cpu": "node --cpu-prof --cpu-prof-dir=reports/profiling dist/cli.js inspect examples/basic.md",

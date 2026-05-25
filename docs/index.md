@@ -26,6 +26,8 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
 
 - [Feature Matrix](feature-matrix.md) — Comparison with other Substack publishing tools
 - [Substack Feature Coverage](substack-feature-coverage.md) — Detailed coverage of the Substack platform surface
+- [Autonomous Implementation Plan](integrations/autonomous-implementation-plan.md) — Execution queue for remaining Conductor tracks
+- [AI Integration Readiness](integrations/ai-readiness-matrix.md) — MCP distribution status across AI clients and registries
 
 ## Examples & Workflows
 
@@ -35,3 +37,11 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
 - [MCP Integration](examples/mcp-integration.md) — Using the Model Context Protocol server
 - [Configuration](examples/configuration.md) — Publication URL, runtime, auth, and environment variables
 - [Diagnostics & Traces](examples/diagnostics-and-traces.md) — Debugging with doctor, debug commands, and trace artifacts
+
+## AI Client Setup
+
+- [VS Code](integrations/vscode.md)
+- [Claude](integrations/claude.md)
+- [Gemini](integrations/gemini.md)
+- [Codex](integrations/codex.md)
+- [GitHub Copilot](integrations/copilot.md)
