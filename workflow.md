@@ -94,7 +94,7 @@ For implementation details, see `docs/workflows/cli.md` and `docs/workflows/mcp.
 - Prefer dry-run support for potentially destructive publishing actions.
 - Treat undocumented direct API calls as research fixtures only, not the default product path.
 
-## Active Conductor Tracks
+## Completed Conductor Tracks
 
 Detailed track files live under `tracks/`:
 

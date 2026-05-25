@@ -203,7 +203,7 @@ The CLI maintains a local JSON file (`.substack-cli/draft-mappings.json`) that m
 | Fixture comparison | `schema compare`        | Regression testing of parser output against saved fixtures       |
 | Contract matrix    | `draft contract-matrix` | API endpoint contract validation across browser captures         |
 | Mutation testing   | Stryker                 | Test quality assessment                                          |
-| E2E (planned)      | Vitest + Playwright     | Full browser workflow against live Substack                      |
+| E2E                | Vitest + Playwright     | Manual workflow-dispatch browser checks against live Substack     |
 
 ## How to Add a New API Endpoint
 
