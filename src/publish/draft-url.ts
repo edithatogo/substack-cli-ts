@@ -4,13 +4,16 @@ export function resolveDraftEditorUrl(draftUrl: string, draftId: string | undefi
   try {
     const url = new URL(draftUrl);
     const path = url.pathname.replace(/\/+$/, "");
-    if (path.endsWith(`/${draftId}`) || /\/\d+$/.test(path)) return draftUrl;
+    if (path.endsWith(`/${draftId}`)) return draftUrl;
+    const normalizedPath = path.replace(/\/\d+$/, "");
 
-    url.pathname = `${path}/${draftId}`;
+    url.pathname = `${normalizedPath}/${draftId}`;
     return url.toString();
   } catch {
-    const base = draftUrl.replace(/\/+$/, "");
-    if (base.endsWith(`/${draftId}`) || /\/\d+$/.test(base)) return draftUrl;
-    return `${base}/${draftId}`;
+    const [path = "", ...suffix] = draftUrl.split(/([?#])/);
+    const base = path.replace(/\/+$/, "");
+    if (base.endsWith(`/${draftId}`)) return draftUrl;
+    const normalizedBase = base.replace(/\/\d+$/, "");
+    return `${normalizedBase}/${draftId}${suffix.join("")}`;
   }
 }

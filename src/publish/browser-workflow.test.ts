@@ -34,10 +34,10 @@ describe("resolveDraftEditorUrl", () => {
     );
   });
 
-  it("keeps editor URLs with an existing numeric draft ID", () => {
+  it("replaces mismatched numeric draft IDs with the mapped draft ID", () => {
     assert.equal(
       resolveDraftEditorUrl("https://rareinsights.substack.com/publish/post/456", "123"),
-      "https://rareinsights.substack.com/publish/post/456",
+      "https://rareinsights.substack.com/publish/post/123",
     );
   });
 
@@ -51,7 +51,11 @@ describe("resolveDraftEditorUrl", () => {
   it("normalizes non-absolute editor URL strings", () => {
     assert.equal(resolveDraftEditorUrl("/publish/post", "123"), "/publish/post/123");
     assert.equal(resolveDraftEditorUrl("/publish/post/123/", "123"), "/publish/post/123/");
-    assert.equal(resolveDraftEditorUrl("/publish/post/456", "123"), "/publish/post/456");
+    assert.equal(resolveDraftEditorUrl("/publish/post/456", "123"), "/publish/post/123");
+    assert.equal(
+      resolveDraftEditorUrl("/publish/post?s=w#editor", "123"),
+      "/publish/post/123?s=w#editor",
+    );
   });
 
   it("keeps URLs unchanged when no draft ID is available", () => {
