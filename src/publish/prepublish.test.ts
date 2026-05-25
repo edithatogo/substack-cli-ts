@@ -29,6 +29,7 @@ Hello **world**.
     assert.equal(report.compatibility.ok, true);
     assert.equal(report.mode, "publish");
     assert.equal(report.filePath, "ready.md");
+    assert.deepEqual(report.warnings, []);
   });
 
   it("produces a ready report for draft mode", async () => {
@@ -49,6 +50,7 @@ title: "Draft Post"
     assert.equal(report.status, "ready");
     assert.equal(report.mode, "draft");
     assert.equal(report.filePath, "draft.md");
+    assert.deepEqual(report.warnings, []);
   });
 
   it("includes scheduleAt when present", async () => {
@@ -90,6 +92,7 @@ title: "Scheduled Post"
           remoteCount: 0,
           dataCount: 0,
         },
+        warnings: [],
       },
     };
 
@@ -120,6 +123,7 @@ title: "Scheduled Post"
           remoteCount: 0,
           dataCount: 0,
         },
+        warnings: ["Parser warning"],
       },
     };
 
@@ -129,5 +133,6 @@ title: "Scheduled Post"
     assert.equal(report.mode, "publish");
     assert.equal(report.filePath, "bad.md");
     assert.equal(report.payload, undefined);
+    assert.deepEqual(report.warnings, ["Parser warning"]);
   });
 });

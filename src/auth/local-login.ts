@@ -11,16 +11,18 @@ export interface LocalLoginOptions {
 }
 
 export interface LocalLoginResult {
-  status: "local-session-started";
+  status: "local-session-started" | "authentication-failed";
   publicationUrl: string;
   profileDir: string;
   finalUrl: string;
   signInStillVisible: boolean;
   autoLogin: null | {
     emailInserted: boolean;
+    passwordOptionSelected?: boolean | undefined;
     passwordInserted: boolean;
     submitted: boolean;
     pausedBeforePassword?: boolean | undefined;
+    failureReason?: "password_option_not_found" | "post_login_authentication_failed" | undefined;
     note?: string | undefined;
   };
 }
@@ -51,12 +53,24 @@ export async function runLocalLogin(options: LocalLoginOptions): Promise<LocalLo
       await page.waitForTimeout(options.waitSeconds * 1000);
     }
 
+    const finalUrl = page.url();
+    const signInStillVisible =
+      (await isSignInVisible(page)) || isAuthenticationFailureUrl(finalUrl);
+    const authenticationFailed =
+      Boolean(autoLogin?.submitted) && Boolean(autoLogin?.passwordInserted) && signInStillVisible;
+
+    if (authenticationFailed && autoLogin) {
+      autoLogin.failureReason = "post_login_authentication_failed";
+      autoLogin.note =
+        "Password login was submitted, but the browser is still on a sign-in or recovery page. Complete any verification step manually in the opened browser.";
+    }
+
     return {
-      status: "local-session-started",
+      status: authenticationFailed ? "authentication-failed" : "local-session-started",
       publicationUrl: options.publicationUrl,
       profileDir: localBrowserProfileDir(),
-      finalUrl: page.url(),
-      signInStillVisible: await isSignInVisible(page),
+      finalUrl,
+      signInStillVisible,
       autoLogin,
     };
   } finally {
@@ -104,7 +118,7 @@ async function attemptPasswordLogin(
     );
   }
 
-  await choosePasswordLogin(page);
+  let passwordOptionSelected = await choosePasswordLogin(page);
 
   const email = await firstVisible(
     page,
@@ -127,7 +141,7 @@ async function attemptPasswordLogin(
   }
 
   await email.fill(credentials.email);
-  await choosePasswordLogin(page);
+  passwordOptionSelected = (await choosePasswordLogin(page)) || passwordOptionSelected;
 
   let password = await firstVisible(
     page,
@@ -148,7 +162,7 @@ async function attemptPasswordLogin(
       ],
       10000,
     );
-    await choosePasswordLogin(page);
+    passwordOptionSelected = (await choosePasswordLogin(page)) || passwordOptionSelected;
     password = await firstVisible(
       page,
       [
@@ -163,9 +177,13 @@ async function attemptPasswordLogin(
   if (!password) {
     return {
       emailInserted: true,
+      passwordOptionSelected,
       passwordInserted: false,
       submitted: false,
-      note: "Email was submitted, but no password field appeared. Complete magic-link or verification login manually.",
+      failureReason: passwordOptionSelected ? undefined : "password_option_not_found",
+      note: passwordOptionSelected
+        ? "Email was submitted, but no password field appeared. Complete magic-link or verification login manually."
+        : "Email was submitted, but no password-login option was found. Complete magic-link or verification login manually.",
     };
   }
 
@@ -173,6 +191,7 @@ async function attemptPasswordLogin(
     await password.click();
     return {
       emailInserted: true,
+      passwordOptionSelected,
       passwordInserted: false,
       submitted: false,
       pausedBeforePassword: true,
@@ -196,6 +215,7 @@ async function attemptPasswordLogin(
 
   return {
     emailInserted: true,
+    passwordOptionSelected,
     passwordInserted: true,
     submitted: true,
   };
@@ -298,6 +318,15 @@ async function isSignInVisible(page: Page): Promise<boolean> {
         .first()
         .isVisible({ timeout: 1000 }))
     );
+  } catch {
+    return false;
+  }
+}
+
+export function isAuthenticationFailureUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return /\/(sign-in|login|account-recovery|recover|reset-password)\b/i.test(parsed.pathname);
   } catch {
     return false;
   }

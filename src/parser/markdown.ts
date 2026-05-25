@@ -22,6 +22,7 @@ export async function parseMarkdownString(
   const html = String(await marked.parse(normalized, { gfm: true }));
   const document = htmlToProseMirrorJson(html);
   const media = buildMediaManifest(document, filePath);
+  const parserWarnings = lintAdjacentRiskyBlocks(document);
 
   return {
     filePath,
@@ -30,8 +31,8 @@ export async function parseMarkdownString(
     html,
     document,
     media,
-    warnings,
-  } as ParsedPost;
+    warnings: [...warnings, ...parserWarnings],
+  };
 }
 
 export function htmlToProseMirrorJson(html: string): ProseMirrorNode {
@@ -82,4 +83,52 @@ function escapeHtml(value: string): string {
     .replaceAll('"', "&quot;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
+}
+
+interface BlockSummary {
+  kind: "image" | "custom" | "horizontalRule" | "content";
+  type: string;
+}
+
+const riskyCustomNodeTypes = new Set(["embedNode", "paywallDivider", "subscribeWidget"]);
+
+function lintAdjacentRiskyBlocks(document: ProseMirrorNode): string[] {
+  const warnings: string[] = [];
+  const blocks = (document.content ?? []).map(summarizeTopLevelBlock);
+
+  for (let index = 0; index < blocks.length - 1; index += 1) {
+    const current = blocks[index]!;
+    const next = blocks[index + 1]!;
+
+    if (!isRiskyAdjacency(current, next)) continue;
+
+    warnings.push(
+      `Adjacent ${describeBlock(current)} and ${describeBlock(next)} blocks at positions ${index + 1}-${index + 2} may render unpredictably in Substack; add a paragraph or spacer between them before publishing.`,
+    );
+  }
+
+  return warnings;
+}
+
+function summarizeTopLevelBlock(node: ProseMirrorNode): BlockSummary {
+  if (node.type === "image") return { kind: "image", type: node.type };
+  if (node.type === "horizontalRule") return { kind: "horizontalRule", type: node.type };
+  if (riskyCustomNodeTypes.has(node.type)) return { kind: "custom", type: node.type };
+
+  return { kind: "content", type: node.type };
+}
+
+function isRiskyAdjacency(left: BlockSummary, right: BlockSummary): boolean {
+  const riskyKinds = new Set<BlockSummary["kind"]>(["image", "custom", "horizontalRule"]);
+
+  return (
+    riskyKinds.has(left.kind) &&
+    riskyKinds.has(right.kind) &&
+    !(left.kind === "custom" && right.kind === "custom")
+  );
+}
+
+function describeBlock(block: BlockSummary): string {
+  if (block.kind === "custom") return `custom ${block.type}`;
+  return block.type;
 }
