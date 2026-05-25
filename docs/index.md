@@ -26,7 +26,7 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
 
 - [Feature Matrix](feature-matrix.md) — Comparison with other Substack publishing tools
 - [Substack Feature Coverage](substack-feature-coverage.md) — Detailed coverage of the Substack platform surface
-- [Autonomous Implementation Record](integrations/autonomous-implementation-plan.md) — Completed execution record and external gates for integration tracks
+- [Autonomous Implementation Record](integrations/autonomous-implementation-record.md) — Completed execution record and external gates for integration tracks
 - [AI Integration Readiness](integrations/ai-readiness-matrix.md) — MCP distribution status across AI clients and registries
 
 ## Examples & Workflows

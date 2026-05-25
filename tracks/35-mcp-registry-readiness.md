@@ -58,7 +58,7 @@ Prepare the existing MCP server and related metadata for publication to the curr
 - Added `registry.server.json` for registry metadata.
 - Added docs/integrations/mcp-registry-readiness.md.
 - Added docs/integrations/mcp-registry-checklist.md.
-- Added docs/integrations/autonomous-implementation-plan.md.
+- Added docs/integrations/autonomous-implementation-record.md.
 - Added `scripts/validate-registry-metadata.mjs`.
 - Added `scripts/mcp-publisher-helper.mjs`.
 - Local verification now passes without warnings; final live publish remains an external gate.
