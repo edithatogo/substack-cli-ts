@@ -19,8 +19,8 @@ substack-cli completion powershell  # PowerShell completions
 **Installation:**
 
 - **Bash / Zsh:** Add `source <(substack-cli completion <shell>)` to your `.bashrc` or `.zshrc`.
-- **PowerShell:** Add `substack-cli completion powershell | Out-String | Invoke-Expression` to your `$PROFILE`.
-- **Script helpers:** See `scripts/install-completions.sh` and `scripts/install-completions.ps1`.
+- **PowerShell:** Dot-source the shipped helper from your `$PROFILE`, or register a native completer with `substack-cli completion powershell` as its command source.
+- **Script helpers:** `scripts/install-completions.sh` and `scripts/install-completions.ps1` are distributed as user-run helpers. They generate completions from the installed `substack-cli` binary at shell startup; the npm package does not ship generated `scripts/completions.*` artifacts.
 
 ---
 

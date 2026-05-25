@@ -17,10 +17,10 @@ Most registry submissions require account ownership, API tokens, or manual revie
 | --- | --- | --- | --- | --- |
 | Official MCP registry / GitHub MCP registry | `registry.server.json` | Submit/publish using the current MCP registry process for `io.github.edithatogo/substack-cli` | GitHub namespace ownership; registry publisher token if required | Metadata ready; external submission required |
 | Smithery | `registry.server.json` plus npm package launch command | Register package/server through Smithery's publisher flow | Smithery account/API token | External submission required |
-| Claude Desktop / Claude Code | MCP config spawning `npx @edithatogo/substack-cli mcp serve` | User/client config, not a public package registry | None for local use | Config scaffold present |
-| Gemini CLI extensions | MCP config spawning `npx @edithatogo/substack-cli mcp serve` | Gemini extension/registry process when available | Gemini/Google publisher access if registry-backed | Config scaffold present; external process required |
-| Codex / ChatGPT connectors | MCP config spawning `npx @edithatogo/substack-cli mcp serve` | ChatGPT/Codex connector flow when MCP/local connectors are supported for the account | OpenAI account/admin access | Config scaffold present; external process required |
-| GitHub Copilot | VS Code MCP configuration or Copilot extension path | VS Code workspace/user config and marketplace docs | Marketplace publisher for extension package | Config scaffold present |
+| Claude Desktop / Claude Code | MCP config spawning `npx -y @edithatogo/substack-cli mcp serve` | User/client config, not a public package registry | None for local use | Config documented |
+| Gemini CLI extensions | MCP config spawning `npx -y @edithatogo/substack-cli mcp serve` | Gemini settings or extension/registry process when available | Gemini/Google publisher access if registry-backed | Config documented; external process required |
+| Codex / ChatGPT connectors | Codex local MCP config; ChatGPT requires remote MCP connector | Codex local config or ChatGPT connector flow | OpenAI account/admin access for ChatGPT connector publication | Codex documented; ChatGPT external productization required |
+| GitHub Copilot | VS Code MCP configuration or Copilot extension path | VS Code workspace/user config and marketplace docs | Marketplace publisher for extension package | Config documented |
 
 ## Editor marketplaces
 
