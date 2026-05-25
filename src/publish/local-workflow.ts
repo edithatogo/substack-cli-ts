@@ -10,6 +10,7 @@ import type {
   DraftOperation,
   WorkflowStep,
 } from "./browser-workflow.js";
+import { resolveDraftEditorUrl } from "./draft-url.js";
 import { resolvePostTitle } from "./title.js";
 import type { TransportResolution } from "./transport.js";
 
@@ -363,14 +364,6 @@ export async function runLocalDraftWorkflow(
   } finally {
     await browser.close();
   }
-}
-
-function resolveDraftEditorUrl(draftUrl: string, draftId: string | undefined): string {
-  if (!draftId || !draftUrl) return draftUrl || "";
-  const hasDraftId = /\/\d+$/.test(draftUrl);
-  if (hasDraftId) return draftUrl;
-  const base = draftUrl.replace(/\/+$/, "");
-  return `${base}/${draftId}`;
 }
 
 async function clickIfVisible(page: Page, locator: Locator, timeout: number): Promise<boolean> {

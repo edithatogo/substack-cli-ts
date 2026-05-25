@@ -1,11 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { parseMarkdownString } from "../parser/markdown.js";
-import {
-  resolveDraftEditorUrl,
-  runBrowserWorkflow,
-  shouldOpenPublishReview,
-} from "./browser-workflow.js";
+import { runBrowserWorkflow, shouldOpenPublishReview } from "./browser-workflow.js";
+import { resolveDraftEditorUrl } from "./draft-url.js";
 
 describe("shouldOpenPublishReview", () => {
   it("returns true only when review-only is enabled", () => {
@@ -27,6 +24,20 @@ describe("resolveDraftEditorUrl", () => {
     assert.equal(
       resolveDraftEditorUrl("https://rareinsights.substack.com/publish/post/123", "123"),
       "https://rareinsights.substack.com/publish/post/123",
+    );
+  });
+
+  it("keeps editor URLs with a trailing slash after the draft ID", () => {
+    assert.equal(
+      resolveDraftEditorUrl("https://rareinsights.substack.com/publish/post/123/", "123"),
+      "https://rareinsights.substack.com/publish/post/123/",
+    );
+  });
+
+  it("inserts the draft ID before query parameters and hashes", () => {
+    assert.equal(
+      resolveDraftEditorUrl("https://rareinsights.substack.com/publish/post?s=w#editor", "123"),
+      "https://rareinsights.substack.com/publish/post/123?s=w#editor",
     );
   });
 
