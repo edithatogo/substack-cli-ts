@@ -16,11 +16,15 @@
       "properties": {
         "substackCli.mcpCommand": {
           "type": "string",
-          "default": "node dist/cli.js mcp serve",
+          "default": "npx -y @edithatogo/substack-cli mcp serve",
           "description": "Command used to launch the local Substack CLI MCP server."
+        },
+        "substackCli.publicationUrl": {
+          "type": "string",
+          "default": "https://your-publication.substack.com",
+          "description": "Publication URL placeholder passed to the MCP server as SUBSTACK_PUBLICATION_URL."
         }
       }
     }
   }
 }
-
