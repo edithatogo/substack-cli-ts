@@ -10,6 +10,7 @@ export type RegistryServerMetadata = {
   packages: Array<{
     registryType: string;
     identifier: string;
+    version?: string;
     mcpName: string;
     runtime: string;
     entrypoint: string;

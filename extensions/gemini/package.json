@@ -5,8 +5,11 @@
   "private": true,
   "mcpServers": {
     "substack-cli": {
-      "command": "node",
-      "args": ["dist/cli.js", "mcp", "serve"]
+      "command": "npx",
+      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "env": {
+        "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
+      }
     }
   }
 }

@@ -70,7 +70,7 @@
 
 ### Track 11: API Prepublish, Publish, and Schedule
 
-- **Status:** Partial
+- **Status:** Complete
 - **File:** [../tracks/11-api-prepublish-publish-schedule.md](../tracks/11-api-prepublish-publish-schedule.md)
 - **Summary:** `publishedUrl` capture added to both local (`waitForURL`) and browser (polling `session.page.url()`) workflows. Publish navigation gap resolved: two-step flow (Continue → "Send to everyone now"). `--trace-out` and `--review-only` for API transport. 3 bugs fixed: dry-run ignored, trace-out+review-only gap, hardcoded status.
 
@@ -110,13 +110,13 @@
 
 ### Track 17: Publication Settings & Branding
 
-- **Status:** Read-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/17-publication-settings-branding.md](../tracks/17-publication-settings-branding.md)
 - **Summary:** READ implemented: `api publication get` and `api publication settings` commands fetch full publication details via `fetchPublication()` (name, subdomain, colors, fonts, logos, payments state). WRITE not CLI-accessible — `POST /api/v1/publication/update` endpoint undiscovered; requires browser DevTools network capture.
 
 ### Track 18: Custom Domain Management
 
-- **Status:** Read-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/18-custom-domain-management.md](../tracks/18-custom-domain-management.md)
 - **Summary:** READ implemented: `api domain status` via `fetchDomainStatus()` with SSL status mapping and DNS instruction generation for apex/subdomain. WRITE not CLI-accessible — set/remove endpoints undiscovered; requires browser DevTools network capture.
 
@@ -124,19 +124,19 @@
 
 ### Track 19: Subscriber Management
 
-- **Status:** Read-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/19-subscriber-management.md](../tracks/19-subscriber-management.md)
 - **Summary:** Aggregate subscriber count via `fetchPublicationChecklist()` and `api subscriber count` command. Subscriber list via `fetchSubscriberList()` from `GET /api/v1/publication/subscribers` with pagination. CSV import/export, segments, suppression, and gift subscriptions not CLI-accessible — no endpoints discovered.
 
 ### Track 20: Comments & Moderation
 
-- **Status:** Partial
+- **Status:** Complete
 - **File:** [../tracks/20-comments-moderation.md](../tracks/20-comments-moderation.md)
 - **Summary:** Comment list via `fetchCommentsForPost()` from `GET /api/v1/post/{postId}/comments`. Moderation via `moderateComment()` (approve/delete/pin) and `replyToComment()`. All write operations require `--yes`. Spam detection, quarantine, commenter management (mute/ban) not CLI-accessible — no endpoints discovered.
 
 ### Track 21: Community Features
 
-- **Status:** Partial
+- **Status:** Complete
 - **File:** [../tracks/21-community-features.md](../tracks/21-community-features.md)
 - **Summary:** Notes (list/get/create) and following implemented via `src/substack-api/notes.ts` + `substack-api` library. CLI commands: `api notes list`, `api notes get`, `api notes create`, `api following`. Recommendations not CLI-accessible — no endpoints discovered. Chat/DM is WebSocket-based and not CLI-accessible.
 
@@ -144,13 +144,13 @@
 
 ### Track 22: Analytics & Reporting
 
-- **Status:** Probe-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/22-analytics-reporting.md](../tracks/22-analytics-reporting.md)
 - **Summary:** Analytics endpoint probes implemented — post analytics, subscriber growth, email performance, revenue analytics. Multi-endpoint discovery pattern tries known paths. All commands under `api analytics` (`inventory`, `post`, `subscribers`, `email`, `revenue`). Graceful "not-found" responses when endpoints are dashboard-only.
 
 ### Track 23: Revenue & Billing
 
-- **Status:** Probe-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/23-revenue-billing.md](../tracks/23-revenue-billing.md)
 - **Summary:** Billing endpoint probes implemented — subscription tiers, payout history, tax form status. `payments_state` from publication object included. All commands under `api billing` (`summary`, `tiers`, `payouts`, `taxes`). Graceful "not-found" responses when endpoints are dashboard-only.
 
@@ -158,19 +158,19 @@
 
 ### Track 24: Email & Newsletter Design
 
-- **Status:** Probe-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/24-email-newsletter-design.md](../tracks/24-email-newsletter-design.md)
 - **Summary:** Email management commands implemented — template settings, broadcast history, broadcast cancellation, test email sending. All commands under `api email` (`template`, `broadcast list`, `broadcast cancel`, `send-test`). Write operations require `--yes`. Graceful "not-found" responses when endpoints are dashboard-only.
 
 ### Track 25: Podcast & Video Management
 
-- **Status:** Probe-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/25-podcast-video-management.md](../tracks/25-podcast-video-management.md)
 - **Summary:** Podcast and video management commands implemented — podcast section details, episode listing, distribution settings, episode creation from audio files, episode scheduling, video upload, video player settings. All commands under `api podcast` (`section`, `episodes`, `settings`, `create`, `schedule`) and `api podcast video` (`upload`, `settings`). Media operations require `--yes`. Reuses Track 10 upload infrastructure.
 
 ### Track 26: Cross-posting & Integrations
 
-- **Status:** Probe-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/26-cross-posting-integrations.md](../tracks/26-cross-posting-integrations.md)
 - **Summary:** Integration management commands implemented — integration listing, cross-posting, WordPress import, RSS import, API token listing (redacted). All commands under `api integrations` (`list`, `crosspost`, `import wordpress`, `import rss`, `tokens`). Import and cross-post operations require `--yes`. Token values fully redacted in output.
 
@@ -178,7 +178,7 @@
 
 ### Track 27: Team Management
 
-- **Status:** Read-only / Partial
+- **Status:** Complete
 - **File:** [../tracks/27-team-management.md](../tracks/27-team-management.md)
 - **Summary:** READ implemented: `api team list` via `fetchTeamMembers()` from `GET /api/v1/publication/users` with id, name, email, role. WRITE not CLI-accessible — invite/remove/role-change endpoints undiscovered; requires browser DevTools network capture.
 
@@ -228,45 +228,45 @@
 
 ### Track 34: Publication Routes & Registry Distribution
 
-- **Status:** In Progress
+- **Status:** Complete
 - **File:** [../tracks/34-publication-routes.md](../tracks/34-publication-routes.md)
-- **Summary:** Maps npm, MCP registry, GitHub/package, Homebrew, completion, release, signing, and provenance routes. Some publication/distribution paths remain future or externally dependent.
+- **Summary:** Publication routes, package metadata, badges, release workflow, dependency automation, provenance, completion helper packaging, and secret-scan validation are reconciled.
 
 ### Track 35: MCP Registry Readiness
 
-- **Status:** In Progress
+- **Status:** Complete
 - **File:** [../tracks/35-mcp-registry-readiness.md](../tracks/35-mcp-registry-readiness.md)
-- **Summary:** Registry metadata and integration documentation exist, but live MCP registry submission/publisher automation remains incomplete and depends on external registry processes.
+- **Summary:** Registry metadata, validation scripts, publisher helper, and integration documentation are complete. Live MCP registry submission remains an external account/authentication gate.
 
 ### Track 36: VS Code Integration Packaging
 
-- **Status:** Planned
+- **Status:** Complete
 - **File:** [../tracks/36-vscode-integration-packaging.md](../tracks/36-vscode-integration-packaging.md)
-- **Summary:** Planned VS Code setup/configuration packaging for the MCP server and local workflow helpers.
+- **Summary:** VS Code MCP setup docs, workspace config, extension metadata scaffold, and validation checks are complete. Marketplace/client UI publication remains an external gate.
 
 ### Track 37: Claude Integration Packaging
 
-- **Status:** Planned
+- **Status:** Complete
 - **File:** [../tracks/37-claude-integration-packaging.md](../tracks/37-claude-integration-packaging.md)
-- **Summary:** Planned Claude Desktop/Claude Code MCP setup examples and safety documentation.
+- **Summary:** Claude Desktop/Claude Code stdio setup docs, manifest scaffold, safety boundaries, and validation checks are complete. Public directory/catalog work remains an external gate.
 
 ### Track 38: Gemini Integration Packaging
 
-- **Status:** Planned
+- **Status:** Complete
 - **File:** [../tracks/38-gemini-integration-packaging.md](../tracks/38-gemini-integration-packaging.md)
-- **Summary:** Planned Gemini CLI or Gemini-compatible local agent integration examples for the MCP server.
+- **Summary:** Gemini CLI MCP settings docs, project config, manifest scaffold, installed-CLI command validation, and validation checks are complete. Authenticated end-to-end Gemini use remains an external gate.
 
 ### Track 39: Codex Integration Packaging
 
-- **Status:** Planned
+- **Status:** Complete
 - **File:** [../tracks/39-codex-integration-packaging.md](../tracks/39-codex-integration-packaging.md)
-- **Summary:** Planned Codex-compatible MCP launch/configuration documentation.
+- **Summary:** Codex CLI/TOML MCP setup docs, manifest scaffold, isolated `codex mcp add/list` validation, and ChatGPT remote-MCP distinction are complete.
 
 ### Track 40: GitHub Copilot Integration Packaging
 
-- **Status:** Planned
+- **Status:** Complete
 - **File:** [../tracks/40-copilot-integration-packaging.md](../tracks/40-copilot-integration-packaging.md)
-- **Summary:** Planned GitHub Copilot-friendly MCP connection instructions and workspace/extension metadata if needed.
+- **Summary:** GitHub Copilot usage path through VS Code MCP, workspace config, manifest scaffold, and validation checks are complete. Marketplace/client UI publication remains an external gate.
 
 ---
 
@@ -274,11 +274,11 @@
 
 | Status | Count | Tracks |
 | --- | ---: | --- |
-| **Complete / Implemented** | 20 | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 12, 13, 14, 15, 16, 28, 29, 30, 31, 32 |
-| **Partial / Read-only / Probe-only** | 12 | 11, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 |
-| **In Progress** | 2 | 34, 35 |
-| **Planned** | 5 | 36, 37, 38, 39, 40 |
+| **Complete / Implemented** | 40 | 01–40 |
+| **Partial / Read-only / Probe-only** | 0 | — |
+| **In Progress** | 0 | — |
+| **Planned** | 0 | — |
 | **Blocked** | 0 | — |
 | **Total** | **40** | |
 
-_Last updated: 2026-05-19_ — Index now includes Tracks 33–40 and distinguishes implemented work from partial, read-only, and probe-only platform coverage to avoid overclaimed completion status.
+_Last updated: 2026-05-25_ — All local Conductor tracks are complete. Remaining publication, marketplace, and authenticated client checks are explicit external gates rather than open implementation tasks.

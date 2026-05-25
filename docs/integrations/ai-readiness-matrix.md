@@ -4,11 +4,11 @@
 | --- | --- | --- |
 | MCP registry | Metadata ready / external submission required | `registry.server.json` is present; publication requires registry/GitHub namespace auth. |
 | Smithery | Documented / external submission required | Use the published npm package and MCP launch command. |
-| VS Code | Scaffolded | Extension metadata exists; marketplace publication requires a real VS Code extension package and publisher token. |
-| Claude | Config scaffolded | Direct MCP server spawning via stdio config. |
-| Gemini | Config scaffolded | Needs client-specific validation against the current Gemini extension process. |
-| Codex / ChatGPT | Config scaffolded | Needs supported connector/extension path confirmation for the target account. |
-| GitHub Copilot | Config scaffolded | Likely through VS Code MCP integration path. |
+| VS Code | Config documented / scaffolded | `docs/integrations/vscode.md` documents workspace MCP config; marketplace publication requires a real VS Code extension package and publisher token. |
+| Claude | Config documented | `docs/integrations/claude.md` documents local stdio launch for Claude Desktop / Claude Code. |
+| Gemini | Config documented | `docs/integrations/gemini.md` documents Gemini CLI settings; validate against the installed Gemini CLI version before publishing claims. |
+| Codex / ChatGPT | Codex documented / ChatGPT remote path gated | `docs/integrations/codex.md` documents Codex local MCP setup; ChatGPT custom connectors require remote MCP productization. |
+| GitHub Copilot | Config documented | `docs/integrations/copilot.md` documents the VS Code MCP path for Copilot. |
 
 ## Principles
 
