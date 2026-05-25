@@ -18,11 +18,19 @@ const manifestClients = ["claude", "codex", "copilot", "gemini"];
 const docClients = ["vscode", "claude", "gemini", "codex", "copilot"];
 
 function read(path) {
-  return readFileSync(join(root, path), "utf8").replace(/^\uFEFF/, "");
+  try {
+    return readFileSync(join(root, path), "utf8").replace(/^\uFEFF/, "");
+  } catch (error) {
+    throw new Error(`Failed to read ${path}: ${error.message}`);
+  }
 }
 
 function readJson(path) {
-  return JSON.parse(read(path));
+  try {
+    return JSON.parse(read(path));
+  } catch (error) {
+    throw new Error(`Failed to parse JSON from ${path}: ${error.message}`);
+  }
 }
 
 function assert(condition, message) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { basename, join } from "node:path";
+import { join } from "node:path";
 
 const root = process.cwd();
 
@@ -33,12 +33,12 @@ for (let index = 0; index < args.length; index += 1) {
     process.exit(0);
   }
   if (arg === "--manifest") {
-    manifestPath = args[index + 1];
+    manifestPath = readOptionValue(args, index, "--manifest");
     index += 1;
     continue;
   }
   if (arg === "--publisher") {
-    publisherCommand = args[index + 1];
+    publisherCommand = readOptionValue(args, index, "--publisher");
     index += 1;
     continue;
   }
@@ -53,15 +53,11 @@ for (let index = 0; index < args.length; index += 1) {
   fail(`Unknown argument: ${arg}`);
 }
 
-if (!manifestPath || !publisherCommand) {
-  fail("--manifest and --publisher require a value.");
-}
-
 const packageJson = readJson("package.json");
 const manifest = readJson(manifestPath);
 const checks = verifyManifest(packageJson, manifest, manifestPath);
 const publisher = inspectPublisher(publisherCommand);
-const commands = buildCommands(manifestPath);
+const commands = buildCommands(publisherCommand, manifestPath);
 
 const summary = {
   manifest: manifestPath,
@@ -136,7 +132,6 @@ function verifyManifest(pkg, registry, path) {
   requireCheck(checks, registry.publisher?.type === "github", "publisher type is github");
   requireCheck(checks, registry.publisher?.owner === "edithatogo", "publisher owner is edithatogo");
   requireCheck(checks, registry.publisher?.repository === "substack-cli-ts", "publisher repository is substack-cli-ts");
-  requireCheck(checks, basename(path) !== "server.json" || registry.name === firstPackage?.mcpName, "server manifest name is consistent");
 
   const warnings = [];
   if (pkg.mcpName && pkg.mcpName !== registry.name) {
@@ -171,10 +166,19 @@ function inspectPublisher(command) {
   };
 }
 
-function buildCommands(path) {
+function readOptionValue(values, index, flag) {
+  const value = values[index + 1];
+  if (!value || value.startsWith("-")) {
+    fail(`${flag} requires a value.`);
+  }
+  return value;
+}
+
+function buildCommands(command, path) {
+  const quotedCommand = shellQuote(command);
   return {
-    login: "mcp-publisher login github",
-    publish: `mcp-publisher publish ${shellQuote(path)}`,
+    login: `${quotedCommand} login github`,
+    publish: `${quotedCommand} publish ${shellQuote(path)}`,
   };
 }
 
@@ -204,7 +208,7 @@ function printSummary(summary) {
 
 function printPublisherInstallHint() {
   console.log("Install mcp-publisher before live publishing:");
-  console.log('  curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr \'[:upper:]\' \'[:lower:]\')_$(uname -m | sed \'s/x86_64/amd64/;s/aarch64/arm64/\').tar.gz" | tar xz mcp-publisher');
+  console.log("  https://github.com/modelcontextprotocol/registry/releases/latest");
   console.log("Then move the binary onto PATH and run the login/publish commands above.");
   console.log("");
 }

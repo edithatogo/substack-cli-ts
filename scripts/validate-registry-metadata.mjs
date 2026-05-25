@@ -4,8 +4,12 @@ import { join } from "node:path";
 const root = process.cwd();
 
 function readJson(path) {
-  const raw = readFileSync(join(root, path), "utf8").replace(/^\uFEFF/, "");
-  return JSON.parse(raw);
+  try {
+    const raw = readFileSync(join(root, path), "utf8").replace(/^\uFEFF/, "");
+    return JSON.parse(raw);
+  } catch (error) {
+    throw new Error(`Failed to read or parse ${path}: ${error.message}`);
+  }
 }
 
 function assert(condition, message) {
@@ -19,6 +23,7 @@ const registry = readJson("registry.server.json");
 
 assert(registry.name === "io.github.edithatogo/substack-cli", "Registry name is incorrect.");
 assert(registry.transport === "stdio", "Registry transport must be stdio.");
+assert(Array.isArray(registry.packages), "Registry must define a packages array.");
 assert(registry.packages.length === 1, "Registry must define exactly one package.");
 assert(
   registry.packages[0].identifier === packageJson.name,

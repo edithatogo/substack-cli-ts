@@ -6,11 +6,12 @@ if (-not (Get-Command substack-cli -ErrorAction SilentlyContinue)) {
     return
 }
 
+$script:substackCliCompletions = substack-cli completion powershell
+
 Register-ArgumentCompleter -Native -CommandName substack-cli -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
-    $commands = substack-cli completion powershell | Out-String | Invoke-Expression
-    $commands |
+    $script:substackCliCompletions |
         Where-Object { $_ -like "$wordToComplete*" } |
         ForEach-Object {
             [System.Management.Automation.CompletionResult]::new($_, $_, "ParameterValue", $_)

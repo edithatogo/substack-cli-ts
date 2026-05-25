@@ -7,7 +7,7 @@ This repository already ships a stdio MCP server via `src/mcp/server.ts` and exp
 - `registry.server.json` contains the registry-ready metadata for the MCP Registry.
 - The package is published as npm package `@edithatogo/substack-cli`.
 - The MCP server name is `io.github.edithatogo/substack-cli`.
-- The package is launched via `node dist/cli.js mcp serve`.
+- The package is launched via `npx -y @edithatogo/substack-cli mcp serve`.
 - `src/registry/metadata.ts` provides a typed local reader for the registry manifest.
 
 ## Required publish steps
