@@ -49,6 +49,7 @@ export interface ParsedPost {
   html: string;
   document: ProseMirrorNode;
   media: MediaManifest;
+  warnings: string[];
 }
 
 export interface PreparedPost {

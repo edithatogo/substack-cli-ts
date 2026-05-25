@@ -78,6 +78,7 @@ const value = 1;
             remoteCount: 0,
             dataCount: 0,
           },
+          warnings: [],
         }),
       /Unsupported Substack payload content/,
     );
