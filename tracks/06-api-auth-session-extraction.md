@@ -39,5 +39,4 @@ Create a safe authentication layer for internal API probes without committing or
 
 ## Remaining Work
 
-- Improve expired-cookie detection after real endpoint responses are mapped.
-- Decide whether Track 07 should use the `jakub-k-slys/substack-api` endpoint model directly or implement a smaller local read model.
+- None for the local Conductor scope. Later tracks added shared API response classification, redacted failures, and a local typed read model while preserving `substack-api` where it is useful.

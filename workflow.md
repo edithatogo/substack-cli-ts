@@ -113,4 +113,4 @@ Detailed track files live under `tracks/`:
 - `tracks/13-dependency-and-discovery-register.md`
 - `tracks/14-quality-ci-automation.md`
 
-Current implementation status: local draft creation is validated with the local Chrome profile. Publish, schedule, image upload, table handling, advanced Substack blocks, Browserbase runtime validation, systematic external project research, the TypeScript internal API adapter tracks, and quality automation hardening remain active work.
+Current implementation status: all local Conductor tracks in `conductor/tracks.md` are complete. Publication, marketplace, registry submission, and authenticated live-client checks are documented as external account or environment gates rather than open implementation tasks.

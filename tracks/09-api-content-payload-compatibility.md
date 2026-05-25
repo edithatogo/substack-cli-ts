@@ -48,5 +48,4 @@ Translate the existing Markdown/Tiptap pipeline into the payload shape expected 
 
 ## Remaining Work
 
-- Image/embed/caption payload compatibility after media upload mapping exists (depends on Track 10).
-- Expand unsupported fallback documentation once draft write probes identify exact endpoint requirements.
+- None for the local Conductor scope. Track 10 completed media upload mapping, and unsupported content behavior is covered by payload validation plus the platform-gap documentation.
