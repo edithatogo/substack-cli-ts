@@ -42,16 +42,25 @@ Prepare the existing MCP server and related metadata for publication to the curr
 
 ## Remaining Work
 
-- Add local registry metadata files.
-- Add publish/packaging docs for the MCP server.
-- Add client setup examples and extension manifests.
-- Verify whether the registry supports direct submission, package registration, or manual indexing.
+- [x] Add local registry metadata files.
+- [x] Add publish/packaging docs for the MCP server.
+- [x] Add client setup examples and extension manifests.
+- [x] Add `npm run registry:validate` preflight for registry/client metadata drift.
+- [x] Add bounded `mcp-publisher` helper with verify, dry-run, help, and explicit publish modes.
+
+## External Gates
+
+- Live registry submission still requires `mcp-publisher` installation and authenticated GitHub namespace ownership.
+- Final package submission must be run by an authenticated publisher after npm release credentials are available.
 
 ## Implementation Notes
 
-- Added egistry.server.json for registry metadata.
+- Added `registry.server.json` for registry metadata.
 - Added docs/integrations/mcp-registry-readiness.md.
 - Added docs/integrations/mcp-registry-checklist.md.
-- Next step is to wire a mcp registry CLI helper or mcp-publisher automation.
+- Added docs/integrations/autonomous-implementation-plan.md.
+- Added `scripts/validate-registry-metadata.mjs`.
+- Added `scripts/mcp-publisher-helper.mjs`.
+- Local verification now passes without warnings; final live publish remains an external gate.
 
 

@@ -6,6 +6,7 @@ describe("loadRegistryServerMetadata", () => {
     const metadata = loadRegistryServerMetadata();
     expect(metadata.name).toBe("io.github.edithatogo/substack-cli");
     expect(metadata.packages[0]?.identifier).toBe("@edithatogo/substack-cli");
+    expect(metadata.packages[0]?.version).toBe("0.1.0");
   });
 });
 

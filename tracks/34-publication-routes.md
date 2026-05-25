@@ -2,7 +2,7 @@
 
 ## Status
 
-**In Progress**
+**Complete**
 
 ## Goal
 
@@ -60,7 +60,7 @@ graph TB
 
 | Item | Status | Details |
 |------|--------|---------|
-| Package name | ✅ | `substack-cli` |
+| Package name | ✅ | `@edithatogo/substack-cli` |
 | Version | ✅ | `0.1.0` |
 | `"private": false` | ✅ | Published to npm |
 | `"main"` entry | ✅ | `"dist/cli.js"` |
@@ -170,20 +170,20 @@ jobs:
 
 | Badge | Status | URL |
 |-------|--------|-----|
-| npm version | 🔶 Needs adding | `https://img.shields.io/npm/v/substack-cli` |
-| npm downloads | 🔶 Needs adding | `https://img.shields.io/npm/dm/substack-cli` |
+| npm version | ✅ Added | `https://img.shields.io/npm/v/%40edithatogo%2Fsubstack-cli` |
+| npm downloads | ✅ Added | `https://img.shields.io/npm/dm/%40edithatogo%2Fsubstack-cli` |
 | CI | ✅ In README | Workflow status badge |
-| Coverage | 🔶 Needs adding | From vitest output |
-| License (MIT) | 🔶 Needs adding | MIT badge |
-| Node version | 🔶 Needs adding | `>=18` |
-| TypeScript | 🔶 Needs adding | Blue badge |
+| Coverage | ✅ In README | Codecov badge |
+| License (Apache-2.0) | ✅ In README | Apache-2.0 badge |
+| Node version | ✅ In README | `>=18` |
+| TypeScript | ✅ In README | Blue badge |
 
 ### Repository Homepage Requirements
 
 | Element | Status |
 |---------|--------|
 | Project name & description | ✅ |
-| Badges row | 🔶 Needs addition |
+| Badges row | ✅ |
 | Installation instructions | ✅ |
 | Quick start example | ✅ |
 | Command reference | ✅ |
@@ -200,10 +200,10 @@ jobs:
 
 | Feature | Status | Details |
 |---------|--------|---------|
-| Renovate config | 🔶 Needs addition | Auto-merge patch/minor |
-| Dependabot config | 🔶 Needs addition | GitHub-native security updates |
-| Auto-merge workflow | 🔶 Needs addition | For Renovate/Dependabot PRs |
-| npm provenance | 🔶 Needs addition | `--provenance` flag |
+| Renovate config | ✅ | Auto-merge patch/minor |
+| Dependabot config | ✅ | GitHub-native security updates |
+| Auto-merge workflow | ✅ | For Renovate/Dependabot PRs |
+| npm provenance | ✅ | `--provenance` flag in publish workflow |
 | Secret scanning | ✅ | `scripts/secret-scan.mjs` |
 | Production audit | ✅ | `npm run audit:prod` |
 
@@ -211,14 +211,22 @@ jobs:
 
 ## Acceptance Criteria
 
-- [ ] `npm publish` workflow automated with provenance signing
-- [ ] MCP server discoverable via standard JSON configuration
-- [ ] README has all relevant badges (npm, CI, coverage, license, node, TS)
-- [ ] GitHub release workflow auto-generates notes
-- [ ] Shell completions distributed with the package
-- [ ] Renovate + Dependabot configured with auto-merge
-- [ ] Starlight/Astro docs site scaffold plan documented
-- [ ] Security scanning passes without false positives
+- [x] `npm publish` workflow automated with provenance signing
+- [x] MCP server discoverable via standard JSON configuration
+- [x] README has all relevant badges (npm, CI, coverage, license, node, TS)
+- [x] GitHub release workflow auto-generates notes
+- [x] Shell completions distributed with the package
+- [x] Renovate + Dependabot configured with auto-merge
+- [x] Starlight/Astro docs site scaffold plan documented
+- [x] Security scanning passes without false positives
+
+## Autonomous Preparation
+
+- [x] Fix stale package and badge metadata to match `@edithatogo/substack-cli` and Apache-2.0.
+- [x] Add `npm run registry:validate` as a fast preflight for registry and client scaffolds.
+- [x] Normalize MCP client launch examples on `npx -y @edithatogo/substack-cli mcp serve`.
+- [x] Package completion installer helpers as generated-at-install artifacts.
+- [x] Run `npm run scan:secrets`.
 
 | `npm pack` test | ✅ | Clean `.tgz` output |
 | `npm publish --dry-run` | ✅ | Succeeds |
