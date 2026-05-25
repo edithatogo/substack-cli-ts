@@ -79,7 +79,7 @@
     "commander": "^14.0.0",
     "dotenv": "^17.0.0",
     "marked": "^16.0.0",
-    "playwright-core": "^1.56.0",
+    "playwright-core": "^1.60.0",
     "substack-api": "file:vendor/substack-api",
     "zod": "^4.0.0"
   },
