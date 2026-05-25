@@ -34,6 +34,4 @@ Map the read-side Substack entities needed for export, diagnostics, and safe wri
 
 ## Remaining Work
 
-- Add draft inventory after identifying stable read-only draft endpoints.
-- Add published post pagination beyond the current bounded recent-post inventory.
-- Add redirects/custom-domain handling.
+- None for the local Conductor scope. Draft inventory, bounded pagination metadata, and domain/redirect-adjacent diagnostics are covered by later read-model and domain tracks; unsupported dashboard-only surfaces are tracked in Track 31.

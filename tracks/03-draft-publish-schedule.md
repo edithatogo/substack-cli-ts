@@ -98,7 +98,7 @@ The following was completed against the live Substack publication at `https://ra
 
 1. ~~**Publish click doesn't trigger navigation**~~: **Resolved.** After clicking Publish via local workflow, `waitForURL(/\/p\//)` timed out because the click sequence was incomplete. The fix identified a two-step flow: **Continue** (`button#publish`) opens the review overlay, then **"Send to everyone now"** triggers the actual publish. Both `local-workflow.ts` and `browser-workflow.ts` now target the correct buttons. Validated: Continue click works (confirmed via `--review-only`), and "Send to everyone now" is now the primary publish target.
 
-2. **`draftUrl` mapping missing draft ID**: Mappings store `https://rareinsights.substack.com/publish/post` without the ID suffix. Local workflow's `resolveDraftEditorUrl()` fixes this, but Stagehand path uses `draftUrl` directly from the mapping which may fail.
+2. ~~**`draftUrl` mapping missing draft ID**~~: **Resolved.** Both local and Stagehand browser workflows normalize mapped editor URLs with the stored draft ID before navigation, so mappings like `https://rareinsights.substack.com/publish/post` resolve to `/publish/post/{id}`.
 
 ## Remaining Work
 

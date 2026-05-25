@@ -97,6 +97,12 @@ export function shouldOpenPublishReview(options: BrowserWorkflowOptions): boolea
   return options.reviewOnly === true;
 }
 
+export function resolveDraftEditorUrl(draftUrl: string, draftId: string | undefined): string {
+  if (!draftId || !draftUrl) return draftUrl || "";
+  if (/\/\d+$/.test(draftUrl)) return draftUrl;
+  return `${draftUrl.replace(/\/+$/, "")}/${draftId}`;
+}
+
 export async function runBrowserWorkflow(
   prepared: PreparedPost,
   options: BrowserWorkflowOptions,
@@ -190,15 +196,18 @@ async function createDraftInBrowser(
   const trace: WorkflowStep[] = [];
   const existingDraft = options.draftMapping;
   const operation: DraftOperation = existingDraft ? "update" : "create";
+  const existingDraftUrl = existingDraft?.draftUrl
+    ? resolveDraftEditorUrl(existingDraft.draftUrl, existingDraft.draftId)
+    : undefined;
 
-  if (existingDraft?.draftUrl) {
+  if (existingDraftUrl) {
     await recordStep(trace, "navigate-existing-draft", async () => {
-      await session.page.goto(existingDraft.draftUrl!, {
+      await session.page.goto(existingDraftUrl, {
         waitUntil: "domcontentloaded",
         timeoutMs: 60000,
       });
       await checkForCaptcha(session);
-      return { draftUrl: existingDraft.draftUrl };
+      return { draftUrl: existingDraftUrl };
     });
   } else {
     await recordStep(trace, "navigate-publication", async () => {
@@ -321,7 +330,7 @@ async function createDraftInBrowser(
     transport,
     editorTextLength: editorText.length,
     draftId: existingDraft?.draftId,
-    draftUrl: existingDraft?.draftUrl,
+    draftUrl: existingDraftUrl ?? existingDraft?.draftUrl,
     metadata: {
       subtitle: prepared.post.metadata.subtitle,
       tags: prepared.post.metadata.tags,
