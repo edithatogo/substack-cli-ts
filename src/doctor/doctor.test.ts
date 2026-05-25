@@ -58,6 +58,7 @@ describe("doctor checks", () => {
 
     assert.equal(check.status, "error");
     assert.match(check.message, /BROWSERBASE_API_KEY/);
+    assert.match(check.message, /config set-runtime local/);
   });
 
   it("warns for Camoufox because it is not validated", () => {
@@ -115,10 +116,21 @@ describe("doctor checks", () => {
           "api-readiness",
           "browserbase-session",
           "local-browser-profile",
+          "editor-write-readiness",
           "gitignore",
         ],
       );
       assert.equal(report.checks.find((check) => check.name === "publication")?.status, "ok");
+      assert.equal(
+        report.checks.find((check) => check.name === "editor-write-readiness")?.status,
+        "warn",
+      );
+      assert.ok(
+        (
+          report.checks.find((check) => check.name === "gitignore")?.details
+            ?.requiredPatterns as string[]
+        ).includes(".npm-cache/"),
+      );
     });
   });
 });
