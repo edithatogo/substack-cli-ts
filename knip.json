@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["src/benchmark/**/*.ts"],
   "project": ["src/**/*.ts"],
-  "ignoreDependencies": ["prettier", "substack-api"],
+  "ignoreDependencies": ["prettier"],
   "ignoreBinaries": ["playwright", "substack-cli"],
   "ignoreIssues": {
     "src/**/*.ts": ["exports", "types"]
