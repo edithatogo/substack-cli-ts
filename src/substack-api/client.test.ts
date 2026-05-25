@@ -178,12 +178,13 @@ describe("requestWrite", () => {
 
   it("retries rate-limited write requests before returning success", async () => {
     const { requestWrite } = await import("./client.js");
+    const retryText = vi.fn(async () => JSON.stringify({ error: "rate limited" }));
     const fetchImpl = vi
       .fn()
       .mockResolvedValueOnce({
         status: 429,
         headers: new Headers({ "retry-after": "1" }),
-        text: async () => JSON.stringify({ error: "rate limited" }),
+        text: retryText,
       })
       .mockResolvedValueOnce({
         status: 200,
@@ -206,6 +207,41 @@ describe("requestWrite", () => {
     assert.equal(result.draftId, 789);
     assert.equal(result.retryAttempts, 1);
     assert.equal(fetchImpl.mock.calls.length, 2);
+    assert.equal(retryText.mock.calls.length, 0);
+  });
+
+  it("honors HTTP-date Retry-After values for write retries", async () => {
+    vi.setSystemTime(new Date("2026-05-26T00:00:00.000Z"));
+    const { requestWrite } = await import("./client.js");
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 503,
+        headers: new Headers({ "retry-after": "Tue, 26 May 2026 00:00:02 GMT" }),
+        text: vi.fn(async () => JSON.stringify({ error: "temporarily unavailable" })),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        text: async () => JSON.stringify({ id: 790 }),
+      });
+
+    const resultPromise = requestWrite(
+      fetchImpl,
+      "https://substack.com/api/v1/drafts",
+      "POST",
+      {},
+      {},
+      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5000 },
+    );
+
+    await vi.advanceTimersByTimeAsync(1999);
+    assert.equal(fetchImpl.mock.calls.length, 1);
+    await vi.advanceTimersByTimeAsync(1);
+
+    const result = await resultPromise;
+    assert.equal(result.status, 200);
+    assert.equal(result.draftId, 790);
+    assert.equal(result.retryAttempts, 1);
   });
 
   it("retries transient network write failures", async () => {

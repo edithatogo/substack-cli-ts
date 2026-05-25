@@ -165,14 +165,13 @@ export async function requestWrite(
         body: JSON.stringify(body),
       });
 
-      const text = await response.text();
-
       if (isRetryableStatus(response.status) && attempt < retryOptions.maxRetries) {
         retryAttempts += 1;
         await delay(resolveRetryDelayMs(response, attempt, retryOptions));
         continue;
       }
 
+      const text = await response.text();
       let parsed: unknown;
 
       try {
@@ -222,9 +221,14 @@ function resolveRetryDelayMs(
   const retryAfter = response.headers?.get("retry-after");
 
   if (retryAfter) {
-    const parsed = Number(retryAfter);
-    if (Number.isFinite(parsed) && parsed >= 0) {
-      return Math.min(parsed * 1000, options.maxDelayMs);
+    const seconds = Number(retryAfter);
+    if (Number.isFinite(seconds) && seconds >= 0) {
+      return Math.min(seconds * 1000, options.maxDelayMs);
+    }
+
+    const retryAtMs = Date.parse(retryAfter);
+    if (Number.isFinite(retryAtMs)) {
+      return Math.min(Math.max(0, retryAtMs - Date.now()), options.maxDelayMs);
     }
   }
 
@@ -232,7 +236,9 @@ function resolveRetryDelayMs(
 }
 
 function resolveBackoffDelayMs(attempt: number, options: RetryOptions): number {
-  return Math.min(options.baseDelayMs * 2 ** attempt, options.maxDelayMs);
+  const backoff = options.baseDelayMs * 2 ** attempt;
+  const jitter = Math.random() * options.baseDelayMs;
+  return Math.min(backoff + jitter, options.maxDelayMs);
 }
 
 function delay(ms: number): Promise<void> {
