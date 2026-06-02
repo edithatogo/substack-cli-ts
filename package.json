@@ -85,7 +85,7 @@
     "@tiptap/html": "^3.23.6",
     "@tiptap/starter-kit": "^3.23.6",
     "chrome-launcher": "^1.2.1",
-    "commander": "^14.0.0",
+    "commander": "^15.0.0",
     "dotenv": "^17.0.0",
     "js-yaml": "^4.1.1",
     "marked": "^18.0.4",
