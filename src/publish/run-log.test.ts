@@ -181,9 +181,11 @@ describe("run log artifacts", () => {
       title: "Scheduled draft 123",
       plan: sparsePublishPlan,
       result: publishResult(),
+      selectorSourceFile: "schedule.json",
     });
 
     assert.equal(scheduled.title, "Scheduled draft 123");
+    assert.equal(scheduled.selectorSourceFile, "schedule.json");
     assert.equal(scheduled.draftUrl, undefined);
     assert.equal(scheduled.slug, "example");
   });
