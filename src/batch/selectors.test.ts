@@ -72,10 +72,22 @@ describe("batch selectors", () => {
     });
 
     assert.deepEqual(plan.selectorSourceFiles, ["schedule.json", "ids.txt"]);
-    assert.equal(plan.items.length, 1);
+    assert.equal(plan.items.length, 2);
     assert.equal(plan.items[0]?.draftId, "123");
+    assert.equal(plan.items[1]?.draftId, "789");
     assert.equal(plan.skipped.length, 1);
     assert.equal(plan.skipped[0]?.reason, "already-scheduled-or-live");
+  });
+
+  it("treats an explicitly empty filter file as selecting no items", () => {
+    const plan = buildBatchSchedulePlan({
+      selectorSourceFiles: ["schedule.json", "ids.txt"],
+      ids: [],
+      scheduleItems: [{ draftId: "123", scheduledAt: "2026-07-01T09:00:00Z" }],
+    });
+
+    assert.equal(plan.items.length, 0);
+    assert.equal(plan.skipped.length, 0);
   });
 
   it("builds an unfiltered plan and honors numeric/state aliases", () => {

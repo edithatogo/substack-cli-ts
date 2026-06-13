@@ -1207,9 +1207,13 @@ batch
 
       const results = [];
       for (const item of plan.items) {
+        const draftUrl = new URL(
+          `/publish/post/${encodeURIComponent(item.draftId)}`,
+          publicationUrl,
+        ).toString();
         const schedulePlan = planPublishWrite(
           item.draftId,
-          "",
+          draftUrl,
           "schedule",
           publicationUrl,
           item.scheduledAt,

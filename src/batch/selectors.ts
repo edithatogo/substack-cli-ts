@@ -48,21 +48,21 @@ export function buildBatchSchedulePlan(input: {
   selectorSourceFiles: string[];
 }): BatchSelectorPlan {
   const allowedIds = new Set([...(input.ids ?? []), ...(input.draftIds ?? [])]);
-  const filtered =
-    allowedIds.size > 0
-      ? input.scheduleItems.filter((item) => allowedIds.has(item.draftId))
-      : input.scheduleItems;
-  const limited = input.limit !== undefined ? filtered.slice(0, input.limit) : filtered;
-  const items: BatchScheduleItem[] = [];
+  const hasExplicitFilter = input.ids !== undefined || input.draftIds !== undefined;
+  const filtered = hasExplicitFilter
+    ? input.scheduleItems.filter((item) => allowedIds.has(item.draftId))
+    : input.scheduleItems;
+  const candidates: BatchScheduleItem[] = [];
   const skipped: Array<BatchScheduleItem & { reason: string }> = [];
 
-  for (const item of limited) {
+  for (const item of filtered) {
     if (isAlreadyLive(item.status)) {
       skipped.push({ ...item, reason: "already-scheduled-or-live" });
       continue;
     }
-    items.push(item);
+    candidates.push(item);
   }
+  const items = input.limit !== undefined ? candidates.slice(0, input.limit) : candidates;
 
   return {
     selectorSourceFiles: input.selectorSourceFiles,
