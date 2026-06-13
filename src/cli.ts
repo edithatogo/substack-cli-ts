@@ -1068,6 +1068,25 @@ scheduleCommand
         readApiInventory(material, fetch, { postLimit: options.limit, draftLimit: options.limit }),
         fetchBroadcastHistory(publicationUrl, material, fetch, options.limit),
       ]);
+      if (inventory.status !== "ok" || broadcastHistory.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Could not fetch a complete scheduled queue for reconciliation.",
+              inventoryStatus: inventory.status,
+              broadcastStatus: broadcastHistory.status,
+              inventoryMessage: inventory.message,
+              broadcastMessage: broadcastHistory.message,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
       const queue = buildScheduledQueue(inventory, broadcastHistory.broadcasts ?? []);
       const report = reconcileSchedule(expected, queue, {
         by,
@@ -2963,7 +2982,7 @@ function buildScheduledQueue(
     .filter((broadcast) => broadcast.scheduledFor)
     .map((broadcast) => ({
       title: broadcast.subject,
-      postId: broadcast.postId !== null ? String(broadcast.postId) : undefined,
+      postId: broadcast.postId != null ? String(broadcast.postId) : undefined,
       scheduledAt: broadcast.scheduledFor,
       source: "broadcast" as const,
       status: broadcast.status,
