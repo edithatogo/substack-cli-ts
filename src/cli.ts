@@ -62,6 +62,7 @@ import {
 } from "./publish/browser-workflow.js";
 import { preparePost } from "./publish/prepare.js";
 import { prepublishPost } from "./publish/prepublish.js";
+import { buildDraftWriteRunLog, buildPublishWriteRunLog, writeRunLog } from "./publish/run-log.js";
 import { resolvePostTitle } from "./publish/title.js";
 import { resolveTransport } from "./publish/transport.js";
 import {
@@ -362,6 +363,7 @@ draft
   .option("--dry-run", "Print the generated payload without opening a browser", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
   .option("--experimental-inject-state", "Use experimental editor-state injection", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
   .action(
@@ -371,6 +373,7 @@ draft
         dryRun: boolean;
         sessionId?: string;
         traceOut?: string;
+        runLogDir?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },
@@ -416,7 +419,12 @@ draft
 
         await maybeWriteTrace(
           {
-            status: result.status === "created" ? "draft-created" : "draft-updated",
+            status:
+              result.status === "failed"
+                ? "failed"
+                : result.status === "created"
+                  ? "draft-created"
+                  : "draft-updated",
             operation: result.operation,
             mode: "draft",
             title: resolvePostTitle(prepared.post),
@@ -437,6 +445,15 @@ draft
           },
           options.traceOut,
         );
+        await writeRunLog(
+          options.runLogDir,
+          buildDraftWriteRunLog({
+            publicationUrl,
+            prepared,
+            plan,
+            result,
+          }),
+        );
         return;
       }
 
@@ -454,6 +471,7 @@ draft
   .option("--dry-run", "Print the generated API draft plan without writing", false)
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
   .action(
     async (
       file: string,
@@ -461,6 +479,7 @@ draft
         dryRun: boolean;
         source: "auto" | ApiAuthSource;
         traceOut?: string;
+        runLogDir?: string;
       },
     ) => {
       const effective = await loadEffectiveConfig();
@@ -543,6 +562,15 @@ draft
         },
         options.traceOut,
       );
+      await writeRunLog(
+        options.runLogDir,
+        buildDraftWriteRunLog({
+          publicationUrl,
+          prepared,
+          plan,
+          result,
+        }),
+      );
     },
   );
 
@@ -586,6 +614,7 @@ draft
   .option("--dry-run", "Print the generated API schedule plan without writing", false)
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
   .action(
     async (options: {
       draftId: string;
@@ -594,6 +623,7 @@ draft
       dryRun: boolean;
       source: "auto" | ApiAuthSource;
       traceOut?: string;
+      runLogDir?: string;
     }) => {
       const isIsoWithTimezone =
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
@@ -663,6 +693,15 @@ draft
         },
         options.traceOut,
       );
+      await writeRunLog(
+        options.runLogDir,
+        buildPublishWriteRunLog({
+          publicationUrl,
+          title: `Draft ${options.draftId}`,
+          plan,
+          result,
+        }),
+      );
     },
   );
 
@@ -674,6 +713,7 @@ program
   .option("--yes", "Confirm publishing without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
   .option("--experimental-inject-state", "Use experimental editor-state injection", false)
   .option("--review-only", "Stop at the publish review screen without clicking Publish", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
@@ -686,6 +726,7 @@ program
         reviewOnly: boolean;
         sessionId?: string;
         traceOut?: string;
+        runLogDir?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },
@@ -799,6 +840,16 @@ program
           },
           options.traceOut,
         );
+        await writeRunLog(
+          options.runLogDir,
+          buildPublishWriteRunLog({
+            publicationUrl,
+            prepared,
+            title: report.title,
+            plan: publishPlan,
+            result: publishResult,
+          }),
+        );
         return;
       }
 
@@ -816,6 +867,7 @@ program
   .option("--yes", "Confirm scheduling without an interactive prompt", false)
   .option("--session-id <id>", "Browserbase session ID to resume")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
   .option("--experimental-inject-state", "Use experimental editor-state injection", false)
   .option("--review-only", "Stop at the schedule review screen without clicking Schedule", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
@@ -829,6 +881,7 @@ program
         reviewOnly: boolean;
         sessionId?: string;
         traceOut?: string;
+        runLogDir?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },
@@ -946,6 +999,16 @@ program
             trace: [],
           },
           options.traceOut,
+        );
+        await writeRunLog(
+          options.runLogDir,
+          buildPublishWriteRunLog({
+            publicationUrl,
+            prepared,
+            title: report.title,
+            plan: schedulePlan,
+            result: scheduleResult,
+          }),
         );
         return;
       }
