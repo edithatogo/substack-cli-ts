@@ -52,6 +52,23 @@ describe("buildDraftIdInspectionReport", () => {
     assert.match(report.message, /increase --draft-limit/);
   });
 
+  it("reports a missing draft when the fetched draft inventory is empty", () => {
+    const report = buildDraftIdInspectionReport({
+      draftId: 999,
+      publicationUrl: "https://rareinsights.substack.com/",
+      inventory: {
+        status: "ok",
+        endpoints: ["/api/v1/drafts"],
+        message: "ok",
+        draftHasMore: false,
+      },
+    });
+
+    assert.equal(report.status, "missing");
+    assert.equal(report.inspectedDraftCount, 0);
+    assert.match(report.message, /not found in the current draft inventory/);
+  });
+
   it("reports inventory failures without pretending the draft is absent", () => {
     const report = buildDraftIdInspectionReport({
       draftId: "123",

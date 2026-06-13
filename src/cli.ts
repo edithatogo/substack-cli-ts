@@ -517,7 +517,12 @@ draft
 
       await maybeWriteTrace(
         {
-          status: result.status === "created" ? "draft-created" : "draft-updated",
+          status:
+            result.status === "failed"
+              ? "failed"
+              : result.status === "created"
+                ? "draft-created"
+                : "draft-updated",
           operation: result.operation,
           mode: "draft",
           title: resolvePostTitle(prepared.post),
