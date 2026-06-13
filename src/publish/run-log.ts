@@ -61,12 +61,12 @@ export function buildBrowserWorkflowRunLog(input: {
   result: BrowserWorkflowResult | Record<string, unknown>;
 }): RunLogArtifact {
   const resultRecord = input.result as Record<string, unknown>;
-  const status = String(input.result.status ?? "");
-  const metadata = asRecord(input.result.metadata);
-  const draftId = valueAsString(input.result.draftId);
-  const publishedUrl = valueAsString(input.result.publishedUrl);
-  const scheduleAt = valueAsString(input.result.scheduleAt) ?? input.prepared.scheduleAt;
-  const actionType = actionTypeForMode(input.prepared.mode, valueAsString(input.result.operation));
+  const status = String(resultRecord.status ?? "");
+  const metadata = asRecord(resultRecord.metadata);
+  const draftId = valueAsString(resultRecord.draftId);
+  const publishedUrl = valueAsString(resultRecord.publishedUrl);
+  const scheduleAt = valueAsString(resultRecord.scheduleAt) ?? input.prepared.scheduleAt;
+  const actionType = actionTypeForMode(input.prepared.mode, valueAsString(resultRecord.operation));
   const isFailure = status.includes("failed") || status === "error";
 
   return {
@@ -77,9 +77,9 @@ export function buildBrowserWorkflowRunLog(input: {
     publicationUrl: input.publicationUrl,
     publicationId: null,
     sourceFile: input.prepared.post.filePath,
-    title: valueAsString(input.result.title) ?? resolvePostTitle(input.prepared.post),
+    title: valueAsString(resultRecord.title) ?? resolvePostTitle(input.prepared.post),
     draftId,
-    draftUrl: redactUrl(valueAsString(input.result.draftUrl)) ?? undefined,
+    draftUrl: redactUrl(valueAsString(resultRecord.draftUrl)) ?? undefined,
     sectionName: valueAsString(metadata.section) ?? input.prepared.post.metadata.section,
     sectionId: input.prepared.post.metadata.sectionId,
     slug: input.prepared.post.metadata.slug,

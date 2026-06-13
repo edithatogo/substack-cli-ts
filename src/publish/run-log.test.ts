@@ -150,6 +150,44 @@ describe("run log artifacts", () => {
     assert.equal(failureArtifact.error?.body, null);
   });
 
+  it("uses safe fallbacks for sparse draft and publish write results", () => {
+    const sparseDraftPlan: DraftWritePlan = {
+      ...draftPlan(),
+      resolvedSectionId: undefined,
+    };
+    const failedDraft = buildDraftWriteRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      prepared: { ...prepared, mode: "draft", scheduleAt: undefined },
+      plan: sparseDraftPlan,
+      result: {
+        status: "failed",
+        operation: "create",
+        method: "POST",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts",
+        message: "Draft request failed.",
+      },
+    });
+
+    assert.equal(failedDraft.sectionId, 42);
+    assert.equal(failedDraft.error?.message, "Draft request failed.");
+    assert.equal(failedDraft.error?.body, null);
+
+    const sparsePublishPlan: PublishWritePlan = {
+      ...publishPlan(),
+      draftUrl: undefined,
+    };
+    const scheduled = buildPublishWriteRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      title: "Scheduled draft 123",
+      plan: sparsePublishPlan,
+      result: publishResult(),
+    });
+
+    assert.equal(scheduled.title, "Scheduled draft 123");
+    assert.equal(scheduled.draftUrl, undefined);
+    assert.equal(scheduled.slug, "example");
+  });
+
   it("builds browser workflow logs without exposing session URLs", () => {
     const artifact = buildBrowserWorkflowRunLog({
       publicationUrl: "https://rareinsights.substack.com/",
@@ -176,6 +214,26 @@ describe("run log artifacts", () => {
     assert.equal(artifact.status, "success");
     assert.equal(artifact.draftUrl, "https://rareinsights.substack.com/publish/post/123");
     assert.equal(JSON.stringify(artifact).includes("session-secret"), false);
+  });
+
+  it("classifies browser publish workflow logs", () => {
+    const artifact = buildBrowserWorkflowRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      prepared: { ...prepared, mode: "publish", scheduleAt: undefined },
+      result: {
+        status: "published",
+        operation: "create",
+        mode: "publish",
+        publishedUrl: "https://rareinsights.substack.com/p/example",
+        metadata: { section: "Updates" },
+        trace: [],
+      },
+    });
+
+    assert.equal(artifact.actionType, "post.publish");
+    assert.equal(artifact.status, "success");
+    assert.equal(artifact.scheduledTimeRequested, undefined);
+    assert.equal(artifact.apiResponseIds?.postUrl, "https://rareinsights.substack.com/p/example");
   });
 
   it("summarizes browser draft updates and validation failures", () => {
