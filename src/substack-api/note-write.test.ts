@@ -27,6 +27,7 @@ describe("note schedule parsing and planning", () => {
             body: "Read the post https://rareinsights.substack.com/p/post.",
             post_url: "https://rareinsights.substack.com/p/post",
             scheduled_at: "2026-07-01T09:00:00Z",
+            post_scheduled_at: "2026-07-01T09:00:00Z",
             post_title: "Post",
             file: "notes/post.md",
           },
@@ -44,6 +45,7 @@ describe("note schedule parsing and planning", () => {
 
     assert.equal(items[0]?.text, "Read the post https://rareinsights.substack.com/p/post.");
     assert.equal(items[0]?.postUrl, "https://rareinsights.substack.com/p/post");
+    assert.equal(items[0]?.postScheduledAt, "2026-07-01T09:00:00Z");
     assert.equal(items[0]?.textFile, "notes/post.md");
     assert.equal(arrayItems[0]?.scheduledAt, "2026-07-02T09:00:00Z");
     assert.equal(numericItems[0]?.title, "123");
@@ -83,6 +85,19 @@ describe("note schedule parsing and planning", () => {
     );
   });
 
+  it("requires timezone-qualified scheduled timestamps", () => {
+    const issues = validateScheduledNoteContract({
+      text: "Read https://rareinsights.substack.com/p/post.",
+      postUrl: "https://rareinsights.substack.com/p/post",
+      scheduledAt: "2026-07-01T09:00:00",
+    });
+
+    assert.deepEqual(
+      issues.map((issue) => issue.code),
+      ["invalid-scheduled-at"],
+    );
+  });
+
   it("builds batch plans with skips, limits, and contract issues", () => {
     const plan = buildNoteBatchPlan({
       selectorSourceFile: "notes.json",
@@ -112,6 +127,31 @@ describe("note schedule parsing and planning", () => {
     assert.equal(plan.skipped.length, 1);
     assert.equal(plan.issues.length, 1);
     assert.equal(plan.issues[0]?.issues[0]?.code, "post-url-not-mentioned");
+  });
+
+  it("blocks duplicate notes and post schedule mismatches", () => {
+    const plan = buildNoteBatchPlan({
+      selectorSourceFile: "notes.json",
+      items: [
+        {
+          text: "Read https://rareinsights.substack.com/p/a.",
+          postUrl: "https://rareinsights.substack.com/p/a",
+          scheduledAt: "2026-07-01T09:00:00Z",
+          postScheduledAt: "2026-07-01T10:00:00Z",
+        },
+        {
+          text: "Again https://rareinsights.substack.com/p/a.",
+          postUrl: "https://rareinsights.substack.com/p/a",
+          scheduledAt: "2026-07-01T09:00:00Z",
+          postScheduledAt: "2026-07-01T09:00:00Z",
+        },
+      ],
+    });
+
+    assert.equal(plan.status, "blocked");
+    const codes = plan.issues.flatMap((issue) => issue.issues.map((entry) => entry.code));
+    assert.equal(codes.includes("post-schedule-time-mismatch"), true);
+    assert.equal(codes.includes("duplicate-note-for-post"), true);
   });
 });
 

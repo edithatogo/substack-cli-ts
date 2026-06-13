@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { appendFileSync, existsSync, mkdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { Command } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
 import {
@@ -1342,7 +1342,7 @@ note
       let rawItems: NoteScheduleFileItem[];
       try {
         rawItems = parseNoteScheduleFileContent(scheduleContent, options.scheduleFile);
-        items = await resolveNoteBatchItems(rawItems);
+        items = await resolveNoteBatchItems(rawItems, dirname(resolve(options.scheduleFile)));
       } catch (error) {
         console.error(
           JSON.stringify(
@@ -3469,16 +3469,26 @@ function buildScheduledQueue(
   return [...postItems, ...draftItems, ...broadcastItems];
 }
 
-async function resolveNoteBatchItems(items: NoteScheduleFileItem[]): Promise<NoteBatchItem[]> {
+async function resolveNoteBatchItems(
+  items: NoteScheduleFileItem[],
+  baseDir: string,
+): Promise<NoteBatchItem[]> {
   return Promise.all(
-    items.map(async (item) => ({
-      text: item.text ?? (item.textFile ? await readBatchNoteTextFile(item.textFile) : ""),
-      postUrl: item.postUrl ?? "",
-      scheduledAt: item.scheduledAt ?? "",
-      title: item.title,
-      sourceFile: item.textFile,
-      status: item.status,
-    })),
+    items.map(async (item) => {
+      const sourceFile =
+        item.textFile && !isAbsolute(item.textFile)
+          ? resolve(baseDir, item.textFile)
+          : item.textFile;
+      return {
+        text: item.text ?? (sourceFile ? await readBatchNoteTextFile(sourceFile) : ""),
+        postUrl: item.postUrl ?? "",
+        scheduledAt: item.scheduledAt ?? "",
+        postScheduledAt: item.postScheduledAt,
+        title: item.title,
+        sourceFile,
+        status: item.status,
+      };
+    }),
   );
 }
 

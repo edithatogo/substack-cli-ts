@@ -9,6 +9,7 @@ export interface NoteScheduleFileItem {
   textFile?: string | undefined;
   postUrl?: string | undefined;
   scheduledAt?: string | undefined;
+  postScheduledAt?: string | undefined;
   title?: string | undefined;
   status?: string | undefined;
 }
@@ -17,6 +18,7 @@ export interface NoteBatchItem {
   text: string;
   postUrl: string;
   scheduledAt: string;
+  postScheduledAt?: string | undefined;
   title?: string | undefined;
   sourceFile?: string | undefined;
   status?: string | undefined;
@@ -28,7 +30,9 @@ export interface NoteContractIssue {
     | "missing-post-url"
     | "post-url-not-mentioned"
     | "too-many-sentences"
-    | "invalid-scheduled-at";
+    | "invalid-scheduled-at"
+    | "post-schedule-time-mismatch"
+    | "duplicate-note-for-post";
   message: string;
 }
 
@@ -114,7 +118,13 @@ export function buildNoteBatchPlan(input: {
 
   const limitedItems = input.limit === undefined ? candidates : candidates.slice(0, input.limit);
   const issues = limitedItems
-    .map((item) => ({ item, issues: validateScheduledNoteContract(item) }))
+    .map((item) => ({
+      item,
+      issues: [
+        ...validateScheduledNoteContract(item),
+        ...validateNotePostAlignment(item, limitedItems),
+      ],
+    }))
     .filter((entry) => entry.issues.length > 0);
   const status = issues.length > 0 ? "blocked" : "ready";
 
@@ -162,10 +172,14 @@ export function validateScheduledNoteContract(input: {
     });
   }
 
-  if (!input.scheduledAt || Number.isNaN(Date.parse(input.scheduledAt))) {
+  if (
+    !input.scheduledAt ||
+    Number.isNaN(Date.parse(input.scheduledAt)) ||
+    !hasTimezoneQualifier(input.scheduledAt)
+  ) {
     issues.push({
       code: "invalid-scheduled-at",
-      message: "Scheduled covering notes need a valid scheduledAt timestamp.",
+      message: "Scheduled covering notes need a valid timezone-qualified scheduledAt timestamp.",
     });
   }
 
@@ -263,9 +277,44 @@ function parseNoteScheduleItem(
     textFile: stringField(item, "textFile", "text_file", "file"),
     postUrl: stringField(item, "postUrl", "post_url", "url"),
     scheduledAt: stringField(item, "scheduledAt", "scheduled_at", "scheduleAt", "at"),
+    postScheduledAt: stringField(
+      item,
+      "postScheduledAt",
+      "post_scheduled_at",
+      "postScheduleAt",
+      "post_at",
+    ),
     title: stringField(item, "title", "postTitle", "post_title"),
     status: stringField(item, "status", "state"),
   };
+}
+
+function validateNotePostAlignment(
+  item: NoteBatchItem,
+  items: NoteBatchItem[],
+): NoteContractIssue[] {
+  const issues: NoteContractIssue[] = [];
+
+  if (
+    item.postScheduledAt &&
+    !Number.isNaN(Date.parse(item.postScheduledAt)) &&
+    Date.parse(item.postScheduledAt) !== Date.parse(item.scheduledAt)
+  ) {
+    issues.push({
+      code: "post-schedule-time-mismatch",
+      message: "Scheduled note time must match the matching post scheduled time.",
+    });
+  }
+
+  const duplicateNotes = items.filter((candidate) => candidate.postUrl === item.postUrl);
+  if (item.postUrl && duplicateNotes.length > 1) {
+    issues.push({
+      code: "duplicate-note-for-post",
+      message: "Only one scheduled covering note is allowed per post URL.",
+    });
+  }
+
+  return issues;
 }
 
 function buildNoteRequestBody(text: string): Record<string, unknown> {
@@ -288,6 +337,10 @@ function buildNoteRequestBody(text: string): Record<string, unknown> {
 
 function countSentences(text: string): number {
   return text.split(/[.!?]+/).filter((sentence) => sentence.trim().length > 0).length;
+}
+
+function hasTimezoneQualifier(value: string): boolean {
+  return /(?:Z|[+-]\d{2}:\d{2})$/i.test(value.trim());
 }
 
 function stringField(record: Record<string, unknown>, ...names: string[]): string | undefined {
