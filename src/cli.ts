@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { appendFileSync, existsSync, mkdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { Command } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
 import {
@@ -68,7 +68,12 @@ import {
 } from "./publish/browser-workflow.js";
 import { preparePost } from "./publish/prepare.js";
 import { prepublishPost } from "./publish/prepublish.js";
-import { buildDraftWriteRunLog, buildPublishWriteRunLog, writeRunLog } from "./publish/run-log.js";
+import {
+  buildDraftWriteRunLog,
+  buildNoteWriteRunLog,
+  buildPublishWriteRunLog,
+  writeRunLog,
+} from "./publish/run-log.js";
 import { resolvePostTitle } from "./publish/title.js";
 import { resolveTransport } from "./publish/transport.js";
 import {
@@ -123,6 +128,15 @@ import {
   importFromWordPress,
 } from "./substack-api/integrations.js";
 import { createNote, getNote, listNotes } from "./substack-api/notes.js";
+import {
+  buildNoteBatchPlan,
+  executeNoteWrite,
+  parseNoteScheduleFileContent,
+  planNoteWrite,
+  validateScheduledNoteContract,
+  type NoteBatchItem,
+  type NoteScheduleFileItem,
+} from "./substack-api/note-write.js";
 import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import {
   createPodcastEpisode,
@@ -1112,6 +1126,329 @@ scheduleCommand
         ),
       );
       if (report.status !== "ok") process.exitCode = 1;
+    },
+  );
+
+const note = program.command("note").description("Create, schedule, inspect, and batch notes.");
+
+note
+  .command("inspect")
+  .description("Get full details for a specific note by ID.")
+  .requiredOption("--note-id <id>", "Note ID", parseInteger)
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { noteId: number; source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await getNote(material, options.noteId);
+    console.log(JSON.stringify({ status: "ok", note: result }, null, 2));
+  });
+
+note
+  .command("create")
+  .description("Publish a note from a local text/Markdown file.")
+  .requiredOption("--text-file <file>", "Text or Markdown file containing the note body")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--dry-run", "Print the local write plan without touching Substack", false)
+  .option("--yes", "Confirm live note publishing", false)
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
+  .action(
+    async (options: {
+      textFile: string;
+      source: "auto" | ApiAuthSource;
+      dryRun: boolean;
+      yes: boolean;
+      runLogDir?: string | undefined;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const text = await readCliTextFile(options.textFile, "note text file");
+      if (text === undefined) return;
+      if (!text) {
+        console.error(
+          JSON.stringify({ status: "failed", message: "Note text must not be empty." }, null, 2),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const plan = planNoteWrite(publicationUrl, "create", text);
+      if (options.dryRun || !options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "planned",
+              operation: "note.create",
+              requiresConfirmation: !options.yes,
+              sourceFile: options.textFile,
+              plan,
+            },
+            null,
+            2,
+          ),
+        );
+        if (!options.dryRun && !options.yes) process.exitCode = 1;
+        return;
+      }
+
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            { status: "failed", message: validation.message ?? "Could not validate API session." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const result = await executeNoteWrite(plan, material, fetch);
+      await writeRunLog(
+        options.runLogDir,
+        buildNoteWriteRunLog({
+          publicationUrl,
+          sourceFile: options.textFile,
+          plan,
+          result,
+        }),
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status === "failed") process.exitCode = 1;
+    },
+  );
+
+note
+  .command("schedule")
+  .description("Schedule a covering note from a local text/Markdown file.")
+  .requiredOption("--text-file <file>", "Text or Markdown file containing the note body")
+  .requiredOption("--post-url <url>", "Matching post URL that must appear in the note")
+  .requiredOption("--scheduled-at <timestamp>", "ISO timestamp for the scheduled note")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--dry-run", "Print the local write plan without touching Substack", false)
+  .option("--yes", "Confirm live note scheduling", false)
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
+  .action(
+    async (options: {
+      textFile: string;
+      postUrl: string;
+      scheduledAt: string;
+      source: "auto" | ApiAuthSource;
+      dryRun: boolean;
+      yes: boolean;
+      runLogDir?: string | undefined;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const text = await readCliTextFile(options.textFile, "note text file");
+      if (text === undefined) return;
+      const contractIssues = validateScheduledNoteContract({
+        text,
+        postUrl: options.postUrl,
+        scheduledAt: options.scheduledAt,
+      });
+      const plan = planNoteWrite(publicationUrl, "schedule", text, {
+        postUrl: options.postUrl,
+        scheduledAt: options.scheduledAt,
+      });
+
+      if (contractIssues.length > 0) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "blocked",
+              operation: "note.schedule",
+              sourceFile: options.textFile,
+              issues: contractIssues,
+              plan,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      if (options.dryRun || !options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "planned",
+              operation: "note.schedule",
+              requiresConfirmation: !options.yes,
+              sourceFile: options.textFile,
+              plan,
+            },
+            null,
+            2,
+          ),
+        );
+        if (!options.dryRun && !options.yes) process.exitCode = 1;
+        return;
+      }
+
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            { status: "failed", message: validation.message ?? "Could not validate API session." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const result = await executeNoteWrite(plan, material, fetch);
+      await writeRunLog(
+        options.runLogDir,
+        buildNoteWriteRunLog({
+          publicationUrl,
+          sourceFile: options.textFile,
+          plan,
+          result,
+        }),
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status === "failed") process.exitCode = 1;
+    },
+  );
+
+note
+  .command("batch")
+  .description("Schedule covering notes from an explicit JSON schedule file.")
+  .requiredOption("--schedule-file <file>", "JSON file with note text, post URLs, and timestamps")
+  .option("--limit <limit>", "Maximum selected note items to touch", parseInteger)
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--dry-run", "Print exactly which notes would be touched", false)
+  .option("--yes", "Confirm live batch note scheduling", false)
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
+  .action(
+    async (options: {
+      scheduleFile: string;
+      limit?: number | undefined;
+      source: "auto" | ApiAuthSource;
+      dryRun: boolean;
+      yes: boolean;
+      runLogDir?: string | undefined;
+    }) => {
+      const scheduleContent = await readCliTextFile(options.scheduleFile, "note schedule file");
+      if (scheduleContent === undefined) return;
+      let items: NoteBatchItem[];
+      let rawItems: NoteScheduleFileItem[];
+      try {
+        rawItems = parseNoteScheduleFileContent(scheduleContent, options.scheduleFile);
+        items = await resolveNoteBatchItems(rawItems, dirname(resolve(options.scheduleFile)));
+      } catch (error) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "note.batch",
+              message: error instanceof Error ? error.message : String(error),
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const plan = buildNoteBatchPlan({
+        selectorSourceFile: options.scheduleFile,
+        items,
+        limit: options.limit,
+      });
+
+      if (plan.status === "blocked") {
+        console.error(JSON.stringify({ operation: "note.batch", ...plan }, null, 2));
+        process.exitCode = 1;
+        return;
+      }
+
+      if (options.dryRun) {
+        console.log(JSON.stringify({ operation: "note.batch", ...plan }, null, 2));
+        return;
+      }
+
+      if (!options.yes) {
+        console.error(
+          JSON.stringify(
+            {
+              ...plan,
+              status: "failed",
+              message: "Add --yes to confirm live batch note scheduling, or use --dry-run.",
+              operation: "note.batch",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: validation.message ?? "Could not validate API session.",
+              operation: "note.batch",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const results = [];
+      for (const item of plan.items) {
+        const writePlan = planNoteWrite(publicationUrl, "schedule", item.text, {
+          postUrl: item.postUrl,
+          scheduledAt: item.scheduledAt,
+        });
+        const result = await executeNoteWrite(writePlan, material, fetch);
+        await writeRunLog(
+          options.runLogDir,
+          buildNoteWriteRunLog({
+            publicationUrl,
+            sourceFile: item.sourceFile,
+            selectorSourceFile: options.scheduleFile,
+            title: item.title,
+            plan: writePlan,
+            result,
+          }),
+        );
+        results.push({ item, result });
+      }
+
+      const failed = results.filter(({ result }) => result.status === "failed");
+      console.log(
+        JSON.stringify(
+          {
+            status: failed.length > 0 ? "failed" : "ok",
+            operation: "note.batch",
+            selectorSourceFile: options.scheduleFile,
+            touchedCount: results.length,
+            skipped: plan.skipped,
+            results,
+          },
+          null,
+          2,
+        ),
+      );
+      if (failed.length > 0) process.exitCode = 1;
     },
   );
 
@@ -3130,6 +3467,58 @@ function buildScheduledQueue(
     }));
 
   return [...postItems, ...draftItems, ...broadcastItems];
+}
+
+async function resolveNoteBatchItems(
+  items: NoteScheduleFileItem[],
+  baseDir: string,
+): Promise<NoteBatchItem[]> {
+  return Promise.all(
+    items.map(async (item) => {
+      const sourceFile =
+        item.textFile && !isAbsolute(item.textFile)
+          ? resolve(baseDir, item.textFile)
+          : item.textFile;
+      return {
+        text: item.text ?? (sourceFile ? await readBatchNoteTextFile(sourceFile) : ""),
+        postUrl: item.postUrl ?? "",
+        scheduledAt: item.scheduledAt ?? "",
+        postScheduledAt: item.postScheduledAt,
+        title: item.title,
+        sourceFile,
+        status: item.status,
+      };
+    }),
+  );
+}
+
+async function readBatchNoteTextFile(file: string): Promise<string> {
+  try {
+    return (await readFile(file, "utf8")).trim();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Could not read note text file ${file}: ${message}`);
+  }
+}
+
+async function readCliTextFile(file: string, label: string): Promise<string | undefined> {
+  try {
+    return (await readFile(file, "utf8")).trim();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      JSON.stringify(
+        {
+          status: "failed",
+          message: `Could not read ${label} ${file}: ${message}`,
+        },
+        null,
+        2,
+      ),
+    );
+    process.exitCode = 1;
+    return undefined;
+  }
 }
 
 function parseInteger(value: string): number {

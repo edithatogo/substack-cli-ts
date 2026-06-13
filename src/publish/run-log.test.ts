@@ -5,10 +5,12 @@ import { join } from "node:path";
 import { describe, it } from "vitest";
 import type { PreparedPost } from "../types.js";
 import type { DraftWritePlan, DraftWriteResult } from "../substack-api/draft-write.js";
+import type { NoteWritePlan, NoteWriteResult } from "../substack-api/note-write.js";
 import type { PublishWritePlan, PublishWriteResult } from "../substack-api/publish-write.js";
 import {
   buildBrowserWorkflowRunLog,
   buildDraftWriteRunLog,
+  buildNoteWriteRunLog,
   buildPublishWriteRunLog,
   writeRunLog,
 } from "./run-log.js";
@@ -218,6 +220,54 @@ describe("run log artifacts", () => {
     assert.equal(JSON.stringify(artifact).includes("session-secret"), false);
   });
 
+  it("summarizes note schedule writes", () => {
+    const artifact = buildNoteWriteRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: notePlan(),
+      result: noteResult(),
+      title: "Example note",
+      sourceFile: "notes/example.md",
+      selectorSourceFile: "notes.json",
+    });
+
+    assert.equal(artifact.actionType, "note.schedule");
+    assert.equal(artifact.status, "success");
+    assert.equal(artifact.sourceFile, "notes/example.md");
+    assert.equal(artifact.selectorSourceFile, "notes.json");
+    assert.equal(artifact.scheduledTimeRequested, "2026-06-20T09:00:00Z");
+    assert.equal(artifact.scheduledTimeReturned, "2026-06-20T09:00:00Z");
+    assert.equal(artifact.apiResponseIds?.noteId, "456");
+    assert.equal(artifact.apiResponseIds?.postUrl, "https://rareinsights.substack.com/p/example");
+  });
+
+  it("summarizes note create failures", () => {
+    const artifact = buildNoteWriteRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        ...notePlan(),
+        operation: "create",
+        scheduledAt: undefined,
+        postUrl: undefined,
+      },
+      result: {
+        status: "failed",
+        operation: "create",
+        method: "POST",
+        endpoint: "https://rareinsights.substack.com/comment/feed/",
+        message: "Substack returned HTTP 500.",
+      },
+    });
+
+    assert.equal(artifact.actionType, "note.create");
+    assert.equal(artifact.status, "failure");
+    assert.equal(artifact.scheduledTimeRequested, undefined);
+    assert.equal(artifact.scheduledTimeReturned, undefined);
+    assert.equal(artifact.apiResponseIds?.noteId, undefined);
+    assert.equal(artifact.apiResponseIds?.postUrl, undefined);
+    assert.equal(artifact.error?.message, "Substack returned HTTP 500.");
+    assert.equal(artifact.error?.body, null);
+  });
+
   it("classifies browser publish workflow logs", () => {
     const artifact = buildBrowserWorkflowRunLog({
       publicationUrl: "https://rareinsights.substack.com/",
@@ -338,6 +388,32 @@ function publishResult(): PublishWriteResult {
     endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/schedule",
     draftId: "123",
     postUrl: "https://rareinsights.substack.com/p/example",
+    message: "scheduled",
+  };
+}
+
+function notePlan(): NoteWritePlan {
+  return {
+    status: "planned",
+    operation: "schedule",
+    method: "POST",
+    endpoint: "https://rareinsights.substack.com/comment/feed/",
+    text: "Read https://rareinsights.substack.com/p/example.",
+    postUrl: "https://rareinsights.substack.com/p/example",
+    scheduledAt: "2026-06-20T09:00:00Z",
+    requestBody: {},
+    message: "planned",
+  };
+}
+
+function noteResult(): NoteWriteResult {
+  return {
+    status: "scheduled",
+    operation: "schedule",
+    method: "POST",
+    endpoint: "https://rareinsights.substack.com/comment/feed/",
+    noteId: "456",
+    scheduledAt: "2026-06-20T09:00:00Z",
     message: "scheduled",
   };
 }
