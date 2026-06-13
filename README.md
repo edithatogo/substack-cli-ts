@@ -120,6 +120,8 @@ Set:
 node dist\cli.js inspect examples\basic.md
 node dist\cli.js prepublish examples\basic.md
 node dist\cli.js prepublish examples\basic.md --mode schedule --at 2026-05-01T09:00:00Z
+node dist\cli.js preflight examples\basic.md --strict
+node dist\cli.js preflight examples\basic.md --mode schedule --at 2026-05-01T09:00:00Z --schedule-file schedule.json
 node dist\cli.js draft examples\basic.md --dry-run
 node dist\cli.js draft examples\basic.md --transport auto
 node dist\cli.js draft create examples\basic.md --dry-run
@@ -174,6 +176,7 @@ node dist\cli.js publish examples\basic.md --transport browser --yes
 node dist\cli.js publish examples\basic.md --yes --run-log-dir .substack-cli\run-log
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --yes --run-log-dir .substack-cli\run-log
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --transport auto --yes
+node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --schedule-file schedule.json --yes
 node dist\cli.js schedule reconcile --schedule-file schedule.json --by title,time
 node dist\cli.js batch schedule --schedule-file schedule.json --draft-ids-file draft-ids.txt --dry-run
 node dist\cli.js batch schedule --schedule-file schedule.json --draft-ids-file draft-ids.txt --yes --run-log-dir .substack-cli\run-log
@@ -182,7 +185,7 @@ node dist\cli.js trace compare .substack-cli\publish-traces\review.json .substac
 node dist\cli.js trace fixture .substack-cli\publish-traces\review.json --out fixtures\trace\review.json
 ```
 
-Publish and schedule commands run the same prepublish validation first and stop early if the payload is not compatible. Use `--trace-out` to capture a local JSON review artifact for later comparison.
+Publish and schedule commands run prepublish and preflight validation first and stop early if the payload or operational contract is not compatible. Use `--trace-out` to capture a local JSON review artifact for later comparison. `preflight` checks the publication target, title, slug format, section/tag/cover readiness, editorial placeholders, schedule parse/future status, optional schedule-file collisions, and dry-run payload printability; `--strict` escalates optional workflow checks to blockers.
 
 ## Markdown Markers
 
