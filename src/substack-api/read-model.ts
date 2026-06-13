@@ -68,6 +68,7 @@ export interface DraftSummary {
   sectionSlug: string | null;
   isPublished: boolean;
   slug: string | null;
+  scheduledAt: string | null;
   writeCommentPermissions: string | null;
 }
 
@@ -152,6 +153,9 @@ const DraftPostSchema = z.object({
   draft_updated_at: z.string().nullable().optional(),
   audience: z.string().nullable().optional(),
   slug: z.string().nullable().optional(),
+  scheduled_at: z.string().nullable().optional(),
+  scheduledAt: z.string().nullable().optional(),
+  draft_scheduled_at: z.string().nullable().optional(),
   should_send_email: z.boolean().nullable().optional(),
   write_comment_permissions: z.string().nullable().optional(),
   section_id: z.number().nullable().optional(),
@@ -390,6 +394,7 @@ async function readDrafts(
       sectionSlug: draft.section_slug ?? null,
       isPublished: draft.is_published,
       slug: draft.slug ?? null,
+      scheduledAt: draft.scheduled_at ?? draft.scheduledAt ?? draft.draft_scheduled_at ?? null,
       writeCommentPermissions: draft.write_comment_permissions ?? null,
     })),
     hasMore: parsed.data.hasMore,

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { appendFileSync, existsSync, mkdirSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Command } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
@@ -103,6 +104,7 @@ import {
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
 import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
 import {
+  type BroadcastEntry,
   cancelScheduledBroadcast,
   fetchBroadcastHistory,
   fetchEmailTemplate,
@@ -135,7 +137,13 @@ import {
 } from "./substack-api/publication-settings.js";
 import { fetchPublication } from "./substack-api/publication.js";
 import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
-import { readApiInventory } from "./substack-api/read-model.js";
+import { type ApiReadInventory, readApiInventory } from "./substack-api/read-model.js";
+import {
+  parseScheduleFileContent,
+  parseScheduleReconcileKeys,
+  reconcileSchedule,
+  type ScheduledQueueItem,
+} from "./substack-api/schedule-reconcile.js";
 import { fetchSubscriberList } from "./substack-api/subscriber-list.js";
 import { getSubscriberCount } from "./substack-api/subscriber.js";
 import { createSubstackClient } from "./substack-api/substack-adapter.js";
@@ -858,7 +866,7 @@ program
     },
   );
 
-program
+const scheduleCommand = program
   .command("schedule")
   .description("Schedule a Markdown file for future publication.")
   .argument("<file>", "Markdown file to schedule")
@@ -1015,6 +1023,71 @@ program
 
       const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
       await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
+    },
+  );
+
+scheduleCommand
+  .command("reconcile")
+  .description("Re-fetch scheduled queue state and reconcile it against an expected schedule file.")
+  .requiredOption("--schedule-file <file>", "JSON schedule file with items to reconcile")
+  .option("--by <keys>", "Comma-separated keys: title,time,draft-id", "title,time")
+  .option("--limit <limit>", "Maximum queue entries to fetch from each source", parseInteger, 50)
+  .option("--tolerance-minutes <minutes>", "Allowed timestamp drift in minutes", parseInteger, 5)
+  .action(
+    async (options: {
+      scheduleFile: string;
+      by: string;
+      limit: number;
+      toleranceMinutes: number;
+    }) => {
+      const expected = parseScheduleFileContent(
+        await readFile(options.scheduleFile, "utf8"),
+        options.scheduleFile,
+      );
+      const by = parseScheduleReconcileKeys(options.by);
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const material = await resolveApiAuthMaterial(effective, "auto");
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: validation.message ?? "Could not validate API session.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const [inventory, broadcastHistory] = await Promise.all([
+        readApiInventory(material, fetch, { postLimit: options.limit, draftLimit: options.limit }),
+        fetchBroadcastHistory(publicationUrl, material, fetch, options.limit),
+      ]);
+      const queue = buildScheduledQueue(inventory, broadcastHistory.broadcasts ?? []);
+      const report = reconcileSchedule(expected, queue, {
+        by,
+        toleranceMinutes: options.toleranceMinutes,
+      });
+
+      console.log(
+        JSON.stringify(
+          {
+            ...report,
+            inventoryStatus: inventory.status,
+            broadcastStatus: broadcastHistory.status,
+            inventoryMessage: inventory.message,
+            broadcastMessage: broadcastHistory.message,
+          },
+          null,
+          2,
+        ),
+      );
+      if (report.status !== "ok") process.exitCode = 1;
     },
   );
 
@@ -2865,6 +2938,39 @@ debug
       process.exitCode = 1;
     }
   });
+
+function buildScheduledQueue(
+  inventory: ApiReadInventory,
+  broadcasts: BroadcastEntry[],
+): ScheduledQueueItem[] {
+  const postItems: ScheduledQueueItem[] = (inventory.posts ?? [])
+    .filter((post) => post.postDate)
+    .map((post) => ({
+      title: post.title,
+      postId: String(post.id),
+      scheduledAt: post.postDate,
+      source: "post" as const,
+      status: post.type,
+    }));
+  const draftItems: ScheduledQueueItem[] = (inventory.drafts ?? []).map((draft) => ({
+    title: draft.title ?? draft.draftTitle ?? undefined,
+    draftId: String(draft.id),
+    scheduledAt: draft.scheduledAt,
+    source: "draft" as const,
+    status: draft.isPublished ? "published" : "draft",
+  }));
+  const broadcastItems: ScheduledQueueItem[] = broadcasts
+    .filter((broadcast) => broadcast.scheduledFor)
+    .map((broadcast) => ({
+      title: broadcast.subject,
+      postId: broadcast.postId !== null ? String(broadcast.postId) : undefined,
+      scheduledAt: broadcast.scheduledFor,
+      source: "broadcast" as const,
+      status: broadcast.status,
+    }));
+
+  return [...postItems, ...draftItems, ...broadcastItems];
+}
 
 function parseInteger(value: string): number {
   const parsed = Number.parseInt(value, 10);
