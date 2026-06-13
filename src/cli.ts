@@ -326,6 +326,7 @@ program
   .option("--mode <mode>", "publish or schedule", "publish")
   .option("--at <iso-date>", "ISO timestamp for scheduled publication")
   .option("--schedule-file <file>", "Expected schedule file used to detect timestamp collisions")
+  .option("--draft-id <id>", "Current draft ID to ignore as a self-collision")
   .option("--strict", "Escalate optional workflow checks to blocking errors", false)
   .action(
     async (
@@ -334,6 +335,7 @@ program
         mode: "publish" | "schedule";
         at?: string;
         scheduleFile?: string;
+        draftId?: string;
         strict: boolean;
       },
     ) => {
@@ -357,6 +359,7 @@ program
         : undefined;
       const report = buildPreflightReport(prepared, {
         publicationUrl: effective.publicationUrl,
+        draftId: options.draftId,
         strict: options.strict,
         scheduleItems,
       });

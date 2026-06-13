@@ -121,7 +121,7 @@ node dist\cli.js inspect examples\basic.md
 node dist\cli.js prepublish examples\basic.md
 node dist\cli.js prepublish examples\basic.md --mode schedule --at 2026-05-01T09:00:00Z
 node dist\cli.js preflight examples\basic.md --strict
-node dist\cli.js preflight examples\basic.md --mode schedule --at 2026-05-01T09:00:00Z --schedule-file schedule.json
+node dist\cli.js preflight examples\basic.md --mode schedule --at 2026-05-01T09:00:00Z --schedule-file schedule.json --draft-id 123
 node dist\cli.js draft examples\basic.md --dry-run
 node dist\cli.js draft examples\basic.md --transport auto
 node dist\cli.js draft create examples\basic.md --dry-run

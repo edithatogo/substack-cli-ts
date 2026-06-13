@@ -64,6 +64,48 @@ TODO: finish this.
     assert.equal(checkStatus(report, "subtitle-present"), "warn");
   });
 
+  it("allows benign HTML comments while blocking editorial comment tokens", async () => {
+    const benign = buildPreflightReport(
+      {
+        mode: "publish",
+        scheduleAt: undefined,
+        post: await parseMarkdownString(
+          `---
+title: "Commented"
+---
+# Commented
+
+<!-- prettier-ignore -->
+Body.
+`,
+          "commented.md",
+        ),
+      },
+      { publicationUrl: "https://rareinsights.substack.com" },
+    );
+    const editorial = buildPreflightReport(
+      {
+        mode: "publish",
+        scheduleAt: undefined,
+        post: await parseMarkdownString(
+          `---
+title: "Commented"
+---
+# Commented
+
+<!-- TODO: rewrite this -->
+Body.
+`,
+          "editorial.md",
+        ),
+      },
+      { publicationUrl: "https://rareinsights.substack.com" },
+    );
+
+    assert.notEqual(checkStatus(benign, "no-editorial-placeholders"), "fail");
+    assert.equal(checkStatus(editorial, "no-editorial-placeholders"), "fail");
+  });
+
   it("carries unsupported payload failures into preflight", () => {
     const report = buildPreflightReport(
       {
@@ -145,6 +187,29 @@ slug: scheduled-post
     assert.equal(checkStatus(report, "schedule-time-parseable"), "pass");
     assert.equal(checkStatus(report, "schedule-time-future"), "fail");
     assert.equal(checkStatus(report, "schedule-time-no-collision"), "fail");
+  });
+
+  it("ignores schedule collisions for the current draft id", async () => {
+    const prepared = {
+      mode: "schedule" as const,
+      scheduleAt: "2027-01-01T00:00:00Z",
+      post: await parseMarkdownString(
+        `---
+title: "Scheduled Post"
+---
+# Scheduled Post
+`,
+        "scheduled.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+      draftId: "123",
+      scheduleItems: [{ draftId: "123", scheduledAt: "2027-01-01T00:00:00Z" }],
+    });
+
+    assert.equal(checkStatus(report, "schedule-time-no-collision"), "pass");
   });
 });
 

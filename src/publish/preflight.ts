@@ -20,6 +20,7 @@ export interface PreflightReport {
   filePath: string;
   title: string;
   publicationUrl?: string | undefined;
+  draftId?: string | undefined;
   scheduleAt?: string | undefined;
   checks: PreflightCheck[];
   prepublish: PrepublishReport;
@@ -29,6 +30,7 @@ export interface PreflightReport {
 
 export interface BuildPreflightOptions {
   publicationUrl?: string | undefined;
+  draftId?: string | undefined;
   strict?: boolean | undefined;
   scheduleItems?: ExpectedScheduleItem[] | undefined;
 }
@@ -108,7 +110,7 @@ export function buildPreflightReport(
     ),
   ];
 
-  checks.push(...scheduleChecks(prepared, options.scheduleItems));
+  checks.push(...scheduleChecks(prepared, options.scheduleItems, options.draftId));
 
   if (prepublish.status === "blocked") {
     checks.push({
@@ -136,6 +138,7 @@ export function buildPreflightReport(
     filePath: prepared.post.filePath,
     title,
     publicationUrl: options.publicationUrl,
+    draftId: options.draftId,
     scheduleAt: prepared.scheduleAt,
     checks,
     prepublish,
@@ -154,6 +157,7 @@ export function parsePreflightScheduleFile(content: string, sourceName?: string)
 function scheduleChecks(
   prepared: PreparedPost,
   scheduleItems: ExpectedScheduleItem[] | undefined,
+  draftId: string | undefined,
 ): PreflightCheck[] {
   if (prepared.mode !== "schedule") return [];
 
@@ -175,7 +179,7 @@ function scheduleChecks(
   ];
 
   if (scheduleItems) {
-    const collision = findScheduleCollision(prepared, scheduleItems);
+    const collision = findScheduleCollision(prepared, scheduleItems, draftId);
     checks.push(
       requiredCheck(
         "schedule-time-no-collision",
@@ -194,6 +198,7 @@ function scheduleChecks(
 function findScheduleCollision(
   prepared: PreparedPost,
   scheduleItems: ExpectedScheduleItem[],
+  draftId: string | undefined,
 ): ExpectedScheduleItem | undefined {
   if (!prepared.scheduleAt) return undefined;
   const currentTime = Date.parse(prepared.scheduleAt);
@@ -203,6 +208,7 @@ function findScheduleCollision(
   return scheduleItems.find((item) => {
     if (Number.isNaN(Date.parse(item.scheduledAt))) return false;
     if (Date.parse(item.scheduledAt) !== currentTime) return false;
+    if (draftId && item.draftId === draftId) return false;
     if (item.sourceFile && item.sourceFile === currentFile) return false;
     if (item.title && normalize(item.title) === currentTitle) return false;
     return true;
@@ -243,7 +249,15 @@ function isValidSlug(value: string): boolean {
 }
 
 function hasEditorialPlaceholders(markdown: string): boolean {
-  return /\b(TODO|FIXME|TK|PLACEHOLDER)\b|<!--[\s\S]*?-->|\{\{\s*comment[:\s]/i.test(markdown);
+  const editorialToken = /\b(TODO|FIXME|TK|PLACEHOLDER)\b|\{\{\s*comment[:\s]/i;
+  if (editorialToken.test(markdown)) return true;
+
+  const comments = markdown.matchAll(/<!--([\s\S]*?)-->/g);
+  for (const comment of comments) {
+    if (editorialToken.test(comment[1] ?? "")) return true;
+  }
+
+  return false;
 }
 
 function normalize(value: string | undefined): string {
