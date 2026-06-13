@@ -91,6 +91,7 @@ import {
   fetchTaxFormStatus,
 } from "./substack-api/billing.js";
 import { fetchDomainStatus } from "./substack-api/domain.js";
+import { buildDraftIdInspectionReport } from "./substack-api/draft-id-inspect.js";
 import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
 import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
 import {
@@ -350,8 +351,12 @@ trace
     );
   });
 
-program
+const draft = program
   .command("draft")
+  .description("Create, inspect, or schedule Substack drafts from Markdown.");
+
+draft
+  .command("legacy", { isDefault: true, hidden: true })
   .description("Create or update a Substack draft from Markdown.")
   .argument("<file>", "Markdown file to draft")
   .option("--dry-run", "Print the generated payload without opening a browser", false)
@@ -439,6 +444,225 @@ program
       const publicationUrl = requirePublicationUrl(effective);
       const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
       await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
+    },
+  );
+
+draft
+  .command("create")
+  .description("Create or update a draft through the API and capture its draft ID.")
+  .argument("<file>", "Markdown file to draft")
+  .option("--dry-run", "Print the generated API draft plan without writing", false)
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--trace-out <file>", "Write the workflow result JSON to a file")
+  .action(
+    async (
+      file: string,
+      options: {
+        dryRun: boolean;
+        source: "auto" | ApiAuthSource;
+        traceOut?: string;
+      },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const prepared = await preparePost(file, { mode: "draft" });
+      const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
+
+      if (options.dryRun) {
+        const plan = planCreateDraft(prepared.post, publicationUrl, existingDraft, undefined, {
+          uploadEndpoint: effective.uploadEndpoint,
+          responseUrlField: effective.uploadResponseField,
+        });
+        console.log(JSON.stringify(plan, null, 2));
+        return;
+      }
+
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok" || !validation.userId) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: validation.message ?? "Could not validate the API session.",
+              details: validation,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const inventory = await readApiInventory(material, fetch, { postLimit: 10 });
+      const sectionResolution = buildDraftSectionResolutionReport({
+        post: prepared.post,
+        inventory,
+      });
+      const plan = planCreateDraft(
+        prepared.post,
+        publicationUrl,
+        existingDraft,
+        sectionResolution,
+        {
+          uploadEndpoint: effective.uploadEndpoint,
+          responseUrlField: effective.uploadResponseField,
+        },
+      );
+      const result = await executeDraftWrite(plan, material, validation.userId, fetch);
+
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status === "failed") process.exitCode = 1;
+
+      await maybeWriteTrace(
+        {
+          status:
+            result.status === "failed"
+              ? "failed"
+              : result.status === "created"
+                ? "draft-created"
+                : "draft-updated",
+          operation: result.operation,
+          mode: "draft",
+          title: resolvePostTitle(prepared.post),
+          currentUrl: plan.endpoint,
+          finalUrl: plan.endpoint,
+          finalState: result.status,
+          publishedUrl: undefined,
+          draftId: result.draftId,
+          draftUrl: result.draftUrl,
+          metadata: {
+            subtitle: prepared.post.metadata.subtitle,
+            tags: prepared.post.metadata.tags,
+            audience: prepared.post.metadata.audience,
+            section: prepared.post.metadata.section,
+          },
+          transport: { requested: "api", selected: "api" },
+          trace: [],
+        },
+        options.traceOut,
+      );
+    },
+  );
+
+draft
+  .command("inspect")
+  .description("Inspect an existing Substack draft by draft ID.")
+  .requiredOption("--draft-id <id>", "Substack draft ID to inspect")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option(
+    "--draft-limit <limit>",
+    "Maximum drafts to fetch before matching by ID",
+    parseInteger,
+    100,
+  )
+  .action(
+    async (options: { draftId: string; source: "auto" | ApiAuthSource; draftLimit: number }) => {
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const inventory = await readApiInventory(material, fetch, {
+        postLimit: 0,
+        draftLimit: options.draftLimit,
+      });
+      const report = buildDraftIdInspectionReport({
+        draftId: options.draftId,
+        publicationUrl,
+        inventory,
+      });
+
+      console.log(JSON.stringify(report, null, 2));
+      if (report.status !== "found") process.exitCode = 1;
+    },
+  );
+
+draft
+  .command("schedule")
+  .description("Schedule an existing Substack draft by draft ID.")
+  .requiredOption("--draft-id <id>", "Substack draft ID to schedule")
+  .requiredOption("--scheduled-at <iso-date>", "ISO timestamp for scheduled publication")
+  .option("--draft-url <url>", "Substack draft editor URL")
+  .option("--dry-run", "Print the generated API schedule plan without writing", false)
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--trace-out <file>", "Write the workflow result JSON to a file")
+  .action(
+    async (options: {
+      draftId: string;
+      scheduledAt: string;
+      draftUrl?: string;
+      dryRun: boolean;
+      source: "auto" | ApiAuthSource;
+      traceOut?: string;
+    }) => {
+      const isIsoWithTimezone =
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(
+          options.scheduledAt,
+        );
+      if (!isIsoWithTimezone || Number.isNaN(Date.parse(options.scheduledAt))) {
+        console.error(`Error: Invalid schedule timestamp: ${options.scheduledAt}`);
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const draftUrl =
+        options.draftUrl ??
+        new URL(`/publish/post/${encodeURIComponent(options.draftId)}`, publicationUrl).toString();
+      const plan = planPublishWrite(
+        options.draftId,
+        draftUrl,
+        "schedule",
+        publicationUrl,
+        options.scheduledAt,
+      );
+
+      if (options.dryRun) {
+        console.log(JSON.stringify(plan, null, 2));
+        return;
+      }
+
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: validation.message ?? "Could not validate API session.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const result = await executePublishWrite(plan, material, fetch);
+      console.log(JSON.stringify({ ...result, publishedUrl: result.postUrl }, null, 2));
+      if (result.status === "failed") process.exitCode = 1;
+
+      await maybeWriteTrace(
+        {
+          status: result.status === "failed" ? "failed" : "scheduled",
+          operation: "create",
+          mode: "schedule",
+          title: `Draft ${options.draftId}`,
+          currentUrl: plan.endpoint,
+          finalUrl: plan.endpoint,
+          finalState: result.status,
+          publishedUrl: result.postUrl,
+          draftId: plan.draftId,
+          draftUrl,
+          scheduleAt: options.scheduledAt,
+          metadata: {},
+          transport: { requested: "api", selected: "api" },
+          trace: [],
+        },
+        options.traceOut,
+      );
     },
   );
 
