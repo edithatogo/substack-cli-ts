@@ -127,6 +127,10 @@ node dist\cli.js draft examples\basic.md --transport auto
 node dist\cli.js draft create examples\basic.md --dry-run
 node dist\cli.js draft inspect --draft-id 123
 node dist\cli.js draft schedule --draft-id 123 --scheduled-at 2026-05-01T09:00:00Z --dry-run
+node dist\cli.js note create --text-file examples\note.md --dry-run
+node dist\cli.js note schedule --text-file examples\note.md --post-url https://example.substack.com/p/post --scheduled-at 2026-05-01T09:00:00Z --dry-run
+node dist\cli.js note inspect --note-id 123
+node dist\cli.js note batch --schedule-file notes.json --dry-run
 node dist\cli.js config set-publication https://example.substack.com
 node dist\cli.js config set-runtime local
 node dist\cli.js doctor
@@ -180,12 +184,30 @@ node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --schedule
 node dist\cli.js schedule reconcile --schedule-file schedule.json --by title,time
 node dist\cli.js batch schedule --schedule-file schedule.json --draft-ids-file draft-ids.txt --dry-run
 node dist\cli.js batch schedule --schedule-file schedule.json --draft-ids-file draft-ids.txt --yes --run-log-dir .substack-cli\run-log
+node dist\cli.js note create --text-file examples\note.md --yes --run-log-dir .substack-cli\run-log
+node dist\cli.js note schedule --text-file examples\note.md --post-url https://example.substack.com/p/post --scheduled-at 2026-05-01T09:00:00Z --yes --run-log-dir .substack-cli\run-log
+node dist\cli.js note batch --schedule-file notes.json --yes --run-log-dir .substack-cli\run-log
 node dist\cli.js trace review .substack-cli\publish-traces\review.json
 node dist\cli.js trace compare .substack-cli\publish-traces\review.json .substack-cli\publish-traces\publish.json
 node dist\cli.js trace fixture .substack-cli\publish-traces\review.json --out fixtures\trace\review.json
 ```
 
 Publish and schedule commands run prepublish and preflight validation first and stop early if the payload or operational contract is not compatible. Use `--trace-out` to capture a local JSON review artifact for later comparison. `preflight` checks the publication target, title, slug format, section/tag/cover readiness, editorial placeholders, schedule parse/future status, optional schedule-file collisions, and dry-run payload printability; `--strict` escalates optional workflow checks to blockers.
+
+Scheduled notes enforce the covering-note contract before live writes: each item must include the matching `postUrl`, the note text must mention that URL, the note must be no more than three sentences, and `scheduledAt` must be a valid timestamp. A note batch file can be a JSON array or `{ "items": [...] }`:
+
+```json
+{
+  "items": [
+    {
+      "textFile": "notes/example.md",
+      "postUrl": "https://example.substack.com/p/post",
+      "scheduledAt": "2026-05-01T09:00:00Z",
+      "title": "Example post"
+    }
+  ]
+}
+```
 
 ## Markdown Markers
 

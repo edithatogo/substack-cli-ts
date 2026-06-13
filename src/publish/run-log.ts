@@ -5,10 +5,17 @@ import type { BrowserWorkflowResult } from "./browser-workflow.js";
 import type { PreparedPost } from "../types.js";
 import { redactUrl } from "../util/redact.js";
 import type { DraftWritePlan, DraftWriteResult } from "../substack-api/draft-write.js";
+import type { NoteWritePlan, NoteWriteResult } from "../substack-api/note-write.js";
 import type { PublishWritePlan, PublishWriteResult } from "../substack-api/publish-write.js";
 import { resolvePostTitle } from "./title.js";
 
-export type RunLogActionType = "draft.create" | "draft.update" | "post.publish" | "post.schedule";
+export type RunLogActionType =
+  | "draft.create"
+  | "draft.update"
+  | "post.publish"
+  | "post.schedule"
+  | "note.create"
+  | "note.schedule";
 
 export interface RunLogArtifact {
   schemaVersion: 1;
@@ -31,6 +38,7 @@ export interface RunLogArtifact {
   apiResponseIds?: {
     draftId?: string | undefined;
     postUrl?: string | undefined;
+    noteId?: string | undefined;
   };
   resultMessage?: string | undefined;
   error?:
@@ -168,6 +176,42 @@ export function buildPublishWriteRunLog(input: {
     apiResponseIds: {
       draftId: input.plan.draftId,
       postUrl: input.result.postUrl,
+    },
+    resultMessage: input.result.message,
+    error:
+      input.result.status === "failed"
+        ? {
+            message: input.result.error ?? input.result.message,
+            body: redactErrorBody(input.result.error),
+          }
+        : undefined,
+  };
+}
+
+export function buildNoteWriteRunLog(input: {
+  publicationUrl: string;
+  plan: NoteWritePlan;
+  result: NoteWriteResult;
+  title?: string | undefined;
+  sourceFile?: string | undefined;
+  selectorSourceFile?: string | undefined;
+}): RunLogArtifact {
+  return {
+    schemaVersion: 1,
+    timestamp: new Date().toISOString(),
+    actionType: input.plan.operation === "schedule" ? "note.schedule" : "note.create",
+    status: input.result.status === "failed" ? "failure" : "success",
+    publicationUrl: input.publicationUrl,
+    publicationId: null,
+    sourceFile: input.sourceFile,
+    selectorSourceFile: input.selectorSourceFile,
+    title: input.title,
+    scheduledTimeRequested: input.plan.scheduledAt,
+    scheduledTimeReturned:
+      input.result.status === "scheduled" ? input.result.scheduledAt : undefined,
+    apiResponseIds: {
+      noteId: input.result.noteId,
+      postUrl: input.plan.postUrl,
     },
     resultMessage: input.result.message,
     error:
