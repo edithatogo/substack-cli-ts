@@ -64,6 +64,11 @@ substack-cli inspect examples/basic.md
 
 # 3. Create a draft (dry-run first)
 substack-cli draft post.md --dry-run
+substack-cli draft create post.md --trace-out run-log.json
+
+# Inspect or schedule an existing draft by ID
+substack-cli draft inspect --draft-id 123
+substack-cli draft schedule --draft-id 123 --scheduled-at "2026-06-01T09:00:00Z"
 
 # 4. Publish
 substack-cli publish post.md --yes
@@ -115,6 +120,9 @@ node dist\cli.js prepublish examples\basic.md
 node dist\cli.js prepublish examples\basic.md --mode schedule --at 2026-05-01T09:00:00Z
 node dist\cli.js draft examples\basic.md --dry-run
 node dist\cli.js draft examples\basic.md --transport auto
+node dist\cli.js draft create examples\basic.md --dry-run
+node dist\cli.js draft inspect --draft-id 123
+node dist\cli.js draft schedule --draft-id 123 --scheduled-at 2026-05-01T09:00:00Z --dry-run
 node dist\cli.js config set-publication https://example.substack.com
 node dist\cli.js config set-runtime local
 node dist\cli.js doctor
