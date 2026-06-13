@@ -106,6 +106,28 @@ Body.
     assert.equal(checkStatus(editorial, "no-editorial-placeholders"), "fail");
   });
 
+  it("blocks inline editorial comment placeholders", async () => {
+    const report = buildPreflightReport(
+      {
+        mode: "publish",
+        scheduleAt: undefined,
+        post: await parseMarkdownString(
+          `---
+title: "Comment Marker"
+---
+# Comment Marker
+
+{{ comment: expand this section }}
+`,
+          "comment-marker.md",
+        ),
+      },
+      { publicationUrl: "https://rareinsights.substack.com" },
+    );
+
+    assert.equal(checkStatus(report, "no-editorial-placeholders"), "fail");
+  });
+
   it("carries unsupported payload failures into preflight", () => {
     const report = buildPreflightReport(
       {
@@ -189,6 +211,29 @@ slug: scheduled-post
     assert.equal(checkStatus(report, "schedule-time-no-collision"), "fail");
   });
 
+  it("blocks invalid schedule timestamps before live mutation", async () => {
+    const prepared = {
+      mode: "schedule" as const,
+      scheduleAt: "not-a-date",
+      post: await parseMarkdownString(
+        `---
+title: "Invalid Schedule"
+---
+# Invalid Schedule
+`,
+        "invalid-schedule.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(report.status, "blocked");
+    assert.equal(checkStatus(report, "schedule-time-parseable"), "fail");
+    assert.equal(checkStatus(report, "schedule-time-future"), "fail");
+  });
+
   it("ignores schedule collisions for the current draft id", async () => {
     const prepared = {
       mode: "schedule" as const,
@@ -211,6 +256,58 @@ title: "Scheduled Post"
 
     assert.equal(checkStatus(report, "schedule-time-no-collision"), "pass");
   });
+
+  it("ignores schedule collisions for current source file and title", async () => {
+    const prepared = {
+      mode: "schedule" as const,
+      scheduleAt: "2027-01-01T00:00:00Z",
+      post: await parseMarkdownString(
+        `---
+title: "Scheduled Post"
+---
+# Scheduled Post
+`,
+        "scheduled.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+      scheduleItems: [
+        { title: "Other", sourceFile: "scheduled.md", scheduledAt: "2027-01-01T00:00:00Z" },
+        { title: " scheduled post ", sourceFile: "other.md", scheduledAt: "2027-01-01T00:00:00Z" },
+        { title: "Bad Timestamp", sourceFile: "bad.md", scheduledAt: "not-a-date" },
+      ],
+    });
+
+    assert.equal(checkStatus(report, "schedule-time-no-collision"), "pass");
+  });
+
+  it("uses a fallback collision message when schedule items have no display name", async () => {
+    const prepared = {
+      mode: "schedule" as const,
+      scheduleAt: "2027-01-01T00:00:00Z",
+      post: await parseMarkdownString(
+        `---
+title: "Scheduled Post"
+---
+# Scheduled Post
+`,
+        "scheduled.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+      scheduleItems: [{ draftId: "other-draft", scheduledAt: "2027-01-01T00:00:00Z" }],
+    });
+
+    assert.equal(checkStatus(report, "schedule-time-no-collision"), "fail");
+    assert.equal(
+      report.checks.find((check) => check.code === "schedule-time-no-collision")?.message,
+      "Schedule time collides with another item.",
+    );
+  });
 });
 
 describe("parsePreflightScheduleFile", () => {
@@ -221,6 +318,13 @@ describe("parsePreflightScheduleFile", () => {
 
     assert.equal(items[0]?.title, "Post");
     assert.equal(items[0]?.scheduledAt, "2026-07-01T09:00:00Z");
+  });
+
+  it("includes the source name in schedule parse errors", () => {
+    assert.throws(
+      () => parsePreflightScheduleFile("{", "planned-posts.json"),
+      /Could not parse planned-posts\.json as JSON/,
+    );
   });
 });
 
