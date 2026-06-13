@@ -18,6 +18,7 @@ import { validatePayloadCompatibility } from "../substack-api/payload.js";
 import type { PreparedPost } from "../types.js";
 import { resolveDraftEditorUrl } from "./draft-url.js";
 import { LocalWorkflowError, runLocalDraftWorkflow } from "./local-workflow.js";
+import { buildBrowserWorkflowRunLog, writeRunLog } from "./run-log.js";
 import { resolvePostTitle } from "./title.js";
 import {
   type TransportPreference,
@@ -88,6 +89,7 @@ export interface BrowserWorkflowOptions {
   yes?: boolean;
   reviewOnly?: boolean;
   traceOut?: string | undefined;
+  runLogDir?: string | undefined;
   experimentalInjectState?: boolean;
   sessionId?: string | undefined;
   transport?: TransportPreference | undefined;
@@ -124,11 +126,13 @@ export async function runBrowserWorkflow(
         options,
       );
       await maybeWriteTrace(result, options.traceOut);
+      await maybeWriteWorkflowRunLog(options, requirePublicationUrl(config), prepared, result);
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
       if (error instanceof LocalWorkflowError) {
         const result = buildFailedWorkflowResult(error, prepared, transport);
         await maybeWriteTrace(result, options.traceOut);
+        await maybeWriteWorkflowRunLog(options, requirePublicationUrl(config), prepared, result);
         console.error(JSON.stringify(result, null, 2));
       }
       throw error;
@@ -158,6 +162,7 @@ export async function runBrowserWorkflow(
     try {
       const result = await createDraftInBrowser(session, prepared, options, transport);
       await maybeWriteTrace(result, options.traceOut);
+      await maybeWriteWorkflowRunLog(options, session.publicationUrl, prepared, result);
       console.log(JSON.stringify(result, null, 2));
     } catch (error) {
       if (error instanceof BrowserWorkflowError) {
@@ -170,6 +175,7 @@ export async function runBrowserWorkflow(
           browserbaseDebugUrl: session.browserbaseDebugUrl,
         };
         await maybeWriteTrace(result, options.traceOut);
+        await maybeWriteWorkflowRunLog(options, session.publicationUrl, prepared, result);
         console.error(JSON.stringify(result, null, 2));
       }
 
@@ -633,6 +639,26 @@ export async function maybeWriteTrace(
   }
 
   await writeFile(traceOut, `${JSON.stringify(result, null, 2)}\n`, "utf8");
+}
+
+async function maybeWriteWorkflowRunLog(
+  options: BrowserWorkflowOptions,
+  publicationUrl: string,
+  prepared: PreparedPost,
+  result: BrowserWorkflowResult | Record<string, unknown>,
+): Promise<void> {
+  if (options.reviewOnly) {
+    return;
+  }
+
+  await writeRunLog(
+    options.runLogDir,
+    buildBrowserWorkflowRunLog({
+      publicationUrl,
+      prepared,
+      result,
+    }),
+  );
 }
 
 function buildFailedWorkflowResult(

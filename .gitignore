@@ -11,6 +11,7 @@ playwright-report/
 test-results/
 traces/
 reports/
+catalogue/run-log/
 stryker-tmp/
 .stryker-tmp/
 *.log
