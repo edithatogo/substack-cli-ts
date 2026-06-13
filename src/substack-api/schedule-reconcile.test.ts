@@ -150,4 +150,46 @@ describe("schedule reconciliation", () => {
     assert.equal(draftReport.status, "mismatch");
     assert.equal(draftReport.missing.length, 1);
   });
+
+  it("handles time-only matching and queue entries without usable keys", () => {
+    const timeOnly = reconcileSchedule(
+      [{ title: "Any title", scheduledAt: "2026-07-01T09:00:00Z" }],
+      [
+        { title: "Different title", scheduledAt: "not-a-date", source: "post" },
+        { title: "Different title", source: "broadcast" },
+        { title: "Different title", scheduledAt: "2026-07-01T09:00:00Z", source: "post" },
+      ],
+      { by: ["time"] },
+    );
+    const noKeys = reconcileSchedule(
+      [{ title: "Any title", scheduledAt: "2026-07-01T09:00:00Z" }],
+      [{ title: "Different title", scheduledAt: "2026-07-01T09:00:00Z", source: "post" }],
+      { by: [] },
+    );
+
+    assert.equal(timeOnly.status, "ok");
+    assert.equal(timeOnly.matches[0]?.actual.scheduledAt, "2026-07-01T09:00:00Z");
+    assert.equal(noKeys.status, "ok");
+  });
+
+  it("reports draft-id queue duplicate collisions without scheduled timestamps", () => {
+    const report = reconcileSchedule(
+      [{ draftId: "123", scheduledAt: "2026-07-01T09:00:00Z" }],
+      [
+        { postId: "123", source: "post" },
+        { postId: "123", source: "broadcast" },
+        { source: "draft" },
+      ],
+      { by: ["draft-id"] },
+    );
+
+    assert.equal(report.status, "mismatch");
+    assert.equal(
+      report.duplicateCollisions.some(
+        (collision) =>
+          collision.reason === "duplicate-queue-key" && collision.expected.scheduledAt === "",
+      ),
+      true,
+    );
+  });
 });
