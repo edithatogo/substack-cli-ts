@@ -67,6 +67,7 @@ import {
   runBrowserWorkflow,
 } from "./publish/browser-workflow.js";
 import { preparePost } from "./publish/prepare.js";
+import { buildPreflightReport, parsePreflightScheduleFile } from "./publish/preflight.js";
 import { prepublishPost } from "./publish/prepublish.js";
 import {
   buildDraftWriteRunLog,
@@ -326,6 +327,58 @@ program
       const report = prepublishPost(prepared);
       console.log(JSON.stringify(report, null, 2));
 
+      if (report.status === "blocked") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+program
+  .command("preflight")
+  .description("Run operational contract checks before live publish or schedule mutation.")
+  .argument("<file>", "Markdown file to validate")
+  .option("--mode <mode>", "publish or schedule", "publish")
+  .option("--at <iso-date>", "ISO timestamp for scheduled publication")
+  .option("--schedule-file <file>", "Expected schedule file used to detect timestamp collisions")
+  .option("--draft-id <id>", "Current draft ID to ignore as a self-collision")
+  .option("--strict", "Escalate optional workflow checks to blocking errors", false)
+  .action(
+    async (
+      file: string,
+      options: {
+        mode: "publish" | "schedule";
+        at?: string;
+        scheduleFile?: string;
+        draftId?: string;
+        strict: boolean;
+      },
+    ) => {
+      const prepared = await preparePost(
+        file,
+        options.at
+          ? {
+              mode: options.mode,
+              scheduleAt: options.at,
+            }
+          : {
+              mode: options.mode,
+            },
+      );
+      const effective = await loadEffectiveConfig();
+      const scheduleItems = options.scheduleFile
+        ? parsePreflightScheduleFile(
+            await readFile(options.scheduleFile, "utf8"),
+            options.scheduleFile,
+          )
+        : undefined;
+      const report = buildPreflightReport(prepared, {
+        publicationUrl: effective.publicationUrl,
+        draftId: options.draftId,
+        strict: options.strict,
+        scheduleItems,
+      });
+
+      console.log(JSON.stringify(report, null, 2));
       if (report.status === "blocked") {
         process.exitCode = 1;
       }
@@ -768,6 +821,12 @@ program
       }
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
+      const preflight = buildPreflightReport(prepared, { publicationUrl });
+      if (preflight.status === "blocked") {
+        console.log(JSON.stringify(preflight, null, 2));
+        process.exitCode = 1;
+        return;
+      }
 
       if (transport.selected === "api") {
         const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
@@ -895,6 +954,7 @@ const scheduleCommand = program
   .option("--session-id <id>", "Browserbase session ID to resume")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
   .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
+  .option("--schedule-file <file>", "Expected schedule file used to detect timestamp collisions")
   .option("--experimental-inject-state", "Use experimental editor-state injection", false)
   .option("--review-only", "Stop at the schedule review screen without clicking Schedule", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
@@ -909,6 +969,7 @@ const scheduleCommand = program
         sessionId?: string;
         traceOut?: string;
         runLogDir?: string;
+        scheduleFile?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },
@@ -926,6 +987,18 @@ const scheduleCommand = program
       }
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
+      const scheduleItems = options.scheduleFile
+        ? parsePreflightScheduleFile(
+            await readFile(options.scheduleFile, "utf8"),
+            options.scheduleFile,
+          )
+        : undefined;
+      const preflight = buildPreflightReport(prepared, { publicationUrl, scheduleItems });
+      if (preflight.status === "blocked") {
+        console.log(JSON.stringify(preflight, null, 2));
+        process.exitCode = 1;
+        return;
+      }
 
       if (transport.selected === "api") {
         const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
