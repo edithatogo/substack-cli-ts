@@ -287,8 +287,7 @@ function buildNoteRequestBody(text: string): Record<string, unknown> {
 }
 
 function countSentences(text: string): number {
-  const matches = text.match(/[^.!?]+[.!?]+(?:\s|$)|[^.!?]+$/g);
-  return matches?.filter((sentence) => sentence.trim().length > 0).length ?? 0;
+  return text.split(/[.!?]+/).filter((sentence) => sentence.trim().length > 0).length;
 }
 
 function stringField(record: Record<string, unknown>, ...names: string[]): string | undefined {

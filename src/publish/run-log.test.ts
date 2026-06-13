@@ -240,6 +240,34 @@ describe("run log artifacts", () => {
     assert.equal(artifact.apiResponseIds?.postUrl, "https://rareinsights.substack.com/p/example");
   });
 
+  it("summarizes note create failures", () => {
+    const artifact = buildNoteWriteRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        ...notePlan(),
+        operation: "create",
+        scheduledAt: undefined,
+        postUrl: undefined,
+      },
+      result: {
+        status: "failed",
+        operation: "create",
+        method: "POST",
+        endpoint: "https://rareinsights.substack.com/comment/feed/",
+        message: "Substack returned HTTP 500.",
+      },
+    });
+
+    assert.equal(artifact.actionType, "note.create");
+    assert.equal(artifact.status, "failure");
+    assert.equal(artifact.scheduledTimeRequested, undefined);
+    assert.equal(artifact.scheduledTimeReturned, undefined);
+    assert.equal(artifact.apiResponseIds?.noteId, undefined);
+    assert.equal(artifact.apiResponseIds?.postUrl, undefined);
+    assert.equal(artifact.error?.message, "Substack returned HTTP 500.");
+    assert.equal(artifact.error?.body, null);
+  });
+
   it("classifies browser publish workflow logs", () => {
     const artifact = buildBrowserWorkflowRunLog({
       publicationUrl: "https://rareinsights.substack.com/",

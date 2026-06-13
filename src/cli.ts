@@ -1161,7 +1161,8 @@ note
     }) => {
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
-      const text = (await readFile(options.textFile, "utf8")).trim();
+      const text = await readCliTextFile(options.textFile, "note text file");
+      if (text === undefined) return;
       if (!text) {
         console.error(
           JSON.stringify({ status: "failed", message: "Note text must not be empty." }, null, 2),
@@ -1240,7 +1241,8 @@ note
     }) => {
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
-      const text = (await readFile(options.textFile, "utf8")).trim();
+      const text = await readCliTextFile(options.textFile, "note text file");
+      if (text === undefined) return;
       const contractIssues = validateScheduledNoteContract({
         text,
         postUrl: options.postUrl,
@@ -1334,11 +1336,28 @@ note
       yes: boolean;
       runLogDir?: string | undefined;
     }) => {
-      const rawItems = parseNoteScheduleFileContent(
-        await readFile(options.scheduleFile, "utf8"),
-        options.scheduleFile,
-      );
-      const items = await resolveNoteBatchItems(rawItems);
+      const scheduleContent = await readCliTextFile(options.scheduleFile, "note schedule file");
+      if (scheduleContent === undefined) return;
+      let items: NoteBatchItem[];
+      let rawItems: NoteScheduleFileItem[];
+      try {
+        rawItems = parseNoteScheduleFileContent(scheduleContent, options.scheduleFile);
+        items = await resolveNoteBatchItems(rawItems);
+      } catch (error) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "note.batch",
+              message: error instanceof Error ? error.message : String(error),
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
       const plan = buildNoteBatchPlan({
         selectorSourceFile: options.scheduleFile,
         items,
@@ -3453,7 +3472,7 @@ function buildScheduledQueue(
 async function resolveNoteBatchItems(items: NoteScheduleFileItem[]): Promise<NoteBatchItem[]> {
   return Promise.all(
     items.map(async (item) => ({
-      text: item.text ?? (item.textFile ? (await readFile(item.textFile, "utf8")).trim() : ""),
+      text: item.text ?? (item.textFile ? await readBatchNoteTextFile(item.textFile) : ""),
       postUrl: item.postUrl ?? "",
       scheduledAt: item.scheduledAt ?? "",
       title: item.title,
@@ -3461,6 +3480,35 @@ async function resolveNoteBatchItems(items: NoteScheduleFileItem[]): Promise<Not
       status: item.status,
     })),
   );
+}
+
+async function readBatchNoteTextFile(file: string): Promise<string> {
+  try {
+    return (await readFile(file, "utf8")).trim();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Could not read note text file ${file}: ${message}`);
+  }
+}
+
+async function readCliTextFile(file: string, label: string): Promise<string | undefined> {
+  try {
+    return (await readFile(file, "utf8")).trim();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      JSON.stringify(
+        {
+          status: "failed",
+          message: `Could not read ${label} ${file}: ${message}`,
+        },
+        null,
+        2,
+      ),
+    );
+    process.exitCode = 1;
+    return undefined;
+  }
 }
 
 function parseInteger(value: string): number {

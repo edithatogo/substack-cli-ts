@@ -60,7 +60,7 @@ describe("note schedule parsing and planning", () => {
 
   it("blocks scheduled notes that violate the covering-note contract", () => {
     const issues = validateScheduledNoteContract({
-      text: "One. Two. Three. Four.",
+      text: "One.Two.Three.Four.",
       postUrl: "https://rareinsights.substack.com/p/post",
       scheduledAt: "soon",
     });
