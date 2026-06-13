@@ -75,6 +75,7 @@ substack-cli publish post.md --yes
 
 # 5. Schedule
 substack-cli schedule post.md --at "2026-06-01T09:00:00Z" --yes
+substack-cli schedule reconcile --schedule-file schedule.json --by title,time
 ```
 
 - Final publish and schedule button flows.
@@ -172,6 +173,7 @@ node dist\cli.js publish examples\basic.md --transport browser --yes
 node dist\cli.js publish examples\basic.md --yes --run-log-dir .substack-cli\run-log
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --yes --run-log-dir .substack-cli\run-log
 node dist\cli.js schedule examples\basic.md --at 2026-05-01T09:00:00Z --transport auto --yes
+node dist\cli.js schedule reconcile --schedule-file schedule.json --by title,time
 node dist\cli.js trace review .substack-cli\publish-traces\review.json
 node dist\cli.js trace compare .substack-cli\publish-traces\review.json .substack-cli\publish-traces\publish.json
 node dist\cli.js trace fixture .substack-cli\publish-traces\review.json --out fixtures\trace\review.json

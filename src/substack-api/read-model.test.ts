@@ -93,6 +93,7 @@ describe("readApiInventory", () => {
                   draft_updated_at: "2026-04-02T00:00:00.000Z",
                   audience: "everyone",
                   slug: null,
+                  scheduled_at: "2026-05-01T09:00:00.000Z",
                   should_send_email: null,
                   write_comment_permissions: "only_paid",
                   section_id: null,
@@ -114,6 +115,7 @@ describe("readApiInventory", () => {
     assert.equal(inventory.sections?.[0]?.slug, "main");
     assert.equal(inventory.posts?.[0]?.slug, "recent-post");
     assert.equal(inventory.drafts?.[0]?.draftTitle, "Draft Title");
+    assert.equal(inventory.drafts?.[0]?.scheduledAt, "2026-05-01T09:00:00.000Z");
     assert.equal(inventory.draftHasMore, false);
   });
 
