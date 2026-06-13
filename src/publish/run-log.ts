@@ -18,6 +18,7 @@ export interface RunLogArtifact {
   publicationUrl: string;
   publicationId?: number | null | undefined;
   sourceFile?: string | undefined;
+  selectorSourceFile?: string | undefined;
   title?: string | undefined;
   draftId?: string | undefined;
   draftUrl?: string | undefined;
@@ -105,6 +106,7 @@ export function buildDraftWriteRunLog(input: {
   prepared: PreparedPost;
   plan: DraftWritePlan;
   result: DraftWriteResult;
+  selectorSourceFile?: string | undefined;
 }): RunLogArtifact {
   const draftId = input.result.draftId !== undefined ? String(input.result.draftId) : undefined;
   return {
@@ -115,6 +117,7 @@ export function buildDraftWriteRunLog(input: {
     publicationUrl: input.publicationUrl,
     publicationId: null,
     sourceFile: input.prepared.post.filePath,
+    selectorSourceFile: input.selectorSourceFile,
     title: resolvePostTitle(input.prepared.post),
     draftId,
     draftUrl: redactUrl(input.result.draftUrl) ?? undefined,
@@ -142,6 +145,7 @@ export function buildPublishWriteRunLog(input: {
   title?: string | undefined;
   plan: PublishWritePlan;
   result: PublishWriteResult;
+  selectorSourceFile?: string | undefined;
 }): RunLogArtifact {
   return {
     schemaVersion: 1,
@@ -151,6 +155,7 @@ export function buildPublishWriteRunLog(input: {
     publicationUrl: input.publicationUrl,
     publicationId: null,
     sourceFile: input.prepared?.post.filePath,
+    selectorSourceFile: input.selectorSourceFile,
     title: input.title ?? (input.prepared ? resolvePostTitle(input.prepared.post) : undefined),
     draftId: input.plan.draftId,
     draftUrl: redactUrl(input.plan.draftUrl) ?? undefined,

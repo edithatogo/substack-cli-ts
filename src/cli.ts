@@ -13,6 +13,11 @@ import {
 import { buildAuthStatusReport, readLocalProfileReadiness } from "./auth/status.js";
 import { performSubstackLogin } from "./auth/substack-login.js";
 import {
+  buildBatchSchedulePlan,
+  parseBatchScheduleFileContent,
+  parseIdFileContent,
+} from "./batch/selectors.js";
+import {
   captureLocalDiagnostics,
   capturePublishScreenDiagnostics,
   captureReviewOverlayDiagnostics,
@@ -1107,6 +1112,142 @@ scheduleCommand
         ),
       );
       if (report.status !== "ok") process.exitCode = 1;
+    },
+  );
+
+const batch = program.command("batch").description("Run explicit file-selected batch operations.");
+
+batch
+  .command("schedule")
+  .description("Schedule selected drafts from explicit selector files.")
+  .requiredOption("--schedule-file <file>", "JSON schedule file with draft IDs and timestamps")
+  .option("--ids-file <file>", "Line-delimited IDs to include")
+  .option("--draft-ids-file <file>", "Line-delimited draft IDs to include")
+  .option("--limit <limit>", "Maximum selected schedule items to touch", parseInteger)
+  .option("--dry-run", "Print exactly which items would be touched", false)
+  .option("--yes", "Confirm live batch scheduling", false)
+  .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
+  .action(
+    async (options: {
+      scheduleFile: string;
+      idsFile?: string | undefined;
+      draftIdsFile?: string | undefined;
+      limit?: number | undefined;
+      dryRun: boolean;
+      yes: boolean;
+      runLogDir?: string | undefined;
+    }) => {
+      const scheduleItems = parseBatchScheduleFileContent(
+        await readFile(options.scheduleFile, "utf8"),
+        options.scheduleFile,
+      );
+      const ids = options.idsFile
+        ? parseIdFileContent(await readFile(options.idsFile, "utf8"))
+        : undefined;
+      const draftIds = options.draftIdsFile
+        ? parseIdFileContent(await readFile(options.draftIdsFile, "utf8"))
+        : undefined;
+      const selectorSourceFiles = [
+        options.scheduleFile,
+        ...(options.idsFile ? [options.idsFile] : []),
+        ...(options.draftIdsFile ? [options.draftIdsFile] : []),
+      ];
+      const plan = buildBatchSchedulePlan({
+        scheduleItems,
+        ids,
+        draftIds,
+        limit: options.limit,
+        selectorSourceFiles,
+      });
+
+      if (options.dryRun) {
+        console.log(
+          JSON.stringify({ status: "planned", operation: "batch.schedule", ...plan }, null, 2),
+        );
+        return;
+      }
+
+      if (!options.yes) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Add --yes to confirm live batch scheduling, or use --dry-run.",
+              operation: "batch.schedule",
+              ...plan,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const material = await resolveApiAuthMaterial(effective, "auto");
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: validation.message ?? "Could not validate API session.",
+              operation: "batch.schedule",
+              ...plan,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const results = [];
+      for (const item of plan.items) {
+        const draftUrl = new URL(
+          `/publish/post/${encodeURIComponent(item.draftId)}`,
+          publicationUrl,
+        ).toString();
+        const schedulePlan = planPublishWrite(
+          item.draftId,
+          draftUrl,
+          "schedule",
+          publicationUrl,
+          item.scheduledAt,
+        );
+        const result = await executePublishWrite(schedulePlan, material, fetch);
+        await writeRunLog(
+          options.runLogDir,
+          buildPublishWriteRunLog({
+            publicationUrl,
+            title: item.title ?? `Draft ${item.draftId}`,
+            plan: schedulePlan,
+            result,
+            selectorSourceFile: selectorSourceFiles.join(","),
+          }),
+        );
+        results.push({ item, result });
+      }
+
+      const failed = results.filter(({ result }) => result.status === "failed");
+      console.log(
+        JSON.stringify(
+          {
+            status: failed.length > 0 ? "failed" : "ok",
+            operation: "batch.schedule",
+            selectorSourceFiles,
+            touchedCount: results.length,
+            skipped: plan.skipped,
+            results,
+          },
+          null,
+          2,
+        ),
+      );
+      if (failed.length > 0) process.exitCode = 1;
     },
   );
 
