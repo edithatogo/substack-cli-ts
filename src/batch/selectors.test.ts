@@ -77,4 +77,30 @@ describe("batch selectors", () => {
     assert.equal(plan.skipped.length, 1);
     assert.equal(plan.skipped[0]?.reason, "already-scheduled-or-live");
   });
+
+  it("builds an unfiltered plan and honors numeric/state aliases", () => {
+    const items = parseBatchScheduleFileContent(
+      JSON.stringify([
+        {
+          id: 123,
+          at: "2026-07-01T09:00:00Z",
+          subject: "Numeric draft",
+          file: "posts/numeric.md",
+          state: "sent",
+        },
+        { draftId: "456", scheduledAt: "2026-07-02T09:00:00Z" },
+      ]),
+    );
+    const plan = buildBatchSchedulePlan({
+      selectorSourceFiles: ["schedule.json"],
+      scheduleItems: items,
+    });
+
+    assert.equal(items[0]?.draftId, "123");
+    assert.equal(items[0]?.title, "Numeric draft");
+    assert.equal(items[0]?.sourceFile, "posts/numeric.md");
+    assert.equal(plan.items.length, 1);
+    assert.equal(plan.items[0]?.draftId, "456");
+    assert.equal(plan.skipped[0]?.draftId, "123");
+  });
 });
