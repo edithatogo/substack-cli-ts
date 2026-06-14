@@ -61,7 +61,7 @@ Reviewed: 2026-05-02
 
 4. **Trace and audit commands** — The only tool with structured workflow trace capture (`trace review`, `trace compare`, `trace fixture`) and diagnostic commands (`doctor`, `policy`, `debug local-page`, `debug publish-screen`). These make non-reproducible browser issues debuggable.
 
-5. **MCP integration** — Exposes 17 MCP tools, 2 redacted resources, and 2 prompts for read-only inventory, schema inspection, trace review, draft contract inference, duplicate detection, section resolution, diagnostics, and media inspection. Write flows (publish, schedule, draft, config, auth login) are intentionally excluded from the MCP surface for safety.
+5. **MCP integration** — Exposes 21 MCP tools, 2 redacted resources, and 2 prompts for read-only inventory, schema inspection, trace review, draft contract inference, duplicate detection, section resolution, diagnostics, media inspection, and Creator OS planning. Write flows (publish, schedule, draft, config, auth login) are intentionally excluded from the MCP surface for safety.
 
 6. **Draft mapping and lifecycle tracking** — Persists local source-file-to-Substack-draft-ID mappings under `.substack-cli/draft-mappings.json`. Detects existing drafts and reuses them on re-run (PUT instead of POST). Supports duplicate draft detection against read-only inventory.
 

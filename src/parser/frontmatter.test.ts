@@ -66,4 +66,33 @@ Body.
     assert.equal(result.metadata.title, "Quoted title");
     assert.equal(result.metadata.subtitle, "Quoted subtitle");
   });
+
+  it("parses Creator OS front matter fields", () => {
+    const result = parseFrontmatter(`---
+title: Creator OS
+seoTitle: Creator SEO
+seoDescription: Creator description
+socialImage: ./social.png
+canonicalUrl: https://example.substack.com/p/creator-os
+campaign: creator-os-launch
+utm: source=newsletter&medium=launch&campaign=creator-os
+video: ./video.mp4
+audio: ./episode.mp3
+transcript: ./transcript.md
+thumbnail: ./thumb.png
+---
+Body.
+`);
+
+    assert.equal(result.metadata.seoTitle, "Creator SEO");
+    assert.equal(result.metadata.seoDescription, "Creator description");
+    assert.equal(result.metadata.socialImage, "./social.png");
+    assert.equal(result.metadata.canonicalUrl, "https://example.substack.com/p/creator-os");
+    assert.equal(result.metadata.campaign, "creator-os-launch");
+    assert.equal(result.metadata.utm, "source=newsletter&medium=launch&campaign=creator-os");
+    assert.equal(result.metadata.video, "./video.mp4");
+    assert.equal(result.metadata.audio, "./episode.mp3");
+    assert.equal(result.metadata.transcript, "./transcript.md");
+    assert.equal(result.metadata.thumbnail, "./thumb.png");
+  });
 });

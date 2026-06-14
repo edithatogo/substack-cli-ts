@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { appendFileSync, existsSync, mkdirSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { Command } from "commander";
 import { runLocalLogin } from "./auth/local-login.js";
@@ -52,6 +52,23 @@ import {
   requireSubstackCredentials,
   updateConfig,
 } from "./config/store.js";
+import {
+  buildCampaignExecutionReport,
+  buildCampaignPlan,
+  buildCampaignRunLogReport,
+  collectCampaignOption,
+  parseCampaignChannels,
+  readCampaignPlan,
+  validateCampaignPlan,
+} from "./creator/campaign.js";
+import { buildCommentTriageReport, inspectCommunitySurface } from "./creator/community.js";
+import {
+  buildAnalyticsSnapshot,
+  buildAnalyticsTrend,
+  buildGrowthReport,
+  writeAnalyticsSnapshot,
+} from "./creator/growth.js";
+import { buildCreatorMediaPlan, buildLivePlan, type LiveAudience } from "./creator/media-plan.js";
 import { runDoctor } from "./doctor/doctor.js";
 import { runMcpServer } from "./mcp/server.js";
 import {
@@ -71,6 +88,7 @@ import { buildPreflightReport, parsePreflightScheduleFile } from "./publish/pref
 import { prepublishPost } from "./publish/prepublish.js";
 import {
   buildDraftWriteRunLog,
+  buildCreatorWorkflowRunLog,
   buildNoteWriteRunLog,
   buildPublishWriteRunLog,
   writeRunLog,
@@ -103,6 +121,7 @@ import {
   fetchSubscriptionTiers,
   fetchTaxFormStatus,
 } from "./substack-api/billing.js";
+import { fetchCommentsForPost } from "./substack-api/comment-list.js";
 import { fetchDomainStatus } from "./substack-api/domain.js";
 import { buildDraftIdInspectionReport } from "./substack-api/draft-id-inspect.js";
 import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
@@ -384,6 +403,377 @@ program
       }
     },
   );
+
+const campaign = program
+  .command("campaign")
+  .description("Plan, validate, execute, and report Creator OS campaigns.");
+
+campaign
+  .command("plan")
+  .description("Build a campaign plan artifact from a Markdown post.")
+  .argument("<file>", "Markdown file to plan")
+  .option("--publish-at <timestamp>", "Future ISO timestamp for publication")
+  .option(
+    "--note-at <timestamp>",
+    "Future ISO timestamp for a covering note",
+    collectCampaignOption,
+    [],
+  )
+  .option("--channels <channels>", "Comma-separated channels: notes,linkedin,x,youtube", "notes")
+  .option("--run-log-dir <dir>", "Run-log directory to include in planned commands")
+  .option("--out <file>", "Write the campaign plan JSON to a file")
+  .action(
+    async (
+      file: string,
+      options: {
+        publishAt?: string | undefined;
+        noteAt: string[];
+        channels: string;
+        runLogDir?: string | undefined;
+        out?: string | undefined;
+      },
+    ) => {
+      const prepared = await preparePost(
+        file,
+        options.publishAt
+          ? { mode: "schedule", scheduleAt: options.publishAt }
+          : { mode: "publish" },
+      );
+      const effective = await loadEffectiveConfig();
+      const plan = buildCampaignPlan(prepared, {
+        publicationUrl: effective.publicationUrl,
+        publishAt: options.publishAt,
+        noteAt: options.noteAt,
+        channels: parseCampaignChannels(options.channels),
+        runLogDir: options.runLogDir,
+      });
+
+      if (options.out) {
+        await mkdir(dirname(options.out), { recursive: true });
+        await writeFile(options.out, `${JSON.stringify(plan, null, 2)}\n`, "utf8");
+      }
+      await writeRunLog(
+        options.runLogDir,
+        buildCreatorWorkflowRunLog({
+          actionType: "campaign.plan",
+          status: plan.status === "ready" ? "success" : "failure",
+          publicationUrl: effective.publicationUrl,
+          sourceFile: prepared.post.filePath,
+          title: plan.post.title,
+          scheduledTimeRequested: options.publishAt,
+          campaignId: plan.campaignId,
+          resultMessage: options.out
+            ? `Campaign plan written to ${options.out}.`
+            : "Campaign plan generated.",
+          errorMessage:
+            plan.status === "blocked" ? "Campaign plan has blocking issues." : undefined,
+        }),
+      );
+      console.log(
+        JSON.stringify(options.out ? { ...plan, outputFile: options.out } : plan, null, 2),
+      );
+      if (plan.status === "blocked") process.exitCode = 1;
+    },
+  );
+
+campaign
+  .command("validate")
+  .description("Validate a campaign plan artifact.")
+  .requiredOption("--plan <file>", "Campaign plan JSON file")
+  .action(async (options: { plan: string }) => {
+    const plan = await readCampaignPlan(options.plan);
+    console.log(JSON.stringify(plan, null, 2));
+    if (plan.status === "blocked") process.exitCode = 1;
+  });
+
+campaign
+  .command("execute")
+  .description("Validate campaign execution readiness without adding new unsafe live writes.")
+  .requiredOption("--plan <file>", "Campaign plan JSON file")
+  .option("--run-log-dir <dir>", "Override run-log directory for campaign execution audit")
+  .option("--yes", "Confirm campaign execution readiness", false)
+  .action(async (options: { plan: string; runLogDir?: string | undefined; yes: boolean }) => {
+    const plan = await readCampaignPlan(options.plan);
+    const report = buildCampaignExecutionReport(plan, options.yes);
+    const runLogDir = options.runLogDir ?? plan.runLogDir;
+    await writeRunLog(
+      runLogDir,
+      buildCreatorWorkflowRunLog({
+        actionType: "campaign.execute",
+        status: report.status === "ready" ? "success" : "failure",
+        publicationUrl: plan.publicationUrl,
+        sourceFile: plan.post.filePath,
+        title: plan.post.title,
+        scheduledTimeRequested: plan.publishAt,
+        campaignId: plan.campaignId,
+        resultMessage: report.message,
+        errorMessage: report.status === "ready" ? undefined : report.message,
+      }),
+    );
+    console.log(JSON.stringify(report, null, 2));
+    if (report.status !== "ready") process.exitCode = 1;
+  });
+
+campaign
+  .command("report")
+  .description("Summarize campaign and mutation run logs.")
+  .requiredOption("--run-log-dir <dir>", "Directory containing run-log JSON artifacts")
+  .action(async (options: { runLogDir: string }) => {
+    const report = await buildCampaignRunLogReport(options.runLogDir);
+    console.log(JSON.stringify(report, null, 2));
+  });
+
+const creatorMedia = program
+  .command("media")
+  .description("Plan native media workflows without unsafe uploads.");
+
+const mediaVideo = creatorMedia.command("video").description("Video planning commands.");
+
+mediaVideo
+  .command("plan")
+  .description("Plan a native Substack video post.")
+  .requiredOption("--file <file>", "Video file to package")
+  .requiredOption("--post <markdown>", "Markdown post file with metadata")
+  .option("--run-log-dir <dir>", "Write a local media planning run log")
+  .action(async (options: { file: string; post: string; runLogDir?: string | undefined }) => {
+    const prepared = await preparePost(options.post, { mode: "draft" });
+    const plan = await buildCreatorMediaPlan("video", options.file, prepared);
+    const effective = await loadEffectiveConfig();
+    await writeRunLog(
+      options.runLogDir,
+      buildCreatorWorkflowRunLog({
+        actionType: "media.video.plan",
+        status: plan.status === "ready" ? "success" : "failure",
+        publicationUrl: effective.publicationUrl,
+        sourceFile: plan.postFile,
+        title: plan.title,
+        assetFile: plan.file,
+        resultMessage: "Video media plan generated.",
+        errorMessage:
+          plan.status === "blocked" ? "Video media plan has blocking issues." : undefined,
+      }),
+    );
+    console.log(JSON.stringify(plan, null, 2));
+    if (plan.status === "blocked") process.exitCode = 1;
+  });
+
+const mediaAudio = creatorMedia.command("audio").description("Audio planning commands.");
+
+mediaAudio
+  .command("plan")
+  .description("Plan a native Substack audio/podcast post.")
+  .requiredOption("--file <file>", "Audio file to package")
+  .requiredOption("--post <markdown>", "Markdown post file with metadata")
+  .option("--run-log-dir <dir>", "Write a local media planning run log")
+  .action(async (options: { file: string; post: string; runLogDir?: string | undefined }) => {
+    const prepared = await preparePost(options.post, { mode: "draft" });
+    const plan = await buildCreatorMediaPlan("audio", options.file, prepared);
+    const effective = await loadEffectiveConfig();
+    await writeRunLog(
+      options.runLogDir,
+      buildCreatorWorkflowRunLog({
+        actionType: "media.audio.plan",
+        status: plan.status === "ready" ? "success" : "failure",
+        publicationUrl: effective.publicationUrl,
+        sourceFile: plan.postFile,
+        title: plan.title,
+        assetFile: plan.file,
+        resultMessage: "Audio media plan generated.",
+        errorMessage:
+          plan.status === "blocked" ? "Audio media plan has blocking issues." : undefined,
+      }),
+    );
+    console.log(JSON.stringify(plan, null, 2));
+    if (plan.status === "blocked") process.exitCode = 1;
+  });
+
+const live = program.command("live").description("Plan Substack live video workflows.");
+
+live
+  .command("plan")
+  .description("Plan a live video or RTMP event.")
+  .requiredOption("--title <title>", "Live video title")
+  .requiredOption("--at <timestamp>", "Future ISO timestamp for the live event")
+  .option("--audience <audience>", "everyone, subscribers, or paid", "everyone")
+  .option("--run-log-dir <dir>", "Write a local live planning run log")
+  .action(
+    async (options: {
+      title: string;
+      at: string;
+      audience: string;
+      runLogDir?: string | undefined;
+    }) => {
+      const audience = parseLiveAudience(options.audience);
+      const plan = buildLivePlan({ title: options.title, scheduledAt: options.at, audience });
+      const effective = await loadEffectiveConfig();
+      await writeRunLog(
+        options.runLogDir,
+        buildCreatorWorkflowRunLog({
+          actionType: "live.plan",
+          status: plan.status === "ready" ? "success" : "failure",
+          publicationUrl: effective.publicationUrl,
+          title: plan.title,
+          scheduledTimeRequested: plan.scheduledAt,
+          resultMessage: "Live video plan generated.",
+          errorMessage: plan.status === "blocked" ? "Live plan has blocking issues." : undefined,
+        }),
+      );
+      console.log(JSON.stringify(plan, null, 2));
+      if (plan.status === "blocked") process.exitCode = 1;
+    },
+  );
+
+const creatorAnalytics = program
+  .command("analytics")
+  .description("Creator OS analytics snapshots and trends.");
+
+creatorAnalytics
+  .command("snapshot")
+  .description("Capture or dry-run a growth analytics snapshot.")
+  .requiredOption("--post-url <url>", "Post URL to attach to the snapshot")
+  .requiredOption("--out <file>", "Snapshot JSON output file")
+  .option("--post-id <id>", "Numeric Substack post ID for live post analytics", parseInteger)
+  .option("--campaign <id>", "Campaign ID to attach")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--run-log-dir <dir>", "Write a local analytics snapshot run log")
+  .option("--dry-run", "Build the snapshot shape without fetching or writing live analytics", false)
+  .action(
+    async (options: {
+      postUrl: string;
+      out: string;
+      postId?: number | undefined;
+      campaign?: string | undefined;
+      source: "auto" | ApiAuthSource;
+      runLogDir?: string | undefined;
+      dryRun: boolean;
+    }) => {
+      let inventory = null;
+      if (!options.dryRun) {
+        const effective = await loadEffectiveConfig();
+        const material = await resolveApiAuthMaterial(effective, options.source);
+        inventory = await fetchAnalyticsInventory(
+          material.publicationUrl,
+          material,
+          fetch,
+          options.postId,
+        );
+      }
+      const snapshot = buildAnalyticsSnapshot({
+        postUrl: options.postUrl,
+        postId: options.postId,
+        campaignId: options.campaign,
+        analytics: inventory,
+      });
+      if (!options.dryRun) {
+        await writeAnalyticsSnapshot(snapshot, options.out);
+      }
+      await writeRunLog(
+        options.runLogDir,
+        buildCreatorWorkflowRunLog({
+          actionType: "analytics.snapshot",
+          sourceFile: options.out,
+          campaignId: options.campaign,
+          resultMessage: options.dryRun
+            ? "Analytics snapshot dry-run completed."
+            : `Analytics snapshot written to ${options.out}.`,
+        }),
+      );
+      console.log(
+        JSON.stringify(
+          options.dryRun
+            ? { status: "planned", snapshot }
+            : { status: "ok", outputFile: options.out, snapshot },
+          null,
+          2,
+        ),
+      );
+    },
+  );
+
+creatorAnalytics
+  .command("trend")
+  .description("Summarize growth trends from local snapshot artifacts.")
+  .requiredOption("--snapshots-dir <dir>", "Directory containing snapshot JSON or JSONL files")
+  .action(async (options: { snapshotsDir: string }) => {
+    const trend = await buildAnalyticsTrend(options.snapshotsDir);
+    console.log(JSON.stringify(trend, null, 2));
+  });
+
+const growth = program.command("growth").description("Creator growth reports.");
+
+growth
+  .command("report")
+  .description("Build a campaign growth report from campaign and optional snapshots.")
+  .requiredOption("--campaign <file>", "Campaign plan JSON file")
+  .option("--snapshots-dir <dir>", "Directory containing analytics snapshots")
+  .action(async (options: { campaign: string; snapshotsDir?: string | undefined }) => {
+    const campaignPlan = await readCampaignPlan(options.campaign);
+    const report = await buildGrowthReport({
+      campaign: campaignPlan,
+      snapshotsDir: options.snapshotsDir,
+    });
+    console.log(JSON.stringify(report, null, 2));
+  });
+
+const recommendations = program
+  .command("recommendations")
+  .description("Inspect recommendations discovery surfaces.");
+
+recommendations
+  .command("inspect")
+  .description("Probe recommendations availability for the current publication.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await inspectCommunitySurface(
+      material.publicationUrl,
+      material,
+      fetch,
+      "recommendations",
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok" && result.status !== "not-found") process.exitCode = 1;
+  });
+
+const boost = program.command("boost").description("Inspect Substack Boost discovery surfaces.");
+
+boost
+  .command("inspect")
+  .description("Probe Boost availability for the current publication.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await inspectCommunitySurface(material.publicationUrl, material, fetch, "boost");
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok" && result.status !== "not-found") process.exitCode = 1;
+  });
+
+const comments = program.command("comments").description("Comment triage workflows.");
+
+comments
+  .command("triage")
+  .description("Fetch and triage comments for follow-up, testimonials, and moderation.")
+  .requiredOption("--post-id <id>", "Post ID to triage", parseInteger)
+  .option("--limit <limit>", "Maximum comments to inspect", parseInteger, 100)
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { postId: number; limit: number; source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchCommentsForPost(
+      material.publicationUrl,
+      options.postId,
+      material,
+      fetch,
+      {
+        limit: options.limit,
+      },
+    );
+    const report = buildCommentTriageReport(options.postId, result);
+    console.log(JSON.stringify(report, null, 2));
+    if (report.status !== "ok") process.exitCode = 1;
+  });
 
 const trace = program
   .command("trace")
@@ -1522,6 +1912,49 @@ note
         ),
       );
       if (failed.length > 0) process.exitCode = 1;
+    },
+  );
+
+const notes = program.command("notes").description("Creator OS notes workflows.");
+
+notes
+  .command("campaign")
+  .description("Validate a campaign note schedule file without live note writes.")
+  .requiredOption("--post-url <url>", "Post URL expected in each campaign note")
+  .requiredOption("--schedule-file <file>", "JSON note schedule file")
+  .option("--limit <limit>", "Maximum selected note items to validate", parseInteger)
+  .action(
+    async (options: { postUrl: string; scheduleFile: string; limit?: number | undefined }) => {
+      const scheduleContent = await readCliTextFile(options.scheduleFile, "note schedule file");
+      if (scheduleContent === undefined) return;
+      try {
+        const rawItems = parseNoteScheduleFileContent(scheduleContent, options.scheduleFile);
+        const items = await resolveNoteBatchItems(rawItems, dirname(resolve(options.scheduleFile)));
+        const normalizedItems = items.map((item) => ({
+          ...item,
+          postUrl: options.postUrl,
+        }));
+        const plan = buildNoteBatchPlan({
+          selectorSourceFile: options.scheduleFile,
+          items: normalizedItems,
+          limit: options.limit,
+        });
+        console.log(JSON.stringify({ operation: "notes.campaign", ...plan }, null, 2));
+        if (plan.status === "blocked") process.exitCode = 1;
+      } catch (error) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "notes.campaign",
+              message: error instanceof Error ? error.message : String(error),
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+      }
     },
   );
 
@@ -3601,6 +4034,13 @@ function parseInteger(value: string): number {
   }
 
   return parsed;
+}
+
+function parseLiveAudience(value: string): LiveAudience {
+  if (value === "everyone" || value === "subscribers" || value === "paid") {
+    return value;
+  }
+  throw new Error(`Unsupported live audience "${value}". Use everyone, subscribers, or paid.`);
 }
 
 program.parseAsync().catch((error: unknown) => {

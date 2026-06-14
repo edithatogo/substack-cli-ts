@@ -15,7 +15,13 @@ export type RunLogActionType =
   | "post.publish"
   | "post.schedule"
   | "note.create"
-  | "note.schedule";
+  | "note.schedule"
+  | "campaign.plan"
+  | "campaign.execute"
+  | "analytics.snapshot"
+  | "media.video.plan"
+  | "media.audio.plan"
+  | "live.plan";
 
 export interface RunLogArtifact {
   schemaVersion: 1;
@@ -40,6 +46,9 @@ export interface RunLogArtifact {
     postUrl?: string | undefined;
     noteId?: string | undefined;
   };
+  campaignId?: string | undefined;
+  channel?: string | undefined;
+  assetFile?: string | undefined;
   resultMessage?: string | undefined;
   error?:
     | {
@@ -47,6 +56,50 @@ export interface RunLogArtifact {
         body?: string | null | undefined;
       }
     | undefined;
+}
+
+export function buildCreatorWorkflowRunLog(input: {
+  actionType: Extract<
+    RunLogActionType,
+    | "campaign.plan"
+    | "campaign.execute"
+    | "analytics.snapshot"
+    | "media.video.plan"
+    | "media.audio.plan"
+    | "live.plan"
+  >;
+  status?: "success" | "failure" | undefined;
+  publicationUrl?: string | undefined;
+  sourceFile?: string | undefined;
+  title?: string | undefined;
+  scheduledTimeRequested?: string | undefined;
+  campaignId?: string | undefined;
+  channel?: string | undefined;
+  assetFile?: string | undefined;
+  resultMessage?: string | undefined;
+  errorMessage?: string | undefined;
+}): RunLogArtifact {
+  return {
+    schemaVersion: 1,
+    timestamp: new Date().toISOString(),
+    actionType: input.actionType,
+    status: input.status ?? "success",
+    publicationUrl: input.publicationUrl ?? "local",
+    publicationId: null,
+    sourceFile: input.sourceFile,
+    title: input.title,
+    scheduledTimeRequested: input.scheduledTimeRequested,
+    campaignId: input.campaignId,
+    channel: input.channel,
+    assetFile: input.assetFile,
+    resultMessage: input.resultMessage,
+    error: input.errorMessage
+      ? {
+          message: input.errorMessage,
+          body: redactErrorBody(input.errorMessage),
+        }
+      : undefined,
+  };
 }
 
 export async function writeRunLog(

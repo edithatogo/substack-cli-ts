@@ -8,7 +8,7 @@ describe("buildMcpSummaryResource", () => {
 
     assert.equal(summary.name, "substack-cli");
     assert.equal(summary.status, "ready");
-    assert.equal(summary.toolCount, 17);
+    assert.equal(summary.toolCount, 21);
     assert.equal(summary.resourceCount, 2);
     assert.equal(summary.promptCount, 2);
     assert.ok(Array.isArray(summary.promptNames));

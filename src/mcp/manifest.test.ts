@@ -38,11 +38,11 @@ describe("buildMcpSummaryResource", () => {
 
     assert.equal(summary.name, "substack-cli");
     assert.equal(summary.status, "ready");
-    assert.equal(summary.toolCount, 17);
-    assert.equal(summary.redactedToolCount, 17);
+    assert.equal(summary.toolCount, 21);
+    assert.equal(summary.redactedToolCount, 21);
     assert.equal(summary.resourceCount, 2);
     assert.equal(summary.promptCount, 2);
-    assert.deepEqual(summary.groups, ["read", "review", "capture"]);
+    assert.deepEqual(summary.groups, ["read", "review", "capture", "creator"]);
     assert.ok(Array.isArray(summary.promptNames));
     assert.equal(summary.promptNames.length, 2);
   });
@@ -61,9 +61,10 @@ describe("buildMcpResourceDescriptors", () => {
 describe("buildMcpSurfaceGroups", () => {
   it("delegates to buildMcpToolGroups for the group structure", () => {
     const groups = buildMcpSurfaceGroups();
-    assert.equal(groups.length, 3);
+    assert.equal(groups.length, 4);
     assert.ok(groups.some((g) => g.name === "read"));
     assert.ok(groups.some((g) => g.name === "review"));
     assert.ok(groups.some((g) => g.name === "capture"));
+    assert.ok(groups.some((g) => g.name === "creator"));
   });
 });
