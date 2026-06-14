@@ -270,15 +270,25 @@
 
 ---
 
+## Phase 12: Creator OS
+
+### Track 41: Creator OS Upgrade
+
+- **Status:** Complete
+- **File:** [../tracks/41-creator-os-upgrade.md](../tracks/41-creator-os-upgrade.md)
+- **Summary:** Campaign planning, native media/live planning, analytics snapshots/trends, growth reports, recommendations/Boost inspection, comments triage, campaign Notes validation, Creator OS front matter, run-log actions, and read-only MCP creator tools are implemented with explicit write boundaries.
+
+---
+
 ## Summary
 
 | Status | Count | Tracks |
 | --- | ---: | --- |
-| **Complete / Implemented** | 40 | 01–40 |
+| **Complete / Implemented** | 41 | 01–41 |
 | **Partial / Read-only / Probe-only** | 0 | — |
 | **In Progress** | 0 | — |
 | **Planned** | 0 | — |
 | **Blocked** | 0 | — |
-| **Total** | **40** | |
+| **Total** | **41** | |
 
-_Last updated: 2026-05-25_ — All local Conductor tracks are complete. Remaining publication, marketplace, and authenticated client checks are explicit external gates rather than open implementation tasks.
+_Last updated: 2026-06-14_ — All local Conductor tracks are complete. Remaining publication, marketplace, authenticated client, and unverified live native-media endpoint checks are explicit external gates rather than open implementation tasks.

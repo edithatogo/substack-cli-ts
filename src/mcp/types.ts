@@ -2,7 +2,7 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 export type McpSurfaceStatus = "planned" | "ready";
 
-export type McpToolGroup = "read" | "review" | "capture";
+export type McpToolGroup = "read" | "review" | "capture" | "creator";
 
 export interface McpToolSurface {
   name: string;

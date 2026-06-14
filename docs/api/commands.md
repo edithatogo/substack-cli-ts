@@ -84,6 +84,170 @@ Exits with code 1 if validation blocks the publish.
 
 ---
 
+## `campaign`
+
+Plan, validate, execute, and report Creator OS campaigns. These commands keep campaign orchestration local-first: validation and run-log planning happen in the CLI, while live Substack mutations remain behind the existing confirmed publish, schedule, and note commands.
+
+### `campaign plan <file>`
+
+Build a `campaign.json` artifact from a Markdown post.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--publish-at <timestamp>` | Future ISO timestamp for publication | — |
+| `--note-at <timestamp>` | Future ISO timestamp for a covering note. Repeatable | — |
+| `--channels <channels>` | Comma-separated channels: `notes`, `linkedin`, `x`, `youtube` | `notes` |
+| `--run-log-dir <dir>` | Run-log directory to include in planned commands | — |
+| `--out <file>` | Write the campaign plan JSON to a file | — |
+
+### `campaign validate`
+
+Validate a campaign plan artifact.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--plan <file>` (required) | Campaign plan JSON file |
+
+### `campaign execute`
+
+Validate campaign execution readiness and emit a run log if requested. This command does not add new live Substack mutations; it confirms that the plan can move through the existing explicit write commands.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--plan <file>` (required) | Campaign plan JSON file | — |
+| `--run-log-dir <dir>` | Override run-log directory for campaign execution audit | — |
+| `--yes` | Confirm execution-readiness validation | `false` |
+
+### `campaign report`
+
+Summarize campaign and mutation run logs.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--run-log-dir <dir>` (required) | Directory containing run-log JSON artifacts |
+
+---
+
+## Creator Media And Live Planning
+
+### `media video plan`
+
+Plan a native Substack video post without uploading the file.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--file <file>` (required) | Video file to package |
+| `--post <markdown>` (required) | Markdown post file with metadata |
+| `--run-log-dir <dir>` | Write a local media planning run log |
+
+### `media audio plan`
+
+Plan a native Substack audio or podcast post without uploading the file.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--file <file>` (required) | Audio file to package |
+| `--post <markdown>` (required) | Markdown post file with metadata |
+| `--run-log-dir <dir>` | Write a local media planning run log |
+
+### `live plan`
+
+Plan a Substack live video or RTMP event without creating it in the dashboard.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--title <title>` (required) | Live video title | — |
+| `--at <timestamp>` (required) | Future ISO timestamp for the live event | — |
+| `--audience <audience>` | `everyone`, `subscribers`, or `paid` | `everyone` |
+| `--run-log-dir <dir>` | Write a local live planning run log | — |
+
+---
+
+## Creator Analytics, Growth, And Community
+
+### `analytics snapshot`
+
+Capture or dry-run a Creator OS analytics snapshot. Live analytics are fetched only when `--dry-run` is omitted and a numeric `--post-id` is supplied.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--post-url <url>` (required) | Post URL to attach to the snapshot | — |
+| `--out <file>` (required) | Snapshot JSON output file | — |
+| `--post-id <id>` | Numeric Substack post ID for live post analytics | — |
+| `--campaign <id>` | Campaign ID to attach | — |
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--run-log-dir <dir>` | Write a local analytics snapshot run log | — |
+| `--dry-run` | Build the snapshot shape without fetching or writing live analytics | `false` |
+
+### `analytics trend`
+
+Summarize growth trends from local snapshot artifacts.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--snapshots-dir <dir>` (required) | Directory containing snapshot JSON or JSONL files |
+
+### `growth report`
+
+Build a campaign growth report from a campaign plan and optional snapshots.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--campaign <file>` (required) | Campaign plan JSON file |
+| `--snapshots-dir <dir>` | Directory containing analytics snapshots |
+
+### `recommendations inspect`
+
+Probe recommendations availability for the current publication.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `boost inspect`
+
+Probe Boost availability for the current publication.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `comments triage`
+
+Fetch and triage comments for follow-up, testimonials, and moderation.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--post-id <id>` (required) | Post ID to triage | — |
+| `--limit <limit>` | Maximum comments to inspect | `100` |
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `notes campaign`
+
+Validate a campaign note schedule file without live note writes.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--post-url <url>` (required) | Post URL expected in each campaign note |
+| `--schedule-file <file>` (required) | JSON note schedule file |
+| `--limit <limit>` | Maximum selected note items to validate |
+
+---
+
 ## `trace`
 
 Review stored browser workflow trace artifacts.

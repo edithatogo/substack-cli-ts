@@ -52,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Auth session extraction and validation
 - Dual-transport design (browser | api | auto)
   - Automatic transport selection and fallback
-- MCP integration (17 tools)
+- MCP integration (21 tools)
   - MCP server over stdio
   - Surface manifest and summary resource
 - Trace and diagnostic commands

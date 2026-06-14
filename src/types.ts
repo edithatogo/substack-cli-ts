@@ -11,6 +11,16 @@ export interface PostMetadata {
   comments?: "enabled" | "disabled" | "paid" | "free" | undefined;
   scheduleAt?: string | undefined;
   shouldSendEmail?: boolean | undefined;
+  seoTitle?: string | undefined;
+  seoDescription?: string | undefined;
+  socialImage?: string | undefined;
+  canonicalUrl?: string | undefined;
+  campaign?: string | undefined;
+  utm?: string | undefined;
+  video?: string | undefined;
+  audio?: string | undefined;
+  transcript?: string | undefined;
+  thumbnail?: string | undefined;
 }
 
 export interface ProseMirrorMark {

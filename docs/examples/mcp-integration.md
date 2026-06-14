@@ -51,6 +51,10 @@ substack-cli mcp summary
 | `resolve_section` | Resolve a draft section against the current read-only inventory |
 | `find_duplicates` | Look up likely duplicate drafts using read-only inventory and mappings |
 | `list_draft_mappings` | List local source-file to Substack draft mappings |
+| `campaign.plan` | Build a Creator OS campaign plan without live writes |
+| `campaign.validate` | Validate a campaign artifact |
+| `analytics.trend` | Summarize local growth snapshot trends |
+| `campaign.report` | Summarize campaign run-log artifacts |
 
 All MCP tools are read-only by design for safety. Write operations (publish, draft, schedule, config, auth) are intentionally excluded from the MCP surface.
 

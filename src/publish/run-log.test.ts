@@ -9,6 +9,7 @@ import type { NoteWritePlan, NoteWriteResult } from "../substack-api/note-write.
 import type { PublishWritePlan, PublishWriteResult } from "../substack-api/publish-write.js";
 import {
   buildBrowserWorkflowRunLog,
+  buildCreatorWorkflowRunLog,
   buildDraftWriteRunLog,
   buildNoteWriteRunLog,
   buildPublishWriteRunLog,
@@ -327,6 +328,35 @@ describe("run log artifacts", () => {
     assert.equal(failedArtifact.actionType, "draft.create");
     assert.equal(failedArtifact.status, "failure");
     assert.equal(failedArtifact.error?.body?.includes("abcdef123456"), false);
+  });
+
+  it("builds Creator OS workflow logs", () => {
+    const artifact = buildCreatorWorkflowRunLog({
+      actionType: "campaign.plan",
+      publicationUrl: "https://rareinsights.substack.com/",
+      sourceFile: "posts/creator.md",
+      title: "Creator",
+      campaignId: "creator",
+      channel: "notes",
+      resultMessage: "Campaign plan generated.",
+    });
+
+    assert.equal(artifact.actionType, "campaign.plan");
+    assert.equal(artifact.status, "success");
+    assert.equal(artifact.campaignId, "creator");
+    assert.equal(artifact.channel, "notes");
+  });
+
+  it("builds Creator OS workflow log defaults and errors", () => {
+    const artifact = buildCreatorWorkflowRunLog({
+      actionType: "live.plan",
+      errorMessage: "Authorization=Bearer abcdef123456",
+    });
+
+    assert.equal(artifact.status, "success");
+    assert.equal(artifact.publicationUrl, "local");
+    assert.equal(artifact.error?.message, "Authorization=Bearer abcdef123456");
+    assert.equal(artifact.error?.body?.includes("abcdef123456"), false);
   });
 });
 

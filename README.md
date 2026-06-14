@@ -24,7 +24,8 @@ TypeScript CLI for publishing local Markdown files to a user-owned Substack publ
 - ✅ **API Publishing** — Create, update, publish, and schedule drafts via Substack's API
 - ✅ **Browser Automation** — Local Chrome or Browserbase remote sessions
 - ✅ **Media Upload** — Upload images via base64 data URLs
-- ✅ **MCP Server** — 17 tools, 2 resources, 2 prompts for AI agents
+- ✅ **MCP Server** — 21 tools, 2 resources, 2 prompts for AI agents
+- ✅ **Creator OS** — Campaign plans, media/live planning, growth snapshots, and community triage
 - ✅ **Rich Content** — Tables, embeds, paywall, subscribe, code blocks, blockquotes
 - ✅ **Draft Management** — Mappings, optimistic concurrency, section resolution, duplicates
 - ✅ **Workflow Traces** — Capture, review, and compare browser artifacts
@@ -131,6 +132,20 @@ node dist\cli.js note create --text-file examples\note.md --dry-run
 node dist\cli.js note schedule --text-file examples\note.md --post-url https://example.substack.com/p/post --scheduled-at 2026-05-01T09:00:00Z --dry-run
 node dist\cli.js note inspect --note-id 123
 node dist\cli.js note batch --schedule-file notes.json --dry-run
+node dist\cli.js campaign plan examples\basic.md --publish-at 2026-05-01T09:00:00Z --note-at 2026-05-01T10:00:00Z --channels notes,linkedin --out campaign.json
+node dist\cli.js campaign validate --plan campaign.json
+node dist\cli.js campaign execute --plan campaign.json --yes
+node dist\cli.js campaign report --run-log-dir .substack-cli\run-log
+node dist\cli.js media video plan --file video.mp4 --post examples\basic.md
+node dist\cli.js media audio plan --file episode.mp3 --post examples\basic.md
+node dist\cli.js live plan --title "Launch Q&A" --at 2026-05-01T11:00:00Z --audience paid
+node dist\cli.js analytics snapshot --post-url https://example.substack.com/p/post --out snapshot.json --dry-run
+node dist\cli.js analytics trend --snapshots-dir .substack-cli\analytics
+node dist\cli.js growth report --campaign campaign.json
+node dist\cli.js recommendations inspect
+node dist\cli.js boost inspect
+node dist\cli.js comments triage --post-id 123
+node dist\cli.js notes campaign --post-url https://example.substack.com/p/post --schedule-file notes.json
 node dist\cli.js config set-publication https://example.substack.com
 node dist\cli.js config set-runtime local
 node dist\cli.js doctor
@@ -187,6 +202,9 @@ node dist\cli.js batch schedule --schedule-file schedule.json --draft-ids-file d
 node dist\cli.js note create --text-file examples\note.md --yes --run-log-dir .substack-cli\run-log
 node dist\cli.js note schedule --text-file examples\note.md --post-url https://example.substack.com/p/post --scheduled-at 2026-05-01T09:00:00Z --yes --run-log-dir .substack-cli\run-log
 node dist\cli.js note batch --schedule-file notes.json --yes --run-log-dir .substack-cli\run-log
+node dist\cli.js campaign plan examples\basic.md --channels notes,x,youtube --out campaign.json
+node dist\cli.js media video plan --file launch.mp4 --post examples\basic.md
+node dist\cli.js live plan --title "Reader Q&A" --at 2026-05-01T11:00:00Z --audience subscribers
 node dist\cli.js trace review .substack-cli\publish-traces\review.json
 node dist\cli.js trace compare .substack-cli\publish-traces\review.json .substack-cli\publish-traces\publish.json
 node dist\cli.js trace fixture .substack-cli\publish-traces\review.json --out fixtures\trace\review.json

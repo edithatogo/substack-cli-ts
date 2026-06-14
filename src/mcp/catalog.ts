@@ -11,6 +11,14 @@ import {
 } from "../browser/draft-contract-matrix.js";
 import { inferDraftContract } from "../browser/draft-contract.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
+import {
+  buildCampaignPlan,
+  buildCampaignRunLogReport,
+  parseCampaignChannels,
+  readCampaignPlan,
+  validateCampaignPlan,
+} from "../creator/campaign.js";
+import { buildAnalyticsTrend } from "../creator/growth.js";
 import { runDoctor } from "../doctor/doctor.js";
 import { summarizeMediaManifest } from "../parser/media.js";
 import { evaluateDistributionPolicy } from "../policy/distribution.js";
@@ -55,6 +63,26 @@ const CompareFileArgs = {
 const FixtureArgs = {
   file: z.string().min(1),
   out: z.string().min(1),
+};
+
+const CampaignPlanArgs = {
+  file: z.string().min(1),
+  publishAt: z.string().optional(),
+  noteAt: z.array(z.string()).optional(),
+  channels: z.string().optional(),
+  runLogDir: z.string().optional(),
+};
+
+const PlanFileArg = {
+  planFile: z.string().min(1),
+};
+
+const SnapshotsDirArg = {
+  snapshotsDir: z.string().min(1),
+};
+
+const RunLogDirArg = {
+  runLogDir: z.string().min(1),
 };
 
 const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
@@ -595,6 +623,120 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
       );
     },
   },
+  {
+    group: "creator",
+    name: "campaign.plan",
+    description: "Build a Creator OS campaign plan from a Markdown post without live writes.",
+    cliCommand: "campaign plan <file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "campaign.plan",
+        {
+          description: "Build a Creator OS campaign plan from a Markdown post without live writes.",
+          inputSchema: CampaignPlanArgs,
+          annotations: {
+            title: "Campaign Plan",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ file, publishAt, noteAt, channels, runLogDir }) => {
+          const config = await loadEffectiveConfig();
+          const prepared = await preparePost(
+            String(file),
+            publishAt ? { mode: "schedule", scheduleAt: publishAt } : { mode: "publish" },
+          );
+          const plan = buildCampaignPlan(prepared, {
+            publicationUrl: config.publicationUrl,
+            publishAt,
+            noteAt,
+            channels: parseCampaignChannels(channels),
+            runLogDir,
+          });
+          return jsonResult(toJsonRecord(plan), "Campaign plan generated.");
+        },
+      );
+    },
+  },
+  {
+    group: "creator",
+    name: "campaign.validate",
+    description: "Validate a Creator OS campaign plan artifact.",
+    cliCommand: "campaign validate --plan <file>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "campaign.validate",
+        {
+          description: "Validate a Creator OS campaign plan artifact.",
+          inputSchema: PlanFileArg,
+          annotations: {
+            title: "Campaign Validate",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ planFile }) => {
+          const plan = await readCampaignPlan(String(planFile));
+          return jsonResult(
+            toJsonRecord(validateCampaignPlan(plan)),
+            "Campaign validation completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "creator",
+    name: "analytics.trend",
+    description: "Summarize Creator OS analytics snapshots from a local directory.",
+    cliCommand: "analytics trend --snapshots-dir <dir>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "analytics.trend",
+        {
+          description: "Summarize Creator OS analytics snapshots from a local directory.",
+          inputSchema: SnapshotsDirArg,
+          annotations: {
+            title: "Analytics Trend",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ snapshotsDir }) => {
+          const trend = await buildAnalyticsTrend(String(snapshotsDir));
+          return jsonResult(toJsonRecord(trend), "Analytics trend completed.");
+        },
+      );
+    },
+  },
+  {
+    group: "creator",
+    name: "campaign.report",
+    description: "Summarize campaign run-log artifacts.",
+    cliCommand: "campaign report --run-log-dir <dir>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "campaign.report",
+        {
+          description: "Summarize campaign run-log artifacts.",
+          inputSchema: RunLogDirArg,
+          annotations: {
+            title: "Campaign Report",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ runLogDir }) => {
+          const report = await buildCampaignRunLogReport(String(runLogDir));
+          return jsonResult(toJsonRecord(report), "Campaign run-log report completed.");
+        },
+      );
+    },
+  },
 ];
 
 export function buildMcpToolDescriptors(): McpToolDescriptor[] {
@@ -612,7 +754,7 @@ export function buildMcpToolGroups(): McpSurfaceGroup[] {
 }
 
 function groupDescriptors(descriptors: McpToolDescriptor[]): McpSurfaceGroup[] {
-  const order: McpToolDescriptor["group"][] = ["read", "review", "capture"];
+  const order: McpToolDescriptor["group"][] = ["read", "review", "capture", "creator"];
   const byGroup = new Map<McpToolDescriptor["group"], McpToolDescriptor[]>();
 
   for (const descriptor of descriptors) {
@@ -645,6 +787,8 @@ function groupDescription(group: McpToolDescriptor["group"]): string {
       return "Schema, payload, and workflow review helpers.";
     case "capture":
       return "Local capture and fixture helpers used during discovery.";
+    case "creator":
+      return "Read-only Creator OS campaign, growth, and run-log planning tools.";
   }
 }
 
