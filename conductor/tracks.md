@@ -280,6 +280,16 @@
 
 ---
 
+## Phase 13: Frontier Coverage Roadmap
+
+### Track 42: Frontier Coverage Roadmap
+
+- **Status:** Planned
+- **File:** [../tracks/frontier_coverage_roadmap_20260616/index.md](../tracks/frontier_coverage_roadmap_20260616/index.md)
+- **Summary:** Canonical 100% feature coverage roadmap with strict evidence standards, multiple execution paths, launch/admin follow-through, first-wave tooling, MCP-safe review surfaces, drift monitoring, and delivery discipline requiring task commits, phase review/pushes, and GitHub Actions follow-through.
+
+---
+
 ## Summary
 
 | Status | Count | Tracks |
@@ -287,8 +297,8 @@
 | **Complete / Implemented** | 41 | 01–41 |
 | **Partial / Read-only / Probe-only** | 0 | — |
 | **In Progress** | 0 | — |
-| **Planned** | 0 | — |
+| **Planned** | 1 | 42 |
 | **Blocked** | 0 | — |
-| **Total** | **41** | |
+| **Total** | **42** | |
 
-_Last updated: 2026-06-14_ — All local Conductor tracks are complete. Remaining publication, marketplace, authenticated client, and unverified live native-media endpoint checks are explicit external gates rather than open implementation tasks.
+_Last updated: 2026-06-16_ — Tracks 01–41 are locally complete. Track 42 is planned to define and implement the canonical frontier coverage roadmap, including external launch/admin gates and ongoing drift monitoring.
