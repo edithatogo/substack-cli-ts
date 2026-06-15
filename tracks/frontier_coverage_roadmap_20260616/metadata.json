@@ -1,7 +1,7 @@
 {
   "track_id": "frontier_coverage_roadmap_20260616",
   "type": "feature",
-  "status": "new",
+  "status": "planned",
   "created_at": "2026-06-15T14:23:05Z",
   "updated_at": "2026-06-15T14:23:05Z",
   "description": "Comprehensive roadmap for 100% Substack CLI feature coverage, multiple execution paths, optional hardening, external launch, and admin follow-through."

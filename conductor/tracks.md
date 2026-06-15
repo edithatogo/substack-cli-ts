@@ -285,7 +285,7 @@
 ### Track 42: Frontier Coverage Roadmap
 
 - **Status:** Planned
-- **File:** [../tracks/frontier_coverage_roadmap_20260616/](../tracks/frontier_coverage_roadmap_20260616/)
+- **File:** [../tracks/frontier_coverage_roadmap_20260616/index.md](../tracks/frontier_coverage_roadmap_20260616/index.md)
 - **Summary:** Canonical 100% feature coverage roadmap with strict evidence standards, multiple execution paths, launch/admin follow-through, first-wave tooling, MCP-safe review surfaces, drift monitoring, and delivery discipline requiring task commits, phase review/pushes, and GitHub Actions follow-through.
 
 ---
