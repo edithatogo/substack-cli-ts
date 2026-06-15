@@ -75,7 +75,7 @@
     "profile:heap": "node --heap-prof --heap-prof-dir=reports/profiling dist/cli.js inspect examples/basic.md"
   },
   "dependencies": {
-    "@browserbasehq/stagehand": "^3.0.0",
+    "@browserbasehq/stagehand": "^3.5.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@tiptap/core": "3.24.0",
     "@tiptap/extension-table": "3.24.0",
