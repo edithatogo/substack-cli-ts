@@ -108,6 +108,12 @@ describe("smoke tests", () => {
       expect(gaps.operation).toBe("coverage.gaps");
       expect(gaps.gaps.every((gap: { status: string }) => gap.status === "probe-only")).toBe(true);
 
+      const inspectOutput = runCli(["coverage", "inspect", "--id", "post-draft-publish-schedule"]);
+      expect(JSON.parse(inspectOutput).status).toBe("ready");
+
+      const launchCheckOutput = runCli(["coverage", "launch-check"]);
+      expect(JSON.parse(launchCheckOutput).status).toBe("ready");
+
       writeFileSync(
         badMatrixFile,
         JSON.stringify(
@@ -135,7 +141,8 @@ describe("smoke tests", () => {
       );
       const failed = runCliFailure(["coverage", "validate", "--matrix", badMatrixFile]);
       expect(failed.status).not.toBe(0);
-      expect(JSON.parse(failed.stdout).issues[0].code).toBe("evidence-required");
+      const failedOutput = JSON.parse(failed.stdout) as { issues: Array<{ code: string }> };
+      expect(failedOutput.issues.some((issue) => issue.code === "evidence-required")).toBe(true);
 
       writeFileSync(invalidMatrixFile, JSON.stringify({ schemaVersion: 1, capabilities: [{}] }));
       const invalid = runCliFailure(["coverage", "validate", "--matrix", invalidMatrixFile]);

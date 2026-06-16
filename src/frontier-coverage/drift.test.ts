@@ -97,6 +97,44 @@ describe("frontier coverage drift", () => {
         },
       ]),
     );
+    assert.throws(
+      () =>
+        parseDriftEvidenceSnapshots([
+          {
+            ref: "https://support.substack.com/video",
+            checkedAt: "2026-06-01T00:00:00.000Z",
+            status: "ok",
+          },
+          {
+            ref: "https://support.substack.com/video",
+            checkedAt: "2026-06-02T00:00:00.000Z",
+            status: "changed",
+          },
+        ]),
+      /duplicate ref/,
+    );
+  });
+
+  it("rejects duplicate snapshot refs before building reports", () => {
+    assert.throws(
+      () =>
+        buildFrontierDriftReport({
+          matrix: matrix(),
+          snapshots: [
+            {
+              ref: "https://support.substack.com/video",
+              checkedAt: "2026-06-01T00:00:00.000Z",
+              status: "ok",
+            },
+            {
+              ref: "https://support.substack.com/video",
+              checkedAt: "2026-06-02T00:00:00.000Z",
+              status: "changed",
+            },
+          ],
+        }),
+      /duplicate ref/,
+    );
   });
 
   it("blocks non-implemented capabilities that are missing decision records", () => {

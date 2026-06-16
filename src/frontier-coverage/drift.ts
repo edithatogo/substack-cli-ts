@@ -39,7 +39,9 @@ export function buildFrontierDriftReport(
   } = {},
 ): FrontierDriftReport {
   const matrix = options.matrix ?? FRONTIER_COVERAGE_MATRIX;
-  const snapshots = new Map((options.snapshots ?? []).map((snapshot) => [snapshot.ref, snapshot]));
+  const snapshotList = options.snapshots ?? [];
+  assertUniqueSnapshotRefs(snapshotList);
+  const snapshots = new Map(snapshotList.map((snapshot) => [snapshot.ref, snapshot]));
   const now = options.now ?? new Date();
   const staleAfterDays = options.staleAfterDays ?? 90;
 
@@ -109,7 +111,7 @@ export function parseDriftEvidenceSnapshots(value: unknown): DriftEvidenceSnapsh
   if (!Array.isArray(value)) {
     throw new Error("Drift evidence snapshots must be an array.");
   }
-  return value.map((snapshot, index) => {
+  const snapshots = value.map((snapshot, index) => {
     if (!snapshot || typeof snapshot !== "object") {
       throw new Error(`Drift evidence snapshot ${index} must be an object.`);
     }
@@ -130,6 +132,18 @@ export function parseDriftEvidenceSnapshots(value: unknown): DriftEvidenceSnapsh
       note: typeof record.note === "string" ? record.note : undefined,
     };
   });
+  assertUniqueSnapshotRefs(snapshots);
+  return snapshots;
+}
+
+function assertUniqueSnapshotRefs(snapshots: DriftEvidenceSnapshot[]): void {
+  const seenRefs = new Set<string>();
+  for (const [index, snapshot] of snapshots.entries()) {
+    if (seenRefs.has(snapshot.ref)) {
+      throw new Error(`Drift evidence snapshot ${index} has duplicate ref: ${snapshot.ref}`);
+    }
+    seenRefs.add(snapshot.ref);
+  }
 }
 
 function daysBetween(from: Date, to: Date): number {

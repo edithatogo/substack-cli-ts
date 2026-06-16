@@ -22,6 +22,7 @@ import { buildAnalyticsTrend } from "../creator/growth.js";
 import { runDoctor } from "../doctor/doctor.js";
 import {
   buildCoverageGapOutput,
+  buildCoverageInspectOutput,
   buildCoverageValidationOutput,
   loadCoverageMatrix,
   loadCoverageMatrixInput,
@@ -394,7 +395,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
     group: "review",
     name: "coverage.inspect",
     description: "Inspect a single frontier coverage capability by ID.",
-    cliCommand: "coverage gaps --domain <domain>",
+    cliCommand: "coverage inspect --id <capabilityId>",
     redacted: true,
     register(server) {
       server.registerTool(
@@ -410,17 +411,8 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         },
         async ({ capabilityId, matrixFile }) => {
           const matrix = await loadCoverageMatrix(matrixFile ? String(matrixFile) : undefined);
-          const capability = matrix.capabilities.find(
-            (candidate) => candidate.id === String(capabilityId),
-          );
           return jsonResult(
-            toJsonRecord({
-              operation: "coverage.inspect",
-              status: capability ? "ready" : "blocked",
-              capabilityId: String(capabilityId),
-              capability,
-              message: capability ? "Capability found." : "Capability ID was not found.",
-            }),
+            toJsonRecord(buildCoverageInspectOutput(matrix, String(capabilityId))),
             "Coverage capability inspection completed.",
           );
         },
@@ -431,7 +423,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
     group: "review",
     name: "launch.check",
     description: "Review launch/admin checklist readiness without performing external actions.",
-    cliCommand: "coverage decisions",
+    cliCommand: "coverage launch-check",
     redacted: true,
     register(server) {
       server.registerTool(

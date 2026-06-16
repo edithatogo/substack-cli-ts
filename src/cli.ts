@@ -73,11 +73,13 @@ import { runDoctor } from "./doctor/doctor.js";
 import {
   buildCoverageDecisionOutput,
   buildCoverageGapOutput,
+  buildCoverageInspectOutput,
   buildCoverageValidationOutput,
   loadCoverageMatrix,
   loadCoverageMatrixInput,
   renderCoverageReport,
 } from "./frontier-coverage/cli.js";
+import { validateLaunchChecklist } from "./frontier-coverage/launch-checklist.js";
 import {
   COVERAGE_DOMAINS,
   COVERAGE_STATUSES,
@@ -375,6 +377,38 @@ coverage
     console.log(JSON.stringify(output, null, 2));
     if (output.status === "blocked") process.exitCode = 1;
     if (options.id && output.count === 0) process.exitCode = 1;
+  });
+
+coverage
+  .command("inspect")
+  .description("Inspect a single frontier coverage capability by ID.")
+  .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
+  .requiredOption("--id <id>", "Capability ID to inspect")
+  .action(async (options: { matrix?: string | undefined; id: string }) => {
+    const matrix = await loadCoverageMatrix(options.matrix);
+    const output = buildCoverageInspectOutput(matrix, options.id);
+    console.log(JSON.stringify(output, null, 2));
+    if (output.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
+  .command("launch-check")
+  .description("Review launch/admin checklist readiness without performing external actions.")
+  .action(() => {
+    const checklist = validateLaunchChecklist();
+    console.log(
+      JSON.stringify(
+        {
+          operation: "launch.check",
+          status: checklist.status,
+          checklist,
+          note: "External launch and Substack admin follow-through remains owner-approved.",
+        },
+        null,
+        2,
+      ),
+    );
+    if (checklist.status === "blocked") process.exitCode = 1;
   });
 
 const mcp = program

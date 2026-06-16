@@ -351,7 +351,11 @@ function redactDiagnostics(values: string[] | undefined): string[] | undefined {
   if (!values?.length) return undefined;
   return values.map((value) =>
     value
-      .replace(/(cookie|authorization|password|token)=([^;&]+)/gi, "$1=[REDACTED]")
+      .replace(/(cookie|authorization|password|token)\s*[:=]\s*([^;&\n]+)/gi, "$1=[REDACTED]")
+      .replace(
+        /(session|sid|auth|access[_-]?token|refresh[_-]?token)\s*[:=]\s*([^;&\n]+)/gi,
+        "$1=[REDACTED]",
+      )
       .replace(/(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi, "$1 [REDACTED]"),
   );
 }

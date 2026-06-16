@@ -370,6 +370,7 @@ describe("run log artifacts", () => {
       unsupportedEndpoints: [
         "https://rareinsights.substack.com/api/private?token=secret-token",
         "Authorization=Bearer abcdef123456",
+        "Cookie: session=header-secret",
       ],
       manualAdminGates: ["Substack admin dashboard owner approval"],
       staleDocs: ["docs/frontier-coverage-roadmap.md"],
@@ -382,9 +383,10 @@ describe("run log artifacts", () => {
 
       assert.equal(stored.actionType, "coverage.audit");
       assert.equal(stored.status, "failure");
-      assert.equal(stored.diagnostics?.unsupportedEndpoints?.length, 2);
+      assert.equal(stored.diagnostics?.unsupportedEndpoints?.length, 3);
       assert.equal(JSON.stringify(stored).includes("secret-token"), false);
       assert.equal(JSON.stringify(stored).includes("abcdef123456"), false);
+      assert.equal(JSON.stringify(stored).includes("header-secret"), false);
       assert.deepEqual(stored.diagnostics?.manualAdminGates, [
         "Substack admin dashboard owner approval",
       ]);

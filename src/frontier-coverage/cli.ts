@@ -51,6 +51,14 @@ export interface CoverageDecisionOutput {
   }>;
 }
 
+export interface CoverageInspectOutput {
+  operation: "coverage.inspect";
+  status: "ready" | "blocked";
+  capabilityId: string;
+  capability?: CoverageCapability | undefined;
+  message: string;
+}
+
 export async function loadCoverageMatrix(path?: string | undefined): Promise<CoverageMatrix> {
   if (!path) return FRONTIER_COVERAGE_MATRIX;
   return parseCoverageMatrix(JSON.parse(await readFile(path, "utf8")));
@@ -143,5 +151,19 @@ export function buildCoverageDecisionOutput(
         ? "Decision record ID was not found."
         : "Decision records returned.",
     decisions,
+  };
+}
+
+export function buildCoverageInspectOutput(
+  matrix: CoverageMatrix,
+  capabilityId: string,
+): CoverageInspectOutput {
+  const capability = matrix.capabilities.find((candidate) => candidate.id === capabilityId);
+  return {
+    operation: "coverage.inspect",
+    status: capability ? "ready" : "blocked",
+    capabilityId,
+    capability,
+    message: capability ? "Capability found." : "Capability ID was not found.",
   };
 }

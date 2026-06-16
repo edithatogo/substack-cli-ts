@@ -6,6 +6,7 @@ import { describe, it } from "vitest";
 import {
   buildCoverageDecisionOutput,
   buildCoverageGapOutput,
+  buildCoverageInspectOutput,
   buildCoverageReportOutput,
   buildCoverageValidationOutput,
   loadCoverageMatrix,
@@ -69,6 +70,19 @@ describe("frontier coverage CLI helpers", () => {
     assert.equal(output.status, "blocked");
     assert.equal(output.count, 0);
     assert.match(output.message, /not found/i);
+  });
+
+  it("inspects coverage capabilities by ID", () => {
+    const output = buildCoverageInspectOutput(
+      FRONTIER_COVERAGE_MATRIX,
+      "post-draft-publish-schedule",
+    );
+    const missing = buildCoverageInspectOutput(FRONTIER_COVERAGE_MATRIX, "missing-capability");
+
+    assert.equal(output.status, "ready");
+    assert.equal(output.capability?.id, "post-draft-publish-schedule");
+    assert.equal(missing.status, "blocked");
+    assert.match(missing.message, /not found/i);
   });
 
   it("filters gaps by domain and renders markdown reports", () => {

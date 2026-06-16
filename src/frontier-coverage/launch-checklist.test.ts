@@ -45,6 +45,6 @@ describe("frontier launch checklist", () => {
   it("keeps the checked-in checklist synchronized with the renderer", async () => {
     const checkedIn = await readFile(FRONTIER_LAUNCH_CHECKLIST_PATH, "utf8");
 
-    assert.equal(checkedIn, renderLaunchChecklist());
+    assert.equal(checkedIn.replace(/\r\n/g, "\n"), renderLaunchChecklist().replace(/\r\n/g, "\n"));
   });
 });

@@ -13,12 +13,12 @@ This guide explains how to update the frontier coverage system without overclaim
    - `manual-admin`: the workflow belongs in the Substack dashboard or an external registry/account.
    - `unsupported`: the surface is app-only, private, unsafe, or outside this CLI boundary.
 3. Include evidence:
-   - `source` for implementation modules.
-   - `test` for unit, smoke, contract, or fixture tests.
-   - `doc` for local docs.
-   - `official-doc` for Substack support pages.
-   - `endpoint-capture` only after redaction.
-   - `decision-record` for non-implemented or unsafe surfaces.
+   - **source**: Implementation modules that establish the capability.
+   - **test**: Unit, smoke, contract, or fixture coverage that verifies behavior.
+   - **doc**: Local documentation that explains the supported workflow.
+   - **official-doc**: Substack support pages or external references used as current evidence.
+   - **endpoint-capture**: Redacted dashboard or API traces reviewed before automation changes.
+   - **decision-record**: Rationale for non-implemented, manual, or unsafe surfaces.
 4. Keep `primaryPath`, `fallbackPath`, and `manualPath` explicit unless the helper default is correct.
 5. Run:
 
