@@ -70,6 +70,19 @@ import {
 } from "./creator/growth.js";
 import { buildCreatorMediaPlan, buildLivePlan, type LiveAudience } from "./creator/media-plan.js";
 import { runDoctor } from "./doctor/doctor.js";
+import {
+  buildCoverageDecisionOutput,
+  buildCoverageGapOutput,
+  buildCoverageValidationOutput,
+  loadCoverageMatrix,
+  renderCoverageReport,
+} from "./frontier-coverage/cli.js";
+import {
+  COVERAGE_DOMAINS,
+  COVERAGE_STATUSES,
+  type CapabilityDomain,
+  type CoverageStatus,
+} from "./frontier-coverage/schema.js";
 import { runMcpServer } from "./mcp/server.js";
 import {
   buildMcpSummaryResource,
@@ -290,6 +303,77 @@ program
     if (report.status === "error" || report.status === "warn") {
       process.exitCode = 1;
     }
+  });
+
+const coverage = program
+  .command("coverage")
+  .description("Audit the canonical Substack frontier coverage roadmap.");
+
+coverage
+  .command("validate")
+  .description("Validate the canonical or supplied coverage matrix.")
+  .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
+  .action(async (options: { matrix?: string | undefined }) => {
+    const matrix = await loadCoverageMatrix(options.matrix);
+    const output = buildCoverageValidationOutput(matrix);
+    console.log(JSON.stringify(output, null, 2));
+    if (output.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
+  .command("report")
+  .description("Render a JSON or Markdown coverage report.")
+  .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
+  .option("--format <format>", "json or markdown", "json")
+  .option("--out <file>", "Write the report to a file instead of stdout")
+  .action(
+    async (options: { matrix?: string | undefined; format: string; out?: string | undefined }) => {
+      const format = parseCoverageFormat(options.format);
+      const matrix = await loadCoverageMatrix(options.matrix);
+      const report = renderCoverageReport(matrix, format);
+      if (options.out) {
+        await mkdir(dirname(options.out), { recursive: true });
+        await writeFile(options.out, report, "utf8");
+        console.log(JSON.stringify({ operation: "coverage.report", outputFile: options.out }));
+      } else {
+        process.stdout.write(report);
+      }
+    },
+  );
+
+coverage
+  .command("gaps")
+  .description("List non-implemented, decision-recorded, or missing-evidence coverage gaps.")
+  .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
+  .option("--status <status>", "Filter by coverage status")
+  .option("--domain <domain>", "Filter by capability domain")
+  .action(
+    async (options: {
+      matrix?: string | undefined;
+      status?: string | undefined;
+      domain?: string | undefined;
+    }) => {
+      const matrix = await loadCoverageMatrix(options.matrix);
+      const output = buildCoverageGapOutput(matrix, {
+        status: options.status ? parseCoverageStatus(options.status) : undefined,
+        domain: options.domain ? parseCoverageDomain(options.domain) : undefined,
+      });
+      console.log(JSON.stringify(output, null, 2));
+      if (output.status === "blocked") process.exitCode = 1;
+    },
+  );
+
+coverage
+  .command("decisions")
+  .description("Inspect gap decision records.")
+  .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
+  .option("--id <id>", "Return a single decision record by ID")
+  .action(async (options: { matrix?: string | undefined; id?: string | undefined }) => {
+    const matrix = await loadCoverageMatrix(options.matrix);
+    const output = buildCoverageDecisionOutput(matrix, options.id);
+    console.log(JSON.stringify(output, null, 2));
+    if (output.status === "blocked") process.exitCode = 1;
+    if (options.id && output.count === 0) process.exitCode = 1;
   });
 
 const mcp = program
@@ -3973,6 +4057,21 @@ function buildScheduledQueue(
     }));
 
   return [...postItems, ...draftItems, ...broadcastItems];
+}
+
+function parseCoverageFormat(value: string): "json" | "markdown" {
+  if (value === "json" || value === "markdown") return value;
+  throw new Error(`Unsupported coverage report format: ${value}. Use json or markdown.`);
+}
+
+function parseCoverageStatus(value: string): CoverageStatus {
+  if (COVERAGE_STATUSES.includes(value as CoverageStatus)) return value as CoverageStatus;
+  throw new Error(`Unsupported coverage status: ${value}.`);
+}
+
+function parseCoverageDomain(value: string): CapabilityDomain {
+  if (COVERAGE_DOMAINS.includes(value as CapabilityDomain)) return value as CapabilityDomain;
+  throw new Error(`Unsupported coverage domain: ${value}.`);
 }
 
 async function resolveNoteBatchItems(

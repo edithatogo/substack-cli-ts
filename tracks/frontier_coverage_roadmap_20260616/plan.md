@@ -32,13 +32,13 @@
 
 ## Phase 2: CLI, Docs, and Run-Log Surfaces
 
-- [ ] Task: Add coverage audit CLI commands
-    - [ ] Add commands for coverage validation, summary/report output, gap lookup, and decision-record inspection.
-    - [ ] Keep command handlers thin and delegate schema/matrix logic to modules.
-    - [ ] Add CLI smoke tests for successful validation, missing-evidence failure, and generated report output.
-    - [ ] Run focused validation for the CLI task.
-    - [ ] Self-review the CLI task diff and apply safe fixes.
-    - [ ] Commit the completed CLI task.
+- [x] Task: Add coverage audit CLI commands
+    - [x] Add commands for coverage validation, summary/report output, gap lookup, and decision-record inspection.
+    - [x] Keep command handlers thin and delegate schema/matrix logic to modules.
+    - [x] Add CLI smoke tests for successful validation, missing-evidence failure, and generated report output.
+    - [x] Run focused validation for the CLI task.
+    - [x] Self-review the CLI task diff and apply safe fixes.
+    - [x] Commit the completed CLI task.
 - [ ] Task: Add launch/admin checklist artifacts
     - [ ] Add checklists for npm publish, GitHub release/provenance, MCP registry, VS Code, Copilot, Claude, Gemini, Codex, Substack admin, support, security, and rollback readiness.
     - [ ] Add docs explaining account-gated/manual/admin boundaries.

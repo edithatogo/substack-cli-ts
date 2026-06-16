@@ -91,6 +91,55 @@ describe("smoke tests", () => {
     }
   });
 
+  it("coverage audit commands smoke through the CLI", () => {
+    const temp = mkdtempSync(resolve(tmpdir(), "substack-coverage-smoke-"));
+    const badMatrixFile = resolve(temp, "bad-matrix.json");
+
+    try {
+      const validationOutput = runCli(["coverage", "validate"]);
+      expect(JSON.parse(validationOutput).status).toBe("ready");
+
+      const reportOutput = runCli(["coverage", "report", "--format", "markdown"]);
+      expect(reportOutput).toContain("# Frontier Coverage Roadmap");
+
+      const gapOutput = runCli(["coverage", "gaps", "--status", "probe-only"]);
+      const gaps = JSON.parse(gapOutput);
+      expect(gaps.operation).toBe("coverage.gaps");
+      expect(gaps.gaps.every((gap: { status: string }) => gap.status === "probe-only")).toBe(true);
+
+      writeFileSync(
+        badMatrixFile,
+        JSON.stringify(
+          {
+            schemaVersion: 1,
+            capabilities: [
+              {
+                id: "bad",
+                name: "Bad coverage row",
+                domain: "post-editor",
+                status: "implemented",
+                paths: ["cli", "browser", "manual-admin"],
+                primaryPath: "cli",
+                fallbackPath: "browser",
+                manualPath: "manual-admin",
+                safetyClass: "read-only",
+                evidence: [],
+                nextAction: "Add evidence.",
+              },
+            ],
+          },
+          null,
+          2,
+        ),
+      );
+      const failed = runCliFailure(["coverage", "validate", "--matrix", badMatrixFile]);
+      expect(failed.status).not.toBe(0);
+      expect(JSON.parse(failed.stdout).issues[0].code).toBe("evidence-required");
+    } finally {
+      rmSync(temp, { recursive: true, force: true });
+    }
+  });
+
   it("fixtures are valid ProseMirror documents", () => {
     const fixturesDir = resolve(import.meta.dirname, "../../fixtures/prosemirror");
     for (const file of [
@@ -114,4 +163,14 @@ function runCli(args: string[]): string {
     encoding: "utf8",
     timeout: 30000,
   });
+}
+
+function runCliFailure(args: string[]): { status: number | undefined; stdout: string } {
+  try {
+    runCli(args);
+    throw new Error(`Expected command to fail: ${args.join(" ")}`);
+  } catch (error) {
+    const failed = error as { status?: number; stdout?: string };
+    return { status: failed.status, stdout: failed.stdout ?? "" };
+  }
 }
