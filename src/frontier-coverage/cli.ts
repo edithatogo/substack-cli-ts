@@ -14,7 +14,7 @@ export interface CoverageValidationOutput {
   operation: "coverage.validate";
   status: "ready" | "blocked";
   issueCount: number;
-  summary: ReturnType<typeof summarizeCoverageMatrix>;
+  summary?: ReturnType<typeof summarizeCoverageMatrix> | undefined;
   issues: ReturnType<typeof validateCoverageMatrix>["issues"];
 }
 
@@ -41,6 +41,7 @@ export interface CoverageDecisionOutput {
   status: "ready" | "blocked";
   id?: string | undefined;
   count: number;
+  message: string;
   decisions: Array<{
     capabilityId: string;
     capability: string;
@@ -55,13 +56,18 @@ export async function loadCoverageMatrix(path?: string | undefined): Promise<Cov
   return parseCoverageMatrix(JSON.parse(await readFile(path, "utf8")));
 }
 
-export function buildCoverageValidationOutput(matrix: CoverageMatrix): CoverageValidationOutput {
-  const report = validateCoverageMatrix(matrix);
+export async function loadCoverageMatrixInput(path?: string | undefined): Promise<unknown> {
+  if (!path) return FRONTIER_COVERAGE_MATRIX;
+  return JSON.parse(await readFile(path, "utf8"));
+}
+
+export function buildCoverageValidationOutput(value: unknown): CoverageValidationOutput {
+  const report = validateCoverageMatrix(value);
   return {
     operation: "coverage.validate",
     status: report.status,
     issueCount: report.issueCount,
-    summary: summarizeCoverageMatrix(matrix),
+    summary: report.status === "ready" ? summarizeCoverageMatrix(value) : undefined,
     issues: report.issues,
   };
 }
@@ -126,9 +132,16 @@ export function buildCoverageDecisionOutput(
     }));
   return {
     operation: "coverage.decisions",
-    status: validateCoverageMatrix(matrix).status,
+    status:
+      validateCoverageMatrix(matrix).status === "blocked" || (Boolean(id) && decisions.length === 0)
+        ? "blocked"
+        : "ready",
     id,
     count: decisions.length,
+    message:
+      id && decisions.length === 0
+        ? "Decision record ID was not found."
+        : "Decision records returned.",
     decisions,
   };
 }

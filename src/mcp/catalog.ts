@@ -24,10 +24,16 @@ import {
   buildCoverageGapOutput,
   buildCoverageValidationOutput,
   loadCoverageMatrix,
+  loadCoverageMatrixInput,
 } from "../frontier-coverage/cli.js";
 import { validateLaunchChecklist } from "../frontier-coverage/launch-checklist.js";
 import { FRONTIER_COVERAGE_MATRIX } from "../frontier-coverage/matrix.js";
-import type { CapabilityDomain, CoverageStatus } from "../frontier-coverage/schema.js";
+import {
+  COVERAGE_DOMAINS,
+  COVERAGE_STATUSES,
+  type CapabilityDomain,
+  type CoverageStatus,
+} from "../frontier-coverage/schema.js";
 import { summarizeMediaManifest } from "../parser/media.js";
 import { evaluateDistributionPolicy } from "../policy/distribution.js";
 import { preparePost } from "../publish/prepare.js";
@@ -107,6 +113,16 @@ const CoverageInspectArgs = {
   capabilityId: z.string().min(1),
   matrixFile: z.string().min(1).optional(),
 };
+
+function parseCoverageStatus(value: string): CoverageStatus {
+  if (COVERAGE_STATUSES.includes(value as CoverageStatus)) return value as CoverageStatus;
+  throw new Error(`Unsupported coverage status: ${value}.`);
+}
+
+function parseCoverageDomain(value: string): CapabilityDomain {
+  if (COVERAGE_DOMAINS.includes(value as CapabilityDomain)) return value as CapabilityDomain;
+  throw new Error(`Unsupported coverage domain: ${value}.`);
+}
 
 const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   {
@@ -332,7 +348,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           },
         },
         async ({ matrixFile }) => {
-          const matrix = await loadCoverageMatrix(matrixFile ? String(matrixFile) : undefined);
+          const matrix = await loadCoverageMatrixInput(matrixFile ? String(matrixFile) : undefined);
           return jsonResult(
             toJsonRecord(buildCoverageValidationOutput(matrix)),
             "Coverage matrix validation completed.",
@@ -364,8 +380,8 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           return jsonResult(
             toJsonRecord(
               buildCoverageGapOutput(matrix, {
-                status: status as CoverageStatus | undefined,
-                domain: domain as CapabilityDomain | undefined,
+                status: status ? parseCoverageStatus(String(status)) : undefined,
+                domain: domain ? parseCoverageDomain(String(domain)) : undefined,
               }),
             ),
             "Coverage gap summary completed.",

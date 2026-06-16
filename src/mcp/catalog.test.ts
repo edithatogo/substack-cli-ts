@@ -143,4 +143,24 @@ describe("registerMcpTools", () => {
     assert.equal(missing.structuredContent.message, "Capability ID was not found.");
     assert.equal(launch.structuredContent.checklist.status, "ready");
   });
+
+  it("rejects invalid coverage gap filters", async () => {
+    const handlers = new Map<string, (args: Record<string, unknown>) => Promise<unknown>>();
+    const mockServer = {
+      registerTool: (name: string, _schema: unknown, handler: unknown) => {
+        handlers.set(name, handler as (args: Record<string, unknown>) => Promise<unknown>);
+      },
+    };
+
+    registerMcpTools(mockServer as Parameters<typeof registerMcpTools>[0]);
+
+    await assert.rejects(
+      () => handlers.get("coverage.gaps")?.({ status: "finished" }),
+      /Unsupported coverage status/,
+    );
+    await assert.rejects(
+      () => handlers.get("coverage.gaps")?.({ domain: "newsletter" }),
+      /Unsupported coverage domain/,
+    );
+  });
 });

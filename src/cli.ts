@@ -75,6 +75,7 @@ import {
   buildCoverageGapOutput,
   buildCoverageValidationOutput,
   loadCoverageMatrix,
+  loadCoverageMatrixInput,
   renderCoverageReport,
 } from "./frontier-coverage/cli.js";
 import {
@@ -314,8 +315,8 @@ coverage
   .description("Validate the canonical or supplied coverage matrix.")
   .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
   .action(async (options: { matrix?: string | undefined }) => {
-    const matrix = await loadCoverageMatrix(options.matrix);
-    const output = buildCoverageValidationOutput(matrix);
+    const value = await loadCoverageMatrixInput(options.matrix);
+    const output = buildCoverageValidationOutput(value);
     console.log(JSON.stringify(output, null, 2));
     if (output.status === "blocked") process.exitCode = 1;
   });

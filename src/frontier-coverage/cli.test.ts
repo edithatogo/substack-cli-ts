@@ -9,6 +9,7 @@ import {
   buildCoverageReportOutput,
   buildCoverageValidationOutput,
   loadCoverageMatrix,
+  loadCoverageMatrixInput,
   renderCoverageReport,
 } from "./cli.js";
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
@@ -34,6 +35,19 @@ describe("frontier coverage CLI helpers", () => {
     assert.equal(matrix.capabilities.length, FRONTIER_COVERAGE_MATRIX.capabilities.length);
   });
 
+  it("loads raw matrix input for structured schema validation", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "coverage-matrix-invalid-"));
+    const file = join(dir, "matrix.json");
+    await writeFile(file, JSON.stringify({ schemaVersion: 1, capabilities: [{}] }), "utf8");
+
+    const input = await loadCoverageMatrixInput(file);
+    const output = buildCoverageValidationOutput(input);
+
+    assert.equal(output.status, "blocked");
+    assert.equal(output.summary, undefined);
+    assert.ok(output.issues.some((issue) => issue.code === "schema-invalid"));
+  });
+
   it("builds report, gap, and decision outputs", () => {
     const report = buildCoverageReportOutput(FRONTIER_COVERAGE_MATRIX);
     const gaps = buildCoverageGapOutput(FRONTIER_COVERAGE_MATRIX, { status: "probe-only" });
@@ -47,6 +61,14 @@ describe("frontier coverage CLI helpers", () => {
     assert.ok(gaps.gaps.every((gap) => gap.status === "probe-only"));
     assert.equal(decisions.count, 1);
     assert.equal(decisions.decisions[0]?.decisionRecord.id, "DR-analytics-dashboard");
+  });
+
+  it("blocks missing decision ID lookups in the JSON payload", () => {
+    const output = buildCoverageDecisionOutput(FRONTIER_COVERAGE_MATRIX, "DR-does-not-exist");
+
+    assert.equal(output.status, "blocked");
+    assert.equal(output.count, 0);
+    assert.match(output.message, /not found/i);
   });
 
   it("filters gaps by domain and renders markdown reports", () => {

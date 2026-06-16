@@ -94,6 +94,7 @@ describe("smoke tests", () => {
   it("coverage audit commands smoke through the CLI", () => {
     const temp = mkdtempSync(resolve(tmpdir(), "substack-coverage-smoke-"));
     const badMatrixFile = resolve(temp, "bad-matrix.json");
+    const invalidMatrixFile = resolve(temp, "invalid-matrix.json");
 
     try {
       const validationOutput = runCli(["coverage", "validate"]);
@@ -135,6 +136,19 @@ describe("smoke tests", () => {
       const failed = runCliFailure(["coverage", "validate", "--matrix", badMatrixFile]);
       expect(failed.status).not.toBe(0);
       expect(JSON.parse(failed.stdout).issues[0].code).toBe("evidence-required");
+
+      writeFileSync(invalidMatrixFile, JSON.stringify({ schemaVersion: 1, capabilities: [{}] }));
+      const invalid = runCliFailure(["coverage", "validate", "--matrix", invalidMatrixFile]);
+      const invalidOutput = JSON.parse(invalid.stdout);
+      expect(invalid.status).not.toBe(0);
+      expect(invalidOutput.status).toBe("blocked");
+      expect(invalidOutput.issues[0].code).toBe("schema-invalid");
+
+      const missingDecision = runCliFailure(["coverage", "decisions", "--id", "DR-missing"]);
+      const decisionOutput = JSON.parse(missingDecision.stdout);
+      expect(missingDecision.status).not.toBe(0);
+      expect(decisionOutput.status).toBe("blocked");
+      expect(decisionOutput.message).toContain("not found");
     } finally {
       rmSync(temp, { recursive: true, force: true });
     }
