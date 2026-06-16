@@ -9,8 +9,6 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
       id: "post-draft-publish-schedule",
       name: "Draft, publish, and schedule posts",
       domain: "post-editor",
-      primaryPath: "cli",
-      fallbackPath: "browser",
       safetyClass: "write-with-confirmation",
       evidence: [
         evidence("source", "Publish CLI commands", "src/cli.ts"),

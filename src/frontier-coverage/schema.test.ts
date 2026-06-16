@@ -28,6 +28,13 @@ describe("coverage schema", () => {
     assert.throws(() => parseCoverageMatrix(bad));
   });
 
+  it("reports top-level schema failures without a nested path", () => {
+    const report = validateCoverageMatrix(undefined);
+
+    assert.equal(report.status, "blocked");
+    assert.ok(report.issues.some((issue) => issue.message.startsWith("matrix:")));
+  });
+
   it("requires fallback and manual paths for covered capabilities", () => {
     const bad = matrix({
       fallbackPath: undefined,

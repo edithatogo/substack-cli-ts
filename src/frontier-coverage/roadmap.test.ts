@@ -70,4 +70,38 @@ describe("frontier coverage roadmap renderer", () => {
     assert.match(markdown, /No decision records are currently required\./);
     assert.match(markdown, /No external launch\/admin gates are currently recorded\./);
   });
+
+  it("renders decision review dates and escapes launch gate table cells", () => {
+    const matrix: CoverageMatrix = {
+      schemaVersion: 1,
+      capabilities: [
+        {
+          id: "publisher-gate",
+          name: "Publisher | gate",
+          domain: "distribution-agent",
+          status: "probe-only",
+          paths: ["api", "browser", "manual-admin"],
+          primaryPath: "api",
+          fallbackPath: "browser",
+          manualPath: "manual-admin",
+          safetyClass: "read-only",
+          evidence: [{ kind: "doc", label: "Distribution docs", ref: "docs/distribution.md" }],
+          nextAction: "Review | capture safely.",
+          decisionRecord: {
+            id: "DR-publisher-gate",
+            reason: "Publisher endpoints need account-gated verification.",
+            nextReview: "2026-09-01",
+          },
+          ownerDependency: "Publisher | admin access.",
+        },
+      ],
+    };
+
+    const markdown = renderCoverageRoadmap(matrix);
+
+    assert.match(markdown, /- Next review: 2026-09-01/);
+    assert.match(markdown, /Publisher \\| gate/);
+    assert.match(markdown, /Publisher \\| admin access\./);
+    assert.match(markdown, /Review \\| capture safely\./);
+  });
 });
