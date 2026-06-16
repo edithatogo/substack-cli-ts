@@ -21,7 +21,13 @@ export type RunLogActionType =
   | "analytics.snapshot"
   | "media.video.plan"
   | "media.audio.plan"
-  | "live.plan";
+  | "live.plan"
+  | "coverage.audit"
+  | "coverage.validate"
+  | "coverage.drift"
+  | "launch.check"
+  | "endpoint.capture.review"
+  | "decision.record";
 
 export interface RunLogArtifact {
   schemaVersion: 1;
@@ -49,6 +55,13 @@ export interface RunLogArtifact {
   campaignId?: string | undefined;
   channel?: string | undefined;
   assetFile?: string | undefined;
+  diagnostics?:
+    | {
+        unsupportedEndpoints?: string[] | undefined;
+        manualAdminGates?: string[] | undefined;
+        staleDocs?: string[] | undefined;
+      }
+    | undefined;
   resultMessage?: string | undefined;
   error?:
     | {
@@ -67,6 +80,12 @@ export function buildCreatorWorkflowRunLog(input: {
     | "media.video.plan"
     | "media.audio.plan"
     | "live.plan"
+    | "coverage.audit"
+    | "coverage.validate"
+    | "coverage.drift"
+    | "launch.check"
+    | "endpoint.capture.review"
+    | "decision.record"
   >;
   status?: "success" | "failure" | undefined;
   publicationUrl?: string | undefined;
@@ -76,6 +95,9 @@ export function buildCreatorWorkflowRunLog(input: {
   campaignId?: string | undefined;
   channel?: string | undefined;
   assetFile?: string | undefined;
+  unsupportedEndpoints?: string[] | undefined;
+  manualAdminGates?: string[] | undefined;
+  staleDocs?: string[] | undefined;
   resultMessage?: string | undefined;
   errorMessage?: string | undefined;
 }): RunLogArtifact {
@@ -92,6 +114,7 @@ export function buildCreatorWorkflowRunLog(input: {
     campaignId: input.campaignId,
     channel: input.channel,
     assetFile: input.assetFile,
+    diagnostics: buildRunLogDiagnostics(input),
     resultMessage: input.resultMessage,
     error: input.errorMessage
       ? {
@@ -100,6 +123,23 @@ export function buildCreatorWorkflowRunLog(input: {
         }
       : undefined,
   };
+}
+
+function buildRunLogDiagnostics(input: {
+  unsupportedEndpoints?: string[] | undefined;
+  manualAdminGates?: string[] | undefined;
+  staleDocs?: string[] | undefined;
+}): RunLogArtifact["diagnostics"] {
+  const diagnostics = {
+    unsupportedEndpoints: redactDiagnostics(input.unsupportedEndpoints),
+    manualAdminGates: redactDiagnostics(input.manualAdminGates),
+    staleDocs: redactDiagnostics(input.staleDocs),
+  };
+  return diagnostics.unsupportedEndpoints?.length ||
+    diagnostics.manualAdminGates?.length ||
+    diagnostics.staleDocs?.length
+    ? diagnostics
+    : undefined;
 }
 
 export async function writeRunLog(
@@ -305,4 +345,13 @@ function redactErrorBody(value: string | undefined): string | null {
   return value
     .replace(/(cookie|authorization|password|token)=([^;]+)/gi, "$1=[REDACTED]")
     .replace(/(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi, "$1 [REDACTED]");
+}
+
+function redactDiagnostics(values: string[] | undefined): string[] | undefined {
+  if (!values?.length) return undefined;
+  return values.map((value) =>
+    value
+      .replace(/(cookie|authorization|password|token)=([^;&]+)/gi, "$1=[REDACTED]")
+      .replace(/(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+/gi, "$1 [REDACTED]"),
+  );
 }

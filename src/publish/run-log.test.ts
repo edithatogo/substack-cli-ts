@@ -358,6 +358,60 @@ describe("run log artifacts", () => {
     assert.equal(artifact.error?.message, "Authorization=Bearer abcdef123456");
     assert.equal(artifact.error?.body?.includes("abcdef123456"), false);
   });
+
+  it("builds roadmap operation logs with redacted diagnostics", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-coverage-run-log-"));
+    const artifact = buildCreatorWorkflowRunLog({
+      actionType: "coverage.audit",
+      status: "failure",
+      publicationUrl: "https://rareinsights.substack.com/",
+      resultMessage: "Coverage audit found unsupported endpoints.",
+      errorMessage: "Coverage audit failed.",
+      unsupportedEndpoints: [
+        "https://rareinsights.substack.com/api/private?token=secret-token",
+        "Authorization=Bearer abcdef123456",
+      ],
+      manualAdminGates: ["Substack admin dashboard owner approval"],
+      staleDocs: ["docs/frontier-coverage-roadmap.md"],
+    });
+
+    try {
+      const written = await writeRunLog(temp, artifact);
+      assert.ok(written);
+      const stored = JSON.parse(await readFile(written, "utf8")) as typeof artifact;
+
+      assert.equal(stored.actionType, "coverage.audit");
+      assert.equal(stored.status, "failure");
+      assert.equal(stored.diagnostics?.unsupportedEndpoints?.length, 2);
+      assert.equal(JSON.stringify(stored).includes("secret-token"), false);
+      assert.equal(JSON.stringify(stored).includes("abcdef123456"), false);
+      assert.deepEqual(stored.diagnostics?.manualAdminGates, [
+        "Substack admin dashboard owner approval",
+      ]);
+      assert.deepEqual(stored.diagnostics?.staleDocs, ["docs/frontier-coverage-roadmap.md"]);
+      assert.equal(stored.error?.body, "Coverage audit failed.");
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
+  it("accepts all roadmap run-log action names", () => {
+    for (const actionType of [
+      "coverage.validate",
+      "coverage.drift",
+      "launch.check",
+      "endpoint.capture.review",
+      "decision.record",
+    ] as const) {
+      const artifact = buildCreatorWorkflowRunLog({
+        actionType,
+        resultMessage: `${actionType} recorded.`,
+      });
+
+      assert.equal(artifact.actionType, actionType);
+      assert.equal(artifact.diagnostics, undefined);
+    }
+  });
 });
 
 function draftPlan(): DraftWritePlan {

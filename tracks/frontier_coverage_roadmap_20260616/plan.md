@@ -46,13 +46,13 @@
     - [x] Run focused validation for the checklist task.
     - [x] Self-review the checklist task diff and apply safe fixes.
     - [x] Commit the completed checklist task.
-- [ ] Task: Add run-log actions for roadmap operations
-    - [ ] Add action names for `coverage.audit`, `coverage.validate`, `coverage.drift`, `launch.check`, `endpoint.capture.review`, and `decision.record`.
-    - [ ] Include diagnostics for unsupported endpoint evidence, manual/admin gates, and stale docs.
-    - [ ] Add tests for run-log serialization and redaction behavior.
-    - [ ] Run focused validation for the run-log task.
-    - [ ] Self-review the run-log task diff and apply safe fixes.
-    - [ ] Commit the completed run-log task.
+- [x] Task: Add run-log actions for roadmap operations
+    - [x] Add action names for `coverage.audit`, `coverage.validate`, `coverage.drift`, `launch.check`, `endpoint.capture.review`, and `decision.record`.
+    - [x] Include diagnostics for unsupported endpoint evidence, manual/admin gates, and stale docs.
+    - [x] Add tests for run-log serialization and redaction behavior.
+    - [x] Run focused validation for the run-log task.
+    - [x] Self-review the run-log task diff and apply safe fixes.
+    - [x] Commit the completed run-log task.
 - [ ] Task: Phase 2 review, push, and CI handoff
     - [ ] Run relevant project validation for Phase 2.
     - [ ] Review the full Phase 2 diff and apply safe fixes.
