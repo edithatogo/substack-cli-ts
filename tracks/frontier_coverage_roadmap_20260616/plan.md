@@ -23,12 +23,12 @@
     - [x] Run focused validation for the generated roadmap task.
     - [x] Self-review the generator task diff and apply safe fixes.
     - [x] Commit the completed generator task.
-- [ ] Task: Phase 1 review, push, and CI handoff
-    - [ ] Run relevant project validation for Phase 1.
-    - [ ] Review the full Phase 1 diff and apply safe fixes.
-    - [ ] Push the branch to the remote.
-    - [ ] Check GitHub Actions for the pushed branch or pull request.
-    - [ ] Address failing checks and push fixes before starting Phase 2.
+- [x] Task: Phase 1 review, push, and CI handoff
+    - [x] Run relevant project validation for Phase 1.
+    - [x] Review the full Phase 1 diff and apply safe fixes.
+    - [x] Push the branch to the remote.
+    - [x] Check GitHub Actions for the pushed branch or pull request.
+    - [x] Address failing checks and push fixes before starting Phase 2.
 
 ## Phase 2: CLI, Docs, and Run-Log Surfaces
 
