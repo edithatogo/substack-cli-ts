@@ -53,12 +53,12 @@
     - [x] Run focused validation for the run-log task.
     - [x] Self-review the run-log task diff and apply safe fixes.
     - [x] Commit the completed run-log task.
-- [ ] Task: Phase 2 review, push, and CI handoff
-    - [ ] Run relevant project validation for Phase 2.
-    - [ ] Review the full Phase 2 diff and apply safe fixes.
-    - [ ] Push the branch to the remote.
-    - [ ] Check GitHub Actions for the pushed branch or pull request.
-    - [ ] Address failing checks and push fixes before starting Phase 3.
+- [x] Task: Phase 2 review, push, and CI handoff
+    - [x] Run relevant project validation for Phase 2.
+    - [x] Review the full Phase 2 diff and apply safe fixes.
+    - [x] Push the branch to the remote.
+    - [x] Check GitHub Actions for the pushed branch or pull request.
+    - [x] Address failing checks and push fixes before starting Phase 3.
 
 ## Phase 3: MCP Read-Only Roadmap Tools
 
