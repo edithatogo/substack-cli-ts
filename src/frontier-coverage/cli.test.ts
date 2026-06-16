@@ -54,9 +54,13 @@ describe("frontier coverage CLI helpers", () => {
       domain: "analytics-revenue",
     });
     const markdown = renderCoverageReport(FRONTIER_COVERAGE_MATRIX, "markdown");
+    const json = JSON.parse(renderCoverageReport(FRONTIER_COVERAGE_MATRIX, "json")) as {
+      operation: string;
+    };
 
     assert.ok(gaps.gaps.every((gap) => gap.domain === "analytics-revenue"));
     assert.match(markdown, /^# Frontier Coverage Roadmap/);
+    assert.equal(json.operation, "coverage.report");
   });
 
   it("reports validation blockers for supplied matrices", () => {

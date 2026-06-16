@@ -81,6 +81,7 @@ describe("frontier coverage drift", () => {
 
     assert.equal(parsed[0]?.status, "ok");
     assert.throws(() => parseDriftEvidenceSnapshots({}));
+    assert.throws(() => parseDriftEvidenceSnapshots([null]));
     assert.throws(() => parseDriftEvidenceSnapshots([{}]));
     assert.throws(() =>
       parseDriftEvidenceSnapshots([
@@ -96,6 +97,32 @@ describe("frontier coverage drift", () => {
         },
       ]),
     );
+  });
+
+  it("blocks non-implemented capabilities that are missing decision records", () => {
+    const report = buildFrontierDriftReport({
+      matrix: {
+        schemaVersion: 1,
+        capabilities: [
+          {
+            ...matrix().capabilities[0],
+            status: "probe-only",
+            decisionRecord: undefined,
+          },
+        ],
+      },
+      snapshots: [
+        {
+          ref: "https://support.substack.com/video",
+          checkedAt: "2026-06-01T00:00:00.000Z",
+          status: "ok",
+        },
+      ],
+      now: new Date("2026-06-16T00:00:00.000Z"),
+    });
+
+    assert.equal(report.status, "blocked");
+    assert.equal(report.endpointCaptureDiagnostics[0]?.decisionRecordId, "missing-decision-record");
   });
 });
 
