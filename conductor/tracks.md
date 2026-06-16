@@ -284,9 +284,9 @@
 
 ### Track 42: Frontier Coverage Roadmap
 
-- **Status:** In Progress
+- **Status:** Implemented
 - **File:** [../tracks/frontier_coverage_roadmap_20260616/index.md](../tracks/frontier_coverage_roadmap_20260616/index.md)
-- **Summary:** Canonical 100% feature coverage roadmap with strict evidence standards, multiple execution paths, launch/admin follow-through, first-wave tooling, MCP-safe review surfaces, drift monitoring, and delivery discipline requiring task commits, phase review/pushes, and GitHub Actions follow-through.
+- **Summary:** Canonical 100% feature coverage roadmap, CLI/MCP review surfaces, launch/admin checklist, drift workflow, run-log actions, and maintenance docs are implemented. External launches, registry submissions, and Substack admin actions remain explicit owner-approved gates.
 
 ---
 
@@ -294,11 +294,11 @@
 
 | Status | Count | Tracks |
 | --- | ---: | --- |
-| **Complete / Implemented** | 41 | 01–41 |
+| **Complete / Implemented** | 42 | 01–42 |
 | **Partial / Read-only / Probe-only** | 0 | — |
 | **In Progress** | 0 | — |
-| **Planned** | 1 | 42 |
+| **Planned** | 0 | — |
 | **Blocked** | 0 | — |
 | **Total** | **42** | |
 
-_Last updated: 2026-06-16_ — Tracks 01–41 are locally complete. Track 42 is planned to define and implement the canonical frontier coverage roadmap, including external launch/admin gates and ongoing drift monitoring.
+_Last updated: 2026-06-17_ — Tracks 01–42 are locally implemented. Track 42 records external launch/admin gates explicitly rather than claiming account-gated actions were performed.

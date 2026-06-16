@@ -99,11 +99,11 @@
     - [x] Run focused validation for the docs task.
     - [x] Self-review the docs task diff and apply safe fixes.
     - [x] Commit the completed docs task.
-- [ ] Task: Final track review, push, GitHub Actions, and external-gate record
-    - [ ] Run full relevant validation, including `npm run typecheck`, `npm test`, and available CI-equivalent checks.
-    - [ ] Review the full track diff and apply safe fixes.
-    - [ ] Push the final branch state to the remote.
-    - [ ] Create or update the pull request if needed.
-    - [ ] Check GitHub Actions results for the track.
-    - [ ] Address failing actions and push fixes until checks pass or a true external/account gate is documented.
-    - [ ] Record any remaining npm, MCP registry, client, Substack admin, or authenticated live-check blockers as explicit external gates.
+- [x] Task: Final track review, push, GitHub Actions, and external-gate record
+    - [x] Run full relevant validation, including `npm run typecheck`, `npm test`, and available CI-equivalent checks.
+    - [x] Review the full track diff and apply safe fixes.
+    - [x] Push the final branch state to the remote.
+    - [x] Create or update the pull request if needed.
+    - [x] Check GitHub Actions results for the track.
+    - [x] Address failing actions and push fixes until checks pass or a true external/account gate is documented.
+    - [x] Record any remaining npm, MCP registry, client, Substack admin, or authenticated live-check blockers as explicit external gates.
