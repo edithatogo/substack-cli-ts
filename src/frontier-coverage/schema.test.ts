@@ -111,9 +111,7 @@ describe("coverage schema", () => {
   });
 });
 
-function matrix(
-  override: Partial<CoverageMatrix["capabilities"][number]> = {},
-): CoverageMatrix {
+function matrix(override: Partial<CoverageMatrix["capabilities"][number]> = {}): CoverageMatrix {
   return {
     schemaVersion: 1,
     capabilities: [

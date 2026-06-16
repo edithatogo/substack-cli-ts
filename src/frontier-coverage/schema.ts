@@ -212,7 +212,11 @@ function validateCapability(capability: CoverageCapability): CoverageValidationI
     add("manual-path-missing", "Manual/admin path must be listed in available paths.");
   }
 
-  if (!capability.primaryPath && capability.status !== "unsupported" && capability.status !== "unknown") {
+  if (
+    !capability.primaryPath &&
+    capability.status !== "unsupported" &&
+    capability.status !== "unknown"
+  ) {
     add("primary-path-required", "Covered or partially covered capabilities need a primary path.");
   }
 
@@ -220,7 +224,11 @@ function validateCapability(capability: CoverageCapability): CoverageValidationI
     add("fallback-path-required", "Covered capabilities need a fallback path.");
   }
 
-  if (!capability.manualPath && capability.status !== "unsupported" && capability.status !== "unknown") {
+  if (
+    !capability.manualPath &&
+    capability.status !== "unsupported" &&
+    capability.status !== "unknown"
+  ) {
     add("manual-path-required", "Covered capabilities need a documented manual/admin path.");
   }
 
@@ -233,11 +241,17 @@ function validateCapability(capability: CoverageCapability): CoverageValidationI
   }
 
   if (DECISION_REQUIRED_STATUSES.has(capability.status) && !capability.decisionRecord) {
-    add("decision-record-required", "Unsupported, probe-only, planning-only, and manual/admin gaps need a decision record.");
+    add(
+      "decision-record-required",
+      "Unsupported, probe-only, planning-only, and manual/admin gaps need a decision record.",
+    );
   }
 
   if (capability.status === "unsupported" && capability.safetyClass !== "unsupported") {
-    add("unsupported-safety-class", "Unsupported capabilities must use the unsupported safety class.");
+    add(
+      "unsupported-safety-class",
+      "Unsupported capabilities must use the unsupported safety class.",
+    );
   }
 
   return issues;

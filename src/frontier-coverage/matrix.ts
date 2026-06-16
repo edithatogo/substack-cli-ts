@@ -17,7 +17,8 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         evidence("test", "Publish write tests", "src/substack-api/publish-write.test.ts"),
         evidence("doc", "Command reference", "docs/api/commands.md"),
       ],
-      nextAction: "Keep browser and API transport fixtures current when Substack editor flows change.",
+      nextAction:
+        "Keep browser and API transport fixtures current when Substack editor flows change.",
     }),
     implemented({
       id: "post-editor-metadata",
@@ -83,7 +84,8 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         "DR-live-video-capture",
         "Live video uses planning-only coverage because stream keys, audience gates, co-hosting, chat, and recordings are account/live-session sensitive.",
       ),
-      nextAction: "Document manual RTMP setup and only automate after endpoint capture proves safe.",
+      nextAction:
+        "Document manual RTMP setup and only automate after endpoint capture proves safe.",
     }),
     implemented({
       id: "creator-campaign-planning",
@@ -133,7 +135,8 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         "DR-recommendations-boost",
         "Recommendations and Boost write/configuration endpoints are dashboard-gated; CLI coverage is inspection and diagnostics until safe endpoints are discovered.",
       ),
-      nextAction: "Capture recommendation and Boost dashboard endpoints, then decide whether write automation is appropriate.",
+      nextAction:
+        "Capture recommendation and Boost dashboard endpoints, then decide whether write automation is appropriate.",
     }),
     readOnly({
       id: "subscriber-count-list",
@@ -158,8 +161,10 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         "DR-subscriber-admin",
         "Subscriber mutation and export workflows are privacy-sensitive and remain manual/admin until endpoints and redaction rules are verified.",
       ),
-      nextAction: "Define redacted fixtures and manual recovery paths before considering subscriber writes.",
-      ownerDependency: "Publication owner/admin access may be required for exports, imports, and segment changes.",
+      nextAction:
+        "Define redacted fixtures and manual recovery paths before considering subscriber writes.",
+      ownerDependency:
+        "Publication owner/admin access may be required for exports, imports, and segment changes.",
     }),
     probeOnly({
       id: "analytics-growth-revenue",
@@ -178,7 +183,8 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         "DR-analytics-dashboard",
         "Many analytics and revenue views are dashboard-only; CLI coverage remains probe/read diagnostics plus local snapshots until contracts are verified.",
       ),
-      nextAction: "Map dashboard-only metrics to endpoint captures or manual snapshot instructions.",
+      nextAction:
+        "Map dashboard-only metrics to endpoint captures or manual snapshot instructions.",
     }),
     implemented({
       id: "comments-moderation",
@@ -192,7 +198,8 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         evidence("test", "Comment list tests", "src/substack-api/comment-list.test.ts"),
         evidence("doc", "Track 20 comments moderation", "conductor/tracks.md"),
       ],
-      nextAction: "Add decision records for mute/ban/spam quarantine if endpoints remain unavailable.",
+      nextAction:
+        "Add decision records for mute/ban/spam quarantine if endpoints remain unavailable.",
     }),
     unsupported({
       id: "chat-dm-live-chat-moderation",
@@ -203,15 +210,24 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         "DR-chat-dm-app-only",
         "Chat and DM surfaces are app/WebSocket oriented and are not safe CLI automation targets without a public contract.",
       ),
-      nextAction: "Keep manual/admin documentation current and revisit only if Substack publishes stable interfaces.",
+      nextAction:
+        "Keep manual/admin documentation current and revisit only if Substack publishes stable interfaces.",
     }),
     readOnly({
       id: "publication-settings-branding",
       name: "Publication settings, branding, welcome page, and checklist state",
       domain: "publication-admin",
       evidence: [
-        evidence("source", "Publication settings adapter", "src/substack-api/publication-settings.ts"),
-        evidence("test", "Publication settings tests", "src/substack-api/publication-settings.test.ts"),
+        evidence(
+          "source",
+          "Publication settings adapter",
+          "src/substack-api/publication-settings.ts",
+        ),
+        evidence(
+          "test",
+          "Publication settings tests",
+          "src/substack-api/publication-settings.test.ts",
+        ),
         evidence("doc", "Track 17 publication settings", "conductor/tracks.md"),
       ],
       nextAction: "Keep writes manual-admin until safe update endpoints are captured.",
@@ -282,7 +298,8 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         evidence("doc", "Release checklist", "docs/release-checklist.md"),
         evidence("source", "Package metadata", "package.json"),
       ],
-      nextAction: "Require live npm publish and release actions to remain explicit owner/admin gates.",
+      nextAction:
+        "Require live npm publish and release actions to remain explicit owner/admin gates.",
       ownerDependency: "npm and GitHub release credentials are external gates.",
     }),
     implemented({
@@ -297,7 +314,8 @@ export const FRONTIER_COVERAGE_MATRIX: CoverageMatrix = {
         evidence("test", "MCP catalog tests", "src/mcp/catalog.test.ts"),
         evidence("doc", "AI integration readiness", "docs/integrations/ai-readiness-matrix.md"),
       ],
-      nextAction: "Keep marketplace/registry submission as external gates until authenticated publisher credentials are available.",
+      nextAction:
+        "Keep marketplace/registry submission as external gates until authenticated publisher credentials are available.",
       ownerDependency: "Registry and client marketplace accounts are external gates.",
     }),
   ],
@@ -314,7 +332,9 @@ export function getCoverageCapabilitiesByDomain(domain: CapabilityDomain): Cover
 export function assertCoverageMatrixReady(matrix = FRONTIER_COVERAGE_MATRIX): void {
   const report = validateCoverageMatrix(matrix);
   if (report.status === "blocked") {
-    throw new Error(report.issues.map((issue) => `${issue.capabilityId}: ${issue.message}`).join("\n"));
+    throw new Error(
+      report.issues.map((issue) => `${issue.capabilityId}: ${issue.message}`).join("\n"),
+    );
   }
 }
 
@@ -353,7 +373,13 @@ function implemented(
 function readOnly(
   input: Omit<
     CoverageCapability,
-    "status" | "paths" | "primaryPath" | "fallbackPath" | "manualPath" | "safetyClass" | "missingEvidence"
+    | "status"
+    | "paths"
+    | "primaryPath"
+    | "fallbackPath"
+    | "manualPath"
+    | "safetyClass"
+    | "missingEvidence"
   >,
 ): CoverageCapability {
   return {
@@ -371,7 +397,13 @@ function readOnly(
 function probeOnly(
   input: Omit<
     CoverageCapability,
-    "status" | "paths" | "primaryPath" | "fallbackPath" | "manualPath" | "safetyClass" | "missingEvidence"
+    | "status"
+    | "paths"
+    | "primaryPath"
+    | "fallbackPath"
+    | "manualPath"
+    | "safetyClass"
+    | "missingEvidence"
   >,
 ): CoverageCapability {
   return {
@@ -389,7 +421,13 @@ function probeOnly(
 function planningOnly(
   input: Omit<
     CoverageCapability,
-    "status" | "paths" | "primaryPath" | "fallbackPath" | "manualPath" | "safetyClass" | "missingEvidence"
+    | "status"
+    | "paths"
+    | "primaryPath"
+    | "fallbackPath"
+    | "manualPath"
+    | "safetyClass"
+    | "missingEvidence"
   >,
 ): CoverageCapability {
   return {
@@ -407,7 +445,13 @@ function planningOnly(
 function unsupported(
   input: Omit<
     CoverageCapability,
-    "status" | "paths" | "primaryPath" | "fallbackPath" | "manualPath" | "safetyClass" | "missingEvidence"
+    | "status"
+    | "paths"
+    | "primaryPath"
+    | "fallbackPath"
+    | "manualPath"
+    | "safetyClass"
+    | "missingEvidence"
   >,
 ): CoverageCapability {
   return {
@@ -419,7 +463,11 @@ function unsupported(
   };
 }
 
-function evidence(kind: CoverageCapability["evidence"][number]["kind"], label: string, ref: string) {
+function evidence(
+  kind: CoverageCapability["evidence"][number]["kind"],
+  label: string,
+  ref: string,
+) {
   return { kind, label, ref };
 }
 

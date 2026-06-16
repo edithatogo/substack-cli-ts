@@ -48,7 +48,9 @@ export function renderCoverageRoadmap(matrix: CoverageMatrix = FRONTIER_COVERAGE
     "",
     "| Domain | Count |",
     "| --- | ---: |",
-    ...COVERAGE_DOMAINS.map((domain) => `| ${DOMAIN_LABELS[domain]} | ${summary.byDomain[domain]} |`),
+    ...COVERAGE_DOMAINS.map(
+      (domain) => `| ${DOMAIN_LABELS[domain]} | ${summary.byDomain[domain]} |`,
+    ),
     "",
     "## Capability Matrix",
     "",
