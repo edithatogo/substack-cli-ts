@@ -91,6 +91,76 @@ describe("smoke tests", () => {
     }
   });
 
+  it("coverage audit commands smoke through the CLI", () => {
+    const temp = mkdtempSync(resolve(tmpdir(), "substack-coverage-smoke-"));
+    const badMatrixFile = resolve(temp, "bad-matrix.json");
+    const invalidMatrixFile = resolve(temp, "invalid-matrix.json");
+
+    try {
+      const validationOutput = runCli(["coverage", "validate"]);
+      expect(JSON.parse(validationOutput).status).toBe("ready");
+
+      const reportOutput = runCli(["coverage", "report", "--format", "markdown"]);
+      expect(reportOutput).toContain("# Frontier Coverage Roadmap");
+
+      const gapOutput = runCli(["coverage", "gaps", "--status", "probe-only"]);
+      const gaps = JSON.parse(gapOutput);
+      expect(gaps.operation).toBe("coverage.gaps");
+      expect(gaps.gaps.every((gap: { status: string }) => gap.status === "probe-only")).toBe(true);
+
+      const inspectOutput = runCli(["coverage", "inspect", "--id", "post-draft-publish-schedule"]);
+      expect(JSON.parse(inspectOutput).status).toBe("ready");
+
+      const launchCheckOutput = runCli(["coverage", "launch-check"]);
+      expect(JSON.parse(launchCheckOutput).status).toBe("ready");
+
+      writeFileSync(
+        badMatrixFile,
+        JSON.stringify(
+          {
+            schemaVersion: 1,
+            capabilities: [
+              {
+                id: "bad",
+                name: "Bad coverage row",
+                domain: "post-editor",
+                status: "implemented",
+                paths: ["cli", "browser", "manual-admin"],
+                primaryPath: "cli",
+                fallbackPath: "browser",
+                manualPath: "manual-admin",
+                safetyClass: "read-only",
+                evidence: [],
+                nextAction: "Add evidence.",
+              },
+            ],
+          },
+          null,
+          2,
+        ),
+      );
+      const failed = runCliFailure(["coverage", "validate", "--matrix", badMatrixFile]);
+      expect(failed.status).not.toBe(0);
+      const failedOutput = JSON.parse(failed.stdout) as { issues: Array<{ code: string }> };
+      expect(failedOutput.issues.some((issue) => issue.code === "evidence-required")).toBe(true);
+
+      writeFileSync(invalidMatrixFile, JSON.stringify({ schemaVersion: 1, capabilities: [{}] }));
+      const invalid = runCliFailure(["coverage", "validate", "--matrix", invalidMatrixFile]);
+      const invalidOutput = JSON.parse(invalid.stdout);
+      expect(invalid.status).not.toBe(0);
+      expect(invalidOutput.status).toBe("blocked");
+      expect(invalidOutput.issues[0].code).toBe("schema-invalid");
+
+      const missingDecision = runCliFailure(["coverage", "decisions", "--id", "DR-missing"]);
+      const decisionOutput = JSON.parse(missingDecision.stdout);
+      expect(missingDecision.status).not.toBe(0);
+      expect(decisionOutput.status).toBe("blocked");
+      expect(decisionOutput.message).toContain("not found");
+    } finally {
+      rmSync(temp, { recursive: true, force: true });
+    }
+  });
+
   it("fixtures are valid ProseMirror documents", () => {
     const fixturesDir = resolve(import.meta.dirname, "../../fixtures/prosemirror");
     for (const file of [
@@ -114,4 +184,14 @@ function runCli(args: string[]): string {
     encoding: "utf8",
     timeout: 30000,
   });
+}
+
+function runCliFailure(args: string[]): { status: number | undefined; stdout: string } {
+  try {
+    runCli(args);
+    throw new Error(`Expected command to fail: ${args.join(" ")}`);
+  } catch (error) {
+    const failed = error as { status?: number; stdout?: string };
+    return { status: failed.status, stdout: failed.stdout ?? "" };
+  }
 }

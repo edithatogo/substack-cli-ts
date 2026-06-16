@@ -26,6 +26,10 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
 
 - [Feature Matrix](feature-matrix.md) — Comparison with other Substack publishing tools
 - [Substack Feature Coverage](substack-feature-coverage.md) — Detailed coverage of the Substack platform surface
+- [Frontier Coverage Roadmap](frontier-coverage-roadmap.md) — Generated 100% coverage matrix view with evidence, alternatives, and decision records
+- [Frontier Coverage Maintenance](frontier-coverage-maintenance.md) — How to update capabilities, evidence, decisions, and generated artifacts
+- [Frontier Launch/Admin Checklist](frontier-launch-admin-checklist.md) — External launch, registry, Substack admin, support, security, and rollback gates
+- [Frontier Drift Workflow](frontier-drift-workflow.md) — Official-doc and endpoint-capture drift refresh process
 - [Autonomous Implementation Record](integrations/autonomous-implementation-record.md) — Completed execution record and external gates for integration tracks
 - [AI Integration Readiness](integrations/ai-readiness-matrix.md) — MCP distribution status across AI clients and registries
 

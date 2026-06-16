@@ -20,6 +20,21 @@ import {
 } from "../creator/campaign.js";
 import { buildAnalyticsTrend } from "../creator/growth.js";
 import { runDoctor } from "../doctor/doctor.js";
+import {
+  buildCoverageGapOutput,
+  buildCoverageInspectOutput,
+  buildCoverageValidationOutput,
+  loadCoverageMatrix,
+  loadCoverageMatrixInput,
+} from "../frontier-coverage/cli.js";
+import { validateLaunchChecklist } from "../frontier-coverage/launch-checklist.js";
+import { FRONTIER_COVERAGE_MATRIX } from "../frontier-coverage/matrix.js";
+import {
+  COVERAGE_DOMAINS,
+  COVERAGE_STATUSES,
+  type CapabilityDomain,
+  type CoverageStatus,
+} from "../frontier-coverage/schema.js";
 import { summarizeMediaManifest } from "../parser/media.js";
 import { evaluateDistributionPolicy } from "../policy/distribution.js";
 import { preparePost } from "../publish/prepare.js";
@@ -84,6 +99,31 @@ const SnapshotsDirArg = {
 const RunLogDirArg = {
   runLogDir: z.string().min(1),
 };
+
+const OptionalMatrixArg = {
+  matrixFile: z.string().min(1).optional(),
+};
+
+const CoverageGapsArgs = {
+  matrixFile: z.string().min(1).optional(),
+  status: z.string().min(1).optional(),
+  domain: z.string().min(1).optional(),
+};
+
+const CoverageInspectArgs = {
+  capabilityId: z.string().min(1),
+  matrixFile: z.string().min(1).optional(),
+};
+
+function parseCoverageStatus(value: string): CoverageStatus {
+  if (COVERAGE_STATUSES.includes(value as CoverageStatus)) return value as CoverageStatus;
+  throw new Error(`Unsupported coverage status: ${value}.`);
+}
+
+function parseCoverageDomain(value: string): CapabilityDomain {
+  if (COVERAGE_DOMAINS.includes(value as CapabilityDomain)) return value as CapabilityDomain;
+  throw new Error(`Unsupported coverage domain: ${value}.`);
+}
 
 const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
   {
@@ -287,6 +327,126 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
           const policy = await evaluateDistributionPolicy();
           return jsonResult(toJsonRecord(policy), "Distribution policy review completed.");
         },
+      );
+    },
+  },
+  {
+    group: "review",
+    name: "coverage.validate",
+    description: "Validate the canonical or supplied frontier coverage matrix.",
+    cliCommand: "coverage validate",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "coverage.validate",
+        {
+          description: "Validate the canonical or supplied frontier coverage matrix.",
+          inputSchema: OptionalMatrixArg,
+          annotations: {
+            title: "Coverage Validate",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ matrixFile }) => {
+          const matrix = await loadCoverageMatrixInput(matrixFile ? String(matrixFile) : undefined);
+          return jsonResult(
+            toJsonRecord(buildCoverageValidationOutput(matrix)),
+            "Coverage matrix validation completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "review",
+    name: "coverage.gaps",
+    description: "Summarize frontier coverage gaps and decision-recorded surfaces.",
+    cliCommand: "coverage gaps",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "coverage.gaps",
+        {
+          description: "Summarize frontier coverage gaps and decision-recorded surfaces.",
+          inputSchema: CoverageGapsArgs,
+          annotations: {
+            title: "Coverage Gaps",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ matrixFile, status, domain }) => {
+          const matrix = await loadCoverageMatrix(matrixFile ? String(matrixFile) : undefined);
+          return jsonResult(
+            toJsonRecord(
+              buildCoverageGapOutput(matrix, {
+                status: status ? parseCoverageStatus(String(status)) : undefined,
+                domain: domain ? parseCoverageDomain(String(domain)) : undefined,
+              }),
+            ),
+            "Coverage gap summary completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "review",
+    name: "coverage.inspect",
+    description: "Inspect a single frontier coverage capability by ID.",
+    cliCommand: "coverage inspect --id <capabilityId>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "coverage.inspect",
+        {
+          description: "Inspect a single frontier coverage capability by ID.",
+          inputSchema: CoverageInspectArgs,
+          annotations: {
+            title: "Coverage Inspect",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ capabilityId, matrixFile }) => {
+          const matrix = await loadCoverageMatrix(matrixFile ? String(matrixFile) : undefined);
+          return jsonResult(
+            toJsonRecord(buildCoverageInspectOutput(matrix, String(capabilityId))),
+            "Coverage capability inspection completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "review",
+    name: "launch.check",
+    description: "Review launch/admin checklist readiness without performing external actions.",
+    cliCommand: "coverage launch-check",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "launch.check",
+        {
+          description:
+            "Review launch/admin checklist readiness without performing external actions.",
+          annotations: {
+            title: "Launch Check",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async () =>
+          jsonResult(
+            toJsonRecord({
+              operation: "launch.check",
+              checklist: validateLaunchChecklist(),
+              capabilityCount: FRONTIER_COVERAGE_MATRIX.capabilities.length,
+              note: "External launch and Substack admin follow-through remains owner-approved.",
+            }),
+            "Launch/admin readiness review completed.",
+          ),
       );
     },
   },

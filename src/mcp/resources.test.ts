@@ -9,6 +9,10 @@ describe("buildMcpResourceDescriptors", () => {
 
     assert.ok(resourceNames.includes("mcp.surface"));
     assert.ok(resourceNames.includes("mcp.summary"));
+    assert.ok(resourceNames.includes("coverage.matrix"));
+    assert.ok(resourceNames.includes("coverage.roadmap"));
+    assert.ok(resourceNames.includes("launch.checklist"));
+    assert.ok(resourceNames.includes("coverage.decisions"));
     assert.ok(resources.every((resource) => resource.redacted));
   });
 });

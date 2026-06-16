@@ -17,6 +17,34 @@ const MCP_RESOURCE_DESCRIPTORS: McpResourceSurface[] = [
     mimeType: "application/json",
     redacted: true,
   },
+  {
+    name: "coverage.matrix",
+    description: "Render the redacted canonical Substack frontier coverage matrix as JSON.",
+    uri: "substack-cli://coverage/matrix",
+    mimeType: "application/json",
+    redacted: true,
+  },
+  {
+    name: "coverage.roadmap",
+    description: "Render the generated frontier coverage roadmap as Markdown.",
+    uri: "substack-cli://coverage/roadmap",
+    mimeType: "text/markdown",
+    redacted: true,
+  },
+  {
+    name: "launch.checklist",
+    description: "Render the external launch and admin checklist as Markdown.",
+    uri: "substack-cli://launch/checklist",
+    mimeType: "text/markdown",
+    redacted: true,
+  },
+  {
+    name: "coverage.decisions",
+    description: "Render frontier coverage decision records and launch gate summaries as JSON.",
+    uri: "substack-cli://coverage/decisions",
+    mimeType: "application/json",
+    redacted: true,
+  },
 ];
 
 export function buildMcpResourceDescriptors(): McpResourceSurface[] {
