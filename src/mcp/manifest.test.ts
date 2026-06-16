@@ -17,7 +17,7 @@ describe("buildMcpSurfaceManifest", () => {
     assert.equal(manifest.transport, "stdio");
     assert.equal(manifest.status, "ready");
     assert.ok(manifest.groups.length > 0);
-    assert.equal(manifest.resources.length, 2);
+    assert.equal(manifest.resources.length, 6);
     assert.equal(manifest.prompts.length, 2);
     assert.ok(manifest.note.length > 0);
   });
@@ -40,7 +40,7 @@ describe("buildMcpSummaryResource", () => {
     assert.equal(summary.status, "ready");
     assert.equal(summary.toolCount, 21);
     assert.equal(summary.redactedToolCount, 21);
-    assert.equal(summary.resourceCount, 2);
+    assert.equal(summary.resourceCount, 6);
     assert.equal(summary.promptCount, 2);
     assert.deepEqual(summary.groups, ["read", "review", "capture", "creator"]);
     assert.ok(Array.isArray(summary.promptNames));
@@ -49,11 +49,17 @@ describe("buildMcpSummaryResource", () => {
 });
 
 describe("buildMcpResourceDescriptors", () => {
-  it("returns both resource descriptors", () => {
+  it("returns all resource descriptors", () => {
     const resources = buildMcpResourceDescriptors();
-    assert.equal(resources.length, 2);
-    assert.equal(resources[0]?.name, "mcp.surface");
-    assert.equal(resources[1]?.name, "mcp.summary");
+    const names = resources.map((resource) => resource.name);
+
+    assert.equal(resources.length, 6);
+    assert.ok(names.includes("mcp.surface"));
+    assert.ok(names.includes("mcp.summary"));
+    assert.ok(names.includes("coverage.matrix"));
+    assert.ok(names.includes("coverage.roadmap"));
+    assert.ok(names.includes("launch.checklist"));
+    assert.ok(names.includes("coverage.decisions"));
     assert.ok(resources.every((r) => r.redacted));
   });
 });

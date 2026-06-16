@@ -62,13 +62,13 @@
 
 ## Phase 3: MCP Read-Only Roadmap Tools
 
-- [ ] Task: Add safe MCP resources for coverage artifacts
-    - [ ] Expose coverage matrix, generated roadmap, launch checklists, and decision records as read-only MCP resources.
-    - [ ] Ensure outputs redact sensitive local paths, secrets, cookies, tokens, and account-private details.
-    - [ ] Add MCP tests for resource discovery and redaction.
-    - [ ] Run focused validation for the MCP resources task.
-    - [ ] Self-review the MCP resources task diff and apply safe fixes.
-    - [ ] Commit the completed MCP resources task.
+- [x] Task: Add safe MCP resources for coverage artifacts
+    - [x] Expose coverage matrix, generated roadmap, launch checklists, and decision records as read-only MCP resources.
+    - [x] Ensure outputs redact sensitive local paths, secrets, cookies, tokens, and account-private details.
+    - [x] Add MCP tests for resource discovery and redaction.
+    - [x] Run focused validation for the MCP resources task.
+    - [x] Self-review the MCP resources task diff and apply safe fixes.
+    - [x] Commit the completed MCP resources task.
 - [ ] Task: Add safe MCP tools for roadmap review
     - [ ] Add tools to validate the matrix, summarize gaps, inspect a capability, and review launch/admin readiness.
     - [ ] Do not add Substack write operations or broad mutation tools.
