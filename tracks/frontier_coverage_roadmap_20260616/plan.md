@@ -39,13 +39,13 @@
     - [x] Run focused validation for the CLI task.
     - [x] Self-review the CLI task diff and apply safe fixes.
     - [x] Commit the completed CLI task.
-- [ ] Task: Add launch/admin checklist artifacts
-    - [ ] Add checklists for npm publish, GitHub release/provenance, MCP registry, VS Code, Copilot, Claude, Gemini, Codex, Substack admin, support, security, and rollback readiness.
-    - [ ] Add docs explaining account-gated/manual/admin boundaries.
-    - [ ] Add tests or validation for checklist completeness.
-    - [ ] Run focused validation for the checklist task.
-    - [ ] Self-review the checklist task diff and apply safe fixes.
-    - [ ] Commit the completed checklist task.
+- [x] Task: Add launch/admin checklist artifacts
+    - [x] Add checklists for npm publish, GitHub release/provenance, MCP registry, VS Code, Copilot, Claude, Gemini, Codex, Substack admin, support, security, and rollback readiness.
+    - [x] Add docs explaining account-gated/manual/admin boundaries.
+    - [x] Add tests or validation for checklist completeness.
+    - [x] Run focused validation for the checklist task.
+    - [x] Self-review the checklist task diff and apply safe fixes.
+    - [x] Commit the completed checklist task.
 - [ ] Task: Add run-log actions for roadmap operations
     - [ ] Add action names for `coverage.audit`, `coverage.validate`, `coverage.drift`, `launch.check`, `endpoint.capture.review`, and `decision.record`.
     - [ ] Include diagnostics for unsupported endpoint evidence, manual/admin gates, and stale docs.
