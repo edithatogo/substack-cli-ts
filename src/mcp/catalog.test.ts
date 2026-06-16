@@ -3,9 +3,9 @@ import { describe, it } from "vitest";
 import { buildMcpToolDescriptors, buildMcpToolGroups, registerMcpTools } from "./catalog.js";
 
 describe("McpToolDescriptors", () => {
-  it("returns all 21 tool descriptors", () => {
+  it("returns all 25 tool descriptors", () => {
     const descriptors = buildMcpToolDescriptors();
-    assert.equal(descriptors.length, 21);
+    assert.equal(descriptors.length, 25);
     assert.ok(descriptors.every((d) => d.redacted));
     assert.ok(descriptors.every((d) => d.name.length > 0));
     assert.ok(descriptors.every((d) => d.description.length > 0));
@@ -21,6 +21,10 @@ describe("McpToolDescriptors", () => {
     assert.ok(names.includes("trace.review"));
     assert.ok(names.includes("trace.compare"));
     assert.ok(names.includes("policy"));
+    assert.ok(names.includes("coverage.validate"));
+    assert.ok(names.includes("coverage.gaps"));
+    assert.ok(names.includes("coverage.inspect"));
+    assert.ok(names.includes("launch.check"));
     assert.ok(names.includes("doctor"));
     assert.ok(names.includes("api.draft.contract"));
     assert.ok(names.includes("api.draft.contract.matrix"));
@@ -45,7 +49,7 @@ describe("McpToolDescriptors", () => {
     const creatorTools = descriptors.filter((d) => d.group === "creator");
 
     assert.equal(readTools.length, 2);
-    assert.equal(reviewTools.length, 6);
+    assert.equal(reviewTools.length, 10);
     assert.equal(captureTools.length, 9);
     assert.equal(creatorTools.length, 4);
   });
@@ -85,6 +89,10 @@ describe("buildMcpToolGroups", () => {
     const creatorGroup = groups.find((g) => g.name === "creator")!;
     assert.equal(creatorGroup.tools.length, 4);
     assert.ok(creatorGroup.tools.some((t) => t.name === "campaign.plan"));
+
+    const reviewGroup = groups.find((g) => g.name === "review")!;
+    assert.ok(reviewGroup.tools.some((t) => t.name === "coverage.validate"));
+    assert.ok(reviewGroup.tools.some((t) => t.name === "launch.check"));
   });
 
   it("sets redacted to true on all tool surfaces", () => {
@@ -105,6 +113,34 @@ describe("registerMcpTools", () => {
     };
 
     registerMcpTools(mockServer as Parameters<typeof registerMcpTools>[0]);
-    assert.equal(registered.length, 21);
+    assert.equal(registered.length, 25);
+  });
+
+  it("registers safe coverage tool handlers", async () => {
+    const handlers = new Map<string, (args: Record<string, unknown>) => Promise<unknown>>();
+    const mockServer = {
+      registerTool: (name: string, _schema: unknown, handler: unknown) => {
+        handlers.set(name, handler as (args: Record<string, unknown>) => Promise<unknown>);
+      },
+    };
+
+    registerMcpTools(mockServer as Parameters<typeof registerMcpTools>[0]);
+
+    const validation = (await handlers.get("coverage.validate")?.({})) as {
+      structuredContent: { status: string };
+    };
+    const missing = (await handlers.get("coverage.inspect")?.({
+      capabilityId: "missing-capability",
+    })) as {
+      structuredContent: { status: string; message: string };
+    };
+    const launch = (await handlers.get("launch.check")?.({})) as {
+      structuredContent: { checklist: { status: string } };
+    };
+
+    assert.equal(validation.structuredContent.status, "ready");
+    assert.equal(missing.structuredContent.status, "blocked");
+    assert.equal(missing.structuredContent.message, "Capability ID was not found.");
+    assert.equal(launch.structuredContent.checklist.status, "ready");
   });
 });

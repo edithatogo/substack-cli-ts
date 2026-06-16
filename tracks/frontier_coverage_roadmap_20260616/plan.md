@@ -69,13 +69,13 @@
     - [x] Run focused validation for the MCP resources task.
     - [x] Self-review the MCP resources task diff and apply safe fixes.
     - [x] Commit the completed MCP resources task.
-- [ ] Task: Add safe MCP tools for roadmap review
-    - [ ] Add tools to validate the matrix, summarize gaps, inspect a capability, and review launch/admin readiness.
-    - [ ] Do not add Substack write operations or broad mutation tools.
-    - [ ] Add MCP tool tests for happy paths, validation failures, and unsupported-feature diagnostics.
-    - [ ] Run focused validation for the MCP tools task.
-    - [ ] Self-review the MCP tools task diff and apply safe fixes.
-    - [ ] Commit the completed MCP tools task.
+- [x] Task: Add safe MCP tools for roadmap review
+    - [x] Add tools to validate the matrix, summarize gaps, inspect a capability, and review launch/admin readiness.
+    - [x] Do not add Substack write operations or broad mutation tools.
+    - [x] Add MCP tool tests for happy paths, validation failures, and unsupported-feature diagnostics.
+    - [x] Run focused validation for the MCP tools task.
+    - [x] Self-review the MCP tools task diff and apply safe fixes.
+    - [x] Commit the completed MCP tools task.
 - [ ] Task: Phase 3 review, push, and CI handoff
     - [ ] Run relevant project validation for Phase 3.
     - [ ] Review the full Phase 3 diff and apply safe fixes.
