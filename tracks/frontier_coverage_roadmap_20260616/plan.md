@@ -92,13 +92,13 @@
     - [x] Run focused validation for the drift task.
     - [x] Self-review the drift task diff and apply safe fixes.
     - [x] Commit the completed drift task.
-- [ ] Task: Add final roadmap documentation and examples
-    - [ ] Document how to add capabilities, evidence, fallback paths, decision records, and launch/admin results.
-    - [ ] Add examples for a fully covered feature, a read-only feature, a capture-first feature, and a manual/admin-only gate.
-    - [ ] Update Conductor and track documentation to reference Track 42 without overclaiming external gates.
-    - [ ] Run focused validation for the docs task.
-    - [ ] Self-review the docs task diff and apply safe fixes.
-    - [ ] Commit the completed docs task.
+- [x] Task: Add final roadmap documentation and examples
+    - [x] Document how to add capabilities, evidence, fallback paths, decision records, and launch/admin results.
+    - [x] Add examples for a fully covered feature, a read-only feature, a capture-first feature, and a manual/admin-only gate.
+    - [x] Update Conductor and track documentation to reference Track 42 without overclaiming external gates.
+    - [x] Run focused validation for the docs task.
+    - [x] Self-review the docs task diff and apply safe fixes.
+    - [x] Commit the completed docs task.
 - [ ] Task: Final track review, push, GitHub Actions, and external-gate record
     - [ ] Run full relevant validation, including `npm run typecheck`, `npm test`, and available CI-equivalent checks.
     - [ ] Review the full track diff and apply safe fixes.
