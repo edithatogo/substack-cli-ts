@@ -76,12 +76,12 @@
     - [x] Run focused validation for the MCP tools task.
     - [x] Self-review the MCP tools task diff and apply safe fixes.
     - [x] Commit the completed MCP tools task.
-- [ ] Task: Phase 3 review, push, and CI handoff
-    - [ ] Run relevant project validation for Phase 3.
-    - [ ] Review the full Phase 3 diff and apply safe fixes.
-    - [ ] Push the branch to the remote.
-    - [ ] Check GitHub Actions for the pushed branch or pull request.
-    - [ ] Address failing checks and push fixes before starting Phase 4.
+- [x] Task: Phase 3 review, push, and CI handoff
+    - [x] Run relevant project validation for Phase 3.
+    - [x] Review the full Phase 3 diff and apply safe fixes.
+    - [x] Push the branch to the remote.
+    - [x] Check GitHub Actions for the pushed branch or pull request.
+    - [x] Address failing checks and push fixes before starting Phase 4.
 
 ## Phase 4: Drift Monitoring and Final Track Closeout
 
