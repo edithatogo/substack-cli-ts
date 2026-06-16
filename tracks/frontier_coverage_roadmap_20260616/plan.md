@@ -16,13 +16,13 @@
     - [x] Run focused validation for the seeded matrix.
     - [x] Self-review the matrix task diff and apply safe fixes.
     - [x] Commit the completed matrix task.
-- [ ] Task: Generate the human-readable roadmap from the matrix
-    - [ ] Add a generator that renders the matrix into a stable Markdown roadmap.
-    - [ ] Include coverage status summaries, missing evidence, fallback coverage, launch gates, and next implementation lanes.
-    - [ ] Add tests or snapshots for generated roadmap output.
-    - [ ] Run focused validation for the generated roadmap task.
-    - [ ] Self-review the generator task diff and apply safe fixes.
-    - [ ] Commit the completed generator task.
+- [x] Task: Generate the human-readable roadmap from the matrix
+    - [x] Add a generator that renders the matrix into a stable Markdown roadmap.
+    - [x] Include coverage status summaries, missing evidence, fallback coverage, launch gates, and next implementation lanes.
+    - [x] Add tests or snapshots for generated roadmap output.
+    - [x] Run focused validation for the generated roadmap task.
+    - [x] Self-review the generator task diff and apply safe fixes.
+    - [x] Commit the completed generator task.
 - [ ] Task: Phase 1 review, push, and CI handoff
     - [ ] Run relevant project validation for Phase 1.
     - [ ] Review the full Phase 1 diff and apply safe fixes.
