@@ -85,13 +85,13 @@
 
 ## Phase 4: Drift Monitoring and Final Track Closeout
 
-- [ ] Task: Add official-doc and endpoint-drift workflow
-    - [ ] Add docs and scripts for refreshing official Substack support-page evidence before future coverage updates.
-    - [ ] Add diagnostics for endpoint shape changes, unavailable endpoints, and stale capture fixtures.
-    - [ ] Add tests for drift report parsing and stale-evidence detection where feasible.
-    - [ ] Run focused validation for the drift task.
-    - [ ] Self-review the drift task diff and apply safe fixes.
-    - [ ] Commit the completed drift task.
+- [x] Task: Add official-doc and endpoint-drift workflow
+    - [x] Add docs and scripts for refreshing official Substack support-page evidence before future coverage updates.
+    - [x] Add diagnostics for endpoint shape changes, unavailable endpoints, and stale capture fixtures.
+    - [x] Add tests for drift report parsing and stale-evidence detection where feasible.
+    - [x] Run focused validation for the drift task.
+    - [x] Self-review the drift task diff and apply safe fixes.
+    - [x] Commit the completed drift task.
 - [ ] Task: Add final roadmap documentation and examples
     - [ ] Document how to add capabilities, evidence, fallback paths, decision records, and launch/admin results.
     - [ ] Add examples for a fully covered feature, a read-only feature, a capture-first feature, and a manual/admin-only gate.

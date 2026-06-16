@@ -65,6 +65,7 @@
     "registry:publisher": "node scripts/mcp-publisher-helper.mjs",
     "registry:publisher:dry-run": "node scripts/mcp-publisher-helper.mjs dry-run",
     "integrations:validate": "node scripts/validate-client-integrations.mjs",
+    "frontier:drift": "npm run build && node scripts/frontier-coverage-drift.mjs",
     "quality": "npm run ci && npm run knip && npm run typecheck && npm run build && npm run test:coverage",
     "audit:prod": "npm audit --omit=dev",
     "knip": "knip",
