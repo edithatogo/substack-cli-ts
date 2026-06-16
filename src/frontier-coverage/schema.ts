@@ -163,7 +163,20 @@ export function validateCoverageMatrix(value: unknown): CoverageValidationReport
     };
   }
 
-  const issues = parsed.data.capabilities.flatMap(validateCapability);
+  const seenIds = new Set<string>();
+  const issues = parsed.data.capabilities.flatMap((capability) => {
+    const capabilityIssues = validateCapability(capability);
+    if (seenIds.has(capability.id)) {
+      capabilityIssues.push({
+        capabilityId: capability.id,
+        code: "duplicate-capability-id",
+        message: `Duplicate capability ID: ${capability.id}`,
+      });
+    } else {
+      seenIds.add(capability.id);
+    }
+    return capabilityIssues;
+  });
   return {
     status: issues.length === 0 ? "ready" : "blocked",
     issueCount: issues.length,

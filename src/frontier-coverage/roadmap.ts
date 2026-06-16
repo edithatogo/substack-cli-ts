@@ -129,5 +129,5 @@ function renderLaunchGates(capabilities: CoverageCapability[]): string[] {
 }
 
 function escapeCell(value: string): string {
-  return value.replaceAll("|", "\\|").replace(/\s+/g, " ").trim();
+  return value.replace(/\|/g, "\\|").replace(/\s+/g, " ").trim();
 }

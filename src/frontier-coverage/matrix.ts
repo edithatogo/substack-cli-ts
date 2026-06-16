@@ -352,19 +352,21 @@ function implemented(
     safetyClass?: CoverageCapability["safetyClass"];
   },
 ): CoverageCapability {
+  const {
+    primaryPath = "cli",
+    fallbackPath = "browser",
+    safetyClass = "read-only",
+    ...rest
+  } = input;
   return {
     status: "implemented",
-    paths: uniquePaths([
-      input.primaryPath ?? "cli",
-      input.fallbackPath ?? "browser",
-      "manual-admin",
-    ]),
-    primaryPath: input.primaryPath ?? "cli",
-    fallbackPath: input.fallbackPath ?? "browser",
+    paths: uniquePaths([primaryPath, fallbackPath, "manual-admin"]),
+    primaryPath,
+    fallbackPath,
     manualPath: "manual-admin",
-    safetyClass: input.safetyClass ?? "read-only",
+    safetyClass,
     missingEvidence: [],
-    ...input,
+    ...rest,
   };
 }
 

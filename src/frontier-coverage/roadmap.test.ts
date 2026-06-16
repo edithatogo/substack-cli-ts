@@ -42,7 +42,7 @@ describe("frontier coverage roadmap renderer", () => {
   it("keeps the checked-in roadmap synchronized with the renderer", async () => {
     const checkedIn = await readFile(FRONTIER_COVERAGE_ROADMAP_PATH, "utf8");
 
-    assert.equal(checkedIn, renderCoverageRoadmap());
+    assert.equal(checkedIn.replace(/\r\n/g, "\n"), renderCoverageRoadmap().replace(/\r\n/g, "\n"));
   });
 
   it("renders explicit empty states for decision records and launch gates", () => {

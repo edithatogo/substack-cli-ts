@@ -93,6 +93,16 @@ describe("coverage schema", () => {
     assert.ok(report.issues.some((issue) => issue.code === "evidence-required"));
   });
 
+  it("blocks duplicate capability IDs", () => {
+    const duplicate = matrix();
+    duplicate.capabilities.push({ ...duplicate.capabilities[0] });
+
+    const report = validateCoverageMatrix(duplicate);
+
+    assert.equal(report.status, "blocked");
+    assert.ok(report.issues.some((issue) => issue.code === "duplicate-capability-id"));
+  });
+
   it("requires decision records for unsupported and capture-first gaps", () => {
     const unsupported = matrix({
       status: "unsupported",

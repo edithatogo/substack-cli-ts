@@ -49,6 +49,16 @@ describe("frontier coverage matrix", () => {
     assert.ok(summary.byStatus.unsupported > 0);
   });
 
+  it("keeps implemented helper defaults when optional inputs are omitted", () => {
+    const postWorkflow = FRONTIER_COVERAGE_MATRIX.capabilities.find(
+      (capability) => capability.id === "post-draft-publish-schedule",
+    );
+
+    assert.equal(postWorkflow?.primaryPath, "cli");
+    assert.equal(postWorkflow?.fallbackPath, "browser");
+    assert.equal(postWorkflow?.safetyClass, "write-with-confirmation");
+  });
+
   it("lists capabilities by domain", () => {
     const media = getCoverageCapabilitiesByDomain("native-media");
 
