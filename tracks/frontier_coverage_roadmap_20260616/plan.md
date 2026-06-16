@@ -9,13 +9,13 @@
     - [x] Run focused validation for the schema task.
     - [x] Self-review the schema task diff and apply safe fixes.
     - [x] Commit the completed schema task.
-- [ ] Task: Seed the canonical Substack capability matrix
-    - [ ] Add machine-readable matrix rows for publishing, media, live, Creator OS, Notes/community, growth, analytics, moderation, publication/admin, integrations, distribution, and agent surfaces.
-    - [ ] Link existing implemented tracks, tests, docs, fixtures, and known external/admin gates as evidence.
-    - [ ] Add decision records for unsupported, dashboard-only, app-only, and capture-first surfaces.
-    - [ ] Run focused validation for the seeded matrix.
-    - [ ] Self-review the matrix task diff and apply safe fixes.
-    - [ ] Commit the completed matrix task.
+- [x] Task: Seed the canonical Substack capability matrix
+    - [x] Add machine-readable matrix rows for publishing, media, live, Creator OS, Notes/community, growth, analytics, moderation, publication/admin, integrations, and distribution/agent surfaces.
+    - [x] Link existing implemented tracks, tests, docs, fixtures, and known external/admin gates as evidence.
+    - [x] Add decision records for unsupported, dashboard-only, app-only, and capture-first surfaces.
+    - [x] Run focused validation for the seeded matrix.
+    - [x] Self-review the matrix task diff and apply safe fixes.
+    - [x] Commit the completed matrix task.
 - [ ] Task: Generate the human-readable roadmap from the matrix
     - [ ] Add a generator that renders the matrix into a stable Markdown roadmap.
     - [ ] Include coverage status summaries, missing evidence, fallback coverage, launch gates, and next implementation lanes.
