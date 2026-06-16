@@ -2,13 +2,13 @@
 
 ## Phase 1: Coverage Schema and Source of Truth
 
-- [ ] Task: Define the coverage data model and validation contract
-    - [ ] Add a typed coverage schema for capability domains, status labels, execution paths, safety classes, evidence links, and next actions.
-    - [ ] Add unit tests for required fields, invalid status labels, missing fallbacks, missing evidence, and unsupported-feature decision records.
-    - [ ] Implement the validator until the schema tests pass.
-    - [ ] Run focused validation for the schema task.
-    - [ ] Self-review the schema task diff and apply safe fixes.
-    - [ ] Commit the completed schema task.
+- [x] Task: Define the coverage data model and validation contract
+    - [x] Add a typed coverage schema for capability domains, status labels, execution paths, safety classes, evidence links, and next actions.
+    - [x] Add unit tests for required fields, invalid status labels, missing fallbacks, missing evidence, and unsupported-feature decision records.
+    - [x] Implement the validator until the schema tests pass.
+    - [x] Run focused validation for the schema task.
+    - [x] Self-review the schema task diff and apply safe fixes.
+    - [x] Commit the completed schema task.
 - [ ] Task: Seed the canonical Substack capability matrix
     - [ ] Add machine-readable matrix rows for publishing, media, live, Creator OS, Notes/community, growth, analytics, moderation, publication/admin, integrations, distribution, and agent surfaces.
     - [ ] Link existing implemented tracks, tests, docs, fixtures, and known external/admin gates as evidence.

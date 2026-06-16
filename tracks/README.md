@@ -56,7 +56,7 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 39. Codex Integration Packaging | Implemented | Codex docs, manifest scaffold, isolated `codex mcp add/list` validation, and ChatGPT remote-MCP distinction are complete. |
 | 40. Copilot Integration Packaging | Implemented | Copilot-through-VS-Code docs, workspace config, manifest scaffold, and validation checks are complete. |
 | 41. Creator OS Upgrade | Implemented | Campaign planning, media/live planning, analytics snapshots/trends, growth reports, community triage, Creator OS front matter/run-log actions, and read-only MCP creator tools are complete. |
-| 42. Frontier Coverage Roadmap | Planned | Canonical 100% feature coverage roadmap with strict evidence, alternatives, launch/admin gates, MCP-safe review surfaces, drift monitoring, and task/phase/CI delivery discipline. |
+| 42. Frontier Coverage Roadmap | In progress | Canonical 100% feature coverage roadmap with strict evidence, alternatives, launch/admin gates, MCP-safe review surfaces, drift monitoring, and task/phase/CI delivery discipline. |
 
 ## Operating Rules
 
