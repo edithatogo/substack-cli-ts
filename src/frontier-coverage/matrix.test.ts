@@ -6,7 +6,12 @@ import {
   getCoverageCapabilitiesByDomain,
   getCoverageMatrix,
 } from "./matrix.js";
-import { COVERAGE_DOMAINS, summarizeCoverageMatrix, validateCoverageMatrix } from "./schema.js";
+import {
+  COVERAGE_DOMAINS,
+  summarizeCoverageMatrix,
+  validateCoverageMatrix,
+  type CoverageMatrix,
+} from "./schema.js";
 
 describe("frontier coverage matrix", () => {
   it("is valid against the strict coverage schema", () => {
@@ -49,5 +54,23 @@ describe("frontier coverage matrix", () => {
 
     assert.ok(media.some((capability) => capability.id === "image-media-upload"));
     assert.ok(media.some((capability) => capability.id === "native-video-posts"));
+  });
+
+  it("throws with capability diagnostics when a supplied matrix is blocked", () => {
+    const blocked: CoverageMatrix = {
+      schemaVersion: 1,
+      capabilities: [
+        {
+          ...FRONTIER_COVERAGE_MATRIX.capabilities[0],
+          id: "broken-capability",
+          fallbackPath: undefined,
+        },
+      ],
+    };
+
+    assert.throws(
+      () => assertCoverageMatrixReady(blocked),
+      /broken-capability: Covered capabilities need a fallback path\./,
+    );
   });
 });

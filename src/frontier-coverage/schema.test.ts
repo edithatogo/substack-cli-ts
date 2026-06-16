@@ -41,6 +41,42 @@ describe("coverage schema", () => {
     assert.ok(report.issues.some((issue) => issue.code === "manual-path-required"));
   });
 
+  it("requires declared primary, fallback, and manual paths to be listed", () => {
+    const bad = matrix({
+      primaryPath: "api",
+      fallbackPath: "browser",
+      manualPath: "manual-admin",
+      paths: ["cli"],
+    });
+
+    const report = validateCoverageMatrix(bad);
+
+    assert.equal(report.status, "blocked");
+    assert.ok(report.issues.some((issue) => issue.code === "primary-path-missing"));
+    assert.ok(report.issues.some((issue) => issue.code === "fallback-path-missing"));
+    assert.ok(report.issues.some((issue) => issue.code === "manual-path-missing"));
+  });
+
+  it("requires a primary path for partial coverage statuses", () => {
+    const bad = matrix({
+      status: "probe-only",
+      safetyClass: "read-only",
+      paths: ["api", "browser", "manual-admin"],
+      primaryPath: undefined,
+      fallbackPath: "browser",
+      manualPath: "manual-admin",
+      decisionRecord: {
+        id: "DR-probe",
+        reason: "Capture-first until the endpoint contract is verified.",
+      },
+    });
+
+    const report = validateCoverageMatrix(bad);
+
+    assert.equal(report.status, "blocked");
+    assert.ok(report.issues.some((issue) => issue.code === "primary-path-required"));
+  });
+
   it("requires evidence for claimed coverage", () => {
     const bad = matrix({ evidence: [] });
 
@@ -82,6 +118,27 @@ describe("coverage schema", () => {
         (issue) => issue.code === "decision-record-required",
       ),
     );
+  });
+
+  it("requires unsupported capabilities to use the unsupported safety class", () => {
+    const bad = matrix({
+      status: "unsupported",
+      safetyClass: "read-only",
+      paths: ["manual-admin"],
+      primaryPath: undefined,
+      fallbackPath: undefined,
+      manualPath: undefined,
+      evidence: [{ kind: "official-doc", label: "App-only surface", ref: "https://example.com" }],
+      decisionRecord: {
+        id: "DR-unsupported",
+        reason: "No safe CLI path exists.",
+      },
+    });
+
+    const report = validateCoverageMatrix(bad);
+
+    assert.equal(report.status, "blocked");
+    assert.ok(report.issues.some((issue) => issue.code === "unsupported-safety-class"));
   });
 
   it("summarizes matrix status and domain counts", () => {

@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { describe, it } from "vitest";
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
 import { FRONTIER_COVERAGE_ROADMAP_PATH, renderCoverageRoadmap } from "./roadmap.js";
+import type { CoverageMatrix } from "./schema.js";
 
 describe("frontier coverage roadmap renderer", () => {
   it("renders a stable human-readable roadmap", () => {
@@ -42,5 +43,31 @@ describe("frontier coverage roadmap renderer", () => {
     const checkedIn = await readFile(FRONTIER_COVERAGE_ROADMAP_PATH, "utf8");
 
     assert.equal(checkedIn, renderCoverageRoadmap());
+  });
+
+  it("renders explicit empty states for decision records and launch gates", () => {
+    const matrix: CoverageMatrix = {
+      schemaVersion: 1,
+      capabilities: [
+        {
+          id: "local-only",
+          name: "Local-only inspection",
+          domain: "creator-os",
+          status: "implemented",
+          paths: ["cli", "manual-admin"],
+          primaryPath: "cli",
+          fallbackPath: "manual-admin",
+          manualPath: "manual-admin",
+          safetyClass: "read-only",
+          evidence: [{ kind: "test", label: "Local test", ref: "src/local-only.test.ts" }],
+          nextAction: "Keep local fixture coverage current.",
+        },
+      ],
+    };
+
+    const markdown = renderCoverageRoadmap(matrix);
+
+    assert.match(markdown, /No decision records are currently required\./);
+    assert.match(markdown, /No external launch\/admin gates are currently recorded\./);
   });
 });
