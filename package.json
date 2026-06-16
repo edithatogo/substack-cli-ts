@@ -125,7 +125,11 @@
     "@tiptap/html": "3.26.1",
     "@tiptap/pm": "3.24.0",
     "@tiptap/starter-kit": "3.26.1",
+    "@ai-sdk/provider-utils": "4.0.29",
+    "form-data": "4.0.6",
+    "hono": "4.12.25",
     "langsmith": "^0.7.2",
+    "protobufjs": "8.6.4",
     "qs": "^6.15.2",
     "uuid": "^11.1.1"
   },
