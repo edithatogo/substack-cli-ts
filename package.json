@@ -88,7 +88,7 @@
     "chrome-launcher": "^1.2.1",
     "commander": "^15.0.0",
     "dotenv": "^17.0.0",
-    "js-yaml": "^4.2.0",
+    "js-yaml": "^5.0.0",
     "marked": "^18.0.5",
     "playwright-core": "^1.60.0",
     "substack-api": "file:vendor/substack-api",
