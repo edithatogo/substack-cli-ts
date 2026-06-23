@@ -56,6 +56,13 @@ describe("safe frontier surfaces", () => {
     assert.ok(blocked.allowedAlternatives.some((alternative) => alternative.includes("redacted")));
   });
 
+  it("fails closed when an unsafe write references an unregistered surface", () => {
+    assert.throws(
+      () => buildUnsafeWriteBlockedOutput("missing-surface" as never, "unsafe write"),
+      /Safe surface is not registered: missing-surface/,
+    );
+  });
+
   it("represents the requested safety classifications", () => {
     const byId = Object.fromEntries(SAFE_SURFACES.map((surface) => [surface.id, surface]));
 

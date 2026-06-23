@@ -5,10 +5,9 @@ import {
   parseDriftEvidenceSnapshots,
 } from "../dist/frontier-coverage/drift.js";
 
-const snapshotFile = process.argv[2];
-const snapshots = snapshotFile
-  ? parseDriftEvidenceSnapshots(JSON.parse(await readFile(snapshotFile, "utf8")))
-  : [];
+const snapshotFile =
+  process.argv[2] || process.env.DRIFT_SNAPSHOT_FILE || "fixtures/frontier-drift-snapshots.json";
+const snapshots = parseDriftEvidenceSnapshots(JSON.parse(await readFile(snapshotFile, "utf8")));
 const report = buildFrontierDriftReport({ snapshots });
 
 console.log(JSON.stringify(report, null, 2));
