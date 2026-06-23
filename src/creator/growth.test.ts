@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
@@ -171,7 +171,7 @@ describe("creator growth snapshots", () => {
   it("skips unreadable snapshot entries", async () => {
     const temp = await mkdtemp(join(tmpdir(), "substack-growth-unreadable-"));
     try {
-      await symlink(join(temp, "missing.json"), join(temp, "dangling.json"));
+      await mkdir(join(temp, "unreadable.json"));
       const trend = await buildAnalyticsTrend(temp);
       assert.equal(trend.snapshotCount, 0);
     } finally {

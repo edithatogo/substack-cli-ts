@@ -1,17 +1,17 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import {
-  formatEmailPerformance,
-  formatPostAnalytics,
-  formatRevenueAnalytics,
-  formatSubscriberGrowth,
-} from "./analytics-format.js";
 import type {
   EmailPerformanceResult,
   PostAnalyticsResult,
   RevenueAnalyticsResult,
   SubscriberGrowthResult,
 } from "./analytics.js";
+import {
+  formatEmailPerformance,
+  formatPostAnalytics,
+  formatRevenueAnalytics,
+  formatSubscriberGrowth,
+} from "./analytics-format.js";
 
 const postResult: PostAnalyticsResult = {
   status: "ok",

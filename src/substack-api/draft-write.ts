@@ -5,8 +5,8 @@ import { apiHeaders, requestWrite } from "./client.js";
 import type { DraftMapping, SaveDraftMappingInput } from "./draft-mappings.js";
 import { saveDraftMapping } from "./draft-mappings.js";
 import type { DraftSectionResolutionReport } from "./draft-section.js";
-import { uploadDraftMedia } from "./media-upload.js";
 import type { MediaUploadOptions } from "./media-upload.js";
+import { uploadDraftMedia } from "./media-upload.js";
 import { buildDraftWriteRequestBody, buildSubstackDraftPayload } from "./payload.js";
 
 export interface DraftWriteResult {

@@ -1,5 +1,5 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import { type FetchLike, apiHeaders, classifyFailure, requestWrite } from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestWrite } from "./client.js";
 
 export type SubscriberImportStatus = "ok" | "failed";
 

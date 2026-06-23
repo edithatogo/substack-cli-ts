@@ -1,6 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { McpPromptSurface } from "./types.js";
-import type { McpPromptDescriptor } from "./types.js";
+import type { McpPromptDescriptor, McpPromptSurface } from "./types.js";
 
 const MCP_PROMPT_DESCRIPTORS: McpPromptDescriptor[] = [
   {

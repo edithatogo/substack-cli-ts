@@ -1,8 +1,8 @@
+import type { SubstackDraftPayload } from "../substack-api/payload.js";
 import {
   buildSubstackDraftPayload,
   validatePayloadCompatibility,
 } from "../substack-api/payload.js";
-import type { SubstackDraftPayload } from "../substack-api/payload.js";
 import type { PreparedPost } from "../types.js";
 import { resolvePostTitle } from "./title.js";
 

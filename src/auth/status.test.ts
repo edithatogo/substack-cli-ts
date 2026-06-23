@@ -5,8 +5,8 @@ import { join } from "node:path";
 import { describe, it } from "vitest";
 import type { EffectiveConfig } from "../config/store.js";
 import {
-  type LocalProfileReadiness,
   buildAuthStatusReport,
+  type LocalProfileReadiness,
   readLocalProfileReadiness,
 } from "./status.js";
 

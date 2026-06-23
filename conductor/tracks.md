@@ -72,7 +72,8 @@
 
 - **Status:** Complete
 - **File:** [../tracks/11-api-prepublish-publish-schedule.md](../tracks/11-api-prepublish-publish-schedule.md)
-- **Summary:** `publishedUrl` capture added to both local (`waitForURL`) and browser (polling `session.page.url()`) workflows. Publish navigation gap resolved: two-step flow (Continue → "Send to everyone now"). `--trace-out` and `--review-only` for API transport. 3 bugs fixed: dry-run ignored, trace-out+review-only gap, hardcoded status.
+- **Assigned agent:** Cline
+- **Summary:** `publishedUrl` capture added to both local (`waitForURL`) and browser (polling `session.page.url()`) workflows. Publish navigation gap resolved: two-step flow (Continue → "Send to everyone now"). `--trace-out` and `--review-only` for API transport. 4 bugs fixed: dry-run ignored, trace-out+review-only gap, hardcoded status, and API prepublish planner routing to the publish endpoint. All acceptance criteria met. Track closed as complete.
 
 ### Track 12: Transport Selection and Fallback
 
@@ -112,13 +113,15 @@
 
 - **Status:** Complete
 - **File:** [../tracks/17-publication-settings-branding.md](../tracks/17-publication-settings-branding.md)
-- **Summary:** READ implemented: `api publication get` and `api publication settings` commands fetch full publication details via `fetchPublication()` (name, subdomain, colors, fonts, logos, payments state). WRITE not CLI-accessible — `POST /api/v1/publication/update` endpoint undiscovered; requires browser DevTools network capture.
+- **Assigned agent:** Cline
+- **Summary:** Full read and write support for publication settings via the Substack API. READ: `api publication get`, `api publication settings`, and `api publication get-details` commands fetch full publication details via `fetchPublication()`. WRITE: `api publication set` performs read-modify-write cycles via `POST /api/v1/publication/update`. Logo/favicon upload via `api publication upload-logo` and `api publication upload-favicon`. Rich schema support for colors, fonts, logos, SEO fields, and email branding. 18 test cases in `src/substack-api/publication-settings.test.ts`. Dry-run previews and `--yes` confirmation guards all write operations.
 
 ### Track 18: Custom Domain Management
 
 - **Status:** Complete
 - **File:** [../tracks/18-custom-domain-management.md](../tracks/18-custom-domain-management.md)
-- **Summary:** READ implemented: `api domain status` via `fetchDomainStatus()` with SSL status mapping and DNS instruction generation for apex/subdomain. WRITE not CLI-accessible — set/remove endpoints undiscovered; requires browser DevTools network capture.
+- **Assigned agent:** Cline
+- **Summary:** READ implemented: `api domain status` and `api domain verify` via `fetchDomainStatus()` with SSL status mapping and DNS instruction generation for apex/subdomain. Set/remove commands are wired as confirmation-gated endpoint probes; mutation endpoints remain unconfirmed and require browser DevTools network capture.
 
 ## Phase 6: Subscribers & Community
 
@@ -126,19 +129,22 @@
 
 - **Status:** Complete
 - **File:** [../tracks/19-subscriber-management.md](../tracks/19-subscriber-management.md)
-- **Summary:** Aggregate subscriber count via `fetchPublicationChecklist()` and `api subscriber count` command. Subscriber list via `fetchSubscriberList()` from `GET /api/v1/publication/subscribers` with pagination. CSV import/export, segments, suppression, and gift subscriptions not CLI-accessible — no endpoints discovered.
+- **Assigned agent:** Cline
+- **Summary:** Aggregate subscriber count via `fetchPublicationChecklist()` and `api subscriber count` command. Subscriber list via `fetchSubscriberList()` with filtering (`--status`, `--tier`, `--date-from`, `--date-to`, `--source-filter`) plus pagination. Probe-based CSV export (`api subscriber export`), CSV import (`api subscriber import --yes`), segment listing (`api subscriber segment list`), suppression management (`api subscriber suppress --yes`, `api subscriber suppression-list list`), and gift subscription listing (`api subscriber gift list`) all wired as multi-endpoint probes with graceful "not-found" responses. All write operations require `--yes` confirmation. Fully tested.
 
 ### Track 20: Comments & Moderation
 
 - **Status:** Complete
 - **File:** [../tracks/20-comments-moderation.md](../tracks/20-comments-moderation.md)
-- **Summary:** Comment list via `fetchCommentsForPost()` from `GET /api/v1/post/{postId}/comments`. Moderation via `moderateComment()` (approve/delete/pin) and `replyToComment()`. All write operations require `--yes`. Spam detection, quarantine, commenter management (mute/ban) not CLI-accessible — no endpoints discovered.
+- **Assigned agent:** Cline
+- **Summary:** Comment list via `fetchCommentsForPost()` from `GET /api/v1/post/{postId}/comments`. Moderation via `moderateComment()` (approve/delete/pin) and `replyToComment()`. Comment settings read/update probes via `fetchCommentSettings()`/`updateCommentSettings()`. Commenter management probes via `muteCommenter()`/`banCommenter()`. All destructive actions require `--yes`. Spam detection and quarantine remain unsupported.
 
 ### Track 21: Community Features
 
 - **Status:** Complete
 - **File:** [../tracks/21-community-features.md](../tracks/21-community-features.md)
-- **Summary:** Notes (list/get/create) and following implemented via `src/substack-api/notes.ts` + `substack-api` library. CLI commands: `api notes list`, `api notes get`, `api notes create`, `api following`. Recommendations not CLI-accessible — no endpoints discovered. Chat/DM is WebSocket-based and not CLI-accessible.
+- **Assigned agent:** Cline
+- **Summary:** Notes (list/get/create/delete/like/reshare/reply) and following implemented via `src/substack-api/notes.ts` + `substack-api` library/direct probes. Recommendation probes implemented via `src/substack-api/recommendations.ts`. CLI commands: `api notes list|get|create|delete|like|reshare|reply`, `api recommendation list|status|add|remove`, `api following`. Recommendations and note reply are probe-only where endpoints are unconfirmed. Chat/DM is WebSocket-based and not CLI-accessible.
 
 ## Phase 7: Analytics & Revenue
 
@@ -146,13 +152,15 @@
 
 - **Status:** Complete
 - **File:** [../tracks/22-analytics-reporting.md](../tracks/22-analytics-reporting.md)
-- **Summary:** Analytics endpoint probes implemented — post analytics, subscriber growth, email performance, revenue analytics. Multi-endpoint discovery pattern tries known paths. All commands under `api analytics` (`inventory`, `post`, `subscribers`, `email`, `revenue`). Graceful "not-found" responses when endpoints are dashboard-only.
+- **Assigned agent:** Cline
+- **Summary:** Analytics endpoint probes implemented — post analytics, subscriber growth with `period` query propagation, email performance, revenue analytics, CSV/table/JSON formatting, and snapshots. Multi-endpoint discovery pattern tries known paths and returns graceful "not-found" responses when endpoints are dashboard-only.
 
 ### Track 23: Revenue & Billing
 
 - **Status:** Complete
 - **File:** [../tracks/23-revenue-billing.md](../tracks/23-revenue-billing.md)
-- **Summary:** Billing endpoint probes implemented — subscription tiers, payout history, tax form status. `payments_state` from publication object included. All commands under `api billing` (`summary`, `tiers`, `payouts`, `taxes`). Graceful "not-found" responses when endpoints are dashboard-only.
+- **Assigned agent:** Cline
+- **Summary:** Billing endpoint probes implemented — subscription tiers, payout history, tax form status, refund, and promotions. `payments_state` from publication object included. Billing read/probe output redacts common PII fields by default with `--include-pii` opt-in. `refund` requires `--yes` AND `--confirm refund`. Tier configuration, coupon/discount management, and actual Stripe-based refund remain dashboard-only/unconfirmed.
 
 ## Phase 8: Content Extensions
 
@@ -160,7 +168,8 @@
 
 - **Status:** Complete
 - **File:** [../tracks/24-email-newsletter-design.md](../tracks/24-email-newsletter-design.md)
-- **Summary:** Email management commands implemented — template settings, broadcast history, broadcast cancellation, test email sending. All commands under `api email` (`template`, `broadcast list`, `broadcast cancel`, `send-test`). Write operations require `--yes`. Graceful "not-found" responses when endpoints are dashboard-only.
+- **Assigned agent:** Cline
+- **Summary:** All 8 acceptance criteria wired. Template read (`email template`) and write (`email set-template`) with `--dry-run`/`--yes`, broadcast history/cancel, test email send, subject/preview via frontmatter, `should_send_email` pipeline. Write is probe-based and may be dashboard-only.
 
 ### Track 25: Podcast & Video Management
 
@@ -180,7 +189,8 @@
 
 - **Status:** Complete
 - **File:** [../tracks/27-team-management.md](../tracks/27-team-management.md)
-- **Summary:** READ implemented: `api team list` via `fetchTeamMembers()` from `GET /api/v1/publication/users` with id, name, email, role. WRITE not CLI-accessible — invite/remove/role-change endpoints undiscovered; requires browser DevTools network capture.
+- **Assigned agent:** Cline
+- **Summary:** READ implemented: `api team list` via `fetchTeamMembers()` from `GET /api/v1/publication/users` with id, name, email, role; emails are redacted by default unless `--include-emails` is passed. Activity, invite, remove, and role-change commands are wired as confirmation-gated probes. Endpoints remain unconfirmed and require browser DevTools network capture before promotion from probe-only support.
 
 ---
 
@@ -218,7 +228,7 @@
 
 - **Status:** Complete
 - **File:** [../tracks/32-vendored-substack-api.md](../tracks/32-vendored-substack-api.md)
-- **Summary:** Upstream `jakub-k-slys/substack-api` TypeScript source is vendored under `vendor/substack-api`, npm resolves `substack-api` through `file:vendor/substack-api`, and the vendored package scripts use npm-compatible `prepare`/test chaining so the client can be improved directly from this repo. Normal submodule checkout was avoided because upstream sample fixture filenames contain Windows-invalid `?` characters.
+- **Summary:** Upstream `jakub-k-slys/substack-api` TypeScript source is vendored under `vendor/substack-api`, npm resolves `substack-api` through `file:vendor/substack-api`, and `package.json#files` includes the vendored package files without nested `node_modules`. Normal submodule checkout was avoided because upstream sample fixture filenames contain Windows-invalid `?` characters.
 
 ### Track 33: CI, Coverage, and Quality Hardening
 
@@ -241,7 +251,7 @@
 ### Track 36: VS Code Integration Packaging
 
 - **Status:** Complete
-- **File:** [../tracks/36-vscode-integration-packaging.md](../tracks/36-vscode-integration-packaging.md)
+- **File:** [../tracks/archive/36-vscode-integration-packaging.md](../tracks/archive/36-vscode-integration-packaging.md)
 - **Summary:** VS Code MCP setup docs, workspace config, extension metadata scaffold, and validation checks are complete. Marketplace/client UI publication remains an external gate.
 
 ### Track 37: Claude Integration Packaging

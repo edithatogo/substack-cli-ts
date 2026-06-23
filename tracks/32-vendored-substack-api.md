@@ -14,6 +14,7 @@ Bring the upstream `jakub-k-slys/substack-api` TypeScript client into this repos
 - [x] Pulled the upstream `substack-api` source into `vendor/substack-api`.
 - [x] Kept the vendor import Windows-safe by excluding upstream sample fixtures with `?` in their filenames.
 - [x] Switched the dependency from the npm registry package to `file:vendor/substack-api`.
+- [x] Included the vendored package metadata, source, and build outputs in the root package `files` list so npm distribution carries the local file dependency without nested `node_modules`.
 - [x] Patched the vendored package scripts so npm-based installs can run `prepare` without requiring `pnpm`.
 - [x] Verified the vendored package builds `dist/index.js` and `dist/index.d.ts` for the existing `SubstackClient` import.
 
@@ -31,6 +32,7 @@ The CLI still imports `SubstackClient` from `substack-api`; npm now resolves tha
 ## Acceptance Criteria
 
 - [x] `package.json` resolves `substack-api` from `file:vendor/substack-api`
+- [x] `package.json#files` includes vendored `substack-api` package metadata, source, and build outputs
 - [x] `package-lock.json` records the local file dependency
 - [x] `vendor/substack-api/src` is present and editable in this repository
 - [x] `vendor/substack-api/package.json` can build through npm-driven `prepare`

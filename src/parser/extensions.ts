@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from "@tiptap/core";
+import { mergeAttributes, Node } from "@tiptap/core";
 import { Table } from "@tiptap/extension-table";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";

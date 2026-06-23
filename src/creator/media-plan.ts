@@ -1,7 +1,7 @@
 import { stat } from "node:fs/promises";
 import { basename, extname } from "node:path";
-import type { PreparedPost } from "../types.js";
 import { resolvePostTitle } from "../publish/title.js";
+import type { PreparedPost } from "../types.js";
 
 export type MediaPlanKind = "video" | "audio";
 export type LiveAudience = "everyone" | "subscribers" | "paid";

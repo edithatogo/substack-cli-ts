@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import {
   EmbedNode,
+  getTiptapExtensions,
   PaywallDivider,
   SubscribeWidget,
   SubstackImage,
-  getTiptapExtensions,
 } from "./extensions.js";
 
 describe("PaywallDivider", () => {

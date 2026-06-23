@@ -11,12 +11,12 @@ import {
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
 import { renderCoverageRoadmap } from "./roadmap.js";
 import {
-  parseCoverageMatrix,
-  summarizeCoverageMatrix,
-  validateCoverageMatrix,
   type CoverageCapability,
   type CoverageMatrix,
   type CoverageStatus,
+  parseCoverageMatrix,
+  summarizeCoverageMatrix,
+  validateCoverageMatrix,
 } from "./schema.js";
 
 export interface CoverageValidationOutput {

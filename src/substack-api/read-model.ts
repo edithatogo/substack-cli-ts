@@ -2,9 +2,9 @@ import { z } from "zod";
 import type { ApiAuthMaterial } from "./auth.js";
 import {
   type ApiReadStatus,
-  type FetchLike,
   apiHeaders,
   classifyFailure,
+  type FetchLike,
   requestJson,
 } from "./client.js";
 
