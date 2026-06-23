@@ -65,9 +65,9 @@ graph TB
 | `"private": false` | ✅ | Published to npm |
 | `"main"` entry | ✅ | `"dist/cli.js"` |
 | `"bin"` entry | ✅ | `{ "substack-cli": "dist/cli.js" }` |
-| `"files"` include list | ✅ | Selects dist/ and required files |
+| `"files"` include list | ✅ | Selects dist/, required docs, registry metadata, and bundled `vendor/substack-api` package files |
 | `"publishConfig"` | ✅ | Public access |
-| `"prepublishOnly"` script | ✅ | Build step |
+| `"prepublishOnly"` script | ✅ | Runs `npm run quality` |
 
 ---
 
@@ -92,7 +92,7 @@ For AI agents to discover the MCP server:
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
       "env": {}
     }
   }
@@ -230,6 +230,7 @@ jobs:
 
 | `npm pack` test | ✅ | Clean `.tgz` output |
 | `npm publish --dry-run` | ✅ | Succeeds |
+| `substack-cli policy` | ✅ | Public package metadata is ready; vendored `substack-api` package files are bundled in `package.json#files` |
 
 ### 1.2 Required package.json Fields
 
@@ -266,3 +267,8 @@ flowchart LR
     PUBLISH --> GH_RELEASE[GitHub Release]
     GH_RELEASE --> NOTES[Generate Release Notes]
 ```
+
+
+## External Publication Boundary
+
+The repo-side distribution route is complete: package metadata, release workflow, documentation, badges, completion installers, provenance, and registry metadata are present and locally verifiable. Actual npm publication, MCP registry submission, Smithery listing, and marketplace publication still require external credentials or manual registry review.

@@ -1,46 +1,30 @@
 # MCP Registry Readiness
 
-This repository already ships a stdio MCP server via `src/mcp/server.ts` and exposes a redacted read-only surface.
+This repository already ships a stdio MCP server and local registry metadata.
 
-## Registry metadata
+## Ready locally
 
-- `registry.server.json` contains the registry-ready metadata for the MCP Registry.
+- `registry.server.json` contains registry-ready metadata for the MCP Registry.
 - The package is published as npm package `@edithatogo/substack-cli`.
 - The MCP server name is `io.github.edithatogo/substack-cli`.
-- The package is launched via `npx -y @edithatogo/substack-cli mcp serve`.
-- `src/registry/metadata.ts` provides a typed local reader for the registry manifest.
+- The package is launched via `npx -y @edithatogo/substack-cli mcp serve` for client configs; registry metadata points at the packaged `dist/cli.js` entrypoint.
+- `src/registry/metadata.ts` provides a typed local reader, validation checks, and reproducible publisher commands for the registry manifest.
 
 ## Required publish steps
 
-1. Build the package: `npm run build`
-2. Publish the npm package: `npm publish --access public`
-3. Verify local registry readiness: `npm run registry:publisher`
-4. Authenticate with the MCP Registry using GitHub-based auth: `mcp-publisher login github`
-5. Submit the registry metadata: `npm run registry:publisher -- publish`
-6. Verify the published listing resolves the correct package and launch command
-
-## Local verification boundary
-
-The helper script is bounded to local checks unless `publish` mode is explicitly requested:
-
-```bash
-npm run registry:publisher
-npm run registry:publisher:dry-run
-npm run registry:publisher -- help
-```
-
-These commands do not require registry credentials. They validate local metadata, report whether `mcp-publisher` is installed, and print the live publish commands.
+1. Build and validate the registry package locally: `npm run registry:summary`
+2. Verify metadata/client drift checks: `npm run registry:validate && npm run integrations:validate`
+3. Capture the exact publisher command: `npm run registry:publish-command`
+4. Publish the npm package: `npm publish --provenance --access public`
+5. Authenticate with the MCP Registry using GitHub-based auth: `mcp-publisher login github`
+6. Submit the registry metadata: `npm run registry:publisher -- publish`
+7. Verify the published listing resolves the correct package and launch command
 
 ## External gates
 
-The following steps cannot be completed from an unauthenticated local checkout:
-
-- npm package publication requires package owner access or a configured trusted publisher.
-- MCP Registry publication requires GitHub namespace ownership for `io.github.edithatogo/substack-cli` and an authenticated `mcp-publisher` session.
-- Smithery and other catalogs require their own publisher accounts, review processes, or API tokens.
+The repo-side MCP registry package is complete and locally reproducible. Live MCP Registry, Smithery, npm, or marketplace submission remains external because it requires publisher credentials and registry review outside this repository.
 
 ## Notes
 
-- The registry stores metadata only; the package itself remains on npm.
-- The MCP surface is intentionally redacted and read-only.
-- Publishing should be performed only after verifying the name namespace and `mcpName` match.
+- Do not commit registry credentials or publisher tokens.
+- Keep client examples on the same stdio launch contract unless a target registry requires a different shape.

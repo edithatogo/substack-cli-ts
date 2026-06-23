@@ -57,7 +57,9 @@ import { buildDraftInspectionReport } from "../substack-api/draft-inspect.js";
 import { buildDraftDuplicateLookupReport } from "../substack-api/draft-lookup.js";
 import { loadDraftMappings } from "../substack-api/draft-mappings.js";
 import { buildDraftSectionResolutionReport } from "../substack-api/draft-section.js";
+import { listNotes } from "../substack-api/notes.js";
 import { readApiInventory } from "../substack-api/read-model.js";
+import { fetchRecommendationList } from "../substack-api/recommendations.js";
 import { fetchSubscriberList } from "../substack-api/subscriber-list.js";
 import type { McpSurfaceGroup, McpToolDescriptor } from "./types.js";
 
@@ -68,6 +70,10 @@ type JsonToolResult = {
 
 const ReadInventoryArgs = {
   postLimit: z.number().int().positive().max(100).optional(),
+};
+
+const NotesListArgs = {
+  limit: z.number().int().positive().max(100).optional(),
 };
 
 const FileArg = {
@@ -193,6 +199,62 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
             }),
             "Authenticated session summary completed.",
           );
+        },
+      );
+    },
+  },
+  {
+    group: "read",
+    name: "api.notes.list",
+    description: "List recent notes for the authenticated profile.",
+    cliCommand: "api notes list --source local-profile",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.notes.list",
+        {
+          description: "List recent notes for the authenticated profile.",
+          inputSchema: NotesListArgs,
+          annotations: {
+            title: "Notes List",
+            readOnlyHint: true,
+            openWorldHint: true,
+          },
+        },
+        async ({ limit }) => {
+          const config = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(config, "auto");
+          const notes = await listNotes(material, limit ?? 10);
+          return jsonResult(
+            toJsonRecord({ status: "ok", notes, count: notes.length }),
+            "Notes list completed.",
+          );
+        },
+      );
+    },
+  },
+  {
+    group: "read",
+    name: "api.recommendations.list",
+    description: "Probe recommended and recommending publications.",
+    cliCommand: "api recommendation list --source local-profile",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "api.recommendations.list",
+        {
+          description: "Probe recommended and recommending publications.",
+          annotations: {
+            title: "Recommendations List",
+            readOnlyHint: true,
+            openWorldHint: true,
+          },
+        },
+        async () => {
+          const config = await loadEffectiveConfig();
+          const material = await resolveApiAuthMaterial(config, "auto");
+          const result = await fetchRecommendationList(material.publicationUrl, material, fetch);
+          return jsonResult(toJsonRecord(result), "Recommendation list probe completed.");
         },
       );
     },

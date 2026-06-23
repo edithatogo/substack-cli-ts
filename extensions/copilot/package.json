@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "substack-cli-copilot",
   "version": "0.1.0",
   "description": "Copilot integration docs for the Substack CLI MCP server",
@@ -6,7 +6,12 @@
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": [
+        "-y",
+        "@edithatogo/substack-cli",
+        "mcp",
+        "serve"
+      ],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
       }
