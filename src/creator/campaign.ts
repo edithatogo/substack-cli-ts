@@ -1,8 +1,8 @@
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { PreparedPost } from "../types.js";
-import { resolvePostTitle } from "../publish/title.js";
 import type { RunLogArtifact } from "../publish/run-log.js";
+import { resolvePostTitle } from "../publish/title.js";
+import type { PreparedPost } from "../types.js";
 
 export type CampaignChannel = "notes" | "linkedin" | "x" | "youtube";
 export type CampaignStatus = "ready" | "blocked";

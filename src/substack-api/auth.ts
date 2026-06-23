@@ -5,9 +5,9 @@ import { type EffectiveConfig, requirePublicationUrl } from "../config/store.js"
 import { redact } from "../util/redact.js";
 import {
   type ApiReadStatus,
-  type FetchLike,
   apiHeaders,
   classifyFailure,
+  type FetchLike,
   requestJson,
 } from "./client.js";
 

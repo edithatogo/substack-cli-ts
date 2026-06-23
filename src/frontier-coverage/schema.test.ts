@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import {
+  type CoverageMatrix,
   parseCoverageMatrix,
   summarizeCoverageMatrix,
   validateCoverageMatrix,
-  type CoverageMatrix,
 } from "./schema.js";
 
 describe("coverage schema", () => {

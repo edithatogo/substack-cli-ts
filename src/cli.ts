@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { appendFileSync, existsSync, mkdirSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { Command } from "commander";
@@ -26,15 +26,15 @@ import {
 import {
   compareDraftCaptureArtifacts,
   observeDraftTraffic,
+  reviewDraftCaptureArtifact,
   writeDraftCaptureFixture,
 } from "./browser/draft-capture.js";
-import { reviewDraftCaptureArtifact } from "./browser/draft-capture.js";
+import { inferDraftContract } from "./browser/draft-contract.js";
 import {
   buildDraftContractMatrix,
   compareDraftContractMatrixArtifacts,
   writeDraftContractMatrixFixture,
 } from "./browser/draft-contract-matrix.js";
-import { inferDraftContract } from "./browser/draft-contract.js";
 import { createLocalBrowserSession } from "./browser/local-browser.js";
 import { createStagehandSession } from "./browser/stagehand.js";
 import {
@@ -87,9 +87,9 @@ import {
   type SafeSurfaceId,
 } from "./frontier-coverage/safe-surfaces.js";
 import {
+  type CapabilityDomain,
   COVERAGE_DOMAINS,
   COVERAGE_STATUSES,
-  type CapabilityDomain,
   type CoverageStatus,
 } from "./frontier-coverage/schema.js";
 import { runMcpServer } from "./mcp/server.js";
@@ -105,12 +105,12 @@ import {
   printPreparedPost,
   runBrowserWorkflow,
 } from "./publish/browser-workflow.js";
-import { preparePost } from "./publish/prepare.js";
 import { buildPreflightReport, parsePreflightScheduleFile } from "./publish/preflight.js";
+import { preparePost } from "./publish/prepare.js";
 import { prepublishPost } from "./publish/prepublish.js";
 import {
-  buildDraftWriteRunLog,
   buildCreatorWorkflowRunLog,
+  buildDraftWriteRunLog,
   buildNoteWriteRunLog,
   buildPublishWriteRunLog,
   writeRunLog,
@@ -125,19 +125,19 @@ import {
 } from "./publish/workflow-trace.js";
 import { captureFixture, compareFixture, validateSchemaFile } from "./schema/fixtures.js";
 import {
-  type OutputFormat,
-  formatEmailPerformance,
-  formatPostAnalytics,
-  formatRevenueAnalytics,
-  formatSubscriberGrowth,
-} from "./substack-api/analytics-format.js";
-import {
   fetchAnalyticsInventory,
   fetchEmailPerformance,
   fetchPostAnalytics,
   fetchRevenueAnalytics,
   fetchSubscriberGrowth,
 } from "./substack-api/analytics.js";
+import {
+  formatEmailPerformance,
+  formatPostAnalytics,
+  formatRevenueAnalytics,
+  formatSubscriberGrowth,
+  type OutputFormat,
+} from "./substack-api/analytics-format.js";
 import {
   type ApiAuthSource,
   resolveApiAuthMaterial,
@@ -153,6 +153,7 @@ import {
   initiateRefund,
   redactBillingPiiDeep,
 } from "./substack-api/billing.js";
+import { fetchCommentsForPost as fetchTriageCommentsForPost } from "./substack-api/comment-list.js";
 import {
   banCommenter,
   fetchCommentSettings,
@@ -181,8 +182,8 @@ import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.
 import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
 import {
   type BroadcastEntry,
-  type EmailTemplateUpdate,
   cancelScheduledBroadcast,
+  type EmailTemplateUpdate,
   fetchBroadcastHistory,
   fetchEmailTemplate,
   sendTestEmail,
@@ -196,6 +197,15 @@ import {
   importFromWordPress,
 } from "./substack-api/integrations.js";
 import {
+  buildNoteBatchPlan,
+  executeNoteWrite,
+  type NoteBatchItem,
+  type NoteScheduleFileItem,
+  parseNoteScheduleFileContent,
+  planNoteWrite,
+  validateScheduledNoteContract,
+} from "./substack-api/note-write.js";
+import {
   createNote,
   deleteNote,
   getNote,
@@ -204,15 +214,6 @@ import {
   replyToNote,
   reshareNote,
 } from "./substack-api/notes.js";
-import {
-  buildNoteBatchPlan,
-  executeNoteWrite,
-  parseNoteScheduleFileContent,
-  planNoteWrite,
-  validateScheduledNoteContract,
-  type NoteBatchItem,
-  type NoteScheduleFileItem,
-} from "./substack-api/note-write.js";
 import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import {
   fetchPodcastEpisodes,
@@ -221,32 +222,32 @@ import {
   fetchVideoSettings,
 } from "./substack-api/podcast.js";
 import { readOwnProfile, readPublicProfile } from "./substack-api/profile.js";
+import { fetchPublication } from "./substack-api/publication.js";
 import {
   fetchPublicationSettings,
   updatePublicationSettings,
 } from "./substack-api/publication-settings.js";
-import { fetchPublication } from "./substack-api/publication.js";
 import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
 import { type ApiReadInventory, readApiInventory } from "./substack-api/read-model.js";
-import {
-  parseScheduleFileContent,
-  parseScheduleReconcileKeys,
-  reconcileSchedule,
-  type ScheduledQueueItem,
-} from "./substack-api/schedule-reconcile.js";
 import {
   addRecommendation,
   fetchRecommendationList,
   fetchRecommendationStatus,
   removeRecommendation,
 } from "./substack-api/recommendations.js";
+import {
+  parseScheduleFileContent,
+  parseScheduleReconcileKeys,
+  reconcileSchedule,
+  type ScheduledQueueItem,
+} from "./substack-api/schedule-reconcile.js";
+import { getSubscriberCount } from "./substack-api/subscriber.js";
 import { fetchSubscriberExport } from "./substack-api/subscriber-export.js";
 import { fetchGiftSubscriptions } from "./substack-api/subscriber-gifts.js";
 import { importSubscribers } from "./substack-api/subscriber-import.js";
 import { fetchSubscriberList } from "./substack-api/subscriber-list.js";
 import { fetchSubscriberSegments } from "./substack-api/subscriber-segments.js";
 import { fetchSuppressionList, suppressEmail } from "./substack-api/subscriber-suppression.js";
-import { getSubscriberCount } from "./substack-api/subscriber.js";
 import { createSubstackClient } from "./substack-api/substack-adapter.js";
 import {
   changeTeamMemberRole,
@@ -951,7 +952,7 @@ comments
   .action(async (options: { postId: number; limit: number; source: "auto" | ApiAuthSource }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await fetchCommentsForPost(
+    const result = await fetchTriageCommentsForPost(
       material.publicationUrl,
       options.postId,
       material,
@@ -3052,53 +3053,47 @@ apiDomain
   .requiredOption("--domain <domain>", "Custom domain to set (e.g., newsletter.example.com)")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--yes", "Confirm domain change without interactive prompt", false)
-  .action(
-    async (options: {
-      domain: string;
-      source: "auto" | ApiAuthSource;
-      yes: boolean;
-    }) => {
-      const validation = validateDomainFormat(options.domain);
-      if (!validation.valid) {
-        console.log(
-          JSON.stringify(
-            {
-              status: "failed",
-              message: `Invalid domain: ${validation.reason}`,
-            },
-            null,
-            2,
-          ),
-        );
-        process.exitCode = 1;
-        return;
-      }
+  .action(async (options: { domain: string; source: "auto" | ApiAuthSource; yes: boolean }) => {
+    const validation = validateDomainFormat(options.domain);
+    if (!validation.valid) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: `Invalid domain: ${validation.reason}`,
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
 
-      if (!options.yes) {
-        console.log(
-          JSON.stringify(
-            {
-              status: "failed",
-              message:
-                "Add --yes to confirm custom domain change. This action modifies your publication settings.",
-            },
-            null,
-            2,
-          ),
-        );
-        process.exitCode = 1;
-        return;
-      }
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message:
+              "Add --yes to confirm custom domain change. This action modifies your publication settings.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
 
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await trySetDomain(material.publicationUrl, material, fetch, options.domain);
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await trySetDomain(material.publicationUrl, material, fetch, options.domain);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 apiDomain
   .command("remove")
@@ -3107,36 +3102,31 @@ apiDomain
   )
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--yes", "Confirm domain removal without interactive prompt", false)
-  .action(
-    async (options: {
-      source: "auto" | ApiAuthSource;
-      yes: boolean;
-    }) => {
-      if (!options.yes) {
-        console.log(
-          JSON.stringify(
-            {
-              status: "failed",
-              message:
-                "Add --yes to confirm custom domain removal. This will revert your publication to the Substack subdomain.",
-            },
-            null,
-            2,
-          ),
-        );
-        process.exitCode = 1;
-        return;
-      }
+  .action(async (options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message:
+              "Add --yes to confirm custom domain removal. This will revert your publication to the Substack subdomain.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
 
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const result = await tryRemoveDomain(material.publicationUrl, material, fetch);
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
-    },
-  );
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await tryRemoveDomain(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
 
 const apiTeam = api.command("team").description("Publication team management.");
 

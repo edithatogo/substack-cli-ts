@@ -5,11 +5,11 @@ import {
   reviewDraftCaptureArtifact,
   writeDraftCaptureFixture,
 } from "../browser/draft-capture.js";
+import { inferDraftContract } from "../browser/draft-contract.js";
 import {
   buildDraftContractMatrix,
   compareDraftContractMatrixArtifacts,
 } from "../browser/draft-contract-matrix.js";
-import { inferDraftContract } from "../browser/draft-contract.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import {
   buildCampaignPlan,
@@ -34,9 +34,9 @@ import {
   buildSafeSurfaceListOutput,
 } from "../frontier-coverage/safe-surfaces.js";
 import {
+  type CapabilityDomain,
   COVERAGE_DOMAINS,
   COVERAGE_STATUSES,
-  type CapabilityDomain,
   type CoverageStatus,
 } from "../frontier-coverage/schema.js";
 import { summarizeMediaManifest } from "../parser/media.js";

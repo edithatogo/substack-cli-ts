@@ -5,11 +5,11 @@ import { join } from "node:path";
 import { describe, it } from "vitest";
 import { type EffectiveConfig, updateConfig } from "../config/store.js";
 import {
-  type DoctorCheck,
-  type DoctorStatus,
   checkPublication,
   checkSubstackCredentials,
   checkTransport,
+  type DoctorCheck,
+  type DoctorStatus,
   runDoctor,
   summarizeStatus,
 } from "./doctor.js";

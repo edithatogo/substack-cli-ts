@@ -1,7 +1,7 @@
 import type { ExpectedScheduleItem } from "../substack-api/schedule-reconcile.js";
 import { parseScheduleFileContent } from "../substack-api/schedule-reconcile.js";
 import type { PreparedPost } from "../types.js";
-import { prepublishPost, type PrepublishReport } from "./prepublish.js";
+import { type PrepublishReport, prepublishPost } from "./prepublish.js";
 import { resolvePostTitle } from "./title.js";
 
 export type PreflightSeverity = "error" | "warning";

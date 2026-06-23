@@ -1,6 +1,6 @@
+import { FRONTIER_LAUNCH_CHECKLIST, renderLaunchChecklist } from "./launch-checklist.js";
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
 import { renderCoverageRoadmap } from "./roadmap.js";
-import { FRONTIER_LAUNCH_CHECKLIST, renderLaunchChecklist } from "./launch-checklist.js";
 import { buildSafeSurfaceListOutput, type SafeSurfaceListOutput } from "./safe-surfaces.js";
 
 export function buildCoverageMatrixResource(): Record<string, unknown> {
