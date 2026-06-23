@@ -1,5 +1,11 @@
 # Track 20: Comments & Moderation
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Scope:** Resolve or explicitly document spam/quarantine, commenter management, and comment-settings gaps.
+
 ## Goal
 
 Enable programmatic comment management — reading, moderating, and configuring comments on posts without using the Substack dashboard.
@@ -54,17 +60,33 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**Complete (list + moderation implemented, spam/commenter-mgmt not CLI-accessible)**
+**Partial (list + moderation implemented, commenter-mgmt probe-only, spam/quarantine not CLI-accessible)**
 
-**Implemented:**
-- Comment list via `fetchCommentsForPost()` from `GET /api/v1/post/{postId}/comments` with `--limit`
-- `api comment list <post-id>` CLI command
-- Comment moderation via `moderateComment()` — POST `/api/v1/comments/{id}/{action}` for approve/delete/pin
-- Comment reply via `replyToComment()` — POST `/api/v1/comments/{id}/reply`
-- `api comment approve <id> --yes`, `api comment delete <id> --yes`, `api comment pin <id> --yes`, `api comment reply <id> <text> --yes`
-- Existing `api comment get <id>` via substack-api `client.commentForId()`
+**Implemented (new in this session, 2026-06-04):**
+- `src/substack-api/comments.ts` — complete API module with:
+  - `fetchCommentsForPost()` from `GET /api/v1/post/{postId}/comments` with `--limit`, `--status`, cursor pagination
+  - `moderateComment()` — POST `/api/v1/comments/{id}/{action}` for approve/delete/pin/unpin
+  - `replyToComment()` — POST `/api/v1/comments/{id}/reply`
+  - `getCommentById()` — uses vendored `substack-api` `client.commentForId()`
+  - `fetchCommentSettings()` — probe pattern for post comment settings
+  - `updateCommentSettings()` — confirmation-gated write probe for known comment settings fields
+  - `muteCommenter()` / `banCommenter()` — probe pattern (endpoints tentative, returns "not-found" if no endpoint responds)
+- CLI commands under `api comment`:
+  - `api comment list <post-id>` — list comments with `--limit`, `--status` (e.g. `held`)
+  - `api comment get <comment-id>` — single comment by ID
+  - `api comment approve <comment-id> --yes`
+  - `api comment delete <comment-id> --yes`
+  - `api comment pin <comment-id> --yes`
+  - `api comment reply <comment-id> <text> --yes`
+  - `api comment settings <post-id>` — show comment settings for a post
+  - `api comment settings <post-id> --require-paid --yes` — probe comment settings updates
+  - All destructive actions require `--yes`
+- CLI commands under `api commenter`:
+  - `api commenter mute <user-id> --yes`
+  - `api commenter ban <user-id> --yes`
+  - Both use probe patterns; respond with `"not-found"` if no endpoint responds
 
-**External Gates (not CLI-accessible with the discovered API surface):**
-- Spam detection and quarantine management
-- Commenter management (mute, ban, approve)
-- Comment settings per post and globally
+**Not CLI-accessible (no endpoints discovered):**
+- Spam detection and quarantine management (no API endpoint known)
+- Comment settings write operations remain probe-only until dashboard DevTools capture confirms the exact endpoint
+- Commenter approve/unmute — no endpoint discovered

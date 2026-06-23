@@ -125,6 +125,13 @@ import {
 } from "./publish/workflow-trace.js";
 import { captureFixture, compareFixture, validateSchemaFile } from "./schema/fixtures.js";
 import {
+  type OutputFormat,
+  formatEmailPerformance,
+  formatPostAnalytics,
+  formatRevenueAnalytics,
+  formatSubscriberGrowth,
+} from "./substack-api/analytics-format.js";
+import {
   fetchAnalyticsInventory,
   fetchEmailPerformance,
   fetchPostAnalytics,
@@ -138,13 +145,30 @@ import {
   validateApiAuthMaterial,
 } from "./substack-api/auth.js";
 import {
+  fetchBillingPromotions,
   fetchBillingSummary,
   fetchPayoutHistory,
   fetchSubscriptionTiers,
   fetchTaxFormStatus,
+  initiateRefund,
+  redactBillingPiiDeep,
 } from "./substack-api/billing.js";
-import { fetchCommentsForPost } from "./substack-api/comment-list.js";
-import { fetchDomainStatus } from "./substack-api/domain.js";
+import {
+  banCommenter,
+  fetchCommentSettings,
+  fetchCommentsForPost,
+  getCommentById,
+  moderateComment,
+  muteCommenter,
+  replyToComment,
+  updateCommentSettings,
+} from "./substack-api/comments.js";
+import {
+  fetchDomainStatus,
+  tryRemoveDomain,
+  trySetDomain,
+  validateDomainFormat,
+} from "./substack-api/domain.js";
 import { buildDraftIdInspectionReport } from "./substack-api/draft-id-inspect.js";
 import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
 import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
@@ -157,13 +181,29 @@ import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.
 import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
 import {
   type BroadcastEntry,
+  type EmailTemplateUpdate,
   cancelScheduledBroadcast,
   fetchBroadcastHistory,
   fetchEmailTemplate,
   sendTestEmail,
+  updateEmailTemplate,
 } from "./substack-api/email.js";
-import { fetchApiTokens, fetchIntegrations } from "./substack-api/integrations.js";
-import { createNote, getNote, listNotes } from "./substack-api/notes.js";
+import {
+  crossPost,
+  fetchApiTokens,
+  fetchIntegrations,
+  importFromRss,
+  importFromWordPress,
+} from "./substack-api/integrations.js";
+import {
+  createNote,
+  deleteNote,
+  getNote,
+  likeNote,
+  listNotes,
+  replyToNote,
+  reshareNote,
+} from "./substack-api/notes.js";
 import {
   buildNoteBatchPlan,
   executeNoteWrite,
@@ -194,10 +234,27 @@ import {
   reconcileSchedule,
   type ScheduledQueueItem,
 } from "./substack-api/schedule-reconcile.js";
+import {
+  addRecommendation,
+  fetchRecommendationList,
+  fetchRecommendationStatus,
+  removeRecommendation,
+} from "./substack-api/recommendations.js";
+import { fetchSubscriberExport } from "./substack-api/subscriber-export.js";
+import { fetchGiftSubscriptions } from "./substack-api/subscriber-gifts.js";
+import { importSubscribers } from "./substack-api/subscriber-import.js";
 import { fetchSubscriberList } from "./substack-api/subscriber-list.js";
+import { fetchSubscriberSegments } from "./substack-api/subscriber-segments.js";
+import { fetchSuppressionList, suppressEmail } from "./substack-api/subscriber-suppression.js";
 import { getSubscriberCount } from "./substack-api/subscriber.js";
 import { createSubstackClient } from "./substack-api/substack-adapter.js";
-import { fetchTeamMembers } from "./substack-api/team.js";
+import {
+  changeTeamMemberRole,
+  fetchTeamActivity,
+  fetchTeamMembers,
+  inviteTeamMember,
+  removeTeamMember,
+} from "./substack-api/team.js";
 import { redact, redactUrl } from "./util/redact.js";
 
 const program = new Command();
@@ -2735,6 +2792,28 @@ apiPublication
   });
 
 apiPublication
+  .command("settings")
+  .description("Fetch publication branding settings (colors, fonts, logos, SEO).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    try {
+      const result = await fetchPublicationSettings(material.publicationUrl, material, fetch);
+      console.log(JSON.stringify(result, null, 2));
+    } catch (err) {
+      console.error(
+        JSON.stringify(
+          { status: "failed", message: err instanceof Error ? err.message : String(err) },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+    }
+  });
+
+apiPublication
   .command("get-details")
   .description("Alias for settings.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
@@ -2931,7 +3010,9 @@ apiPublication
     return;
   });
 
-const apiDomain = api.command("domain").description("Custom domain status and DNS instructions.");
+const apiDomain = api
+  .command("domain")
+  .description("Custom domain management (status, set, remove) with DNS guidance.");
 
 apiDomain
   .command("status")
@@ -2947,21 +3028,269 @@ apiDomain
     }
   });
 
+apiDomain
+  .command("verify")
+  .description("Refresh custom domain verification and SSL status without mutating settings.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchDomainStatus(material.publicationUrl, material, fetch);
+    console.log(
+      JSON.stringify({ ...result, message: `Verification refresh: ${result.message}` }, null, 2),
+    );
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiDomain
+  .command("set")
+  .description(
+    "Attempt to set a custom domain. The Substack API endpoint for domain mutation has not been confirmed, so this probes known paths and reports availability.",
+  )
+  .requiredOption("--domain <domain>", "Custom domain to set (e.g., newsletter.example.com)")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--yes", "Confirm domain change without interactive prompt", false)
+  .action(
+    async (options: {
+      domain: string;
+      source: "auto" | ApiAuthSource;
+      yes: boolean;
+    }) => {
+      const validation = validateDomainFormat(options.domain);
+      if (!validation.valid) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: `Invalid domain: ${validation.reason}`,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message:
+                "Add --yes to confirm custom domain change. This action modifies your publication settings.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await trySetDomain(material.publicationUrl, material, fetch, options.domain);
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiDomain
+  .command("remove")
+  .description(
+    "Attempt to remove the custom domain. The Substack API endpoint for domain mutation has not been confirmed, so this probes known paths and reports availability.",
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--yes", "Confirm domain removal without interactive prompt", false)
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      yes: boolean;
+    }) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message:
+                "Add --yes to confirm custom domain removal. This will revert your publication to the Substack subdomain.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await tryRemoveDomain(material.publicationUrl, material, fetch);
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
 const apiTeam = api.command("team").description("Publication team management.");
 
 apiTeam
   .command("list")
   .description("List publication team members.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+  .option("--include-emails", "Include team member email addresses in output", false)
+  .action(async (options: { source: "auto" | ApiAuthSource; includeEmails: boolean }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await fetchTeamMembers(material.publicationUrl, material, fetch);
+    const result = await fetchTeamMembers(material.publicationUrl, material, fetch, {
+      includeEmails: options.includeEmails,
+    });
     console.log(JSON.stringify(result, null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
     }
   });
+
+apiTeam
+  .command("activity")
+  .description("Probe recent team activity.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchTeamActivity(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiTeam
+  .command("invite")
+  .description("Probe inviting a collaborator by email. Requires --yes confirmation.")
+  .argument("<email>", "Email address to invite")
+  .requiredOption("--role <role>", "Role: admin, editor, contributor, or reader")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm team invitation")
+  .action(
+    async (
+      email: string,
+      options: { role: string; source: "auto" | ApiAuthSource; yes: boolean },
+    ) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: "Add --yes to confirm team invitation." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await inviteTeamMember(
+        material.publicationUrl,
+        email,
+        options.role,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiTeam
+  .command("remove")
+  .description("Probe removing a collaborator. Requires --yes confirmation.")
+  .argument("<user-id>", "User ID to remove")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm team member removal")
+  .action(async (userId: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: "Add --yes to confirm team member removal." },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const userIdNum = Number.parseInt(userId, 10);
+    if (!Number.isFinite(userIdNum) || userIdNum < 0) {
+      console.log(
+        JSON.stringify({ status: "failed", message: `Invalid user ID: ${userId}` }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await removeTeamMember(material.publicationUrl, userIdNum, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiTeam
+  .command("role")
+  .description("Probe changing a collaborator role. Requires --yes confirmation.")
+  .argument("<user-id>", "User ID to update")
+  .requiredOption("--role <role>", "Role: admin, editor, contributor, or reader")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm team role update")
+  .action(
+    async (
+      userId: string,
+      options: { role: string; source: "auto" | ApiAuthSource; yes: boolean },
+    ) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: "Add --yes to confirm team role update." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const userIdNum = Number.parseInt(userId, 10);
+      if (!Number.isFinite(userIdNum) || userIdNum < 0) {
+        console.log(
+          JSON.stringify({ status: "failed", message: `Invalid user ID: ${userId}` }, null, 2),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await changeTeamMemberRole(
+        material.publicationUrl,
+        userIdNum,
+        options.role,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 const apiProfile = api.command("profile").description("Read own or public Substack profiles.");
 
@@ -3023,7 +3352,9 @@ apiFollowing
     );
   });
 
-const apiSubscriber = api.command("subscriber").description("Subscriber information.");
+const apiSubscriber = api
+  .command("subscriber")
+  .description("Subscriber management - list, export, import, segments, suppression, and gifts.");
 
 apiSubscriber
   .command("count")
@@ -3055,17 +3386,179 @@ apiSubscriber
 
 apiSubscriber
   .command("list")
-  .description("List subscribers for the publication.")
+  .description("List subscribers for the publication with optional filtering.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--limit <limit>", "Maximum number of subscribers to return", parseInteger, 100)
   .option("--offset <offset>", "Offset for pagination", parseInteger, 0)
-  .action(async (options: { source: "auto" | ApiAuthSource; limit: number; offset: number }) => {
+  .option("--status <status>", "Filter by status (active, inactive, unpaid)")
+  .option("--tier <tier>", "Filter by tier (free, paid)")
+  .option("--date-from <date>", "Filter by subscription date from (ISO date or YYYY-MM-DD)")
+  .option("--date-to <date>", "Filter by subscription date to (ISO date or YYYY-MM-DD)")
+  .option("--source-filter <source>", "Filter by source (substack, import, manual)")
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      limit: number;
+      offset: number;
+      status?: string;
+      tier?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      sourceFilter?: string;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchSubscriberList(material.publicationUrl, material, fetch, {
+        limit: options.limit,
+        offset: options.offset,
+        status: options.status,
+        tier: options.tier,
+        dateFrom: options.dateFrom,
+        dateTo: options.dateTo,
+        source: options.sourceFilter,
+      });
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiSubscriber
+  .command("export")
+  .description("Export subscribers as CSV (probe: likely dashboard-only).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--format <format>", "Export format (csv)", "csv")
+  .option("--status <status>", "Filter by status (active, inactive, unpaid)")
+  .option("--tier <tier>", "Filter by tier (free, paid)")
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      format: string;
+      status?: string;
+      tier?: string;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchSubscriberExport(material.publicationUrl, material, fetch, {
+        format: options.format,
+        status: options.status,
+        tier: options.tier,
+      });
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiSubscriber
+  .command("import")
+  .description("Import subscribers from CSV data (probe: likely dashboard-only).")
+  .argument("<csv-data>", "CSV data string or path to CSV file")
+  .requiredOption("--yes", "Confirm import")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (csvData: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Add --yes to confirm subscriber import.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await fetchSubscriberList(material.publicationUrl, material, fetch, {
-      limit: options.limit,
-      offset: options.offset,
-    });
+    const csvInput = existsSync(csvData) ? readFileSync(csvData, "utf8") : csvData;
+    const result = await importSubscribers(material.publicationUrl, csvInput, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiSubscriberSegment = apiSubscriber
+  .command("segment")
+  .description("Manage subscriber segments/groups.");
+
+apiSubscriberSegment
+  .command("list")
+  .description("List subscriber segments/groups (probe: likely dashboard-only).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchSubscriberSegments(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiSubscriber
+  .command("suppress")
+  .description("Add an email to the suppression list (probe: likely dashboard-only).")
+  .argument("<email>", "Email address to suppress")
+  .requiredOption("--yes", "Confirm suppression")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (email: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Add --yes to confirm email suppression.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await suppressEmail(material.publicationUrl, email, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiSubscriberSuppression = apiSubscriber
+  .command("suppression-list")
+  .description("List suppression entries (bounces, unsubscribes, complaints).");
+
+apiSubscriberSuppression
+  .command("list")
+  .description("List suppression entries (probe: likely dashboard-only).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchSuppressionList(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+const apiSubscriberGift = apiSubscriber.command("gift").description("Manage gift subscriptions.");
+
+apiSubscriberGift
+  .command("list")
+  .description("List gift subscriptions (probe: likely dashboard-only).")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchGiftSubscriptions(material.publicationUrl, material, fetch);
     console.log(JSON.stringify(result, null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
@@ -3112,10 +3605,23 @@ apiNotes
 
 apiNotes
   .command("create")
-  .description("Publish a note immediately.")
+  .description("Publish a note immediately. Requires --yes confirmation.")
   .requiredOption("--body <text>", "Note body text")
+  .requiredOption("--yes", "Confirm note publication")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { body: string; source: "auto" | ApiAuthSource }) => {
+  .action(async (options: { body: string; yes: boolean; source: "auto" | ApiAuthSource }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: "Add --yes to confirm note publication." },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const result = await createNote(material, options.body);
@@ -3132,6 +3638,590 @@ apiNotes
       ),
     );
   });
+
+apiNotes
+  .command("delete")
+  .description("Delete a note by ID. Requires --yes confirmation.")
+  .argument("<id>", "Note ID to delete")
+  .requiredOption("--yes", "Confirm note deletion")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (id: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: "Add --yes to confirm note deletion." },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const noteId = Number.parseInt(id, 10);
+    if (!Number.isFinite(noteId) || noteId < 0) {
+      console.error(`Invalid note ID: ${id}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    const result = await deleteNote(material, noteId, fetch);
+    const ok = result.status >= 200 && result.status < 300;
+    console.log(
+      JSON.stringify(
+        {
+          status: ok ? "ok" : "failed",
+          noteId,
+          httpStatus: result.status,
+          message: ok
+            ? `Note ${id} deleted.`
+            : `Failed to delete note ${id} (HTTP ${result.status}).`,
+        },
+        null,
+        2,
+      ),
+    );
+    if (!ok) process.exitCode = 1;
+  });
+
+apiNotes
+  .command("like")
+  .description("Like a note by ID. Requires --yes confirmation.")
+  .argument("<id>", "Note ID to like")
+  .requiredOption("--yes", "Confirm note like")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (id: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify({ status: "failed", message: "Add --yes to confirm note like." }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const noteId = Number.parseInt(id, 10);
+    if (!Number.isFinite(noteId) || noteId < 0) {
+      console.error(`Invalid note ID: ${id}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    try {
+      await likeNote(material, noteId);
+      console.log(JSON.stringify({ status: "ok", noteId, message: `Note ${id} liked.` }, null, 2));
+    } catch (err) {
+      console.error(
+        JSON.stringify(
+          { status: "failed", message: err instanceof Error ? err.message : String(err) },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+    }
+  });
+
+apiNotes
+  .command("reshare")
+  .description("Reshare a note by ID. Requires --yes confirmation.")
+  .argument("<id>", "Note ID to reshare")
+  .requiredOption("--yes", "Confirm note reshare")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (id: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: "Add --yes to confirm note reshare." },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const noteId = Number.parseInt(id, 10);
+    if (!Number.isFinite(noteId) || noteId < 0) {
+      console.error(`Invalid note ID: ${id}`);
+      process.exitCode = 1;
+      return;
+    }
+
+    const result = await reshareNote(material, noteId, fetch);
+    const ok = result.status >= 200 && result.status < 300;
+    console.log(
+      JSON.stringify(
+        {
+          status: ok ? "ok" : "failed",
+          noteId,
+          httpStatus: result.status,
+          message: ok
+            ? `Note ${id} reshared.`
+            : `Failed to reshare note ${id} (HTTP ${result.status}).`,
+        },
+        null,
+        2,
+      ),
+    );
+    if (!ok) process.exitCode = 1;
+  });
+
+apiNotes
+  .command("reply")
+  .description("Reply to a note by ID. Requires --yes confirmation.")
+  .argument("<id>", "Note ID to reply to")
+  .argument("<text>", "Reply body text")
+  .requiredOption("--yes", "Confirm note reply")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (id: string, text: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: "Add --yes to confirm note reply." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const noteId = Number.parseInt(id, 10);
+      if (!Number.isFinite(noteId) || noteId < 0) {
+        console.error(`Invalid note ID: ${id}`);
+        process.exitCode = 1;
+        return;
+      }
+
+      const result = await replyToNote(material, noteId, text, fetch);
+      const ok = result.status >= 200 && result.status < 300;
+      console.log(
+        JSON.stringify(
+          {
+            status: ok ? "ok" : "failed",
+            noteId,
+            httpStatus: result.status,
+            message: ok
+              ? `Reply posted to note ${id}.`
+              : `Failed to reply to note ${id} (HTTP ${result.status}).`,
+          },
+          null,
+          2,
+        ),
+      );
+      if (!ok) process.exitCode = 1;
+    },
+  );
+
+const apiRecommendation = api
+  .command("recommendation")
+  .description("Manage publication recommendations.");
+
+apiRecommendation
+  .command("list")
+  .description("List recommended and recommending publications.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchRecommendationList(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiRecommendation
+  .command("status")
+  .description("Check recommendation status for a publication.")
+  .argument("<publication-url>", "Publication URL to check")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (publicationUrl: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchRecommendationStatus(
+      material.publicationUrl,
+      publicationUrl,
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiRecommendation
+  .command("add")
+  .description("Recommend another publication. Requires --yes confirmation.")
+  .argument("<publication-url>", "Publication URL to recommend")
+  .requiredOption("--yes", "Confirm recommendation")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (publicationUrl: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: "Add --yes to confirm recommendation." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await addRecommendation(
+        material.publicationUrl,
+        publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiRecommendation
+  .command("remove")
+  .description("Remove a recommendation for a publication. Requires --yes confirmation.")
+  .argument("<publication-url>", "Publication URL to stop recommending")
+  .requiredOption("--yes", "Confirm recommendation removal")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(
+    async (publicationUrl: string, options: { yes: boolean; source: "auto" | ApiAuthSource }) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: "Add --yes to confirm recommendation removal." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await removeRecommendation(
+        material.publicationUrl,
+        publicationUrl,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+const apiComment = api.command("comment").description("Manage and moderate comments on posts.");
+
+apiComment
+  .command("list")
+  .description("List comments for a post.")
+  .argument("<post-id>", "Post ID to fetch comments for")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--limit <limit>", "Maximum number of comments to return", parseInteger, 50)
+  .option("--status <status>", "Filter by status (e.g. held, approved)")
+  .action(
+    async (
+      postId: string,
+      options: {
+        source: "auto" | ApiAuthSource;
+        limit: number;
+        status?: string;
+      },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const postIdNum = Number.parseInt(postId, 10);
+      if (!Number.isFinite(postIdNum) || postIdNum < 0) {
+        console.log(
+          JSON.stringify({ status: "failed", message: `Invalid post ID: ${postId}` }, null, 2),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const result = await fetchCommentsForPost(
+        material.publicationUrl,
+        postIdNum,
+        material,
+        fetch,
+        { limit: options.limit, status: options.status },
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") process.exitCode = 1;
+    },
+  );
+
+apiComment
+  .command("get")
+  .description("Get a single comment by ID.")
+  .argument("<comment-id>", "Comment ID")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .action(async (commentId: string, options: { source: "auto" | ApiAuthSource }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const commentIdNum = Number.parseInt(commentId, 10);
+    if (!Number.isFinite(commentIdNum) || commentIdNum < 0) {
+      console.log(
+        JSON.stringify({ status: "failed", message: `Invalid comment ID: ${commentId}` }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    try {
+      const result = await getCommentById(material, commentIdNum);
+      console.log(JSON.stringify({ status: "ok", comment: result }, null, 2));
+    } catch (err) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: err instanceof Error ? err.message : String(err) },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+    }
+  });
+
+apiComment
+  .command("approve")
+  .description("Approve a held comment. Requires --yes confirmation.")
+  .argument("<comment-id>", "Comment ID to approve")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm moderation action")
+  .action(async (commentId: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: "Add --yes to confirm comment approval." },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const commentIdNum = Number.parseInt(commentId, 10);
+    if (!Number.isFinite(commentIdNum) || commentIdNum < 0) {
+      console.log(
+        JSON.stringify({ status: "failed", message: `Invalid comment ID: ${commentId}` }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const result = await moderateComment(
+      material.publicationUrl,
+      commentIdNum,
+      "approve",
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") process.exitCode = 1;
+  });
+
+apiComment
+  .command("delete")
+  .description("Delete a comment. Requires --yes confirmation.")
+  .argument("<comment-id>", "Comment ID to delete")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm moderation action")
+  .action(async (commentId: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: "Add --yes to confirm comment deletion." },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const commentIdNum = Number.parseInt(commentId, 10);
+    if (!Number.isFinite(commentIdNum) || commentIdNum < 0) {
+      console.log(
+        JSON.stringify({ status: "failed", message: `Invalid comment ID: ${commentId}` }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const result = await moderateComment(
+      material.publicationUrl,
+      commentIdNum,
+      "delete",
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") process.exitCode = 1;
+  });
+
+apiComment
+  .command("pin")
+  .description("Pin a comment. Requires --yes confirmation.")
+  .argument("<comment-id>", "Comment ID to pin")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm moderation action")
+  .action(async (commentId: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify(
+          { status: "failed", message: "Add --yes to confirm pinning comment." },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const commentIdNum = Number.parseInt(commentId, 10);
+    if (!Number.isFinite(commentIdNum) || commentIdNum < 0) {
+      console.log(
+        JSON.stringify({ status: "failed", message: `Invalid comment ID: ${commentId}` }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const result = await moderateComment(
+      material.publicationUrl,
+      commentIdNum,
+      "pin",
+      material,
+      fetch,
+    );
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") process.exitCode = 1;
+  });
+
+apiComment
+  .command("reply")
+  .description("Reply to a comment as the publication. Requires --yes confirmation.")
+  .argument("<comment-id>", "Comment ID to reply to")
+  .argument("<text>", "Reply body text")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm reply")
+  .action(
+    async (
+      commentId: string,
+      text: string,
+      options: { source: "auto" | ApiAuthSource; yes: boolean },
+    ) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify({ status: "failed", message: "Add --yes to confirm reply." }, null, 2),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const commentIdNum = Number.parseInt(commentId, 10);
+      if (!Number.isFinite(commentIdNum) || commentIdNum < 0) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: `Invalid comment ID: ${commentId}` },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const result = await replyToComment(
+        material.publicationUrl,
+        commentIdNum,
+        text,
+        material,
+        fetch,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") process.exitCode = 1;
+    },
+  );
+
+apiComment
+  .command("settings")
+  .description("Show or update comment settings for a post.")
+  .argument("<post-id>", "Post ID")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--require-paid", "Require paid subscribers to comment", false)
+  .option("--require-subscriber", "Require subscribers to comment", false)
+  .option("--hold-for-review", "Hold comments for moderation review", false)
+  .option("--disable", "Disable commenting", false)
+  .option("--auto-approve-repeated", "Auto-approve repeated commenters", false)
+  .option("--yes", "Confirm settings update", false)
+  .action(
+    async (
+      postId: string,
+      options: {
+        source: "auto" | ApiAuthSource;
+        requirePaid: boolean;
+        requireSubscriber: boolean;
+        holdForReview: boolean;
+        disable: boolean;
+        autoApproveRepeated: boolean;
+        yes: boolean;
+      },
+    ) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const postIdNum = Number.parseInt(postId, 10);
+      if (!Number.isFinite(postIdNum) || postIdNum < 0) {
+        console.log(
+          JSON.stringify({ status: "failed", message: `Invalid post ID: ${postId}` }, null, 2),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const updates = {
+        ...(options.requirePaid ? { mustBePaidSubscriber: true } : {}),
+        ...(options.requireSubscriber ? { mustBeSubscriber: true } : {}),
+        ...(options.holdForReview ? { holdForReview: true } : {}),
+        ...(options.disable ? { commentingEnabled: false } : {}),
+        ...(options.autoApproveRepeated ? { autoApproveRepeatedCommenters: true } : {}),
+      };
+      const isWrite = Object.keys(updates).length > 0;
+      if (isWrite && !options.yes) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: "Add --yes to confirm comment settings update." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+      const result = isWrite
+        ? await updateCommentSettings(material.publicationUrl, postIdNum, updates, material, fetch)
+        : await fetchCommentSettings(material.publicationUrl, postIdNum, material, fetch);
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") process.exitCode = 1;
+    },
+  );
 
 const apiAnalytics = api
   .command("analytics")
@@ -3162,64 +4252,137 @@ apiAnalytics
   .description("Fetch analytics for a specific post.")
   .argument("<post-id>", "Post ID to fetch analytics for")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (postId: string, options: { source: "auto" | ApiAuthSource }) => {
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await fetchPostAnalytics(
-      material.publicationUrl,
-      Number(postId),
-      material,
-      fetch,
-    );
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
-  });
+  .option("--format <format>", "Output format: json, csv, or table", "json")
+  .action(
+    async (postId: string, options: { source: "auto" | ApiAuthSource; format: OutputFormat }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchPostAnalytics(
+        material.publicationUrl,
+        Number(postId),
+        material,
+        fetch,
+      );
+      console.log(formatPostAnalytics(result, { format: options.format }));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 apiAnalytics
   .command("subscribers")
   .description("Fetch subscriber growth analytics.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await fetchSubscriberGrowth(material.publicationUrl, material, fetch);
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
-  });
+  .option("--period <period>", "Time period for growth data (daily, weekly, monthly)", "daily")
+  .option("--format <format>", "Output format: json, csv, or table", "json")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource; period: string; format: OutputFormat }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchSubscriberGrowth(material.publicationUrl, material, fetch, {
+        period: options.period,
+      });
+      console.log(formatSubscriberGrowth(result, { format: options.format }));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 apiAnalytics
   .command("email")
   .description("Fetch email performance analytics.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--limit <limit>", "Maximum number of emails to return", parseInteger, 10)
-  .action(async (options: { source: "auto" | ApiAuthSource; limit: number }) => {
+  .option("--format <format>", "Output format: json, csv, or table", "json")
+  .action(
+    async (options: { source: "auto" | ApiAuthSource; limit: number; format: OutputFormat }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const result = await fetchEmailPerformance(
+        material.publicationUrl,
+        material,
+        fetch,
+        options.limit,
+      );
+      console.log(formatEmailPerformance(result, { format: options.format }));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+const apiCommenter = api.command("commenter").description("Manage commenters (mute, ban).");
+
+apiCommenter
+  .command("mute")
+  .description("Mute a commenter by user ID. Requires --yes confirmation.")
+  .argument("<user-id>", "User ID to mute")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm mute action")
+  .action(async (userId: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify({ status: "failed", message: "Add --yes to confirm mute." }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await fetchEmailPerformance(
-      material.publicationUrl,
-      material,
-      fetch,
-      options.limit,
-    );
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
+    const userIdNum = Number.parseInt(userId, 10);
+    if (!Number.isFinite(userIdNum) || userIdNum < 0) {
+      console.log(
+        JSON.stringify({ status: "failed", message: `Invalid user ID: ${userId}` }, null, 2),
+      );
       process.exitCode = 1;
+      return;
     }
+    const result = await muteCommenter(material.publicationUrl, userIdNum, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") process.exitCode = 1;
+  });
+
+apiCommenter
+  .command("ban")
+  .description("Ban a commenter by user ID. Requires --yes confirmation.")
+  .argument("<user-id>", "User ID to ban")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .requiredOption("--yes", "Confirm ban action")
+  .action(async (userId: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+    if (!options.yes) {
+      console.log(
+        JSON.stringify({ status: "failed", message: "Add --yes to confirm ban." }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const userIdNum = Number.parseInt(userId, 10);
+    if (!Number.isFinite(userIdNum) || userIdNum < 0) {
+      console.log(
+        JSON.stringify({ status: "failed", message: `Invalid user ID: ${userId}` }, null, 2),
+      );
+      process.exitCode = 1;
+      return;
+    }
+    const result = await banCommenter(material.publicationUrl, userIdNum, material, fetch);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.status !== "ok") process.exitCode = 1;
   });
 
 apiAnalytics
   .command("revenue")
   .description("Fetch revenue analytics.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+  .option("--format <format>", "Output format: json, csv, or table", "json")
+  .action(async (options: { source: "auto" | ApiAuthSource; format: OutputFormat }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const result = await fetchRevenueAnalytics(material.publicationUrl, material, fetch);
-    console.log(JSON.stringify(result, null, 2));
+    console.log(formatRevenueAnalytics(result, { format: options.format }));
     if (result.status !== "ok") {
       process.exitCode = 1;
     }
@@ -3282,11 +4445,12 @@ apiBilling
   .command("summary")
   .description("Probe all billing endpoints and report availability.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+  .option("--include-pii", "Include unredacted PII if returned by Substack", false)
+  .action(async (options: { source: "auto" | ApiAuthSource; includePii: boolean }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const result = await fetchBillingSummary(material.publicationUrl, material, fetch);
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(redactBillingPiiDeep(result, options.includePii), null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
     }
@@ -3296,11 +4460,12 @@ apiBilling
   .command("tiers")
   .description("List subscription tiers and pricing.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+  .option("--include-pii", "Include unredacted PII if returned by Substack", false)
+  .action(async (options: { source: "auto" | ApiAuthSource; includePii: boolean }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const result = await fetchSubscriptionTiers(material.publicationUrl, material, fetch);
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(redactBillingPiiDeep(result, options.includePii), null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
     }
@@ -3310,11 +4475,12 @@ apiBilling
   .command("payouts")
   .description("Show payout history.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+  .option("--include-pii", "Include unredacted PII if returned by Substack", false)
+  .action(async (options: { source: "auto" | ApiAuthSource; includePii: boolean }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const result = await fetchPayoutHistory(material.publicationUrl, material, fetch);
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(redactBillingPiiDeep(result, options.includePii), null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
     }
@@ -3324,11 +4490,97 @@ apiBilling
   .command("taxes")
   .description("Show tax form status.")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .action(async (options: { source: "auto" | ApiAuthSource }) => {
+  .option("--include-pii", "Include unredacted PII if returned by Substack", false)
+  .action(async (options: { source: "auto" | ApiAuthSource; includePii: boolean }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
     const result = await fetchTaxFormStatus(material.publicationUrl, material, fetch);
-    console.log(JSON.stringify(result, null, 2));
+    console.log(JSON.stringify(redactBillingPiiDeep(result, options.includePii), null, 2));
+    if (result.status !== "ok") {
+      process.exitCode = 1;
+    }
+  });
+
+apiBilling
+  .command("refund")
+  .description("Initiate a refund for a subscriber.")
+  .argument("<subscriber-id>", "Subscriber ID to refund")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--amount <amount>", "Refund amount in dollars (optional, parseFloat)", Number.parseFloat)
+  .option("--reason <reason>", "Reason for the refund")
+  .requiredOption("--yes", "Confirm refund operation")
+  .requiredOption("--confirm <operation>", "Additional typed confirmation: must be 'refund'")
+  .action(
+    async (
+      subscriberId: string,
+      options: {
+        source: "auto" | ApiAuthSource;
+        amount?: number;
+        reason?: string;
+        yes: boolean;
+        confirm: string;
+      },
+    ) => {
+      if (!options.yes) {
+        console.log(
+          JSON.stringify(
+            { status: "failed", message: "Add --yes to confirm refund operation." },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      if (options.confirm !== "refund") {
+        console.log(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Add --confirm refund to confirm the refund operation.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const refundOptions: { amount?: number; reason?: string } = {};
+      if (options.amount !== undefined) {
+        refundOptions.amount = options.amount;
+      }
+      if (options.reason !== undefined) {
+        refundOptions.reason = options.reason;
+      }
+      const result = await initiateRefund(
+        material.publicationUrl,
+        material,
+        fetch,
+        subscriberId,
+        refundOptions,
+      );
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiBilling
+  .command("promote")
+  .description("List or manage boosted post promotions.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--include-pii", "Include unredacted PII if returned by Substack", false)
+  .action(async (options: { source: "auto" | ApiAuthSource; includePii: boolean }) => {
+    const effective = await loadEffectiveConfig();
+    const material = await resolveApiAuthMaterial(effective, options.source);
+    const result = await fetchBillingPromotions(material.publicationUrl, material, fetch);
+    console.log(JSON.stringify(redactBillingPiiDeep(result, options.includePii), null, 2));
     if (result.status !== "ok") {
       process.exitCode = 1;
     }
@@ -3349,6 +4601,56 @@ apiEmail
       process.exitCode = 1;
     }
   });
+
+apiEmail
+  .command("set-template")
+  .description("Update email template settings with confirmation.")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--header-html <html>", "Email header HTML content")
+  .option("--footer-html <html>", "Email footer HTML content")
+  .option("--logo-url <url>", "Email logo URL")
+  .option("--primary-color <color>", "Email primary color (hex)")
+  .option("--background-color <color>", "Email background color (hex)")
+  .option("--text-color <color>", "Email text color (hex)")
+  .option("--font-family <font>", "Email font family")
+  .option("--dry-run", "Preview changes without writing", false)
+  .option("--yes", "Confirm update without interactive prompt", false)
+  .action(
+    async (options: {
+      source: "auto" | ApiAuthSource;
+      headerHtml?: string;
+      footerHtml?: string;
+      logoUrl?: string;
+      primaryColor?: string;
+      backgroundColor?: string;
+      textColor?: string;
+      fontFamily?: string;
+      dryRun: boolean;
+      yes: boolean;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+
+      const updates: EmailTemplateUpdate = {};
+      if (options.headerHtml !== undefined) updates.headerHtml = options.headerHtml;
+      if (options.footerHtml !== undefined) updates.footerHtml = options.footerHtml;
+      if (options.logoUrl !== undefined) updates.logoUrl = options.logoUrl;
+      if (options.primaryColor !== undefined) updates.primaryColor = options.primaryColor;
+      if (options.backgroundColor !== undefined) updates.backgroundColor = options.backgroundColor;
+      if (options.textColor !== undefined) updates.textColor = options.textColor;
+      if (options.fontFamily !== undefined) updates.fontFamily = options.fontFamily;
+
+      const result = await updateEmailTemplate(material.publicationUrl, material, fetch, updates, {
+        dryRun: options.dryRun,
+        confirm: options.yes,
+      });
+
+      console.log(JSON.stringify(result, null, 2));
+      if (result.status !== "ok") {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 apiEmail
   .command("broadcast")
@@ -3713,6 +5015,20 @@ apiIntegrations
   .command("tokens")
   .description("List API tokens (redacted).")
   .option("--source <source>", "auto, env, or local-profile", "auto")
+  .addCommand(
+    new Command("list")
+      .description("List API tokens (redacted).")
+      .option("--source <source>", "auto, env, or local-profile", "auto")
+      .action(async (options: { source: "auto" | ApiAuthSource }) => {
+        const effective = await loadEffectiveConfig();
+        const material = await resolveApiAuthMaterial(effective, options.source);
+        const result = await fetchApiTokens(material.publicationUrl, material, fetch);
+        console.log(JSON.stringify(result, null, 2));
+        if (result.status !== "ok") {
+          process.exitCode = 1;
+        }
+      }),
+  )
   .action(async (options: { source: "auto" | ApiAuthSource }) => {
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);

@@ -13,19 +13,19 @@ Percentages are qualitative estimates, not audited API parity guarantees. Rows l
 | **Publishing** | ~80% | Publish, schedule, prepublish validation, dual transport. Missing: unpublish, republish |
 | **Metadata/frontmatter** | ~75% | Title, subtitle, tags, audience (4 tiers), section, comments, scheduleAt. Missing: SEO title/description, social preview image |
 | **Media** | ~60% | Image upload (5 formats via base64), media manifest inspection, video upload probe. Missing: native video, audio, file attachments |
-| **Publication settings** | ~15% | Read-only: name, subdomain, custom domain, hero text, payments state, colors, fonts, logos. Missing: all write operations |
-| **Custom domain** | ~10% | Read custom domain in publication response, SSL status, DNS instructions. Missing: configure, SSL management |
-| **Email/newsletter** | ~15% | `should_send_email` field on draft create, email template probe, broadcast history/cancel probe, test email probe. Missing: template write, subject/preview |
+| **Publication settings** | ~60% | Read/write probes for name, branding fields, colors, fonts, logos, favicon, SEO/email branding with dry-run and confirmation guards. Missing: live-confirmed parity for every dashboard setting |
+| **Custom domain** | ~25% | Read custom domain, verification/SSL status, DNS instructions, set/remove probes, read-only verify refresh. Missing: confirmed mutation endpoints and continuous SSL management |
+| **Email/newsletter** | ~35% | `should_send_email` field, subject/preview via title/subtitle, email template read/write probes, broadcast history/cancel probe, test email probe. Missing: confirmed full visual designer parity |
 | **Sections** | ~40% | List sections, assign post to section. Missing: create, update, delete sections |
-| **Subscribers** | ~15% | Subscriber count via publication checklist, subscriber list with pagination. Missing: CSV import/export, segments, suppression, gift subscriptions |
-| **Comments** | ~25% | Comment list, moderation (approve/delete/pin/reply). Missing: spam detection, quarantine, commenter management |
-| **Analytics** | ~10% | Probe-only: post analytics, subscriber growth, email performance, revenue analytics, snapshot store. Missing: dashboard-only features and guaranteed endpoint parity |
-| **Recommendations** | ~0% | Not supported |
-| **Team** | ~15% | Read-only team member list. Missing: invite/remove, role changes |
-| **Billing** | ~10% | Read/probe-only: payments_state, subscription tiers, payout history, tax form status. Missing: tier write, refunds, boosted posts |
+| **Subscribers** | ~25% | Subscriber count/list with filters, CSV export/import probes, segments, suppression, gift subscription probes. Missing: confirmed dashboard endpoint parity |
+| **Comments** | ~35% | Comment list, moderation (approve/delete/pin/reply), settings probes, commenter mute/ban probes. Missing: spam detection, quarantine, confirmed settings/commenter endpoints |
+| **Analytics** | ~20% | Probe-only: post analytics, subscriber growth with period query, email performance, revenue analytics, `json/csv/table` formatting, snapshot store. Missing: dashboard-only features and guaranteed endpoint parity |
+| **Recommendations** | ~15% | Recommendation list/status/add/remove probes and MCP read-only list. Missing: confirmed dashboard endpoint parity |
+| **Team** | ~25% | Team member list with default email redaction, activity/invite/remove/role-change probes. Missing: confirmed team write/activity endpoints |
+| **Billing** | ~20% | Read/probe-only: payments_state, tiers, payout history, tax form status, refund/promote probes, default PII redaction. Missing: tier writes, coupons, confirmed Stripe/refund execution |
 | **Podcast** | ~15% | Probe-heavy: podcast section read, episode list probe, distribution settings probe, episode create/schedule paths, video upload/settings probe. Missing: verified RSS/feed/platform parity |
 | **Video** | ~10% | Probe-only: video upload and settings paths. Missing: verified native hosting, transcoding, thumbnails |
-| **Notes/social** | ~15% | Notes list/get/create, following list, like/reshare/delete. Missing: chat/DM (WebSocket) |
+| **Notes/social** | ~20% | Notes list/get/create, following list, like/reshare/delete/reply probe. Missing: chat/DM (WebSocket) |
 | **Cross-posting** | ~5% | Probe-only: cross-post, WordPress import, RSS import, API token listing. Missing: verified actual cross-posting when dashboard-only |
 | **Auth** | ~80% | Cookie, email/password, session validation, multi-publication. Missing: OAuth, 2FA |
 

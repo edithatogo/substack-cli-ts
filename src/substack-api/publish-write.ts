@@ -28,7 +28,7 @@ export interface PublishWriteResult {
   retryAttempts?: number | undefined;
 }
 
-const _PREPUBLISH_PATH = "/api/v1/drafts/{id}/prepublish";
+const PREPUBLISH_PATH = "/api/v1/drafts/{id}/prepublish";
 const PUBLISH_PATH = "/api/v1/drafts/{id}/publish";
 const SCHEDULE_PATH = "/api/v1/drafts/{id}/schedule";
 
@@ -40,7 +40,12 @@ export function planPublishWrite(
   scheduleAt?: string,
   existingDraft?: DraftMapping | null,
 ): PublishWritePlan {
-  const pathTemplate = operation === "schedule" ? SCHEDULE_PATH : PUBLISH_PATH;
+  const pathTemplate =
+    operation === "prepublish"
+      ? PREPUBLISH_PATH
+      : operation === "schedule"
+        ? SCHEDULE_PATH
+        : PUBLISH_PATH;
   const path = pathTemplate.replace("{id}", encodeURIComponent(draftId));
   const endpoint = new URL(path, publicationUrl).toString();
 

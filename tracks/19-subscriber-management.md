@@ -1,5 +1,11 @@
 # Track 19: Subscriber Management
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Scope:** Resolve or explicitly document subscriber import/export, segments, suppression, and gift-subscription gaps.
+
 ## Goal
 
 Enable programmatic subscriber management — listing, importing, exporting, and segmenting subscribers without relying on the Substack web dashboard.
@@ -53,16 +59,40 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**Complete (list + count implemented, import/export/segments not CLI-accessible)**
+**Partial (probe-based read/write stubs; import/export/segments/suppression/gifts are probe-only)**
 
-**Implemented:**
+**Implemented (all with tests):**
 - Aggregate subscriber count via `fetchPublicationChecklist()` → `getSubscriberCount()` in `subscriber.ts`
 - `api subscriber count` CLI command
 - Subscriber list via `fetchSubscriberList()` from `GET /api/v1/publication/subscribers` (discovered externally via tap-substack)
-- `api subscriber list` CLI command with `--limit` and `--offset` pagination
+- `api subscriber list` CLI command with `--limit`, `--offset`, `--status`, `--tier`, `--date-from`, `--date-to`, `--source-filter` filtering
+- `api subscriber export` — probe-based CSV export via `fetchSubscriberExport()` in `subscriber-export.ts` (tests in `subscriber-export.test.ts`)
+- `api subscriber import <csv-data> --yes` — probe-based CSV import via `importSubscribers()` in `subscriber-import.ts` (tests in `subscriber-import.test.ts`)
+- `api subscriber segment list` — probe-based segment listing via `fetchSubscriberSegments()` in `subscriber-segments.ts` (tests in `subscriber-segments.test.ts`)
+- `api subscriber suppress <email> --yes` — probe-based suppression add via `suppressEmail()` in `subscriber-suppression.ts` (tests in `subscriber-suppression.test.ts`)
+- `api subscriber suppression-list list` — probe-based suppression entry listing via `fetchSuppressionList()` in `subscriber-suppression.ts`
+- `api subscriber gift list` — probe-based gift subscription listing via `fetchGiftSubscriptions()` in `subscriber-gifts.ts` (tests in `subscriber-gifts.test.ts`)
 
-**External Gates (not CLI-accessible with the discovered API surface):**
-- CSV import/export — dashboard UI only
-- Subscriber segments/groups — no endpoints discovered
-- Suppression list management — no endpoints discovered
-- Gift subscriptions — no endpoints discovered
+**New modules and files:**
+- `src/substack-api/subscriber-export.ts` — `fetchSubscriberExport()` with multi-endpoint probe
+- `src/substack-api/subscriber-import.ts` — `importSubscribers()` with multi-endpoint probe, `--yes` required
+- `src/substack-api/subscriber-segments.ts` — `fetchSubscriberSegments()` with multi-endpoint probe
+- `src/substack-api/subscriber-suppression.ts` — `fetchSuppressionList()` (read) + `suppressEmail()` (write, `--yes` required)
+- `src/substack-api/subscriber-gifts.ts` — `fetchGiftSubscriptions()` with multi-endpoint probe
+- Updated `src/substack-api/subscriber-list.ts` — `SubscriberListOptions` with `status`, `tier`, `dateFrom`, `dateTo`, `source` fields
+- Updated `src/cli.ts` — all new subscriber subcommands wired
+- Test files: `subscriber-export.test.ts`, `subscriber-import.test.ts`, `subscriber-segments.test.ts`, `subscriber-suppression.test.ts`, `subscriber-gifts.test.ts`, updated `subscriber-list.test.ts`
+
+**No confirmed endpoints (CLI probes return graceful "not-found" when unavailable):**
+- CSV import/export — probe commands exist; operations may be dashboard-only
+- Subscriber segments/groups — probe commands exist; segments may be dashboard-only filtered views
+- Suppression list management — probe commands exist; operation may be dashboard-only
+- Gift subscriptions — probe command exists; management may be dashboard-only
+
+**Discovery status for Subscriber API endpoints:**
+- `/api/v1/publication/subscribers` — known working (list with pagination and filtering)
+- All export, import, segment, suppression, and gift endpoints — none discovered. Dashboard-only behavior confirmed via `tap-substack` and external project research (Tracks 05, 13). No known Substack API exists for these operations outside the web dashboard.
+
+**Commands run to validate:**
+- `npm run typecheck`
+- Escalated `npm test` (sandboxed smoke tests cannot spawn `node.exe` on this machine)

@@ -8,9 +8,8 @@ vi.mock("./substack-adapter.js", () => ({
   createSubstackClient: vi.fn(),
 }));
 
-const { listNotes, getNote, createNote, deleteNote, likeNote, reshareNote } = await import(
-  "./notes.js"
-);
+const { listNotes, getNote, createNote, deleteNote, likeNote, reshareNote, replyToNote } =
+  await import("./notes.js");
 
 function material() {
   return materialFromCookieHeader(
@@ -291,5 +290,30 @@ describe("reshareNote", () => {
     };
     await reshareNote(material(), 42, urlCapturingFetch);
     assert.equal(capturedUrl, "https://rareinsights.substack.com/api/v1/notes/42/reshare");
+  });
+});
+
+describe("replyToNote", () => {
+  it("sends POST and returns status on success", async () => {
+    const result = await replyToNote(material(), 42, "Thanks", fakeFetch(200, "{}"));
+    assert.equal(result.status, 200);
+  });
+
+  it("returns status on not-found response", async () => {
+    const result = await replyToNote(material(), 999, "Thanks", fakeFetch(404, "{}"));
+    assert.equal(result.status, 404);
+  });
+
+  it("targets the note comments URL with body payload", async () => {
+    let capturedUrl = "";
+    let capturedBody = "";
+    const urlCapturingFetch: FetchLike = (url, init) => {
+      capturedUrl = url;
+      capturedBody = String(init?.body ?? "");
+      return Promise.resolve({ status: 200, text: () => Promise.resolve("{}") });
+    };
+    await replyToNote(material(), 42, "Thanks", urlCapturingFetch);
+    assert.equal(capturedUrl, "https://rareinsights.substack.com/api/v1/notes/42/comments");
+    assert.deepEqual(JSON.parse(capturedBody), { body: "Thanks" });
   });
 });

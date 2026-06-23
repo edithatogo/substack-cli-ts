@@ -597,16 +597,232 @@ Get full details for a specific note by ID.
 | Flag | Description |
 |------|-------------|
 | `--body <text>` (required) | Note body text |
+| `--yes` (required) | Confirm note publication |
 | `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
 
-### `api team list`
+### `api notes delete <id>`
 
-List publication team members.
+Delete a note. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm note deletion |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api notes like <id>`
+
+Like a note. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm note like |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api notes reshare <id>`
+
+Reshare a note. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm note reshare |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api notes reply <id> <text>`
+
+[PROBE] Reply to a note. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm note reply |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api recommendation list`
+
+[PROBE] List recommended and recommending publications.
 
 **Options:**
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api recommendation status <publication-url>`
+
+[PROBE] Check recommendation status for another publication.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api recommendation add <publication-url>`
+
+[PROBE] Recommend another publication. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm recommendation |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api recommendation remove <publication-url>`
+
+[PROBE] Remove a publication recommendation. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm recommendation removal |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api comment list <post-id>`
+
+List comments for a post.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--limit <limit>` | Maximum comments to return | `50` |
+| `--status <status>` | Optional status filter, such as `held` or `approved` | — |
+
+### `api comment get <comment-id>`
+
+Get a single comment by ID.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api comment approve <comment-id>`
+
+Approve a held comment. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm moderation action |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api comment delete <comment-id>`
+
+Delete a comment. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm moderation action |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api comment pin <comment-id>`
+
+Pin a comment. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm moderation action |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api comment reply <comment-id> <text>`
+
+Reply to a comment as the publication. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm reply |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api comment settings <post-id>`
+
+[PROBE] Show or update comment settings for a post. Updates require `--yes`.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--require-paid` | Require paid subscribers to comment | `false` |
+| `--require-subscriber` | Require subscribers to comment | `false` |
+| `--hold-for-review` | Hold comments for moderation review | `false` |
+| `--disable` | Disable commenting | `false` |
+| `--auto-approve-repeated` | Auto-approve repeated commenters | `false` |
+| `--yes` | Confirm settings update | `false` |
+
+### `api commenter mute <user-id>`
+
+[PROBE] Mute a commenter. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm mute action |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api commenter ban <user-id>`
+
+[PROBE] Ban a commenter. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm ban action |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api team list`
+
+List publication team members. Email addresses are redacted unless `--include-emails` is passed.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--include-emails` | Include team member email addresses | `false` |
+
+### `api team activity`
+
+[PROBE] Show recent team activity if an endpoint is available.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api team invite <email>`
+
+[PROBE] Invite a collaborator. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--role <role>` (required) | `admin`, `editor`, `contributor`, or `reader` |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+| `--yes` (required) | Confirm team invitation |
+
+### `api team remove <user-id>`
+
+[PROBE] Remove a collaborator. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+| `--yes` (required) | Confirm team member removal |
+
+### `api team role <user-id>`
+
+[PROBE] Change a collaborator role. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--role <role>` (required) | `admin`, `editor`, `contributor`, or `reader` |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+| `--yes` (required) | Confirm team role update |
 
 ### `api publication get`
 
@@ -696,12 +912,42 @@ Blocked manual/admin operation. Use the Substack dashboard for favicon changes u
 
 ### `api domain status`
 
-Show custom domain status and DNS configuration.
+Show custom domain status and DNS configuration. Read-only; no confirmation required.
 
 **Options:**
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api domain verify`
+
+Refresh custom domain verification and SSL status without mutating settings.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api domain set`
+
+[PROBE] Attempt to set a custom domain for the publication. The Substack API domain mutation endpoint has not been confirmed, so this probes known paths (`/api/v1/publication/custom_domain`, `/api/v1/publication/domain`, `/api/v1/publication/update`) and reports availability. Requires `--yes`.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--domain <domain>` (required) | Custom domain to set (e.g., `newsletter.example.com`) | — |
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--yes` | Confirm domain change without interactive prompt | `false` |
+
+### `api domain remove`
+
+[PROBE] Attempt to remove the custom domain and revert to the Substack subdomain. The Substack API domain mutation endpoint has not been confirmed, so this probes known paths and reports availability. Requires `--yes`.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--yes` | Confirm domain removal without interactive prompt | `false` |
 
 ### `api profile me`
 
@@ -759,6 +1005,70 @@ List subscribers for the publication with pagination support.
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 | `--limit <limit>` | Maximum number of subscribers to return | `100` |
 | `--offset <offset>` | Offset for pagination | `0` |
+| `--status <status>` | Filter by status | — |
+| `--tier <tier>` | Filter by tier | — |
+| `--date-from <date>` | Filter by subscription date from | — |
+| `--date-to <date>` | Filter by subscription date to | — |
+| `--source-filter <source>` | Filter by subscriber source | — |
+
+### `api subscriber export`
+
+[PROBE] Export subscribers as CSV. This may be dashboard-only.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--format <format>` | Export format, currently `csv` | `csv` |
+| `--status <status>` | Filter by status | — |
+| `--tier <tier>` | Filter by tier | — |
+
+### `api subscriber import <csv-data>`
+
+[PROBE] Import subscribers from CSV data or a CSV file path. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm import |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api subscriber segment list`
+
+[PROBE] List subscriber segments or groups.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api subscriber suppress <email>`
+
+[PROBE] Add an email address to the suppression list. Requires `--yes`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--yes` (required) | Confirm suppression |
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+
+### `api subscriber suppression-list list`
+
+[PROBE] List suppression entries.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api subscriber gift list`
+
+[PROBE] List gift subscriptions.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 
 ### `api analytics inventory`
 
@@ -783,6 +1093,7 @@ Fetch analytics for a specific post.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--format <format>` | `json`, `csv`, or `table` | `json` |
 
 ### `api analytics subscribers`
 
@@ -792,6 +1103,8 @@ Fetch subscriber growth analytics.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--period <period>` | Growth period label: `daily`, `weekly`, or `monthly` | `daily` |
+| `--format <format>` | `json`, `csv`, or `table` | `json` |
 
 ### `api analytics email`
 
@@ -802,6 +1115,7 @@ Fetch email performance analytics.
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 | `--limit <limit>` | Maximum number of emails to return | `10` |
+| `--format <format>` | `json`, `csv`, or `table` | `json` |
 
 ### `api analytics revenue`
 
@@ -811,6 +1125,7 @@ Fetch revenue analytics.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--format <format>` | `json`, `csv`, or `table` | `json` |
 
 ### `api analytics snapshot`
 
@@ -831,6 +1146,7 @@ Probe all billing endpoints and report availability.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--include-pii` | Include unredacted PII if returned by Substack | `false` |
 
 ### `api billing tiers`
 
@@ -840,6 +1156,7 @@ List subscription tiers and pricing.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--include-pii` | Include unredacted PII if returned by Substack | `false` |
 
 ### `api billing payouts`
 
@@ -849,6 +1166,7 @@ Show payout history.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--include-pii` | Include unredacted PII if returned by Substack | `false` |
 
 ### `api billing taxes`
 
@@ -858,6 +1176,30 @@ Show tax form status.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--include-pii` | Include unredacted PII if returned by Substack | `false` |
+
+### `api billing refund <subscriber-id>`
+
+[PROBE] Attempt to initiate a subscriber refund. Requires `--yes` and typed `--confirm refund`.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
+| `--amount <amount>` | Optional refund amount in dollars |
+| `--reason <reason>` | Optional refund reason |
+| `--yes` (required) | Confirm refund operation |
+| `--confirm refund` (required) | Typed confirmation |
+
+### `api billing promote`
+
+[PROBE] List boosted post promotions.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--include-pii` | Include unredacted PII if returned by Substack | `false` |
 
 ### `api email template`
 
@@ -867,6 +1209,24 @@ Show current email template settings.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api email set-template`
+
+[PROBE] Update email template settings. Use `--dry-run` to preview or `--yes` to confirm.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--header-html <html>` | Email header HTML content | — |
+| `--footer-html <html>` | Email footer HTML content | — |
+| `--logo-url <url>` | Email logo URL | — |
+| `--primary-color <color>` | Email primary color | — |
+| `--background-color <color>` | Email background color | — |
+| `--text-color <color>` | Email text color | — |
+| `--font-family <font>` | Email font family | — |
+| `--dry-run` | Preview changes without writing | `false` |
+| `--yes` | Confirm update without interactive prompt | `false` |
 
 ### `api email broadcast list`
 
@@ -1050,6 +1410,15 @@ Blocked import workflow. Use the Substack dashboard/manual import flow until saf
 ### `api integrations tokens`
 
 List API tokens (redacted).
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+
+### `api integrations tokens list`
+
+Alias for `api integrations tokens`; lists API tokens with token values redacted.
 
 **Options:**
 | Flag | Description | Default |
