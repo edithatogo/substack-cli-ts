@@ -1,0 +1,8 @@
+{
+  "track_id": "recommendations_boost_probe_20260624",
+  "type": "feature",
+  "status": "completed",
+  "created_at": "2026-06-23T17:53:42Z",
+  "updated_at": "2026-06-23T18:13:11Z",
+  "description": "Recommendations and Boost remain probe-only discovery surfaces."
+}
