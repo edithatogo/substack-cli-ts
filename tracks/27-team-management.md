@@ -1,16 +1,26 @@
 # Track 27: Team Management
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Scope:** Resolve or explicitly document invite, remove, role-change, and team-permission gaps.
+
 ## Status
 
-**Complete (list implemented, write not CLI-accessible)**
+**Probe-only / Partial (list implemented, write/activity probes unconfirmed)**
 
 **Implemented:**
 - `api team list` CLI command — reads team members via `fetchTeamMembers()` from `GET /api/v1/publication/users`
+- Email addresses are redacted by default; `api team list --include-emails` explicitly opts into full email output
 - Team member schema with id, name, email, role
+- `api team activity` — read probe for team activity endpoints
+- `api team invite <email> --role <role> --yes` — invite probe with role validation
+- `api team remove <user-id> --yes` — remove probe
+- `api team role <user-id> --role <role> --yes` — role-change probe with role validation
 
-**External Gates:**
-- No invite/remove/role-change endpoints have been discovered. Only `GET /api/v1/publication/users` is available.
-- Team write operations require future browser DevTools network capture or official endpoint documentation before they can be safely implemented.
+**Pending:**
+- No invite/remove/role-change/activity endpoints confirmed. Only `GET /api/v1/publication/users` is known available. Team write operations require browser DevTools network capture before promotion from probe-only support.
 
 ## Goal
 

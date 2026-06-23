@@ -7,6 +7,7 @@ import {
   fetchBroadcastHistory,
   fetchEmailTemplate,
   sendTestEmail,
+  updateEmailTemplate,
 } from "./email.js";
 
 const material = materialFromCookieHeader(
@@ -143,5 +144,80 @@ describe("email write probes", () => {
 
     assert.equal(result.status, "failed");
     assert.match(result.message, /No test email endpoint/);
+  });
+});
+
+describe("updateEmailTemplate", () => {
+  it("returns a preview when dry-run is true (no write performed)", async () => {
+    const result = await updateEmailTemplate(
+      "https://test.substack.com",
+      material,
+      fakeFetch(200, {}),
+      { primaryColor: "#ff0000" },
+      { dryRun: true },
+    );
+
+    assert.equal(result.status, "ok");
+    assert.match(result.message, /Preview/);
+    assert.equal(result.updated?.primaryColor, "#ff0000");
+  });
+
+  it("returns a preview when confirm is not provided", async () => {
+    const result = await updateEmailTemplate(
+      "https://test.substack.com",
+      material,
+      fakeFetch(200, {}),
+      { headerHtml: "<h1>New Header</h1>" },
+    );
+
+    assert.equal(result.status, "ok");
+    assert.match(result.message, /Preview/);
+  });
+
+  it("attempts to write through known endpoints when confirmed", async () => {
+    const routes = new Map([
+      ["https://test.substack.com/api/v1/publication/email_template", { status: 200, body: {} }],
+    ]);
+
+    const result = await updateEmailTemplate(
+      "https://test.substack.com",
+      material,
+      fakeFetchRoutes(routes),
+      { fontFamily: "Georgia" },
+      { confirm: true },
+    );
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.updated?.fontFamily, "Georgia");
+  });
+
+  it("returns failed when all endpoints return 404", async () => {
+    const result = await updateEmailTemplate(
+      "https://test.substack.com",
+      material,
+      fakeFetch(404, {}),
+      { textColor: "#333333" },
+      { confirm: true },
+    );
+
+    assert.equal(result.status, "failed");
+    assert.match(result.message, /No writable email template endpoint/);
+  });
+
+  it("returns failed on non-404 write error", async () => {
+    const routes = new Map([
+      ["https://test.substack.com/api/v1/publication/email_template", { status: 403, body: {} }],
+    ]);
+
+    const result = await updateEmailTemplate(
+      "https://test.substack.com",
+      material,
+      fakeFetchRoutes(routes),
+      { footerHtml: "<p>Footer</p>" },
+      { confirm: true },
+    );
+
+    assert.equal(result.status, "failed");
+    assert.match(result.message, /HTTP 403/);
   });
 });

@@ -1,5 +1,13 @@
 # Track 17: Publication Settings & Branding
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Reconciled on:** 2026-06-04
+- **Scope:** Reconcile the central Read-only / Partial status against this track's implementation notes, then either close the track cleanly or document any remaining endpoint-discovery blockers.
+- **Reconciliation outcome:** Track 17 is verified Complete. All READ and WRITE operations are implemented: `api publication get`, `api publication settings`, `api publication get-details`, `api publication set` (with read-modify-write, dry-run, `--from-json`, `--from-yaml`, and individual CLI flags), `api publication upload-logo`, and `api publication upload-favicon`. The `settings` subcommand was added (it existed only as `get-details` before). The central board (`conductor/tracks.md`) and track index (`tracks/README.md`) have been updated to reflect Complete status. 18 test cases in `src/substack-api/publication-settings.test.ts` cover fetch, update, preview, upload, diff, and edge cases. The `POST /api/v1/publication/update` endpoint is wired and live-usable. No remaining blockers or pending items.
+
 ## Goal
 
 Enable programmatic management of Substack publication settings — branding, layout, SEO, and metadata — through the internal API, so that publication-wide configuration can be scripted and validated without the dashboard UI.

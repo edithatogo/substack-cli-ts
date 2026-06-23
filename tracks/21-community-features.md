@@ -1,5 +1,11 @@
 # Track 21: Community Features (Notes, Chat, Recommendations)
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Scope:** Resolve or explicitly document note-delete/engagement actions, recommendations, chat/DM, and threads/Q&A gaps.
+
 ## Goal
 
 Enable management of Substack community features — Notes (social posts), chat/DMs, threads/Q&A, and the publication recommendations network.
@@ -55,16 +61,32 @@ Before implementation begins, research is required in these areas:
 
 ## Current Status
 
-**Complete (notes+following implemented, recommendations/chat not CLI-accessible)**
+**Partial (notes list/get/create/delete/like/reshare/reply + following + recommendation probes implemented)**
 
-**Implemented:**
+**Implemented (this session, 2026-06-04):**
+- `api notes delete <id> --yes` — delete a note by ID via `deleteNote()` in `notes.ts`
+- `api notes like <id> --yes` — like a note via `likeNote()` in `notes.ts`
+- `api notes reshare <id> --yes` — reshare a note via `reshareNote()` in `notes.ts`
+- `api notes reply <id> <text> --yes` — probe reply-to-note via `replyToNote()` in `notes.ts`
+- `api recommendation list` — probe-based list of recommended/recommending publications via `fetchRecommendationList()` in `recommendations.ts`
+- `api recommendation status <publication-url>` — probe-based recommendation status check via `fetchRecommendationStatus()`
+- `api recommendation add <publication-url> --yes` — probe-based add recommendation via `addRecommendation()`
+- `api recommendation remove <publication-url> --yes` — probe-based remove recommendation via `removeRecommendation()`
+- Wire existing `api notes list`, `api notes get`, `api notes create`, `api following list` (previously implemented)
+- MCP read-only tools: `api.notes.list` and `api.recommendations.list`
+
+**Previously implemented:**
 - `api notes list` — list recent notes from own profile via `listNotes()` in `notes.ts`
 - `api notes get <id>` — get full note details via `getNote()`
-- `api notes create --body <text>` — create and publish a new note via `createNote()`
-- `api following` — list followed users via `client.ownProfile().following()`
+- `api notes create --body <text> --yes` — create and publish a new note via `createNote()`
+- `api following list` — list followed users via `client.ownProfile().following()`
 
-**External Gates:**
-- Note delete, like, reshare, and reply endpoints remain undiscovered.
-- No recommendation endpoints have been discovered. The substack-api npm package has no recommendation methods. Recommendations require future browser DevTools network capture or third-party endpoint research.
-- Chat/DM is WebSocket-based and not CLI-accessible through the current REST adapter.
-- Threads/Q&A management remains undiscovered.
+**Tests added:**
+- `src/substack-api/recommendations.test.ts` — tests for `fetchRecommendationList`, `fetchRecommendationStatus`, `addRecommendation`, `removeRecommendation`
+- Existing `src/substack-api/notes.test.ts` — tests for `deleteNote`, `likeNote`, `reshareNote` already existed
+
+**Not CLI-accessible (no endpoints discovered):**
+- Chat/DM is WebSocket-based and not CLI-accessible.
+- Threads/Q&A management — no endpoints discovered.
+- Recommendation management endpoints are probe-only — actual Substack API endpoints for recommendations have not been confirmed via live testing. The probes try known paths (`/api/v1/publication/recommendations`, `/api/v1/publication/recommendation/status`, etc.) and report not-found if all fail. Live DevTools network capture from the Substack dashboard Recommendations page is needed to confirm exact endpoints.
+- Note reply uses a direct endpoint probe; live endpoint parity remains unconfirmed until dashboard/network capture verifies the route.

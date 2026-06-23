@@ -73,6 +73,30 @@ describe("fetchPodcastSection", () => {
 
     assert.equal(result.status, "schema-drift");
   });
+
+  it("reports not-found when no podcast section exists", async () => {
+    const result = await fetchPodcastSection(
+      "https://test.substack.com",
+      material,
+      fakeFetch(200, [
+        { id: 1, name: "News", slug: "news", is_podcast: false },
+        { id: 2, name: "Essays", slug: "essays", is_podcast: false },
+      ]),
+    );
+
+    assert.equal(result.status, "not-found");
+    assert.match(result.message, /No podcast section found/);
+  });
+
+  it("classifies http errors", async () => {
+    const result = await fetchPodcastSection(
+      "https://test.substack.com",
+      material,
+      fakeFetch(401, { error: "unauthorized" }),
+    );
+
+    assert.equal(result.status, "unauthenticated");
+  });
 });
 
 describe("fetchPodcastEpisodes", () => {
@@ -100,6 +124,42 @@ describe("fetchPodcastEpisodes", () => {
     assert.equal(result.episodes?.[0]?.id, 10);
     assert.equal(result.episodes?.[0]?.audioUrl, "https://example.com/audio.mp3");
   });
+
+  it("parses episodes from flat array response", async () => {
+    const result = await fetchPodcastEpisodes(
+      "https://test.substack.com",
+      material,
+      fakeFetch(200, [
+        {
+          id: 1,
+          title: "Flat Episode",
+          audio_url: "https://example.com/audio.mp3",
+          status: "draft",
+        },
+        {
+          id: 2,
+          title: "Flat Episode 2",
+          audio_url: "https://example.com/audio2.mp3",
+          status: "published",
+        },
+      ]),
+    );
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.episodes?.length, 2);
+    assert.equal(result.episodes?.[0]?.id, 1);
+    assert.equal(result.episodes?.[1]?.id, 2);
+  });
+
+  it("returns not-found when no endpoint responds", async () => {
+    const result = await fetchPodcastEpisodes(
+      "https://test.substack.com",
+      material,
+      fakeFetch(404, { error: "not found" }),
+    );
+
+    assert.equal(result.status, "not-found");
+  });
 });
 
 describe("fetchPodcastSettings", () => {
@@ -121,6 +181,16 @@ describe("fetchPodcastSettings", () => {
     assert.equal(result.settings?.applePodcastsUrl, "https://apple.example");
     assert.equal(result.settings?.playerEmbedEnabled, true);
   });
+
+  it("returns not-found when no settings endpoint responds", async () => {
+    const result = await fetchPodcastSettings(
+      "https://test.substack.com",
+      material,
+      fakeFetch(404, { error: "not found" }),
+    );
+
+    assert.equal(result.status, "not-found");
+  });
 });
 
 describe("podcast write probes", () => {
@@ -136,6 +206,126 @@ describe("podcast write probes", () => {
     assert.match(result.message, /Unsupported audio format/);
   });
 
+  it("creates a podcast episode with a real audio file", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-podcast-"));
+    const file = join(temp, "episode.mp3");
+    await writeFile(file, Buffer.from("audio"));
+
+    try {
+      const result = await createPodcastEpisode(
+        "https://test.substack.com",
+        file,
+        material,
+        fakeFetchRoutes(
+          new Map([
+            [
+              "https://test.substack.com/api/v1/drafts",
+              {
+                status: 200,
+                body: { id: 101, draft_url: "https://substack.com/p/101" },
+              },
+            ],
+            [
+              "https://test.substack.com/api/v1/drafts/101/audio",
+              {
+                status: 200,
+                body: { url: "https://cdn.example/audio.mp3" },
+              },
+            ],
+            [
+              "https://test.substack.com/api/v1/drafts/101",
+              {
+                status: 200,
+                body: { id: 101, draft_podcast_url: "https://cdn.example/audio.mp3" },
+              },
+            ],
+          ]),
+        ),
+      );
+
+      assert.equal(result.status, "ok");
+      assert.equal(result.draftId, 101);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
+  it("uses existing draftId when provided", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-podcast-"));
+    const file = join(temp, "episode.mp3");
+    await writeFile(file, Buffer.from("audio"));
+
+    try {
+      const result = await createPodcastEpisode(
+        "https://test.substack.com",
+        file,
+        material,
+        fakeFetchRoutes(
+          new Map([
+            [
+              "https://test.substack.com/api/v1/drafts/42/audio",
+              {
+                status: 200,
+                body: { audio_url: "https://cdn.example/audio.mp3" },
+              },
+            ],
+            [
+              "https://test.substack.com/api/v1/drafts/42",
+              {
+                status: 200,
+                body: { id: 42, draft_podcast_url: "https://cdn.example/audio.mp3" },
+              },
+            ],
+          ]),
+        ),
+        { draftId: 42 },
+      );
+
+      assert.equal(result.status, "ok");
+      assert.equal(result.draftId, 42);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
+  it("reports audio upload failure gracefully", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-podcast-"));
+    const file = join(temp, "episode.mp3");
+    await writeFile(file, Buffer.from("audio"));
+
+    try {
+      const result = await createPodcastEpisode(
+        "https://test.substack.com",
+        file,
+        material,
+        fakeFetchRoutes(
+          new Map([
+            [
+              "https://test.substack.com/api/v1/drafts",
+              {
+                status: 200,
+                body: { id: 200, draft_url: "https://substack.com/p/200" },
+              },
+            ],
+            [
+              "https://test.substack.com/api/v1/drafts/200/audio",
+              {
+                status: 500,
+                body: { error: "server error" },
+              },
+            ],
+          ]),
+        ),
+      );
+
+      assert.equal(result.status, "failed");
+      assert.ok(result.draftId);
+      assert.match(result.message, /Audio upload failed/);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
   it("schedules podcast episodes", async () => {
     const result = await schedulePodcastEpisode(
       "https://test.substack.com",
@@ -147,6 +337,18 @@ describe("podcast write probes", () => {
 
     assert.equal(result.status, "ok");
     assert.equal(result.draftId, 42);
+  });
+
+  it("scheduling fails with http error", async () => {
+    const result = await schedulePodcastEpisode(
+      "https://test.substack.com",
+      42,
+      "2026-01-01T00:00:00Z",
+      material,
+      fakeFetch(400, { error: "bad request" }),
+    );
+
+    assert.equal(result.status, "failed");
   });
 });
 
@@ -197,6 +399,52 @@ describe("video probes", () => {
     }
   });
 
+  it("reports file-not-found for missing video file", async () => {
+    const result = await uploadVideo(
+      "https://test.substack.com",
+      "/tmp/nonexistent/video.mp4",
+      material,
+      fakeFetch(200, {}),
+    );
+
+    assert.equal(result.status, "failed");
+    assert.match(result.message, /File not found/);
+  });
+
+  it("falls back to next endpoint when video upload endpoint returns 404", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-video-"));
+    const file = join(temp, "clip.mp4");
+    await writeFile(file, Buffer.from("video"));
+
+    try {
+      const result = await uploadVideo(
+        "https://test.substack.com",
+        file,
+        material,
+        fakeFetchRoutes(
+          new Map([
+            [
+              "https://test.substack.com/api/v1/video/upload",
+              { status: 404, body: { error: "not found" } },
+            ],
+            [
+              "https://test.substack.com/api/v1/publication/video/upload",
+              {
+                status: 200,
+                body: { url: "https://cdn.example/video.mp4" },
+              },
+            ],
+          ]),
+        ),
+      );
+
+      assert.equal(result.status, "ok");
+      assert.equal(result.url, "https://cdn.example/video.mp4");
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
   it("fetches video settings", async () => {
     const result = await fetchVideoSettings(
       "https://test.substack.com",
@@ -212,5 +460,16 @@ describe("video probes", () => {
     assert.equal(result.status, "ok");
     assert.equal(result.settings?.postId, 99);
     assert.equal(result.settings?.playerEnabled, false);
+  });
+
+  it("returns not-found when video settings endpoint is missing", async () => {
+    const result = await fetchVideoSettings(
+      "https://test.substack.com",
+      99,
+      material,
+      fakeFetch(404, { error: "not found" }),
+    );
+
+    assert.equal(result.status, "not-found");
   });
 });

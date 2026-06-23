@@ -93,3 +93,15 @@ export async function reshareNote(
   const result = await requestWrite(fetchImpl, url, "POST", headers, {});
   return { status: result.status };
 }
+
+export async function replyToNote(
+  material: ApiAuthMaterial,
+  id: number,
+  body: string,
+  fetchImpl: FetchLike,
+): Promise<{ status: number }> {
+  const url = `${material.publicationUrl}/api/v1/notes/${id}/comments`;
+  const headers = apiHeaders(material);
+  const result = await requestWrite(fetchImpl, url, "POST", headers, { body });
+  return { status: result.status };
+}

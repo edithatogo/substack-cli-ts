@@ -32,11 +32,21 @@ const SubscriberEntrySchema = z.object({
 
 const SubscriberListBodySchema = z.array(SubscriberEntrySchema);
 
+export interface SubscriberListOptions {
+  limit?: number | undefined;
+  offset?: number | undefined;
+  status?: string | undefined;
+  tier?: string | undefined;
+  dateFrom?: string | undefined;
+  dateTo?: string | undefined;
+  source?: string | undefined;
+}
+
 export async function fetchSubscriberList(
   publicationUrl: string,
   material: ApiAuthMaterial,
   fetchFn: FetchLike,
-  options?: { limit?: number | undefined; offset?: number | undefined },
+  options?: SubscriberListOptions,
 ): Promise<SubscriberListResult> {
   const headers = apiHeaders(material);
   const url = new URL("/api/v1/publication/subscribers", publicationUrl);
@@ -45,6 +55,21 @@ export async function fetchSubscriberList(
   }
   if (options?.offset !== undefined) {
     url.searchParams.set("offset", String(options.offset));
+  }
+  if (options?.status !== undefined) {
+    url.searchParams.set("status", options.status);
+  }
+  if (options?.tier !== undefined) {
+    url.searchParams.set("tier", options.tier);
+  }
+  if (options?.dateFrom !== undefined) {
+    url.searchParams.set("date_from", options.dateFrom);
+  }
+  if (options?.dateTo !== undefined) {
+    url.searchParams.set("date_to", options.dateTo);
+  }
+  if (options?.source !== undefined) {
+    url.searchParams.set("source", options.source);
   }
   const endpoint = url.toString();
 

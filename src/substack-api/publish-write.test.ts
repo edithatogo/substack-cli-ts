@@ -50,6 +50,18 @@ describe("planPublishWrite", () => {
     assert.ok(plan.endpoint.includes("/api/v1/drafts/123/schedule"));
     assert.equal(plan.scheduleAt, "2026-06-01T09:00:00Z");
   });
+
+  it("plans prepublish operation without targeting the live publish endpoint", () => {
+    const plan = planPublishWrite(
+      "123",
+      "https://test.substack.com/publish/post/123",
+      "prepublish",
+      "https://test.substack.com",
+    );
+
+    assert.equal(plan.operation, "prepublish");
+    assert.ok(plan.endpoint.includes("/api/v1/drafts/123/prepublish"));
+  });
 });
 
 describe("executePublishWrite", () => {

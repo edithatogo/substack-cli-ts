@@ -139,6 +139,7 @@ export async function fetchSubscriberGrowth(
   publicationUrl: string,
   material: ApiAuthMaterial,
   fetchFn: FetchLike,
+  options: { period?: string | undefined } = {},
 ): Promise<SubscriberGrowthResult> {
   const headers = apiHeaders(material);
   const endpoints = [
@@ -148,8 +149,12 @@ export async function fetchSubscriberGrowth(
   ];
 
   for (const path of endpoints) {
-    const url = new URL(path, publicationUrl).toString();
-    const response = await requestJson(fetchFn, url, headers);
+    const url = new URL(path, publicationUrl);
+    if (options.period) {
+      url.searchParams.set("period", options.period);
+    }
+    const requestUrl = url.toString();
+    const response = await requestJson(fetchFn, requestUrl, headers);
     if (response.status === 200) {
       const body = response.body as Record<string, unknown> | undefined;
       if (body) {
@@ -161,7 +166,7 @@ export async function fetchSubscriberGrowth(
       }
     }
     if (response.status !== 404) {
-      const failure = classifyFailure(response.status, url);
+      const failure = classifyFailure(response.status, requestUrl);
       return { status: failure.status, message: failure.message };
     }
   }

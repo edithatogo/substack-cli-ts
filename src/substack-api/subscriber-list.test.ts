@@ -100,4 +100,16 @@ describe("fetchSubscriberList", () => {
 
     assert.ok(true);
   });
+
+  it("passes filter parameters", async () => {
+    const fetchFn = fakeFetch(200, JSON.stringify([]));
+
+    await fetchSubscriberList("https://test.substack.com", material, fetchFn, {
+      status: "active",
+      tier: "paid",
+      source: "import",
+    });
+
+    assert.ok(true);
+  });
 });
