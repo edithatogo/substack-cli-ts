@@ -26,10 +26,10 @@
 |---------|--------|-------------|--------------|-----------|-------|
 | Publication details (name, subdomain) | ✅ | `api publication get` | `GET /api/v1/publication` | `publication.test.ts` | |
 | Branding (colors, fonts, logos) | 🔶 | `api publication settings` | `GET /api/v1/publication` | `publication-settings.test.ts` | READ only |
-| Logo upload | ✅ | `api publication upload-logo` | Custom endpoint | `publication-settings.test.ts` | |
-| Favicon upload | ✅ | `api publication upload-favicon` | Custom endpoint | `publication-settings.test.ts` | |
-| Settings write | 🔶 | `api publication set` | `POST /api/v1/publication/update` | `publication-settings.test.ts` | From inference |
-| SEO metadata | 🔶 | `api publication set --seo-title` | Via update endpoint | `publication-settings.test.ts` | |
+| Logo upload | 📋 | `api publication upload-logo` | Capture needed | `safe-surfaces.test.ts` | Blocked manual/admin write |
+| Favicon upload | 📋 | `api publication upload-favicon` | Capture needed | `safe-surfaces.test.ts` | Blocked manual/admin write |
+| Settings write | 📋 | `api publication set --dry-run` | Capture needed | `publication-settings.test.ts` | Dry-run only; live write blocked |
+| SEO metadata | 📋 | `api publication set --seo-title --dry-run` | Capture needed | `publication-settings.test.ts` | Dry-run only; live write blocked |
 
 ### 1.2 Custom Domain
 
@@ -139,11 +139,11 @@
 | Group | Tools Count | Status |
 |-------|-------------|--------|
 | Read (inventory, auth) | 2 | ✅ |
-| Review (schema, media, trace, policy, doctor) | 6 | ✅ |
+| Review (schema, media, trace, policy, doctor, coverage, launch) | 12 | ✅ |
 | Capture (draft inspection, contracts, duplicates) | 9 | ✅ |
-| Resources (surface, summary) | 2 | ✅ |
+| Resources (surface, summary, coverage, launch) | 7 | ✅ |
 | Prompts (overview, workflow review) | 2 | ✅ |
-| **Total** | **17 tools + 2 resources + 2 prompts** | **✅** |
+| **Total** | **27 tools + 7 resources + 2 prompts** | **✅** |
 
 ---
 
@@ -209,14 +209,14 @@ dependabotEnabled: ✅
 ```
 
 | Podcast settings | ✅ | `api podcast settings` | `podcast.test.ts` |
-| Create episode | ✅ | `api podcast create <file>` | `podcast.test.ts` |
-| Schedule episode | ✅ | `api podcast schedule <id>` | `podcast.test.ts` |
-| Video upload | ✅ | `api podcast video upload <file>` | `podcast.test.ts` |
+| Create episode | 📋 | `api podcast create <file>` | `safe-surfaces.test.ts` |
+| Schedule episode | 📋 | `api podcast schedule <id>` | `safe-surfaces.test.ts` |
+| Video upload | 📋 | `api podcast video upload <file>` | `safe-surfaces.test.ts` |
 | Video settings | ✅ | `api podcast video settings <id>` | `podcast.test.ts` |
 | Integration list | ✅ | `api integrations list` | `integrations.test.ts` |
-| Cross-post | ✅ | `api integrations crosspost <id>` | `integrations.test.ts` |
-| WordPress import | ✅ | `api integrations import wordpress` | `integrations.test.ts` |
-| RSS import | ✅ | `api integrations import rss` | `integrations.test.ts` |
+| Cross-post | 📋 | `api integrations crosspost <id>` | `safe-surfaces.test.ts` |
+| WordPress import | 📋 | `api integrations import wordpress` | `safe-surfaces.test.ts` |
+| RSS import | 📋 | `api integrations import rss` | `safe-surfaces.test.ts` |
 | API tokens | ✅ | `api integrations tokens` | `integrations.test.ts` |
 
 | Sections | ✅ | `api inventory` | `read-model.test.ts` |

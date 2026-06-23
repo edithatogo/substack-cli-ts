@@ -92,8 +92,8 @@
 | ID | Requirement | Verification |
 |----|------------|--------------|
 | S4.1 | MCP stdio server with tool registration | `mcp serve` starts server |
-| S4.2 | 17+ MCP tools across read/review/capture groups | All registered |
-| S4.3 | MCP resources (surface, summary) | Both registered |
+| S4.2 | 27 MCP tools across read/review/capture/creator groups | All registered |
+| S4.3 | 7 MCP resources (surface, summary, coverage, launch, safe-surface review) | All registered |
 | S4.4 | MCP prompts (surface overview, workflow review) | Both registered |
 | S4.5 | All MCP output redacted | No secrets exposed |
 
@@ -122,8 +122,8 @@
 | C1.8 | Analytics probes | Implemented — post, subscribers, email, revenue |
 | C1.9 | Billing probes | Implemented — summary, tiers, payouts, taxes |
 | C1.10 | Email template & broadcast | Implemented — `fetchEmailTemplate()`, `fetchBroadcastHistory()` |
-| C1.11 | Podcast & video management | Implemented — section, episodes, settings, create, schedule, upload |
-| C1.12 | Cross-posting & integrations | Implemented — list, crosspost, WordPress import, RSS import |
+| C1.11 | Podcast & video management | Implemented — section, episodes, settings; create, schedule, and upload writes blocked pending safe captures |
+| C1.12 | Cross-posting & integrations | Implemented — list and redacted token probes; crosspost and imports blocked pending safe captures |
 | C1.13 | Profile (own & public) | Implemented — `readOwnProfile()`, `readPublicProfile()` |
 | C1.14 | Following list | Implemented — via `substack-api` vendored library |
 

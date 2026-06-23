@@ -98,7 +98,7 @@
 
 - **Status:** Complete
 - **File:** [../tracks/15-mcp-integration.md](../tracks/15-mcp-integration.md)
-- **Summary:** 17 MCP tools across 3 groups, 2 resources, 2 prompts. All key read/review flows covered. No stale references, no secrets leak. stdio server implemented with redacted output.
+- **Summary:** Current MCP surface is 27 tools across read/review/capture/creator groups, 7 resources, and 2 prompts. All key read/review flows are redacted; write flows remain CLI-only or manual.
 
 ### Track 16: Publish Navigation Diagnosis
 
@@ -166,13 +166,13 @@
 
 - **Status:** Complete
 - **File:** [../tracks/25-podcast-video-management.md](../tracks/25-podcast-video-management.md)
-- **Summary:** Podcast and video management commands implemented — podcast section details, episode listing, distribution settings, episode creation from audio files, episode scheduling, video upload, video player settings. All commands under `api podcast` (`section`, `episodes`, `settings`, `create`, `schedule`) and `api podcast video` (`upload`, `settings`). Media operations require `--yes`. Reuses Track 10 upload infrastructure.
+- **Summary:** Podcast and video inspection/planning commands are implemented. Native audio/video creation, scheduling, and upload writes are now blocked behind the `native-video-live-automation` safe-surface decision until safe endpoint captures exist.
 
 ### Track 26: Cross-posting & Integrations
 
 - **Status:** Complete
 - **File:** [../tracks/26-cross-posting-integrations.md](../tracks/26-cross-posting-integrations.md)
-- **Summary:** Integration management commands implemented — integration listing, cross-posting, WordPress import, RSS import, API token listing (redacted). All commands under `api integrations` (`list`, `crosspost`, `import wordpress`, `import rss`, `tokens`). Import and cross-post operations require `--yes`. Token values fully redacted in output.
+- **Summary:** Integration listing and redacted token probes are implemented. Cross-post and import writes are now blocked behind the `integrations-import-crosspost-tokens` safe-surface decision until safe captures exist.
 
 ## Phase 9: Team & Collaboration
 
@@ -302,3 +302,38 @@
 | **Total** | **42** | |
 
 _Last updated: 2026-06-17_ — Tracks 01–42 are locally implemented. Track 42 records external launch/admin gates explicitly rather than claiming account-gated actions were performed.
+
+---
+
+- [x] **Track: Native video and live automation remains planning-only until safe endpoint captures exist.**
+*Link: [../tracks/native_video_live_automation_20260624/](../tracks/native_video_live_automation_20260624/)*
+
+---
+
+- [x] **Track: Recommendations and Boost remain probe-only discovery surfaces.**
+*Link: [../tracks/recommendations_boost_probe_20260624/](../tracks/recommendations_boost_probe_20260624/)*
+
+---
+
+- [x] **Track: Subscriber import, export, and segment workflows remain probe/manual due privacy risk.**
+*Link: [../tracks/subscriber_import_export_segments_20260624/](../tracks/subscriber_import_export_segments_20260624/)*
+
+---
+
+- [x] **Track: Analytics and revenue dashboards remain probe-only with local snapshot/report alternatives.**
+*Link: [../tracks/analytics_revenue_dashboards_20260624/](../tracks/analytics_revenue_dashboards_20260624/)*
+
+---
+
+- [x] **Track: Chat, DM, and live chat remain unsupported without a public contract.**
+*Link: [../tracks/chat_dm_live_chat_contract_20260624/](../tracks/chat_dm_live_chat_contract_20260624/)*
+
+---
+
+- [x] **Track: Publication admin settings, domain, payments, and team writes remain manual/admin.**
+*Link: [../tracks/publication_admin_manual_writes_20260624/](../tracks/publication_admin_manual_writes_20260624/)*
+
+---
+
+- [x] **Track: Integrations, import, crosspost, and token workflows remain probe/manual until safe captures exist.**
+*Link: [../tracks/integrations_import_crosspost_tokens_20260624/](../tracks/integrations_import_crosspost_tokens_20260624/)*

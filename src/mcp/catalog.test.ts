@@ -3,9 +3,9 @@ import { describe, it } from "vitest";
 import { buildMcpToolDescriptors, buildMcpToolGroups, registerMcpTools } from "./catalog.js";
 
 describe("McpToolDescriptors", () => {
-  it("returns all 25 tool descriptors", () => {
+  it("returns all 27 tool descriptors", () => {
     const descriptors = buildMcpToolDescriptors();
-    assert.equal(descriptors.length, 25);
+    assert.equal(descriptors.length, 27);
     assert.ok(descriptors.every((d) => d.redacted));
     assert.ok(descriptors.every((d) => d.name.length > 0));
     assert.ok(descriptors.every((d) => d.description.length > 0));
@@ -24,6 +24,8 @@ describe("McpToolDescriptors", () => {
     assert.ok(names.includes("coverage.validate"));
     assert.ok(names.includes("coverage.gaps"));
     assert.ok(names.includes("coverage.inspect"));
+    assert.ok(names.includes("coverage.safe_surfaces"));
+    assert.ok(names.includes("coverage.safe_surface"));
     assert.ok(names.includes("launch.check"));
     assert.ok(names.includes("doctor"));
     assert.ok(names.includes("api.draft.contract"));
@@ -49,7 +51,7 @@ describe("McpToolDescriptors", () => {
     const creatorTools = descriptors.filter((d) => d.group === "creator");
 
     assert.equal(readTools.length, 2);
-    assert.equal(reviewTools.length, 10);
+    assert.equal(reviewTools.length, 12);
     assert.equal(captureTools.length, 9);
     assert.equal(creatorTools.length, 4);
   });
@@ -92,6 +94,8 @@ describe("buildMcpToolGroups", () => {
 
     const reviewGroup = groups.find((g) => g.name === "review")!;
     assert.ok(reviewGroup.tools.some((t) => t.name === "coverage.validate"));
+    assert.ok(reviewGroup.tools.some((t) => t.name === "coverage.safe_surfaces"));
+    assert.ok(reviewGroup.tools.some((t) => t.name === "coverage.safe_surface"));
     assert.ok(reviewGroup.tools.some((t) => t.name === "launch.check"));
   });
 
@@ -113,7 +117,7 @@ describe("registerMcpTools", () => {
     };
 
     registerMcpTools(mockServer as Parameters<typeof registerMcpTools>[0]);
-    assert.equal(registered.length, 25);
+    assert.equal(registered.length, 27);
   });
 
   it("registers safe coverage tool handlers", async () => {
@@ -137,11 +141,22 @@ describe("registerMcpTools", () => {
     const launch = (await handlers.get("launch.check")?.({})) as {
       structuredContent: { checklist: { status: string } };
     };
+    const safeSurfaces = (await handlers.get("coverage.safe_surfaces")?.({})) as {
+      structuredContent: { count: number };
+    };
+    const safeSurface = (await handlers.get("coverage.safe_surface")?.({
+      id: "chat-dm-live-chat",
+    })) as {
+      structuredContent: { status: string; surface: { status: string } };
+    };
 
     assert.equal(validation.structuredContent.status, "ready");
     assert.equal(missing.structuredContent.status, "blocked");
     assert.equal(missing.structuredContent.message, "Capability ID was not found.");
     assert.equal(launch.structuredContent.checklist.status, "ready");
+    assert.equal(safeSurfaces.structuredContent.count, 7);
+    assert.equal(safeSurface.structuredContent.status, "ready");
+    assert.equal(safeSurface.structuredContent.surface.status, "unsupported");
   });
 
   it("rejects invalid coverage gap filters", async () => {

@@ -30,6 +30,10 @@ import {
 import { validateLaunchChecklist } from "../frontier-coverage/launch-checklist.js";
 import { FRONTIER_COVERAGE_MATRIX } from "../frontier-coverage/matrix.js";
 import {
+  buildSafeSurfaceInspectOutput,
+  buildSafeSurfaceListOutput,
+} from "../frontier-coverage/safe-surfaces.js";
+import {
   COVERAGE_DOMAINS,
   COVERAGE_STATUSES,
   type CapabilityDomain,
@@ -113,6 +117,10 @@ const CoverageGapsArgs = {
 const CoverageInspectArgs = {
   capabilityId: z.string().min(1),
   matrixFile: z.string().min(1).optional(),
+};
+
+const SafeSurfaceInspectArgs = {
+  id: z.string().min(1),
 };
 
 function parseCoverageStatus(value: string): CoverageStatus {
@@ -416,6 +424,59 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
             "Coverage capability inspection completed.",
           );
         },
+      );
+    },
+  },
+  {
+    group: "review",
+    name: "coverage.safe_surfaces",
+    description:
+      "List safe-boundary frontier surfaces and their planning/probe/manual constraints.",
+    cliCommand: "coverage safe-surfaces",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "coverage.safe_surfaces",
+        {
+          description:
+            "List safe-boundary frontier surfaces and their planning/probe/manual constraints.",
+          annotations: {
+            title: "Coverage Safe Surfaces",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async () =>
+          jsonResult(
+            toJsonRecord(buildSafeSurfaceListOutput()),
+            "Safe frontier surface summary completed.",
+          ),
+      );
+    },
+  },
+  {
+    group: "review",
+    name: "coverage.safe_surface",
+    description: "Inspect one safe-boundary frontier surface by ID.",
+    cliCommand: "coverage safe-surface --id <id>",
+    redacted: true,
+    register(server) {
+      server.registerTool(
+        "coverage.safe_surface",
+        {
+          description: "Inspect one safe-boundary frontier surface by ID.",
+          inputSchema: SafeSurfaceInspectArgs,
+          annotations: {
+            title: "Coverage Safe Surface",
+            readOnlyHint: true,
+            openWorldHint: false,
+          },
+        },
+        async ({ id }) =>
+          jsonResult(
+            toJsonRecord(buildSafeSurfaceInspectOutput(String(id))),
+            "Safe frontier surface inspection completed.",
+          ),
       );
     },
   },

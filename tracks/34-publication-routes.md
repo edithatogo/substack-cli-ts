@@ -78,8 +78,8 @@ graph TB
 | Item | Status | Details |
 |------|--------|---------|
 | MCP stdio server | ✅ | `mcp serve` command |
-| Tool registration (17 tools) | ✅ | 3 groups: read, review, capture |
-| Resource registration (2) | ✅ | surface, summary |
+| Tool registration (27 tools) | ✅ | 4 groups: read, review, capture, creator |
+| Resource registration (7) | ✅ | surface, summary, coverage, launch, safe-surface review |
 | Prompt registration (2) | ✅ | overview, workflow review |
 | MCP manifest | ✅ | `buildMcpSurfaceManifest()` |
 

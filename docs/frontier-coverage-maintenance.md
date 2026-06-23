@@ -26,6 +26,8 @@ This guide explains how to update the frontier coverage system without overclaim
 npm run build
 npm test
 node dist/cli.js coverage validate
+node dist/cli.js coverage safe-surfaces
+node dist/cli.js coverage safe-surface --id native-video-live-automation
 node dist/cli.js coverage report --format markdown --out docs/frontier-coverage-roadmap.md
 ```
 

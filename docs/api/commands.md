@@ -47,6 +47,77 @@ Review the repository distribution and dependency policy. Prints a JSON policy r
 
 ---
 
+## `coverage`
+
+Inspect the frontier coverage matrix, launch gates, and safe automation boundaries. These commands are read-only and never perform Substack mutations.
+
+### `coverage validate`
+
+Validate the frontier coverage matrix.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--matrix <file>` | Optional matrix JSON fixture to validate instead of the built-in matrix |
+
+### `coverage report`
+
+Render the frontier coverage roadmap.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--format <format>` | `json` or `markdown` | `json` |
+
+### `coverage gaps`
+
+Summarize coverage gaps and decision-recorded surfaces.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--matrix <file>` | Optional matrix JSON fixture |
+| `--status <status>` | Filter by status, such as `probe-only` or `manual-admin` |
+| `--domain <domain>` | Filter by coverage domain |
+
+### `coverage inspect`
+
+Inspect a single coverage capability.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--id <capability-id>` (required) | Capability ID to inspect |
+| `--matrix <file>` | Optional matrix JSON fixture |
+
+### `coverage safe-surfaces`
+
+List the seven safe frontier surfaces and their planning, probe, manual, or unsupported boundaries.
+
+### `coverage safe-surface`
+
+Inspect one safe frontier surface.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--id <surface-id>` (required) | Surface ID such as `native-video-live-automation` or `publication-admin-writes` |
+
+### `coverage launch-check`
+
+Validate external launch and admin follow-through gates without performing external actions.
+
+### `coverage decisions`
+
+Inspect decision records for coverage gaps and launch gates.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--id <decision-id>` | Optional decision record ID |
+
+---
+
 ## `mcp`
 
 Inspect or run the MCP surface for redacted CLI summaries.
@@ -566,7 +637,7 @@ Alias for `api publication settings`. Fetches publication settings using `fetchP
 
 ### `api publication set`
 
-Update publication settings with a read-modify-write cycle. Requires either `--yes` or `--dry-run`.
+Preview publication settings changes. Live settings writes are manual/admin only until safe endpoint captures exist; without `--dry-run`, the command returns a structured blocked result that points to `coverage safe-surface --id publication-admin-writes`.
 
 **Options:**
 | Flag | Description | Default |
@@ -591,11 +662,11 @@ Update publication settings with a read-modify-write cycle. Requires either `--y
 | `--email-header-color <color>` | Email header color (hex) | — |
 | `--email-footer-color <color>` | Email footer color (hex) | — |
 | `--dry-run` | Preview changes without writing | `false` |
-| `--yes` | Confirm update without interactive prompt | `false` |
+| `--yes` | Reserved for future verified write automation; currently blocked without safe captures | `false` |
 
 ### `api publication upload-logo`
 
-Upload a logo image and update publication settings. Requires `--yes`.
+Blocked manual/admin operation. Use the Substack dashboard for logo changes until upload and settings-write endpoint captures are proven safe. The CLI returns a structured blocked result when `--yes` is supplied.
 
 **Arguments:**
 | Name | Description |
@@ -606,11 +677,11 @@ Upload a logo image and update publication settings. Requires `--yes`.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-| `--yes` | Confirm upload without interactive prompt | — |
+| `--yes` | Required to reach the structured blocked response | — |
 
 ### `api publication upload-favicon`
 
-Upload a favicon image and update publication settings. Requires `--yes`.
+Blocked manual/admin operation. Use the Substack dashboard for favicon changes until upload and settings-write endpoint captures are proven safe. The CLI returns a structured blocked result when `--yes` is supplied.
 
 **Arguments:**
 | Name | Description |
@@ -621,7 +692,7 @@ Upload a favicon image and update publication settings. Requires `--yes`.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-| `--yes` | Confirm upload without interactive prompt | — |
+| `--yes` | Required to reach the structured blocked response | — |
 
 ### `api domain status`
 
@@ -865,7 +936,7 @@ Show podcast distribution settings.
 
 ### `api podcast create <audio-file>`
 
-Create a podcast episode draft from an audio file.
+Blocked native media write. Use `media audio plan --file <audio-file> --post <markdown>` for planning and perform native podcast/video uploads manually until safe endpoint captures exist.
 
 **Arguments:**
 | Name | Description |
@@ -878,11 +949,11 @@ Create a podcast episode draft from an audio file.
 | `--source <source>` | `auto`, `env`, or `local-profile` (default: `auto`) |
 | `--title <title>` | Episode title |
 | `--draft-id <id>` | Existing draft ID to attach audio to |
-| `--yes` (required) | Confirm episode creation |
+| `--yes` (required) | Required to reach the structured blocked response |
 
 ### `api podcast schedule <draft-id>`
 
-Schedule a podcast episode for publication.
+Blocked native media write. Use campaign planning plus manual dashboard scheduling until safe endpoint captures exist.
 
 **Arguments:**
 | Name | Description |
@@ -893,11 +964,11 @@ Schedule a podcast episode for publication.
 | Flag | Description |
 |------|-------------|
 | `--at <iso-date>` (required) | ISO timestamp for scheduled publication |
-| `--yes` (required) | Confirm scheduling |
+| `--yes` (required) | Required to reach the structured blocked response |
 
 ### `api podcast video upload <file>`
 
-Upload a video file.
+Blocked native video write. Use `media video plan --file <file> --post <markdown>` and `live plan` for planning-only workflows until safe endpoint captures exist.
 
 **Arguments:**
 | Name | Description |
@@ -908,7 +979,7 @@ Upload a video file.
 | Flag | Description | Default |
 |------|-------------|---------|
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-| `--yes` (required) | Confirm video upload |
+| `--yes` (required) | Required to reach the structured blocked response |
 
 ### `api podcast video settings <post-id>`
 
@@ -935,7 +1006,7 @@ List configured integrations and their status.
 
 ### `api integrations crosspost <post-id>`
 
-Cross-post a published article to another platform.
+Blocked integrations write. Use manual dashboard cross-posting until destination consent, idempotency, and endpoint captures exist.
 
 **Arguments:**
 | Name | Description |
@@ -946,11 +1017,11 @@ Cross-post a published article to another platform.
 | Flag | Description |
 |------|-------------|
 | `--platform <platform>` (required) | Target platform (e.g., twitter, bluesky) |
-| `--yes` (required) | Confirm cross-posting |
+| `--yes` (required) | Required to reach the structured blocked response |
 
 ### `api integrations import wordpress <file>`
 
-Import from WordPress.
+Blocked import workflow. Use the Substack dashboard/manual import flow until safe endpoint captures exist.
 
 **Arguments:**
 | Name | Description |
@@ -960,11 +1031,11 @@ Import from WordPress.
 **Options:**
 | Flag | Description |
 |------|-------------|
-| `--yes` (required) | Confirm import |
+| `--yes` (required) | Required to reach the structured blocked response |
 
 ### `api integrations import rss <url>`
 
-Import from an RSS feed.
+Blocked import workflow. Use the Substack dashboard/manual import flow until safe endpoint captures exist.
 
 **Arguments:**
 | Name | Description |
@@ -974,7 +1045,7 @@ Import from an RSS feed.
 **Options:**
 | Flag | Description |
 |------|-------------|
-| `--yes` (required) | Confirm import |
+| `--yes` (required) | Required to reach the structured blocked response |
 
 ### `api integrations tokens`
 

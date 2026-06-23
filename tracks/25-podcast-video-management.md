@@ -32,10 +32,10 @@ Enable programmatic podcast and video content management — episodes, distribut
 ## Acceptance Criteria
 
 - `substack-cli podcast section` lists podcast section with RSS feed URL (read-only currently available)
-- `substack-cli podcast episode create <audio-file>` creates a draft with audio attachment
-- `substack-cli podcast episode schedule <id> --at <datetime>` schedules a podcast episode
+- `substack-cli podcast episode create <audio-file>` returns a structured blocked response until safe endpoint captures exist; use media planning plus manual dashboard upload
+- `substack-cli podcast episode schedule <id> --at <datetime>` returns a structured blocked response until safe endpoint captures exist
 - `substack-cli podcast settings` shows distribution settings
-- `substack-cli video upload <file>` uploads a video file
+- `substack-cli video upload <file>` returns a structured blocked response until safe endpoint captures exist; use `media video plan`
 - `substack-cli video settings <post-id>` shows video player settings and thumbnail
 - Media operations reuse Track 10 upload infrastructure (base64 JSON body, image pipeline extended for audio/video)
 - Audio and video uploads require `--yes` confirmation before sending large files

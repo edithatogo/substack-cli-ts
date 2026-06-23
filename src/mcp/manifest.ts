@@ -45,6 +45,13 @@ const MCP_RESOURCE_DESCRIPTORS: McpResourceSurface[] = [
     mimeType: "application/json",
     redacted: true,
   },
+  {
+    name: "coverage.safe-surfaces",
+    description: "Render safe frontier surface decisions and automation boundaries as JSON.",
+    uri: "substack-cli://coverage/safe-surfaces",
+    mimeType: "application/json",
+    redacted: true,
+  },
 ];
 
 export function buildMcpResourceDescriptors(): McpResourceSurface[] {

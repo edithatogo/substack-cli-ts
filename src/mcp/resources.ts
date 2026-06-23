@@ -4,6 +4,7 @@ import {
   buildCoverageRoadmapResource,
   buildDecisionRecordsResource,
   buildLaunchChecklistResource,
+  buildSafeSurfacesResource,
 } from "../frontier-coverage/mcp-resources.js";
 import { buildMcpSummaryResource, buildMcpSurfaceManifest } from "./manifest.js";
 
@@ -117,6 +118,24 @@ export function registerMcpResources(server: McpServer): void {
           uri: "substack-cli://coverage/decisions",
           mimeType: "application/json",
           text: JSON.stringify(buildDecisionRecordsResource(), null, 2),
+        },
+      ],
+    }),
+  );
+
+  server.registerResource(
+    "coverage.safe-surfaces",
+    "substack-cli://coverage/safe-surfaces",
+    {
+      description: "Render safe frontier surface decisions and automation boundaries as JSON.",
+      mimeType: "application/json",
+    },
+    () => ({
+      contents: [
+        {
+          uri: "substack-cli://coverage/safe-surfaces",
+          mimeType: "application/json",
+          text: JSON.stringify(buildSafeSurfacesResource(), null, 2),
         },
       ],
     }),
