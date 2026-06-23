@@ -78,7 +78,7 @@
   "dependencies": {
     "@browserbasehq/stagehand": "^3.6.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@tiptap/core": "3.24.0",
+    "@tiptap/core": "3.27.1",
     "@tiptap/extension-table": "3.24.0",
     "@tiptap/extension-table-cell": "3.26.1",
     "@tiptap/extension-table-header": "3.24.0",
@@ -95,7 +95,7 @@
     "zod": "^4.0.0"
   },
   "overrides": {
-    "@tiptap/core": "3.24.0",
+    "@tiptap/core": "3.27.1",
     "@tiptap/extension-blockquote": "3.24.0",
     "@tiptap/extension-bold": "3.24.0",
     "@tiptap/extension-bullet-list": "3.24.0",
