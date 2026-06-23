@@ -1,5 +1,7 @@
 ﻿# substack-cli
 
+[![npm version](https://img.shields.io/npm/v/@edithatogo/substack-cli.svg)](https://www.npmjs.com/package/@edithatogo/substack-cli)
+[![npm downloads](https://img.shields.io/npm/dm/@edithatogo/substack-cli.svg)](https://www.npmjs.com/package/@edithatogo/substack-cli)
 [![CI](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/%40edithatogo%2Fsubstack-cli)](https://www.npmjs.com/package/@edithatogo/substack-cli)
 [![npm downloads](https://img.shields.io/npm/dm/%40edithatogo%2Fsubstack-cli)](https://www.npmjs.com/package/@edithatogo/substack-cli)

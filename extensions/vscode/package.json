@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "substack-cli-vscode",
   "displayName": "Substack CLI MCP Helper",
   "description": "Launch and configure the Substack CLI MCP server from VS Code.",
@@ -7,9 +7,10 @@
   "engines": {
     "vscode": ">=1.90.0"
   },
-  "categories": ["Other"],
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [],
-  "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
       "title": "Substack CLI MCP Helper",

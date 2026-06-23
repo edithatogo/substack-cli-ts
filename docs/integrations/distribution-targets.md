@@ -2,7 +2,7 @@
 
 This project publishes one core artifact, the npm package `@edithatogo/substack-cli`, plus registry metadata/configuration for MCP-capable clients.
 
-Most registry submissions require account ownership, API tokens, or manual review. Keep those steps explicit and do not automate them with local secrets committed to the repository.
+Most registry submissions require account ownership, API tokens, or manual review. Keep those steps explicit and do not automate them with local secrets committed to the repository. `prepublishOnly` runs `npm run quality` before npm publication.
 
 ## Core package
 
@@ -28,6 +28,10 @@ Most registry submissions require account ownership, API tokens, or manual revie
 | --- | --- | --- | --- | --- |
 | VS Code Marketplace | `extensions/vscode/package.json` scaffold | `vsce package` / `vsce publish` after adding extension implementation assets | Azure DevOps publisher token | Scaffold only |
 | Open VSX | `extensions/vscode/package.json` scaffold | `ovsx publish` after adding extension implementation assets | Open VSX token | Scaffold only |
+
+## Shell completions
+
+The npm package includes `scripts/install-completions.sh` and `scripts/install-completions.ps1`. These scripts load completions dynamically from `substack-cli completion bash|zsh|powershell`, so generated completion files do not need to be committed.
 
 ## Pre-publication checklist
 

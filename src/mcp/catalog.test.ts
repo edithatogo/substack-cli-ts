@@ -3,9 +3,9 @@ import { describe, it } from "vitest";
 import { buildMcpToolDescriptors, buildMcpToolGroups, registerMcpTools } from "./catalog.js";
 
 describe("McpToolDescriptors", () => {
-  it("returns all 27 tool descriptors", () => {
+  it("returns all 29 tool descriptors", () => {
     const descriptors = buildMcpToolDescriptors();
-    assert.equal(descriptors.length, 27);
+    assert.equal(descriptors.length, 29);
     assert.ok(descriptors.every((d) => d.redacted));
     assert.ok(descriptors.every((d) => d.name.length > 0));
     assert.ok(descriptors.every((d) => d.description.length > 0));
@@ -16,6 +16,8 @@ describe("McpToolDescriptors", () => {
     const names = descriptors.map((d) => d.name);
     assert.ok(names.includes("api.inventory"));
     assert.ok(names.includes("api.auth.status"));
+    assert.ok(names.includes("api.notes.list"));
+    assert.ok(names.includes("api.recommendations.list"));
     assert.ok(names.includes("schema.validate"));
     assert.ok(names.includes("api.media"));
     assert.ok(names.includes("trace.review"));
@@ -50,7 +52,7 @@ describe("McpToolDescriptors", () => {
     const captureTools = descriptors.filter((d) => d.group === "capture");
     const creatorTools = descriptors.filter((d) => d.group === "creator");
 
-    assert.equal(readTools.length, 2);
+    assert.equal(readTools.length, 4);
     assert.equal(reviewTools.length, 12);
     assert.equal(captureTools.length, 9);
     assert.equal(creatorTools.length, 4);
@@ -84,9 +86,11 @@ describe("buildMcpToolGroups", () => {
   it("includes the correct tools in each group", () => {
     const groups = buildMcpToolGroups();
     const readGroup = groups.find((g) => g.name === "read")!;
-    assert.equal(readGroup.tools.length, 2);
+    assert.equal(readGroup.tools.length, 4);
     assert.ok(readGroup.tools.some((t) => t.name === "api.inventory"));
     assert.ok(readGroup.tools.some((t) => t.name === "api.auth.status"));
+    assert.ok(readGroup.tools.some((t) => t.name === "api.notes.list"));
+    assert.ok(readGroup.tools.some((t) => t.name === "api.recommendations.list"));
 
     const creatorGroup = groups.find((g) => g.name === "creator")!;
     assert.equal(creatorGroup.tools.length, 4);
@@ -117,7 +121,7 @@ describe("registerMcpTools", () => {
     };
 
     registerMcpTools(mockServer as Parameters<typeof registerMcpTools>[0]);
-    assert.equal(registered.length, 27);
+    assert.equal(registered.length, 29);
   });
 
   it("registers safe coverage tool handlers", async () => {
