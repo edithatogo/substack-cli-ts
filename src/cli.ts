@@ -81,6 +81,12 @@ import {
 } from "./frontier-coverage/cli.js";
 import { validateLaunchChecklist } from "./frontier-coverage/launch-checklist.js";
 import {
+  buildSafeSurfaceInspectOutput,
+  buildSafeSurfaceListOutput,
+  buildUnsafeWriteBlockedOutput,
+  type SafeSurfaceId,
+} from "./frontier-coverage/safe-surfaces.js";
+import {
   COVERAGE_DOMAINS,
   COVERAGE_STATUSES,
   type CapabilityDomain,
@@ -156,13 +162,7 @@ import {
   fetchEmailTemplate,
   sendTestEmail,
 } from "./substack-api/email.js";
-import {
-  crossPost,
-  fetchApiTokens,
-  fetchIntegrations,
-  importFromRss,
-  importFromWordPress,
-} from "./substack-api/integrations.js";
+import { fetchApiTokens, fetchIntegrations } from "./substack-api/integrations.js";
 import { createNote, getNote, listNotes } from "./substack-api/notes.js";
 import {
   buildNoteBatchPlan,
@@ -175,20 +175,15 @@ import {
 } from "./substack-api/note-write.js";
 import { buildSubstackDraftPayload } from "./substack-api/payload.js";
 import {
-  createPodcastEpisode,
   fetchPodcastEpisodes,
   fetchPodcastSection,
   fetchPodcastSettings,
   fetchVideoSettings,
-  schedulePodcastEpisode,
-  uploadVideo,
 } from "./substack-api/podcast.js";
 import { readOwnProfile, readPublicProfile } from "./substack-api/profile.js";
 import {
   fetchPublicationSettings,
   updatePublicationSettings,
-  uploadPublicationFavicon,
-  uploadPublicationLogo,
 } from "./substack-api/publication-settings.js";
 import { fetchPublication } from "./substack-api/publication.js";
 import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
@@ -387,6 +382,25 @@ coverage
   .action(async (options: { matrix?: string | undefined; id: string }) => {
     const matrix = await loadCoverageMatrix(options.matrix);
     const output = buildCoverageInspectOutput(matrix, options.id);
+    console.log(JSON.stringify(output, null, 2));
+    if (output.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
+  .command("safe-surfaces")
+  .description(
+    "List frontier surfaces that are intentionally planning-only, probe-only, manual, or unsupported.",
+  )
+  .action(() => {
+    console.log(JSON.stringify(buildSafeSurfaceListOutput(), null, 2));
+  });
+
+coverage
+  .command("safe-surface")
+  .description("Inspect a safe frontier surface by ID.")
+  .requiredOption("--id <id>", "Safe surface ID to inspect")
+  .action((options: { id: string }) => {
+    const output = buildSafeSurfaceInspectOutput(options.id);
     console.log(JSON.stringify(output, null, 2));
     if (output.status === "blocked") process.exitCode = 1;
   });
@@ -2804,6 +2818,10 @@ apiPublication
         process.exitCode = 1;
         return;
       }
+      if (!options.dryRun) {
+        printUnsafeWriteBlocked("publication-admin-writes", "api publication set");
+        return;
+      }
 
       const effective = await loadEffectiveConfig();
       const material = await resolveApiAuthMaterial(effective, options.source);
@@ -2865,17 +2883,17 @@ apiPublication
 
 apiPublication
   .command("upload-logo")
-  .description("Upload a logo image and update publication settings.")
+  .description("Return a blocked manual/admin result for logo upload until safe captures exist.")
   .argument("<file>", "Logo image file to upload")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .option("--yes", "Confirm upload without interactive prompt", false)
-  .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+  .option("--yes", "Acknowledge the blocked manual/admin boundary", false)
+  .action(async (_file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
     if (!options.yes) {
       console.log(
         JSON.stringify(
           {
             status: "failed",
-            message: "Use --yes to confirm logo upload.",
+            message: "Use --yes to acknowledge the blocked logo upload boundary.",
           },
           null,
           2,
@@ -2884,31 +2902,23 @@ apiPublication
       process.exitCode = 1;
       return;
     }
-
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await uploadPublicationLogo(material.publicationUrl, material, fetch, file, {
-      yes: options.yes,
-    });
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
+    printUnsafeWriteBlocked("publication-admin-writes", "api publication upload-logo");
+    return;
   });
 
 apiPublication
   .command("upload-favicon")
-  .description("Upload a favicon image and update publication settings.")
+  .description("Return a blocked manual/admin result for favicon upload until safe captures exist.")
   .argument("<file>", "Favicon image file to upload")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .option("--yes", "Confirm upload without interactive prompt", false)
-  .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+  .option("--yes", "Acknowledge the blocked manual/admin boundary", false)
+  .action(async (_file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
     if (!options.yes) {
       console.log(
         JSON.stringify(
           {
             status: "failed",
-            message: "Use --yes to confirm favicon upload.",
+            message: "Use --yes to acknowledge the blocked favicon upload boundary.",
           },
           null,
           2,
@@ -2917,16 +2927,8 @@ apiPublication
       process.exitCode = 1;
       return;
     }
-
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await uploadPublicationFavicon(material.publicationUrl, material, fetch, file, {
-      yes: options.yes,
-    });
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
+    printUnsafeWriteBlocked("publication-admin-writes", "api publication upload-favicon");
+    return;
   });
 
 const apiDomain = api.command("domain").description("Custom domain status and DNS instructions.");
@@ -3493,15 +3495,15 @@ apiPodcast
 
 apiPodcast
   .command("create")
-  .description("Create a podcast episode draft from an audio file.")
+  .description("Return a blocked native media result until safe captures exist.")
   .argument("<audio-file>", "Audio file path")
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--title <title>", "Episode title")
   .option("--draft-id <id>", "Existing draft ID to attach audio to", parseInteger)
-  .requiredOption("--yes", "Confirm episode creation")
+  .requiredOption("--yes", "Acknowledge the blocked native media boundary")
   .action(
     async (
-      audioFile: string,
+      _audioFile: string,
       options: {
         source: "auto" | ApiAuthSource;
         title?: string;
@@ -3514,7 +3516,7 @@ apiPodcast
           JSON.stringify(
             {
               status: "failed",
-              message: "Add --yes to confirm podcast episode creation.",
+              message: "Add --yes to acknowledge the blocked podcast creation boundary.",
             },
             null,
             2,
@@ -3523,38 +3525,24 @@ apiPodcast
         process.exitCode = 1;
         return;
       }
-      const effective = await loadEffectiveConfig();
-      const material = await resolveApiAuthMaterial(effective, options.source);
-      const episodeOptions: { title?: string; draftId?: number } = {};
-      if (options.title) episodeOptions.title = options.title;
-      if (options.draftId) episodeOptions.draftId = options.draftId;
-      const result = await createPodcastEpisode(
-        material.publicationUrl,
-        audioFile,
-        material,
-        fetch,
-        episodeOptions,
-      );
-      console.log(JSON.stringify(result, null, 2));
-      if (result.status !== "ok") {
-        process.exitCode = 1;
-      }
+      printUnsafeWriteBlocked("native-video-live-automation", "api podcast create");
+      return;
     },
   );
 
 apiPodcast
   .command("schedule")
-  .description("Schedule a podcast episode for publication.")
+  .description("Return a blocked native media scheduling result until safe captures exist.")
   .argument("<draft-id>", "Draft ID to schedule")
   .requiredOption("--at <iso-date>", "ISO timestamp for scheduled publication")
-  .requiredOption("--yes", "Confirm scheduling")
-  .action(async (draftId: string, options: { at: string; yes: boolean }) => {
+  .requiredOption("--yes", "Acknowledge the blocked native media boundary")
+  .action(async (_draftId: string, options: { at: string; yes: boolean }) => {
     if (!options.yes) {
       console.log(
         JSON.stringify(
           {
             status: "failed",
-            message: "Add --yes to confirm scheduling.",
+            message: "Add --yes to acknowledge the blocked podcast scheduling boundary.",
           },
           null,
           2,
@@ -3563,36 +3551,25 @@ apiPodcast
       process.exitCode = 1;
       return;
     }
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, "auto");
-    const result = await schedulePodcastEpisode(
-      material.publicationUrl,
-      Number(draftId),
-      options.at,
-      material,
-      fetch,
-    );
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
+    printUnsafeWriteBlocked("native-video-live-automation", "api podcast schedule");
+    return;
   });
 
 const apiVideo = apiPodcast.command("video").description("Video management.");
 
 apiVideo
   .command("upload")
-  .description("Upload a video file.")
+  .description("Return a blocked native video upload result until safe captures exist.")
   .argument("<file>", "Video file path")
   .option("--source <source>", "auto, env, or local-profile", "auto")
-  .requiredOption("--yes", "Confirm video upload")
-  .action(async (file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
+  .requiredOption("--yes", "Acknowledge the blocked native video boundary")
+  .action(async (_file: string, options: { source: "auto" | ApiAuthSource; yes: boolean }) => {
     if (!options.yes) {
       console.log(
         JSON.stringify(
           {
             status: "failed",
-            message: "Add --yes to confirm video upload.",
+            message: "Add --yes to acknowledge the blocked video upload boundary.",
           },
           null,
           2,
@@ -3601,13 +3578,8 @@ apiVideo
       process.exitCode = 1;
       return;
     }
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, options.source);
-    const result = await uploadVideo(material.publicationUrl, file, material, fetch);
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
+    printUnsafeWriteBlocked("native-video-live-automation", "api podcast video upload");
+    return;
   });
 
 apiVideo
@@ -3650,17 +3622,17 @@ apiIntegrations
 
 apiIntegrations
   .command("crosspost")
-  .description("Cross-post a published article to another platform.")
+  .description("Return a blocked integration cross-post result until safe captures exist.")
   .argument("<post-id>", "Post ID to cross-post")
   .requiredOption("--platform <platform>", "Target platform (e.g., twitter, bluesky)")
-  .requiredOption("--yes", "Confirm cross-posting")
-  .action(async (postId: string, options: { platform: string; yes: boolean }) => {
+  .requiredOption("--yes", "Acknowledge the blocked integrations boundary")
+  .action(async (_postId: string, options: { platform: string; yes: boolean }) => {
     if (!options.yes) {
       console.log(
         JSON.stringify(
           {
             status: "failed",
-            message: "Add --yes to confirm cross-posting.",
+            message: "Add --yes to acknowledge the blocked cross-post boundary.",
           },
           null,
           2,
@@ -3669,19 +3641,8 @@ apiIntegrations
       process.exitCode = 1;
       return;
     }
-    const effective = await loadEffectiveConfig();
-    const material = await resolveApiAuthMaterial(effective, "auto");
-    const result = await crossPost(
-      material.publicationUrl,
-      Number(postId),
-      options.platform,
-      material,
-      fetch,
-    );
-    console.log(JSON.stringify(result, null, 2));
-    if (result.status !== "ok") {
-      process.exitCode = 1;
-    }
+    printUnsafeWriteBlocked("integrations-import-crosspost-tokens", "api integrations crosspost");
+    return;
   });
 
 apiIntegrations
@@ -3690,16 +3651,16 @@ apiIntegrations
   .addCommand(
     (() => {
       const wpImport = new Command("wordpress")
-        .description("Import from WordPress.")
+        .description("Return a blocked WordPress import result until safe captures exist.")
         .argument("<file>", "WordPress export file path")
-        .requiredOption("--yes", "Confirm import")
-        .action(async (file: string, options: { yes: boolean }) => {
+        .requiredOption("--yes", "Acknowledge the blocked integrations boundary")
+        .action(async (_file: string, options: { yes: boolean }) => {
           if (!options.yes) {
             console.log(
               JSON.stringify(
                 {
                   status: "failed",
-                  message: "Add --yes to confirm WordPress import.",
+                  message: "Add --yes to acknowledge the blocked WordPress import boundary.",
                 },
                 null,
                 2,
@@ -3708,13 +3669,11 @@ apiIntegrations
             process.exitCode = 1;
             return;
           }
-          const effective = await loadEffectiveConfig();
-          const material = await resolveApiAuthMaterial(effective, "auto");
-          const result = await importFromWordPress(material.publicationUrl, file, material, fetch);
-          console.log(JSON.stringify(result, null, 2));
-          if (result.status !== "ok") {
-            process.exitCode = 1;
-          }
+          printUnsafeWriteBlocked(
+            "integrations-import-crosspost-tokens",
+            "api integrations import wordpress",
+          );
+          return;
         });
       return wpImport;
     })(),
@@ -3722,16 +3681,16 @@ apiIntegrations
   .addCommand(
     (() => {
       const rssImport = new Command("rss")
-        .description("Import from an RSS feed.")
+        .description("Return a blocked RSS import result until safe captures exist.")
         .argument("<url>", "RSS feed URL")
-        .requiredOption("--yes", "Confirm import")
-        .action(async (url: string, options: { yes: boolean }) => {
+        .requiredOption("--yes", "Acknowledge the blocked integrations boundary")
+        .action(async (_url: string, options: { yes: boolean }) => {
           if (!options.yes) {
             console.log(
               JSON.stringify(
                 {
                   status: "failed",
-                  message: "Add --yes to confirm RSS import.",
+                  message: "Add --yes to acknowledge the blocked RSS import boundary.",
                 },
                 null,
                 2,
@@ -3740,13 +3699,11 @@ apiIntegrations
             process.exitCode = 1;
             return;
           }
-          const effective = await loadEffectiveConfig();
-          const material = await resolveApiAuthMaterial(effective, "auto");
-          const result = await importFromRss(material.publicationUrl, url, material, fetch);
-          console.log(JSON.stringify(result, null, 2));
-          if (result.status !== "ok") {
-            process.exitCode = 1;
-          }
+          printUnsafeWriteBlocked(
+            "integrations-import-crosspost-tokens",
+            "api integrations import rss",
+          );
+          return;
         });
       return rssImport;
     })(),
@@ -4107,6 +4064,11 @@ function parseCoverageStatus(value: string): CoverageStatus {
 function parseCoverageDomain(value: string): CapabilityDomain {
   if (COVERAGE_DOMAINS.includes(value as CapabilityDomain)) return value as CapabilityDomain;
   throw new Error(`Unsupported coverage domain: ${value}.`);
+}
+
+function printUnsafeWriteBlocked(surfaceId: SafeSurfaceId, operation: string): void {
+  console.log(JSON.stringify(buildUnsafeWriteBlockedOutput(surfaceId, operation), null, 2));
+  process.exitCode = 1;
 }
 
 async function resolveNoteBatchItems(

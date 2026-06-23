@@ -111,6 +111,21 @@ describe("smoke tests", () => {
       const inspectOutput = runCli(["coverage", "inspect", "--id", "post-draft-publish-schedule"]);
       expect(JSON.parse(inspectOutput).status).toBe("ready");
 
+      const safeSurfacesOutput = runCli(["coverage", "safe-surfaces"]);
+      const safeSurfaces = JSON.parse(safeSurfacesOutput);
+      expect(safeSurfaces.status).toBe("ready");
+      expect(safeSurfaces.count).toBe(7);
+
+      const safeSurfaceOutput = runCli([
+        "coverage",
+        "safe-surface",
+        "--id",
+        "native-video-live-automation",
+      ]);
+      const safeSurface = JSON.parse(safeSurfaceOutput);
+      expect(safeSurface.status).toBe("ready");
+      expect(safeSurface.surface.status).toBe("planning-only");
+
       const launchCheckOutput = runCli(["coverage", "launch-check"]);
       expect(JSON.parse(launchCheckOutput).status).toBe("ready");
 
@@ -156,6 +171,17 @@ describe("smoke tests", () => {
       expect(missingDecision.status).not.toBe(0);
       expect(decisionOutput.status).toBe("blocked");
       expect(decisionOutput.message).toContain("not found");
+
+      const missingSafeSurface = runCliFailure([
+        "coverage",
+        "safe-surface",
+        "--id",
+        "missing-surface",
+      ]);
+      const missingSafeSurfaceOutput = JSON.parse(missingSafeSurface.stdout);
+      expect(missingSafeSurface.status).not.toBe(0);
+      expect(missingSafeSurfaceOutput.status).toBe("blocked");
+      expect(missingSafeSurfaceOutput.message).toContain("not found");
     } finally {
       rmSync(temp, { recursive: true, force: true });
     }

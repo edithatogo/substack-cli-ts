@@ -24,7 +24,7 @@ TypeScript CLI for publishing local Markdown files to a user-owned Substack publ
 - ✅ **API Publishing** — Create, update, publish, and schedule drafts via Substack's API
 - ✅ **Browser Automation** — Local Chrome or Browserbase remote sessions
 - ✅ **Media Upload** — Upload images via base64 data URLs
-- ✅ **MCP Server** — 21 tools, 2 resources, 2 prompts for AI agents
+- ✅ **MCP Server** — 27 tools, 7 resources, 2 prompts for AI agents
 - ✅ **Creator OS** — Campaign plans, media/live planning, growth snapshots, and community triage
 - ✅ **Rich Content** — Tables, embeds, paywall, subscribe, code blocks, blockquotes
 - ✅ **Draft Management** — Mappings, optimistic concurrency, section resolution, duplicates
@@ -153,6 +153,8 @@ node dist\cli.js policy
 node dist\cli.js mcp surface
 node dist\cli.js mcp summary
 node dist\cli.js mcp serve
+node dist\cli.js coverage safe-surfaces
+node dist\cli.js coverage safe-surface --id native-video-live-automation
 node dist\cli.js api auth status --source local-profile
 node dist\cli.js api inventory --source local-profile --post-limit 10
 node dist\cli.js api payload examples\basic.md

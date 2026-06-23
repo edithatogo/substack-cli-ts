@@ -50,13 +50,13 @@ Enable programmatic management of Substack publication settings — branding, la
 - `api publication get` command — fetches full publication details via `fetchPublication()` with rich schema (name, subdomain, logo, favicon, colors, fonts, payments state)
 - `api publication settings` command — exposes branding-specific fields (colors, fonts, logos)
 - `api publication get-details` command — alias that returns raw `fetchPublicationSettings()` output
-- `api publication set` command — read-modify-write cycle via `updatePublicationSettings()`
+- `api publication set` command — dry-run read-modify-write preview; live writes are now blocked as manual/admin until safe endpoint captures exist
   - Supports `--from-json <file>` and `--from-yaml <file>` for batch updates
   - Supports individual CLI flags: `--name`, `--description`, `--hero-text`, `--logo-url`, `--favicon-url`, `--primary-color`, `--secondary-color`, `--background-color`, `--text-color`, `--font-heading`, `--font-body`, `--seo-title`, `--seo-description`, `--og-image-url`, `--email-header-color`, `--email-footer-color`
   - `--dry-run` previews diff without writing
-  - `--yes` confirms irreversible changes
-- `api publication upload-logo <file>` command — uploads image via `uploadPublicationLogo()` then updates `logo_url`
-- `api publication upload-favicon <file>` command — uploads image via `uploadPublicationFavicon()` then updates `favicon_url`
+  - `--yes` is reserved for future verified write automation and currently reaches the structured blocked response
+- `api publication upload-logo <file>` command — currently returns a structured blocked response after confirmation; dashboard/manual update required
+- `api publication upload-favicon <file>` command — currently returns a structured blocked response after confirmation; dashboard/manual update required
 - `api inventory` command includes publication details in composite output
 - `src/substack-api/publication-settings.ts` module with:
   - `PublicationSettingsUpdateSchema` (zod) for validation

@@ -13,6 +13,7 @@ describe("buildMcpResourceDescriptors", () => {
     assert.ok(resourceNames.includes("coverage.roadmap"));
     assert.ok(resourceNames.includes("launch.checklist"));
     assert.ok(resourceNames.includes("coverage.decisions"));
+    assert.ok(resourceNames.includes("coverage.safe-surfaces"));
     assert.ok(resources.every((resource) => resource.redacted));
   });
 });

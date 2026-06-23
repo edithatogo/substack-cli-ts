@@ -17,6 +17,7 @@ describe("buildMcpSurfaceManifest", () => {
     assert.ok(toolNames.includes("policy"));
     assert.ok(resourceNames.includes("mcp.surface"));
     assert.ok(resourceNames.includes("mcp.summary"));
+    assert.ok(resourceNames.includes("coverage.safe-surfaces"));
     assert.ok(promptNames.includes("mcp.surface.overview"));
     assert.ok(promptNames.includes("mcp.workflow.review"));
     assert.ok(manifest.groups.every((group) => group.tools.every((tool) => tool.redacted)));

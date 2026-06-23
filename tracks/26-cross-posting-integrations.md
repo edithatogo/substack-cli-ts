@@ -30,9 +30,9 @@ Enable cross-posting to other platforms and integration management — WordPress
 ## Acceptance Criteria
 
 - `substack-cli integrations list` shows configured integrations and their status
-- `substack-cli integrations crosspost <post-id> --platform <platform>` triggers cross-posting
-- `substack-cli integrations import wordpress <file>` starts a WordPress import
-- `substack-cli integrations import rss <url>` starts a custom RSS import
+- `substack-cli integrations crosspost <post-id> --platform <platform>` returns a structured blocked response until destination consent, idempotency, and safe endpoint captures exist
+- `substack-cli integrations import wordpress <file>` returns a structured blocked response until safe endpoint captures exist
+- `substack-cli integrations import rss <url>` returns a structured blocked response until safe endpoint captures exist
 - `substack-cli integrations tokens list` shows external API tokens (redacted)
 - Import and cross-post operations require `--yes` confirmation
 - No tokens or secrets logged in traces, MCP output, or local stores

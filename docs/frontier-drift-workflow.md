@@ -22,7 +22,8 @@ Use this workflow before upgrading any frontier coverage state, especially nativ
 
 ```bash
 npm run build
-npm run frontier:drift -- path/to/snapshots.json
+npm run frontier:drift
+DRIFT_SNAPSHOT_FILE=path/to/snapshots.json npm run frontier:drift
 ```
 
 The report blocks when an official doc is missing a snapshot, stale beyond the default 90-day window, changed, or unavailable.

@@ -1,0 +1,32 @@
+[
+  {
+    "ref": "https://support.substack.com/hc/en-us/articles/21093671091220-Guide-to-video-posts-on-Substack",
+    "checkedAt": "2026-06-23T18:12:26.000Z",
+    "status": "ok",
+    "note": "Reviewed public video-post support page; dashboard upload/transcript/thumbnail/podcast workflows still require planning-only automation."
+  },
+  {
+    "ref": "https://support.substack.com/hc/en-us/articles/32070353475860-Live-video-on-Substack-via-RTMP",
+    "checkedAt": "2026-06-23T18:12:26.000Z",
+    "status": "ok",
+    "note": "Reviewed public RTMP live-video support page; beta dashboard stream-key workflow remains planning-only/manual."
+  },
+  {
+    "ref": "https://support.substack.com/hc/en-us/articles/14564821756308-Getting-started-on-Substack-Notes",
+    "checkedAt": "2026-06-23T18:12:26.000Z",
+    "status": "ok",
+    "note": "Reviewed public Notes support page; no change to Notes planning and campaign validation boundary."
+  },
+  {
+    "ref": "https://support.substack.com/hc/en-us/articles/9674586580244-What-is-Substack-Boost",
+    "checkedAt": "2026-06-23T18:12:26.000Z",
+    "status": "ok",
+    "note": "Reviewed public Boost support page; Boost remains settings/admin and probe-only in this CLI."
+  },
+  {
+    "ref": "https://support.substack.com/hc/en-us/articles/5320347155860-A-guide-to-Substack-metrics",
+    "checkedAt": "2026-06-23T18:12:26.000Z",
+    "status": "ok",
+    "note": "Reviewed public metrics support page; analytics and revenue dashboards remain probe-only with local snapshots."
+  }
+]

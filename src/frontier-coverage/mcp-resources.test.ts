@@ -5,6 +5,7 @@ import {
   buildCoverageRoadmapResource,
   buildDecisionRecordsResource,
   buildLaunchChecklistResource,
+  buildSafeSurfacesResource,
 } from "./mcp-resources.js";
 
 describe("frontier coverage MCP resources", () => {
@@ -30,5 +31,20 @@ describe("frontier coverage MCP resources", () => {
 
     assert.ok(payload.decisions.length > 0);
     assert.ok(payload.launchSurfaces.length > 0);
+  });
+
+  it("builds safe surface summaries", () => {
+    const payload = buildSafeSurfacesResource() as {
+      operation: string;
+      status: string;
+      count: number;
+      surfaces: Array<{ id: string; status: string }>;
+    };
+
+    assert.equal(payload.operation, "coverage.safe-surfaces");
+    assert.equal(payload.status, "ready");
+    assert.equal(payload.count, 7);
+    assert.ok(payload.surfaces.some((surface) => surface.id === "native-video-live-automation"));
+    assert.ok(payload.surfaces.some((surface) => surface.status === "unsupported"));
   });
 });
