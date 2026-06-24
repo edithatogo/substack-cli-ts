@@ -197,6 +197,42 @@ describe("capture evidence fixtures", () => {
     assert.equal(parsed.lastVerifiedAt, undefined);
   });
 
+  it("handles optional fixture fields and non-sensitive endpoint metadata", () => {
+    const parsed = parseCaptureEvidenceFixture({
+      ...fixture(),
+      notes: undefined,
+      lastVerifiedAt: "2026-06-25T00:00:00.000Z",
+      endpoints: [
+        {
+          method: "get",
+          url: "https://example.substack.com/api/v1/posts/abcdef123456?utm_source=notes",
+          status: "not-a-number",
+          requestHeaders: { "x-custom": "dropped" },
+          responseHeaders: { "x-custom": "dropped" },
+          responseBody: {
+            subscriber_ids: [123456],
+            safe: "ok",
+          },
+        },
+      ],
+    });
+    const report = buildCaptureValidationReport(parsed, {
+      verifiedAt: new Date("2026-06-25T00:00:00.000Z"),
+    });
+
+    assert.equal(parsed.notes, undefined);
+    assert.equal(parsed.lastVerifiedAt, "2026-06-25T00:00:00.000Z");
+    assert.equal(report.status, "ready");
+    assert.equal(report.minimized?.endpoints[0]?.status, undefined);
+    assert.equal(report.minimized?.endpoints[0]?.requestHeaders, undefined);
+    assert.equal(report.minimized?.endpoints[0]?.responseHeaders, undefined);
+    assert.match(report.minimized?.endpoints[0]?.url ?? "", /utm_source=notes/);
+    assert.equal(
+      (report.minimized?.endpoints[0]?.responseBody as Record<string, unknown>).subscriber_ids,
+      "[REDACTED]",
+    );
+  });
+
   it("handles non-JSON body values without crashing minimization", () => {
     const minimized = minimizeCaptureFixture(
       fixture({
@@ -271,6 +307,27 @@ describe("endpoint inventory and diff reports", () => {
     assert.equal(diff.added.length, 1);
     assert.equal(diff.removed.length, 0);
     assert.ok(diff.changed.some((entry) => entry.changes.includes("status")));
+  });
+
+  it("reports ready endpoint diffs and blocked inventories", () => {
+    const ready = buildEndpointInventoryReport([fixture()], {
+      generatedAt: new Date("2026-06-24T01:00:00.000Z"),
+      verifiedAt: new Date("2026-06-24T01:00:00.000Z"),
+    });
+    const blocked = buildEndpointInventoryReport([
+      {
+        ...fixture(),
+        endpoints: [{ method: "GET", url: "https://example.substack.com/api/v1/empty" }],
+      },
+    ]);
+    const diff = buildEndpointDiffReport(ready, ready);
+
+    assert.equal(ready.status, "ready");
+    assert.equal(blocked.status, "blocked");
+    assert.equal(diff.status, "ready");
+    assert.equal(diff.added.length, 0);
+    assert.equal(diff.removed.length, 0);
+    assert.equal(diff.changed.length, 0);
   });
 
   it("reports removed endpoints and loads inventory artifacts through CLI helpers", async () => {

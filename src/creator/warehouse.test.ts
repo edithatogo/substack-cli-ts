@@ -42,6 +42,16 @@ describe("creator warehouse exports", () => {
           resultMessage: "ok",
         }),
       );
+      await writeFile(
+        join(runLogDir, "minimal.json"),
+        JSON.stringify({
+          schemaVersion: 1,
+          timestamp: "2099-01-01T01:00:00Z",
+          actionType: "analytics.snapshot",
+          status: "success",
+          publicationUrl: "local",
+        }),
+      );
 
       const warehouse = await buildWarehouseExport({
         campaignFiles: [campaignFile],
@@ -53,7 +63,7 @@ describe("creator warehouse exports", () => {
       assert.equal(warehouse.tables.referrers.length, 1);
       assert.equal(warehouse.tables.subscribers.length, 1);
       assert.equal(warehouse.tables.revenue.length, 1);
-      assert.equal(warehouse.tables.run_logs.length, 1);
+      assert.equal(warehouse.tables.run_logs.length, 2);
 
       const report = buildAttributionReport(warehouse);
       assert.equal(report.campaigns[0]?.campaignId, "creator-os");
@@ -208,6 +218,40 @@ describe("creator warehouse exports", () => {
       assert.equal(sparse.tables.campaigns[0]?.publish_at, null);
       assert.equal(sparse.tables.posts[0]?.slug, null);
       assert.equal(sparse.tables.posts[0]?.planned_url, null);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
+  it("handles analytics snapshots with unavailable sub-results", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-warehouse-null-analytics-"));
+    try {
+      const analyticsDir = join(temp, "analytics");
+      await mkdir(analyticsDir);
+      await writeFile(
+        join(analyticsDir, "snapshot.json"),
+        JSON.stringify({
+          schemaVersion: 1,
+          capturedAt: "2099-01-01T00:00:00Z",
+          campaignId: null,
+          analytics: {
+            status: "ok",
+            endpoints: [],
+            message: "partial",
+            postAnalytics: { status: "blocked", message: "missing", analytics: null },
+            subscriberGrowth: { status: "blocked", message: "missing", growth: null },
+            emailPerformance: null,
+            revenue: { status: "blocked", message: "missing", revenue: null },
+          },
+        }),
+      );
+
+      const warehouse = await buildWarehouseExport({ analyticsDir });
+
+      assert.equal(warehouse.tables.posts.length, 0);
+      assert.equal(warehouse.tables.referrers.length, 0);
+      assert.equal(warehouse.tables.subscribers.length, 0);
+      assert.equal(warehouse.tables.revenue.length, 0);
     } finally {
       await rm(temp, { recursive: true, force: true });
     }
