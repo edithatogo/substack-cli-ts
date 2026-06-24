@@ -13,7 +13,13 @@ This repo separates stable merge gates from experimental hardening lanes so feat
 
 - `Hardening / Strictest TypeScript`: runs `tsconfig.strictest.json` with stricter compiler flags. It is advisory until source modules pass consistently.
 - `CI / Mutation`: remains advisory until module-level mutation thresholds are stable.
-- `Hardening / Experimental Dependency Lane`: scheduled or manually dispatched only. It may inspect canary or next-tag compatibility, but normal PRs must stay on stable dependency releases.
+- `Hardening / Experimental Dependency Lane`: scheduled or manually dispatched only. It installs one prerelease lane with `--no-save` and keeps normal PRs on stable dependency releases. Current lanes are `playwright-next`, `stagehand-alpha`, `typescript-rc`, `typescript-next`, `vitest-beta`, `zod-canary`, and `prettier-alpha`.
+
+Run an experimental lane locally with:
+
+```sh
+npm run experimental:deps -- playwright-next
+```
 
 ## Release Evidence
 
