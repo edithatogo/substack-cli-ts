@@ -59,6 +59,30 @@ describe("fetchCommentsForPost", () => {
     assert.match(result.message, /Found 2 comments/);
   });
 
+  it("skips malformed comment entries", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([
+        null,
+        17,
+        {
+          id: 3,
+          body: "Valid",
+          author_name: "Alice",
+          author_handle: "alice",
+          published_at: "2025-01-03T00:00:00Z",
+          status: "approved",
+        },
+      ]),
+    );
+
+    const result = await fetchCommentsForPost("https://test.substack.com", 100, material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.comments!.length, 1);
+    assert.equal(result.comments![0]!.id, 3);
+  });
+
   it("returns empty comments for empty response", async () => {
     const fetchFn = fakeFetch(200, JSON.stringify([]));
 

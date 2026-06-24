@@ -1,16 +1,16 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import {
-  FRONTIER_COVERAGE_MATRIX,
   assertCoverageMatrixReady,
+  FRONTIER_COVERAGE_MATRIX,
   getCoverageCapabilitiesByDomain,
   getCoverageMatrix,
 } from "./matrix.js";
 import {
   COVERAGE_DOMAINS,
+  type CoverageMatrix,
   summarizeCoverageMatrix,
   validateCoverageMatrix,
-  type CoverageMatrix,
 } from "./schema.js";
 
 describe("frontier coverage matrix", () => {

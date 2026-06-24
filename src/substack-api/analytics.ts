@@ -1,5 +1,6 @@
 import type { ApiAuthMaterial } from "./auth.js";
-import { type FetchLike, apiHeaders, classifyFailure, requestJson } from "./client.js";
+import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type AnalyticsReadStatus =
   | "ok"
@@ -139,6 +140,7 @@ export async function fetchSubscriberGrowth(
   publicationUrl: string,
   material: ApiAuthMaterial,
   fetchFn: FetchLike,
+  options: { period?: string | undefined } = {},
 ): Promise<SubscriberGrowthResult> {
   const headers = apiHeaders(material);
   const endpoints = [
@@ -148,8 +150,12 @@ export async function fetchSubscriberGrowth(
   ];
 
   for (const path of endpoints) {
-    const url = new URL(path, publicationUrl).toString();
-    const response = await requestJson(fetchFn, url, headers);
+    const url = new URL(path, publicationUrl);
+    if (options.period) {
+      url.searchParams.set("period", options.period);
+    }
+    const requestUrl = url.toString();
+    const response = await requestJson(fetchFn, requestUrl, headers);
     if (response.status === 200) {
       const body = response.body as Record<string, unknown> | undefined;
       if (body) {
@@ -161,7 +167,7 @@ export async function fetchSubscriberGrowth(
       }
     }
     if (response.status !== 404) {
-      const failure = classifyFailure(response.status, url);
+      const failure = classifyFailure(response.status, requestUrl);
       return { status: failure.status, message: failure.message };
     }
   }
@@ -332,7 +338,8 @@ function mapPostAnalytics(postId: number, body: Record<string, unknown>): PostAn
   const rawReferrers = body.referrers ?? body.referrer_list;
   if (Array.isArray(rawReferrers)) {
     for (const item of rawReferrers) {
-      const record = item as Record<string, unknown>;
+      if (!isRecord(item)) continue;
+      const record = item;
       const source =
         typeof record.source === "string"
           ? record.source
@@ -410,7 +417,8 @@ function parseEmailPerformance(body: unknown, limit: number): EmailPerformance[]
 
   const results: EmailPerformance[] = [];
   for (const item of items.slice(0, limit)) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const postId =
       typeof record.post_id === "number"
         ? record.post_id

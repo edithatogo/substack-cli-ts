@@ -16,12 +16,15 @@ Configure your MCP client (Claude Code, VS Code, etc.) to spawn the server:
 {
   "mcpServers": {
     "substack-cli": {
-      "command": "substack-cli",
-      "args": ["mcp", "serve"]
+      "command": "npx",
+      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"]
     }
   }
 }
 ```
+
+See `docs/integrations/client-setup.md` for VS Code, Claude, Gemini, Codex, and
+GitHub Copilot setup notes, including the repository-local launch form.
 
 ## Inspecting the MCP Surface
 

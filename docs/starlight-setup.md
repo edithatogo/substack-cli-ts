@@ -143,7 +143,7 @@ export default defineConfig({
 Add these badges to the Starlight site header:
 
 ```markdown
-[![npm version](https://img.shields.io/npm/v/substack-cli.svg)](https://www.npmjs.com/package/substack-cli)
+[![npm version](https://img.shields.io/npm/v/@edithatogo/substack-cli.svg)](https://www.npmjs.com/package/@edithatogo/substack-cli)
 [![CI](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml/badge.svg)](https://github.com/edithatogo/substack-cli-ts/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 ```

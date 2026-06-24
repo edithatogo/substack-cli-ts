@@ -8,8 +8,8 @@ import {
 } from "../browser/editor.js";
 import { CaptchaDetectedError } from "../browser/errors.js";
 import {
-  type StagehandSession,
   createStagehandSession,
+  type StagehandSession,
   withStagehandRetry,
 } from "../browser/stagehand.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
@@ -21,9 +21,9 @@ import { LocalWorkflowError, runLocalDraftWorkflow } from "./local-workflow.js";
 import { buildBrowserWorkflowRunLog, writeRunLog } from "./run-log.js";
 import { resolvePostTitle } from "./title.js";
 import {
+  resolveTransport,
   type TransportPreference,
   type TransportResolution,
-  resolveTransport,
 } from "./transport.js";
 
 export interface WorkflowStep {

@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises";
 import { getChromePath } from "chrome-launcher";
-import { type Locator, type Page, chromium } from "playwright-core";
+import { chromium, type Locator, type Page } from "playwright-core";
 import { localBrowserProfileDir } from "../config/paths.js";
 
 export interface LocalLoginOptions {

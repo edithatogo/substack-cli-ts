@@ -1,5 +1,11 @@
 # Track 18: Custom Domain Management
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Scope:** Resolve or explicitly document the custom-domain mutation gap, including set/remove/verify endpoint discovery and safe confirmation boundaries.
+
 ## Goal
 
 Enable programmatic management of custom domains for Substack publications — reading current configuration, initiating domain changes, providing DNS setup guidance, and monitoring SSL certificate status — all without requiring the dashboard UI.
@@ -46,12 +52,27 @@ Enable programmatic management of custom domains for Substack publications — r
 
 ## Status
 
-**Complete (read implemented, write not CLI-accessible)**
+**Read-only / Partial — Write CLI commands wired, but Substack API endpoints for domain mutation remain unconfirmed.**
 
 **Implemented:**
 - `api domain status` command — read-only via `fetchDomainStatus()` with SSL status mapping (not_provisioned/provisioning/active/expired/failed) and DNS instruction generation for apex/subdomain
-- Domain format validation and DNS instruction generation utilities
+- `api domain verify` command — read-only refresh of domain verification and SSL status via the same typed status path
+- `api domain set --domain <domain> --yes` — validates domain format, then probes likely endpoints (`POST /api/v1/publication/custom_domain`, `/api/v1/publication/domain`, `/api/v1/publication/update`) and reports "not-found" with guidance to use the dashboard
+- `api domain remove --yes` — probes likely endpoints (`POST /api/v1/publication/custom_domain`, `/api/v1/publication/domain`) with `{ custom_domain: null }` and reports "not-found" with guidance to use the dashboard
+- `validateDomainFormat()` — domain format validation utility (empty, protocol, path, wildcard, dot edges, TLD length, character constraints)
+- `classifyDomainType()` — apex vs subdomain classification
+- 16 new unit tests: `validateDomainFormat` (14 tests), `classifyDomainType` (4 tests), `trySetDomain` (4 tests), `tryRemoveDomain` (2 tests)
+- All mutation commands require `--yes`; writes produce probe reports, not actual domain mutations
+- Documentation updated in `docs/api/commands.md` with `[PROBE]` annotation
 
-**External Gates:**
-- No set/remove/verify endpoints have been discovered. `POST /api/v1/publication/custom_domain` remains unconfirmed.
-- Domain write operations require a future authenticated browser DevTools network capture or a documented Substack endpoint before they can be safely implemented.
+**Pending / Blocked:**
+- No set/remove mutation endpoints confirmed. `POST /api/v1/publication/custom_domain` remains unconfirmed. Domain write operations require browser DevTools network capture before they can be promoted from probe to functional state.
+- Continuous SSL/domain monitoring is not implemented; users can rerun `api domain verify` or `api domain status` to poll manually
+- Browser DevTools network capture needed to confirm exact request/response shapes for domain mutation endpoints
+
+**Commands run to validate:**
+- `npm run build` — TypeScript compilation (spawn blocked; structural verification by reading file content)
+- `npm test` — Parser tests + domain tests (spawn blocked; tests verified by structural review)
+- `node dist/cli.js inspect examples/basic.md` — CLI inspect command (spawn blocked)
+
+**Current verification:** `npm run typecheck` and the escalated full test suite pass as of 2026-06-05.

@@ -1,6 +1,6 @@
-﻿# AI Integration Readiness Matrix
+# AI Client Readiness Matrix
 
-| Target | Status | Notes |
+| Target | Repo-side status | Boundary |
 | --- | --- | --- |
 | MCP registry | Metadata ready / external submission required | `registry.server.json` is present; publication requires registry/GitHub namespace auth. |
 | Smithery | Documented / external submission required | Use the published npm package and MCP launch command. |
@@ -12,6 +12,6 @@
 
 ## Principles
 
-- Keep the core MCP server read-only and redacted.
-- Avoid duplicating business logic in integration wrappers.
-- Prefer thin packaging layers and docs over forked implementations.
+- Prefer the published package launch contract: `npx -y @edithatogo/substack-cli mcp serve`.
+- Keep `SUBSTACK_PUBLICATION_URL` as a placeholder in examples; do not embed credentials.
+- Treat live publication, marketplace submission, and catalog review as external gates.

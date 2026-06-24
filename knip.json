@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/benchmark/**/*.ts"],
+  "entry": ["src/mcp/server.ts", "src/benchmark/**/*.ts"],
   "project": ["src/**/*.ts"],
   "ignoreDependencies": ["prettier"],
   "ignoreBinaries": ["playwright"],
@@ -8,7 +8,10 @@
     "src/**/*.ts": ["exports", "types"]
   },
   "rules": {
-    "exports": "off",
-    "types": "off"
+    "binaries": "error",
+    "dependencies": "error",
+    "devDependencies": "error",
+    "files": "error",
+    "types": "error"
   }
 }

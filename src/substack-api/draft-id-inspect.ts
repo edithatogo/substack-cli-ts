@@ -1,4 +1,4 @@
-import type { DraftSummary, ApiReadInventory } from "./read-model.js";
+import type { ApiReadInventory, DraftSummary } from "./read-model.js";
 
 export interface DraftIdInspectionReport {
   status: "found" | "missing" | "inventory-unavailable";

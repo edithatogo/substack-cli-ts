@@ -255,7 +255,7 @@
     "version": "0.1.0",
     "transport": "stdio",
     "status": "ready",
-    "toolCount": 27,
+    "toolCount": 29,
     "resourceCount": 7,
     "promptCount": 2,
     "tools": [
@@ -335,6 +335,18 @@
         "name": "api.media",
         "group": "review",
         "cliCommand": "api media <file>",
+        "redacted": true
+      },
+      {
+        "name": "api.notes.list",
+        "group": "read",
+        "cliCommand": "api notes list --source local-profile",
+        "redacted": true
+      },
+      {
+        "name": "api.recommendations.list",
+        "group": "read",
+        "cliCommand": "api recommendation list --source local-profile",
         "redacted": true
       },
       {

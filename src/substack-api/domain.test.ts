@@ -2,7 +2,13 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import type { FetchLike } from "./client.js";
-import { fetchDomainStatus } from "./domain.js";
+import {
+  classifyDomainType,
+  fetchDomainStatus,
+  tryRemoveDomain,
+  trySetDomain,
+  validateDomainFormat,
+} from "./domain.js";
 
 describe("fetchDomainStatus", () => {
   it("returns domain status with no custom domain configured", async () => {
@@ -275,6 +281,168 @@ describe("fetchDomainStatus", () => {
     );
 
     assert.equal(result.domain?.customDomainOptional, false);
+  });
+});
+
+describe("validateDomainFormat", () => {
+  it("accepts a valid apex domain", () => {
+    assert.deepEqual(validateDomainFormat("example.com"), { valid: true });
+  });
+
+  it("accepts a valid subdomain", () => {
+    assert.deepEqual(validateDomainFormat("newsletter.example.com"), { valid: true });
+  });
+
+  it("accepts a deep subdomain", () => {
+    assert.deepEqual(validateDomainFormat("blog.newsletter.example.com"), { valid: true });
+  });
+
+  it("accepts hyphens in domain", () => {
+    assert.deepEqual(validateDomainFormat("my-blog.example.com"), { valid: true });
+  });
+
+  it("rejects empty string", () => {
+    const result = validateDomainFormat("");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason);
+  });
+
+  it("rejects protocol prefix", () => {
+    const result = validateDomainFormat("https://example.com");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("protocol"));
+  });
+
+  it("rejects path in domain", () => {
+    const result = validateDomainFormat("example.com/path");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("path"));
+  });
+
+  it("rejects wildcard domain", () => {
+    const result = validateDomainFormat("*.example.com");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("Wildcard"));
+  });
+
+  it("rejects domain starting with dot", () => {
+    const result = validateDomainFormat(".example.com");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("dot"));
+  });
+
+  it("rejects domain ending with dot", () => {
+    const result = validateDomainFormat("example.com.");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("dot"));
+  });
+
+  it("rejects domain without TLD", () => {
+    const result = validateDomainFormat("example");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("TLD"));
+  });
+
+  it("rejects domain with single-char TLD", () => {
+    const result = validateDomainFormat("example.x");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("TLD"));
+  });
+
+  it("rejects domain with consecutive dots", () => {
+    const result = validateDomainFormat("example..com");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("consecutive"));
+  });
+
+  it("rejects domain with invalid characters", () => {
+    const result = validateDomainFormat("exam ple.com");
+    assert.equal(result.valid, false);
+    assert.ok(result.reason?.includes("characters"));
+  });
+});
+
+describe("classifyDomainType", () => {
+  it("classifies apex domain", () => {
+    assert.equal(classifyDomainType("example.com"), "apex");
+  });
+
+  it("classifies subdomain", () => {
+    assert.equal(classifyDomainType("newsletter.example.com"), "subdomain");
+  });
+
+  it("classifies deep subdomain", () => {
+    assert.equal(classifyDomainType("blog.newsletter.example.com"), "subdomain");
+  });
+
+  it("returns invalid for an empty string", () => {
+    assert.equal(classifyDomainType(""), "invalid");
+  });
+});
+
+describe("trySetDomain", () => {
+  it("rejects invalid domain format", async () => {
+    const result = await trySetDomain(
+      "https://test.substack.com",
+      material(),
+      () => Promise.resolve(response(200, {})),
+      "",
+    );
+    assert.equal(result.status, "schema-drift");
+    assert.ok(result.message.includes("Invalid domain"));
+  });
+
+  it("probing all known endpoints returns not-found when none match", async () => {
+    let callCount = 0;
+    const fetchFn: FetchLike = async () => {
+      callCount++;
+      return response(404, { error: "not found" });
+    };
+    const result = await trySetDomain(
+      "https://test.substack.com",
+      material(),
+      fetchFn,
+      "example.com",
+    );
+    // Should have tried all 3 endpoints and not found any that work
+    assert.equal(result.status, "not-found");
+    assert.ok(callCount >= 2);
+  });
+
+  it("returns not-found when all endpoints 404", async () => {
+    const fetchFn: FetchLike = async () => response(404, { error: "not found" });
+    const result = await trySetDomain(
+      "https://test.substack.com",
+      material(),
+      fetchFn,
+      "example.com",
+    );
+    assert.equal(result.status, "not-found");
+  });
+
+  it("returns unauthenticated on 401", async () => {
+    const fetchFn: FetchLike = () => Promise.resolve(response(401, { error: "unauthorized" }));
+    const result = await trySetDomain(
+      "https://test.substack.com",
+      material(),
+      fetchFn,
+      "example.com",
+    );
+    assert.equal(result.status, "unauthenticated");
+  });
+});
+
+describe("tryRemoveDomain", () => {
+  it("returns not-found when all endpoints 404", async () => {
+    const fetchFn: FetchLike = () => Promise.resolve(response(404, { error: "not found" }));
+    const result = await tryRemoveDomain("https://test.substack.com", material(), fetchFn);
+    assert.equal(result.status, "not-found");
+  });
+
+  it("returns unauthenticated on 401", async () => {
+    const fetchFn: FetchLike = () => Promise.resolve(response(401, { error: "unauthorized" }));
+    const result = await tryRemoveDomain("https://test.substack.com", material(), fetchFn);
+    assert.equal(result.status, "unauthenticated");
   });
 });
 

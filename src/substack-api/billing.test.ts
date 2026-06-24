@@ -2,12 +2,179 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import {
+  fetchBillingPromotions,
   fetchBillingSummary,
   fetchPayoutHistory,
   fetchSubscriptionTiers,
   fetchTaxFormStatus,
+  initiateRefund,
+  redactBillingPii,
+  redactBillingPiiDeep,
+  redactBillingPiiInObject,
 } from "./billing.js";
 import type { FetchLike } from "./client.js";
+
+describe("fetchBillingPromotions", () => {
+  it("returns promotions from nested response", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify({
+        promotions: [
+          {
+            id: "promo-1",
+            post_id: 123,
+            post_title: "Boosted Post",
+            status: "active",
+            budget: 5000,
+            currency: "usd",
+            start_date: "2024-01-01T00:00:00Z",
+            end_date: "2024-01-31T00:00:00Z",
+            impressions: 10000,
+            clicks: 500,
+            conversions: 50,
+          },
+        ],
+      }),
+    );
+
+    const result = await fetchBillingPromotions("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.promotions?.length, 1);
+    assert.equal(result.promotions?.[0]?.postTitle, "Boosted Post");
+    assert.equal(result.promotions?.[0]?.budget, 5000);
+    assert.equal(result.promotions?.[0]?.impressions, 10000);
+  });
+
+  it("returns not-found when all endpoints return 404", async () => {
+    const fetchFn = fakeFetch(404, "{}");
+
+    const result = await fetchBillingPromotions("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "not-found");
+  });
+});
+
+describe("initiateRefund", () => {
+  it("returns ok on successful refund with refund_id", async () => {
+    const fetchFn = fakeFetch(200, JSON.stringify({ refund_id: "ref-456", amount: 50 }));
+
+    const result = await initiateRefund("https://test.substack.com", material, fetchFn, "sub-123", {
+      amount: 50,
+      reason: "Customer request",
+    });
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.refundId, "ref-456");
+    assert.equal(result.refundAmount, 50);
+  });
+
+  it("returns ok with amount from amount_cents", async () => {
+    const fetchFn = fakeFetch(200, JSON.stringify({ id: "ref-789", amount_cents: 2500 }));
+
+    const result = await initiateRefund(
+      "https://test.substack.com",
+      material,
+      fetchFn,
+      "sub-123",
+      {},
+    );
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.refundId, "ref-789");
+    assert.equal(result.refundAmount, 25);
+  });
+
+  it("returns schema-drift on validation error (422)", async () => {
+    const fetchFn = fakeFetch(422, JSON.stringify({ error: "Refund amount exceeds charge" }));
+
+    const result = await initiateRefund(
+      "https://test.substack.com",
+      material,
+      fetchFn,
+      "sub-123",
+      {},
+    );
+
+    assert.equal(result.status, "schema-drift");
+    assert.match(result.message, /Refund amount/);
+  });
+
+  it("returns not-found when all endpoints return 404", async () => {
+    const fetchFn = fakeFetch(404, "{}");
+
+    const result = await initiateRefund(
+      "https://test.substack.com",
+      material,
+      fetchFn,
+      "sub-123",
+      {},
+    );
+
+    assert.equal(result.status, "not-found");
+  });
+
+  it("returns unauthenticated on 401", async () => {
+    const fetchFn = fakeFetch(401, "{}");
+
+    const result = await initiateRefund(
+      "https://test.substack.com",
+      material,
+      fetchFn,
+      "sub-123",
+      {},
+    );
+
+    assert.equal(result.status, "unauthenticated");
+  });
+});
+
+describe("redactBillingPii", () => {
+  it("redacts non-empty string when includePii is false", () => {
+    assert.equal(redactBillingPii("John Doe", false), "J...e");
+  });
+
+  it("returns value when includePii is true", () => {
+    assert.equal(redactBillingPii("John Doe", true), "John Doe");
+  });
+
+  it("returns null for null input", () => {
+    assert.equal(redactBillingPii(null, false), null);
+  });
+
+  it("returns null for undefined input", () => {
+    assert.equal(redactBillingPii(undefined, false), null);
+  });
+});
+
+describe("redactBillingPiiInObject", () => {
+  it("redacts specified fields when includePii is false", () => {
+    const obj = { name: "Jane Doe", email: "jane@example.com", amount: 100 };
+    const result = redactBillingPiiInObject(obj, false, ["name", "email"]);
+    assert.match(result.name as string, /^J.*e$/);
+    assert.match(result.email as string, /^j.*m$/);
+    assert.equal(result.amount, 100);
+  });
+
+  it("returns original object when includePii is true", () => {
+    const obj = { name: "Jane Doe", email: "jane@example.com" };
+    const result = redactBillingPiiInObject(obj, true, ["name", "email"]);
+    assert.equal(result.name, "Jane Doe");
+    assert.equal(result.email, "jane@example.com");
+  });
+
+  it("handles short strings by using **", () => {
+    const obj = { name: "JD" };
+    const result = redactBillingPiiInObject(obj, false, ["name"]);
+    assert.equal(result.name, "**");
+  });
+
+  it("returns original object if no piiFields match", () => {
+    const obj = { amount: 100, currency: "usd" };
+    const result = redactBillingPiiInObject(obj, false, ["name", "email"]);
+    assert.deepEqual(result, { amount: 100, currency: "usd" });
+  });
+});
 
 function fakeFetch(status: number, body: string): FetchLike {
   return () =>
@@ -71,6 +238,19 @@ describe("fetchSubscriptionTiers", () => {
     assert.equal(result.tiers?.[0]?.priceMonthly, 0);
     assert.equal(result.tiers?.[1]?.priceMonthly, 5);
     assert.equal(result.tiers?.[1]?.priceYearly, 50);
+  });
+
+  it("skips malformed tier entries", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([null, "bad", { id: "tier-paid", name: "Paid", price: 5 }]),
+    );
+
+    const result = await fetchSubscriptionTiers("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.tiers?.length, 1);
+    assert.equal(result.tiers?.[0]?.id, "tier-paid");
   });
 
   it("parses tiers from nested data field", async () => {
@@ -268,5 +448,32 @@ describe("fetchBillingSummary", () => {
     assert.equal(result.status, "ok");
     assert.equal(result.tiers?.status, "ok");
     assert.equal(result.tiers?.tiers?.length, 1);
+  });
+});
+
+describe("redactBillingPiiDeep", () => {
+  it("redacts nested billing PII fields by default", () => {
+    const result = redactBillingPiiDeep(
+      {
+        status: "ok",
+        customerEmail: "alice@example.com",
+        nested: {
+          subscriber_name: "Alice Smith",
+          amount: 10,
+        },
+        rows: [{ email: "bob@example.com" }],
+      },
+      false,
+    );
+
+    assert.equal(result.customerEmail, "a...m");
+    assert.equal(result.nested.subscriber_name, "A...h");
+    assert.equal(result.rows[0]!.email, "b...m");
+    assert.equal(result.nested.amount, 10);
+  });
+
+  it("preserves PII when explicitly requested", () => {
+    const result = redactBillingPiiDeep({ email: "alice@example.com" }, true);
+    assert.equal(result.email, "alice@example.com");
   });
 });

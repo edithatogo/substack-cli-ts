@@ -271,7 +271,7 @@ export async function checkLocalApiContract(
       message: `${schemaFile} is missing. Run npm run contracts:generate.`,
     };
   }
-  if (actual !== expected) {
+  if (!jsonArtifactsEqual(actual, expected)) {
     return {
       status: "stale",
       outFile,
@@ -279,7 +279,7 @@ export async function checkLocalApiContract(
       message: `${outFile} is stale. Run npm run contracts:generate.`,
     };
   }
-  if (actualSchema !== expectedSchema) {
+  if (!jsonArtifactsEqual(actualSchema, expectedSchema)) {
     return {
       status: "stale",
       outFile,
@@ -293,6 +293,14 @@ export async function checkLocalApiContract(
     schemaFile,
     message: `${outFile} and ${schemaFile} are current.`,
   };
+}
+
+function jsonArtifactsEqual(actual: string, expected: string): boolean {
+  try {
+    return JSON.stringify(JSON.parse(actual)) === JSON.stringify(JSON.parse(expected));
+  } catch {
+    return false;
+  }
 }
 
 export function buildLocalArtifactSchemaBundle(

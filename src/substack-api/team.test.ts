@@ -2,7 +2,15 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import type { FetchLike } from "./client.js";
-import { fetchTeamMembers } from "./team.js";
+import {
+  changeTeamMemberRole,
+  fetchTeamActivity,
+  fetchTeamMembers,
+  inviteTeamMember,
+  isValidTeamRole,
+  redactEmail,
+  removeTeamMember,
+} from "./team.js";
 
 function fakeFetch(status: number, body: string): FetchLike {
   return () =>
@@ -10,6 +18,21 @@ function fakeFetch(status: number, body: string): FetchLike {
       status,
       text: () => Promise.resolve(body),
     });
+}
+
+function captureFetch(
+  status: number,
+  body: unknown,
+  capture: { url?: string; body?: string },
+): FetchLike {
+  return (url, init) => {
+    capture.url = url;
+    capture.body = String(init?.body ?? "");
+    return Promise.resolve({
+      status,
+      text: () => Promise.resolve(JSON.stringify(body)),
+    });
+  };
 }
 
 const material = materialFromCookieHeader(
@@ -33,12 +56,26 @@ describe("fetchTeamMembers", () => {
     assert.equal(result.status, "ok");
     assert.equal(result.members!.length, 2);
     assert.equal(result.members![0]!.name, "Alice");
-    assert.equal(result.members![0]!.email, "alice@example.com");
+    assert.equal(result.members![0]!.email, "a...e@example.com");
     assert.equal(result.members![0]!.role, "admin");
     assert.equal(result.members![1]!.name, "Bob");
     assert.equal(result.members![1]!.email, undefined);
     assert.equal(result.members![1]!.role, "editor");
     assert.match(result.message, /Found 2 team members/);
+  });
+
+  it("includes full emails only when requested", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([{ id: 1, name: "Alice", email: "alice@example.com", role: "admin" }]),
+    );
+
+    const result = await fetchTeamMembers("https://test.substack.com", material, fetchFn, {
+      includeEmails: true,
+    });
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.members![0]!.email, "alice@example.com");
   });
 
   it("returns empty members for empty response", async () => {
@@ -124,5 +161,99 @@ describe("fetchTeamMembers", () => {
 
     assert.equal(result.status, "ok");
     assert.equal(result.members!.length, 0);
+  });
+
+  it("skips malformed team member entries", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([null, "bad", { id: 9, name: "Valid", role: "admin" }]),
+    );
+
+    const result = await fetchTeamMembers("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.members!.length, 1);
+    assert.equal(result.members![0]!.name, "Valid");
+  });
+});
+
+describe("redactEmail", () => {
+  it("redacts local part while preserving domain", () => {
+    assert.equal(redactEmail("alice@example.com"), "a...e@example.com");
+  });
+
+  it("handles malformed email-like strings", () => {
+    assert.equal(redactEmail("ab"), "**");
+  });
+});
+
+describe("fetchTeamActivity", () => {
+  it("parses activity entries", async () => {
+    const result = await fetchTeamActivity(
+      "https://test.substack.com",
+      material,
+      fakeFetch(
+        200,
+        JSON.stringify({ activities: [{ id: "a1", actor: "Alice", action: "invite" }] }),
+      ),
+    );
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.activities![0]!.action, "invite");
+  });
+
+  it("returns not-found when activity endpoints are unavailable", async () => {
+    const result = await fetchTeamActivity(
+      "https://test.substack.com",
+      material,
+      fakeFetch(404, JSON.stringify({})),
+    );
+
+    assert.equal(result.status, "not-found");
+  });
+});
+
+describe("team write probes", () => {
+  it("validates known roles", () => {
+    assert.equal(isValidTeamRole("admin"), true);
+    assert.equal(isValidTeamRole("owner"), false);
+  });
+
+  it("sends invite payload to the first available endpoint", async () => {
+    const capture: { url?: string; body?: string } = {};
+    const result = await inviteTeamMember(
+      "https://test.substack.com",
+      "alice@example.com",
+      "editor",
+      material,
+      captureFetch(200, {}, capture),
+    );
+
+    assert.equal(result.status, "ok");
+    assert.match(capture.url!, /\/api\/v1\/publication\/users\/invite$/);
+    assert.deepEqual(JSON.parse(capture.body!), { email: "alice@example.com", role: "editor" });
+  });
+
+  it("rejects invalid role changes before probing endpoints", async () => {
+    const result = await changeTeamMemberRole(
+      "https://test.substack.com",
+      1,
+      "owner",
+      material,
+      captureFetch(200, {}, {}),
+    );
+
+    assert.equal(result.status, "schema-drift");
+  });
+
+  it("returns not-found for unavailable remove endpoints", async () => {
+    const result = await removeTeamMember(
+      "https://test.substack.com",
+      1,
+      material,
+      fakeFetch(404, JSON.stringify({})),
+    );
+
+    assert.equal(result.status, "not-found");
   });
 });

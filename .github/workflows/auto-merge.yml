@@ -28,12 +28,12 @@ jobs:
 
           # Wait for CI checks to complete (up to 10 minutes)
           for i in $(seq 1 60); do
-            CI_STATE=$(gh pr view "$PR_URL" --json statusCheckRollup --jq '.statusCheckRollup | map(.conclusion) | join(",")')
-            if echo "$CI_STATE" | grep -q "FAILURE"; then
-              echo "CI checks failed; not enabling auto-merge"
+            CI_STATE=$(gh pr view "$PR_URL" --json statusCheckRollup --jq '.statusCheckRollup | map(.conclusion // .status // "UNKNOWN") | join(",")')
+            if echo "$CI_STATE" | grep -Eq "FAILURE|CANCELLED|TIMED_OUT|ACTION_REQUIRED|SKIPPED|STALE"; then
+              echo "CI checks did not succeed; not enabling auto-merge"
               exit 1
             fi
-            if echo "$CI_STATE" | grep -qv "PENDING"; then
+            if [ -n "$CI_STATE" ] && ! echo "$CI_STATE" | grep -Eq "PENDING|QUEUED|IN_PROGRESS|REQUESTED|WAITING|UNKNOWN"; then
               echo "All CI checks completed"
               break
             fi

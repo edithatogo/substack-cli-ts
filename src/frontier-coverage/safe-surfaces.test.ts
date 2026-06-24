@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import {
-  SAFE_SURFACE_IDS,
-  SAFE_SURFACES,
   buildSafeSurfaceInspectOutput,
   buildSafeSurfaceListOutput,
   buildUnsafeWriteBlockedOutput,
+  SAFE_SURFACE_IDS,
+  SAFE_SURFACES,
 } from "./safe-surfaces.js";
 
 describe("safe frontier surfaces", () => {

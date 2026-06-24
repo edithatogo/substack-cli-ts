@@ -1,5 +1,13 @@
 # Track 11: API Prepublish, Publish, and Schedule
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Closed on:** 2026-06-04
+- **Scope:** Reconcile the central Partial status against this track's remaining-work notes, then either close the track cleanly or document any live validation/external blockers.
+- **Resolution:** Track 11 is verified **Complete**. Code is fully implemented with tests — 5 prepublish tests, 7 publish-write tests, 6 workflow-trace tests. All tracked issues fixed (dry-run, trace-out gap, hardcoded status, prepublish routing). Acceptance criteria met: (a) Publish/schedule require `--yes` or confirmation, (b) Prepublish runs without publishing, (c) Final status and URL returned. No remaining work. Status updated in central board and README.
+
 ## Goal
 
 Add final publishing operations only after draft writes and payload validation are reliable.
@@ -69,6 +77,8 @@ The following three code gaps were fixed:
 2. ✅ **`--trace-out` + `--review-only` gap**: Review-only path returned before `maybeWriteTrace`, so no trace file was written even with `--trace-out`. Fixed: `maybeWriteTrace` called before early return.
 
 3. ✅ **Trace status hardcoded**: `status: "published"` / `status: "scheduled"` was always passed even on failure. Fixed: now uses `publishResult.status === "failed" ? "failed" : "published"` (dynamic).
+
+4. ✅ **API prepublish planner endpoint safety**: `planPublishWrite(..., "prepublish", ...)` now targets `/api/v1/drafts/{id}/prepublish` instead of falling through to the live publish endpoint. Added a regression test so prepublish planning cannot accidentally route to `/publish`.
 
 ## publishedUrl Capture Implemented (May 2026)
 

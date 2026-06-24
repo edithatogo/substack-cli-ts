@@ -68,6 +68,12 @@ describe("local API contract renderer", () => {
     assert.match(staleSchema.message, /schema/);
     await writeFile(schemaFile, schema, "utf8");
 
+    await writeFile(outFile, "{", "utf8");
+    const malformed = await checkLocalApiContract({ outFile });
+    assert.equal(malformed.status, "stale");
+    assert.match(malformed.message, /stale/);
+
+    await renderLocalApiContract({ outFile });
     const rendered = await readFile(outFile, "utf8");
     await writeFile(outFile, rendered.replace("local-first", "changed"), "utf8");
     const stale = await checkLocalApiContract({ outFile });
@@ -83,11 +89,12 @@ describe("local API contract renderer", () => {
     assert.match(result.schemaFile, /substack-cli\.schema\.json$/);
   });
 
-  it("renders repository contract artifacts through default paths", async () => {
-    const result = await renderLocalApiContract();
+  it("renders contract artifacts without mutating repository defaults", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "substack-contract-default-"));
+    const result = await renderLocalApiContract({ outFile: join(dir, "contract.json") });
 
-    assert.match(result.outFile, /substack-cli\.contract\.json$/);
-    assert.match(result.schemaFile, /substack-cli\.schema\.json$/);
+    assert.match(result.outFile, /contract\.json$/);
+    assert.match(result.schemaFile, /contract\.json\.schema\.json$/);
     assert.equal(result.contract.contract.id, "substack-cli.local-api");
   });
 

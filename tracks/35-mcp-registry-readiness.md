@@ -37,8 +37,9 @@ Prepare the existing MCP server and related metadata for publication to the curr
 
 - The repo already implements a stdio MCP server with read-only, redacted tools/resources/prompts.
 - The MCP surface manifest and summary resource are implemented and tested.
-- Official MCP documentation now references a community-driven registry service.
-- The registry submission route still needs to be completed against the live registry process.
+- `registry.server.json` exists with scoped npm package metadata for `@edithatogo/substack-cli`.
+- Client setup examples exist in `docs/integrations/client-setup.md` for Claude, VS Code, Gemini, Codex, and Copilot workflows.
+- The repo-side registry readiness path is documented; live submission still requires external account credentials and registry review.
 
 ## Completed Work
 

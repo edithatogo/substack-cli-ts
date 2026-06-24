@@ -95,4 +95,42 @@ describe("evaluateDistributionPolicy", () => {
       await rm(temp, { recursive: true, force: true });
     }
   });
+
+  it("allows vendored file dependencies that are included in package files", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-policy-"));
+
+    try {
+      await writeFile(
+        join(temp, "package.json"),
+        JSON.stringify(
+          {
+            private: false,
+            license: "Apache-2.0",
+            files: [
+              "dist/",
+              "vendor/substack-api/dist/",
+              "vendor/substack-api/src/",
+              "vendor/substack-api/package.json",
+              "vendor/substack-api/README.md",
+              "vendor/substack-api/LICENSE",
+            ],
+            dependencies: {
+              "substack-api": "file:vendor/substack-api",
+            },
+          },
+          null,
+          2,
+        ),
+        "utf8",
+      );
+      await writeFile(join(temp, "LICENSE"), "Apache-2.0\n", "utf8");
+
+      const report = await evaluateDistributionPolicy(temp);
+
+      assert.equal(report.status, "ok");
+      assert.deepEqual(report.nonRegistryDependencies, []);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
 });

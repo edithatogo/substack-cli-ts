@@ -36,7 +36,7 @@ jobs:
         run: npm ci
 
       - name: Biome (Lint & Format)
-        run: npx biome ci src
+        run: npm run ci
 
       - name: Knip (Dead Code Detection)
         run: npm run knip
@@ -55,15 +55,13 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/lcov.info
-          fail_ci_if_error: false
+          fail_ci_if_error: true
 
       - name: Production Audit
         run: npm run audit:prod
-        continue-on-error: true
 
       - name: Secret Pattern Scan
         run: npm run scan:secrets
-        continue-on-error: true
 
   smoke:
     name: Smoke
@@ -94,7 +92,6 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Mutation Test
-        continue-on-error: true
         run: npm run test:mutation
       - name: Upload Mutation Report
         if: always()

@@ -1,8 +1,8 @@
 import type { ApiAuthMaterial } from "../substack-api/auth.js";
 import {
-  type FetchLike,
   apiHeaders,
   classifyFailure,
+  type FetchLike,
   requestJson,
 } from "../substack-api/client.js";
 import type { CommentListEntry, CommentListResult } from "../substack-api/comment-list.js";

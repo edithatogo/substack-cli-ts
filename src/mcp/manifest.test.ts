@@ -38,8 +38,8 @@ describe("buildMcpSummaryResource", () => {
 
     assert.equal(summary.name, "substack-cli");
     assert.equal(summary.status, "ready");
-    assert.equal(summary.toolCount, 27);
-    assert.equal(summary.redactedToolCount, 27);
+    assert.equal(summary.toolCount, 29);
+    assert.equal(summary.redactedToolCount, 29);
     assert.equal(summary.resourceCount, 7);
     assert.equal(summary.promptCount, 2);
     assert.deepEqual(summary.groups, ["read", "review", "capture", "creator"]);

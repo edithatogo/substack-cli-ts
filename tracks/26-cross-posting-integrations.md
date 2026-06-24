@@ -1,8 +1,18 @@
 # Track 26: Cross-posting & Integrations
 
+## Handoff
+
+- **Assigned agent:** Cline
+- **Assigned on:** 2026-06-04
+- **Scope:** Resolve or explicitly document cross-posting, import, integration-management, and token-safety gaps.
+
 ## Status
 
-**Complete**
+**Probe-only / Partial**
+
+Implementation is limited to endpoint probes and redacted status output. Cross-posting, imports, and token listing may still be dashboard-only unless confirmed by live DevTools/network capture.
+
+Repo-side command coverage includes `api integrations list`, `api integrations crosspost`, `api integrations import wordpress`, `api integrations import rss`, `api integrations tokens`, and `api integrations tokens list`. Token values are redacted in parser output.
 
 ## Goal
 

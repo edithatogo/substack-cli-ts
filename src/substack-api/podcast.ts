@@ -2,12 +2,13 @@ import { access, readFile } from "node:fs/promises";
 import { dirname, extname, resolve } from "node:path";
 import type { ApiAuthMaterial } from "./auth.js";
 import {
-  type FetchLike,
   apiHeaders,
   classifyFailure,
+  type FetchLike,
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type PodcastReadStatus =
   | "ok"
@@ -138,7 +139,8 @@ export async function fetchPodcastSection(
   }
 
   for (const item of body) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const isPodcast = typeof record.is_podcast === "boolean" && record.is_podcast;
     if (!isPodcast) continue;
 
@@ -586,7 +588,8 @@ function parseEpisodes(body: unknown, limit: number): PodcastEpisode[] | null {
 
   const episodes: PodcastEpisode[] = [];
   for (const item of items.slice(0, limit)) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "number"
         ? record.id

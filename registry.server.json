@@ -13,19 +13,11 @@
       "runtime": "node",
       "entrypoint": "dist/cli.js",
       "transport": "stdio",
-      "environmentVariables": [
-        "SUBSTACK_EMAIL",
-        "SUBSTACK_PASSWORD",
-        "SUBSTACK_PUBLICATION_URL"
-      ]
+      "environmentVariables": ["SUBSTACK_EMAIL", "SUBSTACK_PASSWORD", "SUBSTACK_PUBLICATION_URL"]
     }
   ],
   "transport": "stdio",
-  "environmentVariables": [
-    "SUBSTACK_EMAIL",
-    "SUBSTACK_PASSWORD",
-    "SUBSTACK_PUBLICATION_URL"
-  ],
+  "environmentVariables": ["SUBSTACK_EMAIL", "SUBSTACK_PASSWORD", "SUBSTACK_PUBLICATION_URL"],
   "publisher": {
     "type": "github",
     "owner": "edithatogo",

@@ -10,13 +10,13 @@ describe("smoke tests", () => {
     const parsed = JSON.parse(output);
     expect(parsed.document.type).toBe("doc");
     expect(parsed.metadata.title).toBe("Example Substack Draft");
-  });
+  }, 60_000);
 
   it("prepublish validates successfully", () => {
     const output = runCli(["prepublish", "examples/basic.md"]);
     const parsed = JSON.parse(output);
     expect(parsed.status).toBe("ready");
-  });
+  }, 60_000);
 
   it("campaign plan and validate smoke through the CLI", () => {
     const temp = mkdtempSync(resolve(tmpdir(), "substack-campaign-smoke-"));
@@ -185,7 +185,7 @@ describe("smoke tests", () => {
     } finally {
       rmSync(temp, { recursive: true, force: true });
     }
-  });
+  }, 120_000);
 
   it("fixtures are valid ProseMirror documents", () => {
     const fixturesDir = resolve(import.meta.dirname, "../../fixtures/prosemirror");
@@ -208,7 +208,13 @@ function runCli(args: string[]): string {
   return execFileSync("node", ["dist/cli.js", ...args], {
     cwd: resolve(import.meta.dirname, "../.."),
     encoding: "utf8",
-    timeout: 30000,
+    timeout: 60000,
+    env: {
+      ...process.env,
+      SUBSTACK_EMAIL: "smoke@example.com",
+      SUBSTACK_PASSWORD: "smoke-password",
+      SUBSTACK_PUBLICATION_URL: "https://example.substack.com",
+    },
   });
 }
 

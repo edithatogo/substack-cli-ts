@@ -1,11 +1,12 @@
 import type { ApiAuthMaterial } from "./auth.js";
 import {
-  type FetchLike,
   apiHeaders,
   classifyFailure,
+  type FetchLike,
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type IntegrationReadStatus =
   | "ok"
@@ -278,7 +279,8 @@ function parseIntegrations(body: unknown): IntegrationEntry[] | null {
 
   const integrations: IntegrationEntry[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id
@@ -329,7 +331,8 @@ function parseApiTokens(body: unknown): ApiTokenEntry[] | null {
 
   const tokens: ApiTokenEntry[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id

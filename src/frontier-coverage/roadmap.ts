@@ -1,8 +1,8 @@
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
 import {
+  type CapabilityDomain,
   COVERAGE_DOMAINS,
   COVERAGE_STATUSES,
-  type CapabilityDomain,
   type CoverageCapability,
   type CoverageMatrix,
   summarizeCoverageMatrix,

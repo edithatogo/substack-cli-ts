@@ -174,6 +174,31 @@ describe("fetchSubscriberGrowth", () => {
     assert.equal(result.growth?.churned, 10);
   });
 
+  it("passes period as a query parameter", async () => {
+    let requestedUrl = "";
+    const fetchFn: FetchLike = async (url) => {
+      requestedUrl = url;
+      return {
+        status: 200,
+        text: () =>
+          Promise.resolve(
+            JSON.stringify({
+              period: "weekly",
+              total_subscribers: 10,
+              net_change: 1,
+            }),
+          ),
+      };
+    };
+
+    const result = await fetchSubscriberGrowth("https://test.substack.com", material, fetchFn, {
+      period: "weekly",
+    });
+
+    assert.equal(result.status, "ok");
+    assert.match(requestedUrl, /[?&]period=weekly/);
+  });
+
   it("returns not-found when all endpoints return 404", async () => {
     const fetchFn = fakeFetch(404, "{}");
 
@@ -219,6 +244,29 @@ describe("fetchEmailPerformance", () => {
     assert.equal(result.emails?.[0]?.title, "Newsletter #1");
     assert.equal(result.emails?.[0]?.recipients, 1000);
     assert.equal(result.emails?.[0]?.openRate, 0.408);
+  });
+
+  it("skips malformed email performance entries", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([
+        null,
+        "bad",
+        {
+          post_id: 3,
+          title: "Valid Email",
+          recipients: 20,
+          opens: 10,
+          clicks: 2,
+        },
+      ]),
+    );
+
+    const result = await fetchEmailPerformance("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.emails?.length, 1);
+    assert.equal(result.emails?.[0]?.title, "Valid Email");
   });
 
   it("parses emails from nested object response", async () => {

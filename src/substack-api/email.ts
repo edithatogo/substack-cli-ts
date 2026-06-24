@@ -1,11 +1,12 @@
 import type { ApiAuthMaterial } from "./auth.js";
 import {
-  type FetchLike,
   apiHeaders,
   classifyFailure,
+  type FetchLike,
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type EmailReadStatus =
   | "ok"
@@ -57,6 +58,22 @@ export interface TestEmailResult {
   status: "ok" | "failed";
   draftId: number;
   message: string;
+}
+
+export interface EmailTemplateUpdate {
+  headerHtml?: string | undefined;
+  footerHtml?: string | undefined;
+  logoUrl?: string | undefined;
+  primaryColor?: string | undefined;
+  backgroundColor?: string | undefined;
+  textColor?: string | undefined;
+  fontFamily?: string | undefined;
+}
+
+export interface UpdateEmailTemplateResult {
+  status: "ok" | "failed";
+  message: string;
+  updated?: EmailTemplateUpdate | undefined;
 }
 
 export async function fetchEmailTemplate(
@@ -216,6 +233,91 @@ export async function sendTestEmail(
   };
 }
 
+export async function updateEmailTemplate(
+  publicationUrl: string,
+  material: ApiAuthMaterial,
+  fetchFn: FetchLike,
+  updates: EmailTemplateUpdate,
+  options: { dryRun?: boolean | undefined; confirm?: boolean | undefined } = {},
+): Promise<UpdateEmailTemplateResult> {
+  const shouldPreview = options.dryRun === true || options.confirm !== true;
+  if (shouldPreview) {
+    return {
+      status: "ok",
+      message: "Preview of email template changes (no write performed)",
+      updated: updates,
+    };
+  }
+
+  const headers = apiHeaders(material);
+  const endpoints = [
+    "/api/v1/publication/email_template",
+    "/api/v1/publication/settings/email",
+    "/api/v1/email_template",
+  ];
+
+  const body = mapEmailTemplateUpdateToBody(updates);
+
+  for (const path of endpoints) {
+    const url = new URL(path, publicationUrl).toString();
+    const response = await requestWrite(fetchFn, url, "POST", headers, body);
+    if (response.status === 200) {
+      return {
+        status: "ok",
+        message: `Email template updated via ${path}.`,
+        updated: updates,
+      };
+    }
+    if (response.status === 404) {
+      continue;
+    }
+    return {
+      status: "failed",
+      message: `Update failed with HTTP ${response.status} on ${path}.`,
+    };
+  }
+
+  return {
+    status: "failed",
+    message:
+      "No writable email template endpoint found. Email template editing may be dashboard-only.",
+  };
+}
+
+function mapEmailTemplateUpdateToBody(updates: EmailTemplateUpdate): Record<string, unknown> {
+  const body: Record<string, unknown> = {};
+  if (updates.headerHtml !== undefined) {
+    body.header_html = updates.headerHtml;
+    body.header = updates.headerHtml;
+  }
+  if (updates.footerHtml !== undefined) {
+    body.footer_html = updates.footerHtml;
+    body.footer = updates.footerHtml;
+  }
+  if (updates.logoUrl !== undefined) {
+    body.logo_url = updates.logoUrl;
+    body.logoUrl = updates.logoUrl;
+  }
+  if (updates.primaryColor !== undefined) {
+    body.primary_color = updates.primaryColor;
+    body.primaryColor = updates.primaryColor;
+    body.color = updates.primaryColor;
+  }
+  if (updates.backgroundColor !== undefined) {
+    body.background_color = updates.backgroundColor;
+    body.backgroundColor = updates.backgroundColor;
+  }
+  if (updates.textColor !== undefined) {
+    body.text_color = updates.textColor;
+    body.textColor = updates.textColor;
+  }
+  if (updates.fontFamily !== undefined) {
+    body.font_family = updates.fontFamily;
+    body.fontFamily = updates.fontFamily;
+  }
+  return body;
+}
+
 function mapEmailTemplate(body: Record<string, unknown>): EmailTemplateSettings {
   const headerHtml =
     typeof body.header_html === "string"
@@ -288,7 +390,8 @@ function parseBroadcasts(body: unknown, limit: number): BroadcastEntry[] | null 
 
   const broadcasts: BroadcastEntry[] = [];
   for (const item of items.slice(0, limit)) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id

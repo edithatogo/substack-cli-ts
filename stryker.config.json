@@ -12,14 +12,16 @@
     "src/publish/title.ts",
     "src/publish/prepare.ts",
     "src/publish/prepublish.ts",
+    "src/policy/distribution.ts",
     "src/substack-api/payload.ts",
+    "src/substack-api/publish-write.ts",
     "!src/**/*.test.ts",
     "!src/test/**"
   ],
   "coverageAnalysis": "perTest",
   "thresholds": {
-    "high": 75,
-    "low": 40,
-    "break": 50
+    "high": 80,
+    "low": 60,
+    "break": 60
   }
 }
