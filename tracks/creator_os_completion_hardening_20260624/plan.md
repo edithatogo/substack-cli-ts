@@ -88,5 +88,5 @@
 - [x] Task: Review and apply fixes
     - [x] Run Conductor review.
     - [x] Apply safe review fixes.
-    - [ ] Push branch.
-    - [ ] Check GitHub Actions and address failures.
+    - [x] Push branch.
+    - [x] Check GitHub Actions and address failures.

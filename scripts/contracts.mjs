@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { checkLocalApiContract, renderLocalApiContract } from "../dist/contracts/index.js";
+import { checkLocalApiContract, renderLocalApiContract } from "../dist/contracts/renderer.js";
 
 const mode = process.argv[2] ?? "check";
 const outFile = process.argv[3];
