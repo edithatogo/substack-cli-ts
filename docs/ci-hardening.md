@@ -25,10 +25,10 @@ Refresh stable and experimental dependency candidates with:
 
 ```sh
 npm outdated --json
-npm view <package> version dist-tags --json
+npm view package-name version dist-tags --json
 ```
 
-Use `npm outdated --json` for the installed stable baseline, then query each targeted package with `npm view` to capture the exact stable, next, beta, alpha, rc, or canary tag before editing `package.json` or an experimental lane.
+Use `npm outdated --json` for the installed stable baseline, then query each targeted package with `npm view package-name version dist-tags --json` to capture the exact stable, next, beta, alpha, rc, or canary tag before editing `package.json` or an experimental lane.
 
 ## Release Evidence
 
