@@ -100,7 +100,7 @@ Recommended additions:
 - Add a Node compatibility matrix for the supported engine range and a separate `next` lane.
 - Add an experimental dependency lane for canary/beta packages without blocking normal merges.
 - Generate and diff the CLI/MCP/API contract in CI.
-- Add `npm sbom --json`, package provenance verification, and package contents assertions.
+- Add a custom SBOM generation script, package provenance verification, and package contents assertions.
 - Upload SLSA/npm provenance evidence and make it visible in the release scorecard.
 - Add branch protection/ruleset documentation listing required checks for dependency PRs and feature PRs.
 - Keep mutation testing advisory until runtime is stable, then raise thresholds per module rather than globally.
