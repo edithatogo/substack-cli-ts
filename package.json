@@ -93,9 +93,9 @@
     "@browserbasehq/stagehand": "^3.6.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@tiptap/core": "3.27.1",
-    "@tiptap/extension-table": "3.24.0",
-    "@tiptap/extension-table-cell": "3.26.1",
-    "@tiptap/extension-table-header": "3.24.0",
+    "@tiptap/extension-table": "3.27.1",
+    "@tiptap/extension-table-cell": "3.27.1",
+    "@tiptap/extension-table-header": "3.27.1",
     "@tiptap/extension-table-row": "3.27.1",
     "@tiptap/html": "3.27.1",
     "@tiptap/starter-kit": "3.27.1",
@@ -104,9 +104,9 @@
     "dotenv": "^17.0.0",
     "js-yaml": "^5.1.0",
     "marked": "^18.0.5",
-    "playwright-core": "^1.60.0",
+    "playwright-core": "^1.61.1",
     "substack-api": "file:vendor/substack-api",
-    "zod": "^4.0.0"
+    "zod": "^4.4.3"
   },
   "overrides": {
     "@tiptap/core": "3.27.1",
@@ -129,9 +129,9 @@
     "@tiptap/extension-ordered-list": "3.24.0",
     "@tiptap/extension-paragraph": "3.24.0",
     "@tiptap/extension-strike": "3.24.0",
-    "@tiptap/extension-table": "3.24.0",
-    "@tiptap/extension-table-cell": "3.26.1",
-    "@tiptap/extension-table-header": "3.24.0",
+    "@tiptap/extension-table": "3.27.1",
+    "@tiptap/extension-table-cell": "3.27.1",
+    "@tiptap/extension-table-header": "3.27.1",
     "@tiptap/extension-table-row": "3.27.1",
     "@tiptap/extension-text": "3.24.0",
     "@tiptap/extension-underline": "3.24.0",
@@ -148,18 +148,18 @@
     "uuid": "^11.1.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.0",
+    "@biomejs/biome": "2.5.1",
     "@eslint/js": "^10.0.1",
     "@stryker-mutator/core": "^9.6.1",
     "@stryker-mutator/vitest-runner": "^9.6.1",
     "@types/node": "^26.0.0",
-    "@vitest/coverage-v8": "^4.1.7",
+    "@vitest/coverage-v8": "^4.1.9",
     "eslint": "^10.5.0",
-    "fast-check": "^4.7.0",
-    "knip": "^6.17.1",
+    "fast-check": "^4.8.0",
+    "knip": "^6.18.0",
     "prettier": "^3.8.4",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1",
-    "vitest": "^4.1.7"
+    "typescript-eslint": "^8.62.0",
+    "vitest": "^4.1.9"
   }
 }

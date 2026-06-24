@@ -1,9 +1,8 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": ["src/mcp/server.ts", "src/benchmark/**/*.ts"],
   "project": ["src/**/*.ts"],
   "ignoreDependencies": ["prettier"],
-  "ignoreBinaries": ["playwright"],
   "ignoreIssues": {
     "src/**/*.ts": ["exports", "types"]
   },
