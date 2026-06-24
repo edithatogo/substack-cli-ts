@@ -15,3 +15,4 @@ Before cutting a release:
 11. Publish the tag and confirm the GitHub Release is created
 12. Confirm npm publication of `@edithatogo/substack-cli`
 13. Submit/update MCP registry and Smithery metadata for the published version
+14. For feature releases that change command options, MCP tools, JSON artifacts, run-log actions, or safe-surface status, update the API contract/versioning artifacts described in [Creator OS Completion and Hardening Roadmap](creator-os-completion-roadmap.md)
