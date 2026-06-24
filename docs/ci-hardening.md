@@ -21,6 +21,15 @@ Run an experimental lane locally with:
 npm run experimental:deps -- playwright-next
 ```
 
+Refresh stable and experimental dependency candidates with:
+
+```sh
+npm outdated --json
+npm view <package> version dist-tags --json
+```
+
+Use `npm outdated --json` for the installed stable baseline, then query each targeted package with `npm view` to capture the exact stable, next, beta, alpha, rc, or canary tag before editing `package.json` or an experimental lane.
+
 ## Release Evidence
 
 Run these locally before an external release or registry submission:
