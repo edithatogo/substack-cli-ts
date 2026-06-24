@@ -182,7 +182,10 @@ async function readAnalyticsSnapshots(
     if (!text) continue;
     try {
       if (file.endsWith(".jsonl")) {
-        for (const line of text.split(/\r?\n/).filter(Boolean)) {
+        for (const line of text
+          .split(/\r?\n/)
+          .map((entry) => entry.trim())
+          .filter(Boolean)) {
           addSnapshot(JSON.parse(line), snapshots);
         }
       } else {

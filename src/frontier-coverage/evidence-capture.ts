@@ -391,7 +391,9 @@ function redactUrlForCapture(value: string): string {
     for (const key of [...url.searchParams.keys()]) {
       url.searchParams.set(
         key,
-        SENSITIVE_KEY_PATTERN.test(key) ? REDACTED : redactScalar(url.searchParams.get(key) ?? ""),
+        testPattern(SENSITIVE_KEY_PATTERN, key)
+          ? REDACTED
+          : redactScalar(url.searchParams.get(key) ?? ""),
       );
     }
     url.pathname = url.pathname
@@ -405,7 +407,9 @@ function redactUrlForCapture(value: string): string {
 }
 
 function looksPrivatePathPart(value: string): boolean {
-  return /^\d{4,}$/.test(value) || /^[0-9a-f]{12,}$/i.test(value) || EMAIL_PATTERN.test(value);
+  return (
+    /^\d{4,}$/.test(value) || /^[0-9a-f]{12,}$/i.test(value) || testPattern(EMAIL_PATTERN, value)
+  );
 }
 
 function validateMinimizedFixture(fixture: MinimizedCaptureFixture): CaptureValidationIssue[] {
@@ -433,10 +437,15 @@ function validateMinimizedFixture(fixture: MinimizedCaptureFixture): CaptureVali
 function containsSensitiveValue(value: unknown): boolean {
   const serialized = stableStringify(value);
   return (
-    EMAIL_PATTERN.test(serialized) ||
-    UUID_PATTERN.test(serialized) ||
-    LONG_TOKEN_PATTERN.test(serialized)
+    testPattern(EMAIL_PATTERN, serialized) ||
+    testPattern(UUID_PATTERN, serialized) ||
+    testPattern(LONG_TOKEN_PATTERN, serialized)
   );
+}
+
+function testPattern(pattern: RegExp, value: string): boolean {
+  pattern.lastIndex = 0;
+  return pattern.test(value);
 }
 
 function inventoryEntry(

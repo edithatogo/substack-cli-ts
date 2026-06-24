@@ -154,9 +154,9 @@ export function buildPreflightReport(
     ),
     requiredCheck(
       "links-http-valid",
-      collectMarkdownLinks(prepared.post.markdown).every((url) => isValidHttpUrl(url)),
-      "Markdown links are valid http or https URLs.",
-      "One or more Markdown links are invalid or non-http URLs.",
+      collectMarkdownLinks(prepared.post.markdown).every(isValidMarkdownLinkTarget),
+      "Markdown links are valid http, https, anchor, mailto, or relative URLs.",
+      "One or more Markdown links are invalid URLs.",
     ),
     optionalCheck(
       "utm-present",
@@ -351,13 +351,28 @@ function collectMarkdownLinks(markdown: string): string[] {
   const links: string[] = [];
   for (const match of markdown.matchAll(/\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)) {
     const url = match[1] ?? "";
-    if (!url.startsWith("#") && !url.startsWith("mailto:")) links.push(url);
+    links.push(url);
   }
   for (const match of markdown.matchAll(/<a\s+[^>]*href=["']([^"']+)["']/gi)) {
     const url = match[1] ?? "";
-    if (!url.startsWith("#") && !url.startsWith("mailto:")) links.push(url);
+    links.push(url);
   }
   return links;
+}
+
+function isValidMarkdownLinkTarget(value: string): boolean {
+  if (value.startsWith("//")) return isValidHttpUrl(`https:${value}`);
+  if (
+    value.startsWith("#") ||
+    value.startsWith("/") ||
+    value.startsWith("./") ||
+    value.startsWith("../")
+  ) {
+    return true;
+  }
+  if (value.startsWith("mailto:")) return true;
+  if (!hasUrlScheme(value)) return !value.includes(":");
+  return isValidHttpUrl(value);
 }
 
 function markdownHasUtm(markdown: string): boolean {

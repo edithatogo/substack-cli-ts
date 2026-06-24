@@ -8,7 +8,7 @@ const packageLock = JSON.parse(await readFile("package-lock.json", "utf8"));
 const packages = Object.entries(packageLock.packages ?? {})
   .filter(([path]) => path.startsWith("node_modules/"))
   .map(([path, meta]) => {
-    const name = path.replace(/^node_modules\//, "");
+    const name = packageNameFromLockPath(path);
     return {
       SPDXID: `SPDXRef-Package-${safeSpdxId(name)}`,
       name,
@@ -57,4 +57,9 @@ console.log(JSON.stringify({ operation: "sbom.generate", outputFile: outFile, pa
 
 function safeSpdxId(value) {
   return String(value).replace(/[^A-Za-z0-9.-]/g, "-");
+}
+
+function packageNameFromLockPath(path) {
+  const parts = path.replace(/^node_modules\//, "").split("/node_modules/");
+  return parts.at(-1) ?? path;
 }

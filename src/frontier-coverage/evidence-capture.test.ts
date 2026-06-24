@@ -1,5 +1,16 @@
 import assert from "node:assert/strict";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "vitest";
+import {
+  buildCaptureFixtureValidationOutput,
+  buildCaptureGraduationOutput,
+  buildEndpointDiffOutput,
+  buildEndpointInventoryOutput,
+  loadEndpointInventoryReport,
+  renderEndpointInventoryReport,
+} from "./cli.js";
 import {
   buildCaptureValidationReport,
   buildEndpointDiffReport,
@@ -44,6 +55,19 @@ describe("capture evidence fixtures", () => {
     assert.equal(report.status, "blocked");
     assert.equal(report.issues[0]?.code, "empty-evidence");
     assert.throws(() => parseCaptureEvidenceFixture({}));
+    assert.throws(
+      () => parseCaptureEvidenceFixture({ ...fixture(), endpoints: [null] }),
+      /endpoint 0/,
+    );
+    assert.throws(
+      () =>
+        parseCaptureEvidenceFixture({ ...fixture(), endpoints: [{ url: "https://example.com" }] }),
+      /method/,
+    );
+    assert.throws(
+      () => parseCaptureEvidenceFixture({ ...fixture(), endpoints: [{ method: "GET" }] }),
+      /url/,
+    );
   });
 
   it("rejects malformed capture fixtures with specific shape errors", () => {
@@ -130,6 +154,21 @@ describe("capture evidence fixtures", () => {
     assert.equal(cleaned.status, "ready");
     assert.doesNotMatch(JSON.stringify(cleaned.minimized), /synthetic-secret-token/);
   });
+
+  it("keeps sensitive-value validation deterministic across repeated global regex checks", () => {
+    const first = buildCaptureValidationReport(
+      fixture({ responseBody: { leaked: "owner@example.com" } }),
+      { verifiedAt: new Date("2026-06-24T00:00:00.000Z") },
+    );
+    const second = buildCaptureValidationReport(
+      fixture({ responseBody: { leaked: "owner@example.com" } }),
+      { verifiedAt: new Date("2026-06-24T00:00:00.000Z") },
+    );
+
+    assert.equal(first.status, "ready");
+    assert.equal(second.status, "ready");
+    assert.doesNotMatch(JSON.stringify(second.minimized), /owner@example.com/);
+  });
 });
 
 function assertTruncatedPreview(value: unknown): unknown {
@@ -180,6 +219,48 @@ describe("endpoint inventory and diff reports", () => {
     assert.equal(diff.removed.length, 0);
     assert.ok(diff.changed.some((entry) => entry.changes.includes("status")));
   });
+
+  it("reports removed endpoints and loads inventory artifacts through CLI helpers", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-capture-cli-"));
+    try {
+      const fixturePath = join(temp, "capture.json");
+      const beforePath = join(temp, "before.json");
+      const afterPath = join(temp, "after.json");
+      const inventoryPath = join(temp, "inventory.json");
+      await writeFile(fixturePath, JSON.stringify(fixture(), null, 2));
+
+      const validation = await buildCaptureFixtureValidationOutput(fixturePath);
+      assert.equal(validation.status, "ready");
+
+      const before = buildEndpointInventoryReport([
+        fixture(),
+        fixture({ method: "POST", url: "https://example.substack.com/api/v1/reports" }),
+      ]);
+      const after = buildEndpointInventoryReport([fixture()]);
+      await writeFile(beforePath, JSON.stringify(before, null, 2));
+      await writeFile(afterPath, JSON.stringify(after, null, 2));
+      await writeFile(
+        inventoryPath,
+        JSON.stringify(await buildEndpointInventoryOutput([fixturePath])),
+      );
+
+      const diff = await buildEndpointDiffOutput(beforePath, afterPath);
+      const loaded = await loadEndpointInventoryReport(inventoryPath);
+
+      assert.equal(diff.status, "blocked");
+      assert.equal(diff.removed.length, 1);
+      assert.equal(loaded.endpointCount, 1);
+      assert.match(renderEndpointInventoryReport(loaded, "json"), /coverage.endpoint.inventory/);
+      assert.match(renderEndpointInventoryReport(loaded, "markdown"), /Endpoint Capture Inventory/);
+      await writeFile(join(temp, "bad-inventory.json"), "{}");
+      await assert.rejects(
+        () => loadEndpointInventoryReport(join(temp, "bad-inventory.json")),
+        /capture-inventory/,
+      );
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("graduation checks", () => {
@@ -214,6 +295,25 @@ describe("graduation checks", () => {
 
     assert.equal(report.status, "ready");
     assert.equal(report.blockers.length, 0);
+  });
+
+  it("runs graduation checks through file-backed CLI helpers", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-capture-graduation-"));
+    try {
+      const matrixPath = join(temp, "matrix.json");
+      const inventoryPath = join(temp, "inventory.json");
+      await writeFile(matrixPath, JSON.stringify(matrix({ evidence: [] }), null, 2));
+      await writeFile(
+        inventoryPath,
+        JSON.stringify(buildEndpointInventoryReport([fixture()]), null, 2),
+      );
+
+      const report = await buildCaptureGraduationOutput(matrixPath, inventoryPath);
+      assert.equal(report.status, "blocked");
+      assert.ok(report.blockers.length > 0);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
   });
 });
 

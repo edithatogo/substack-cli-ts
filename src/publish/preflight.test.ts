@@ -81,6 +81,51 @@ socialImage: ftp://example.com/social.png
     assert.equal(checkStatus(report, "utm-present"), "fail");
   });
 
+  it("allows relative, anchor, and mailto markdown links while still blocking unsafe schemes", async () => {
+    const valid = buildPreflightReport(
+      {
+        mode: "publish",
+        scheduleAt: undefined,
+        post: await parseMarkdownString(
+          `---
+title: "Relative Links"
+---
+# Relative Links
+
+[Relative](/archive)
+[Sibling](./next)
+[Parent](../previous)
+[Anchor](#section)
+[Mail](mailto:editor@example.com)
+<a href="/html-link">HTML link</a>
+`,
+          "relative-links.md",
+        ),
+      },
+      { publicationUrl: "https://rareinsights.substack.com" },
+    );
+    const invalid = buildPreflightReport(
+      {
+        mode: "publish",
+        scheduleAt: undefined,
+        post: await parseMarkdownString(
+          `---
+title: "Unsafe Link"
+---
+# Unsafe Link
+
+[Bad](javascript:alert(1))
+`,
+          "unsafe-link.md",
+        ),
+      },
+      { publicationUrl: "https://rareinsights.substack.com" },
+    );
+
+    assert.notEqual(checkStatus(valid, "links-http-valid"), "fail");
+    assert.equal(checkStatus(invalid, "links-http-valid"), "fail");
+  });
+
   it("blocks missing publication targets and editorial placeholders", async () => {
     const prepared = {
       mode: "publish" as const,

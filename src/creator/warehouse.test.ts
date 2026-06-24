@@ -77,12 +77,12 @@ describe("creator warehouse exports", () => {
       await mkdir(analyticsDir);
       await writeFile(
         join(analyticsDir, "snapshots.jsonl"),
-        `${JSON.stringify([
+        `  \n ${JSON.stringify([
           buildAnalyticsSnapshot({
             campaignId: "quoted,campaign",
             analytics: analyticsInventory(),
           }),
-        ])}\n`,
+        ])}\n\t\n`,
       );
       await writeFile(join(analyticsDir, "bad.json"), "{");
 
