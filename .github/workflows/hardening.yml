@@ -84,8 +84,19 @@ jobs:
     name: Experimental Dependency Lane
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        lane:
+          - playwright-next
+          - stagehand-alpha
+          - typescript-rc
+          - typescript-next
+          - vitest-beta
+          - zod-canary
+          - prettier-alpha
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -93,6 +104,4 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm outdated --json || true
-      - run: npm run typecheck:strictest || true
-      - run: npm run test:coverage
+      - run: node scripts/experimental-dependency-lane.mjs ${{ matrix.lane }}
