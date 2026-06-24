@@ -60,6 +60,17 @@ describe("creator warehouse exports", () => {
       assert.equal(report.campaigns[0]?.views, 42);
       assert.equal(report.campaigns[0]?.revenue, 123);
 
+      warehouse.tables.referrers.push({
+        campaign_id: null,
+        post_id: 999,
+        source: "external",
+        views: 50,
+        captured_at: "2099-01-01T00:00:00Z",
+      });
+      const reportWithUnattributed = buildAttributionReport(warehouse);
+      assert.equal(reportWithUnattributed.campaigns[0]?.campaignId, "unattributed");
+      assert.equal(reportWithUnattributed.campaigns[0]?.referrals, 1);
+
       const written = await writeWarehouseExport(warehouse, join(temp, "out"), "both");
       assert.ok(written.files.some((file) => file.endsWith("warehouse.json")));
       assert.match(await readFile(join(temp, "out", "referrers.csv"), "utf8"), /reader/);
@@ -146,6 +157,31 @@ describe("creator warehouse exports", () => {
     } finally {
       await rm(temp, { recursive: true, force: true });
     }
+  });
+
+  it("sorts attribution ties by campaign id", () => {
+    const warehouse = {
+      schemaVersion: 1 as const,
+      generatedAt: "2099-01-01T00:00:00Z",
+      source: { campaignFiles: [] },
+      diagnostics: [],
+      tables: {
+        campaigns: [{ campaign_id: "z-campaign" }, { campaign_id: "a-campaign" }],
+        posts: [],
+        notes: [],
+        referrers: [],
+        subscribers: [],
+        revenue: [],
+        run_logs: [],
+      },
+    };
+
+    const report = buildAttributionReport(warehouse);
+
+    assert.deepEqual(
+      report.campaigns.map((campaign) => campaign.campaignId),
+      ["a-campaign", "z-campaign"],
+    );
   });
 });
 

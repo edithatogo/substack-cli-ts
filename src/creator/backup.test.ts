@@ -42,6 +42,18 @@ describe("creator backup plans", () => {
     assert.equal(plan.status, "blocked");
   });
 
+  it("blocks backup plans without any source artifacts", async () => {
+    const plan = await buildBackupSnapshotPlan({
+      snapshotFile: "snapshot.json",
+      publicationUrl: undefined,
+      sources: [],
+    });
+
+    assert.equal(plan.status, "blocked");
+    assert.equal(plan.publicationUrl, null);
+    assert.ok(plan.validations.some((validation) => validation.code === "source-required"));
+  });
+
   it("blocks empty and malformed snapshot plans", async () => {
     const temp = await mkdtemp(join(tmpdir(), "substack-backup-invalid-"));
     try {

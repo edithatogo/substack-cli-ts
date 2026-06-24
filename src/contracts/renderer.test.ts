@@ -75,6 +75,14 @@ describe("local API contract renderer", () => {
     assert.match(stale.message, /stale/);
   });
 
+  it("checks the repository contract artifacts through default paths", async () => {
+    const result = await checkLocalApiContract();
+
+    assert.equal(result.status, "ready");
+    assert.match(result.outFile, /substack-cli\.contract\.json$/);
+    assert.match(result.schemaFile, /substack-cli\.schema\.json$/);
+  });
+
   it("rejects invalid package metadata before rendering", async () => {
     const dir = await mkdtemp(join(tmpdir(), "substack-contract-package-"));
     const packageFile = join(dir, "package.json");

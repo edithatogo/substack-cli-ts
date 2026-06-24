@@ -98,6 +98,7 @@ title: "Relative Links"
 [Anchor](#section)
 [Mail](mailto:editor@example.com)
 <a href="/html-link">HTML link</a>
+<a href="//example.com/protocol-relative">Protocol relative</a>
 `,
           "relative-links.md",
         ),

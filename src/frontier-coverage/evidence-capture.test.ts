@@ -75,6 +75,14 @@ describe("capture evidence fixtures", () => {
     assert.throws(
       () =>
         parseCaptureEvidenceFixture({
+          ...fixture(),
+          capabilityId: "",
+        }),
+      /capabilityId/,
+    );
+    assert.throws(
+      () =>
+        parseCaptureEvidenceFixture({
           schemaVersion: 2,
           capabilityId: "x",
           capturedAt: "2026-06-24T00:00:00.000Z",
@@ -153,6 +161,32 @@ describe("capture evidence fixtures", () => {
     );
     assert.equal(cleaned.status, "ready");
     assert.doesNotMatch(JSON.stringify(cleaned.minimized), /synthetic-secret-token/);
+
+    const numeric = minimizeCaptureFixture(
+      fixture({
+        responseBody: {
+          subscriber_count: 10,
+          safe_count: 20,
+          nested: { value: 1 },
+        },
+      }),
+    );
+    assert.equal(
+      (numeric.endpoints[0]?.responseBody as Record<string, unknown>).subscriber_count,
+      "[REDACTED]",
+    );
+    assert.equal((numeric.endpoints[0]?.responseBody as Record<string, unknown>).safe_count, 20);
+  });
+
+  it("handles non-JSON body values without crashing minimization", () => {
+    const minimized = minimizeCaptureFixture(
+      fixture({
+        responseBody: Symbol("ignored"),
+      }),
+    );
+
+    assert.equal(typeof minimized.evidenceHash, "string");
+    assert.equal(minimized.endpoints[0]?.responseBody, undefined);
   });
 
   it("keeps sensitive-value validation deterministic across repeated global regex checks", () => {

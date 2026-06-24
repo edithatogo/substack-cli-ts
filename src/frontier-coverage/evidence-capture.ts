@@ -340,6 +340,7 @@ function minimizeBody(value: unknown): unknown {
   if (value === undefined || value === null) return undefined;
   const redacted = redactCaptureValue(value);
   const serialized = stableStringify(redacted);
+  if (serialized === "undefined") return undefined;
   if (serialized.length <= BODY_PREVIEW_LIMIT) return redacted;
   return {
     preview: `${serialized.slice(0, BODY_PREVIEW_LIMIT)}...`,
@@ -499,7 +500,7 @@ function stableHash(value: unknown): string {
 }
 
 function stableStringify(value: unknown): string {
-  return JSON.stringify(sortForStableStringify(value));
+  return JSON.stringify(sortForStableStringify(value)) ?? "undefined";
 }
 
 function sortForStableStringify(value: unknown): unknown {
