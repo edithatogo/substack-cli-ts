@@ -63,6 +63,28 @@ export function buildPreflightReport(
       strict,
     ),
     optionalCheck(
+      "preview-text-present",
+      Boolean(prepared.post.metadata.previewText ?? prepared.post.metadata.seoDescription),
+      "Preview text is present.",
+      "Preview text is missing. Add previewText or seoDescription front matter.",
+      strict,
+    ),
+    requiredCheck(
+      "subject-length",
+      title.trim().length > 0 && title.trim().length <= 90,
+      "Subject length is deliverable.",
+      "Subject should be 1-90 characters for email clients.",
+    ),
+    optionalCheck(
+      "preview-text-length",
+      isPreviewTextLengthReady(
+        prepared.post.metadata.previewText ?? prepared.post.metadata.seoDescription,
+      ),
+      "Preview text length is deliverable.",
+      "Preview text should be 35-160 characters.",
+      strict,
+    ),
+    optionalCheck(
       "slug-present",
       Boolean(prepared.post.metadata.slug),
       "Slug is present.",
@@ -94,6 +116,64 @@ export function buildPreflightReport(
       prepared.post.media.assets.length > 0,
       "At least one media asset is available as a cover candidate.",
       "Cover image is missing.",
+      strict,
+    ),
+    optionalCheck(
+      "canonical-url-present",
+      Boolean(prepared.post.metadata.canonicalUrl),
+      "Canonical URL is present.",
+      "Canonical URL is missing.",
+      strict,
+    ),
+    requiredCheck(
+      "canonical-url-valid",
+      !prepared.post.metadata.canonicalUrl || isValidHttpUrl(prepared.post.metadata.canonicalUrl),
+      "Canonical URL is valid.",
+      "Canonical URL must be an http or https URL.",
+    ),
+    optionalCheck(
+      "social-image-present",
+      Boolean(prepared.post.metadata.socialImage || prepared.post.media.assets.length > 0),
+      "Social image is present.",
+      "Social image is missing.",
+      strict,
+    ),
+    requiredCheck(
+      "social-image-valid",
+      !prepared.post.metadata.socialImage ||
+        isValidHttpUrl(prepared.post.metadata.socialImage) ||
+        !hasUrlScheme(prepared.post.metadata.socialImage),
+      "Social image reference is valid.",
+      "Social image must be an http URL or local file path.",
+    ),
+    requiredCheck(
+      "image-alt-text",
+      prepared.post.media.assets.every((asset) => Boolean(asset.alt?.trim())),
+      "All media assets have alt text.",
+      "One or more media assets are missing alt text.",
+    ),
+    requiredCheck(
+      "links-http-valid",
+      collectMarkdownLinks(prepared.post.markdown).every(isValidMarkdownLinkTarget),
+      "Markdown links are valid http, https, anchor, mailto, or relative URLs.",
+      "One or more Markdown links are invalid URLs.",
+    ),
+    optionalCheck(
+      "utm-present",
+      Boolean(
+        prepared.post.metadata.utm ||
+          prepared.post.metadata.campaign ||
+          markdownHasUtm(prepared.post.markdown),
+      ),
+      "Campaign attribution is present.",
+      "No campaign, utm front matter, or UTM-tagged links were detected.",
+      strict,
+    ),
+    optionalCheck(
+      "audience-present",
+      Boolean(prepared.post.metadata.audience),
+      "Audience is explicit.",
+      "Audience is missing.",
       strict,
     ),
     requiredCheck(
@@ -246,6 +326,57 @@ function optionalCheck(
 
 function isValidSlug(value: string): boolean {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+}
+
+function isPreviewTextLengthReady(value: string | undefined): boolean {
+  if (!value) return false;
+  const length = value.trim().length;
+  return length >= 35 && length <= 160;
+}
+
+function isValidHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function hasUrlScheme(value: string): boolean {
+  return /^[a-z][a-z0-9+.-]*:/i.test(value);
+}
+
+function collectMarkdownLinks(markdown: string): string[] {
+  const links: string[] = [];
+  for (const match of markdown.matchAll(/\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)) {
+    const url = match[1] ?? "";
+    links.push(url);
+  }
+  for (const match of markdown.matchAll(/<a\s+[^>]*href=["']([^"']+)["']/gi)) {
+    const url = match[1] ?? "";
+    links.push(url);
+  }
+  return links;
+}
+
+function isValidMarkdownLinkTarget(value: string): boolean {
+  if (value.startsWith("//")) return isValidHttpUrl(`https:${value}`);
+  if (
+    value.startsWith("#") ||
+    value.startsWith("/") ||
+    value.startsWith("./") ||
+    value.startsWith("../")
+  ) {
+    return true;
+  }
+  if (value.startsWith("mailto:")) return true;
+  if (!hasUrlScheme(value)) return !value.includes(":");
+  return isValidHttpUrl(value);
+}
+
+function markdownHasUtm(markdown: string): boolean {
+  return /[?&]utm_(source|medium|campaign)=/i.test(markdown);
 }
 
 function hasEditorialPlaceholders(markdown: string): boolean {

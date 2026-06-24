@@ -94,6 +94,46 @@ Inspect a single coverage capability.
 
 List the seven safe frontier surfaces and their planning, probe, manual, or unsupported boundaries.
 
+### `coverage capture-validate`
+
+Validate and minimize a redacted endpoint capture fixture.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--fixture <file>` (required) | Capture evidence fixture JSON file |
+
+### `coverage capture-inventory`
+
+Render a JSON or Markdown endpoint inventory from one or more capture fixtures.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--fixture <file...>` (required) | Capture evidence fixture JSON files | |
+| `--format <format>` | `json` or `markdown` | `json` |
+| `--out <file>` | Write output to a file instead of stdout | |
+
+### `coverage capture-diff`
+
+Compare two JSON endpoint inventory reports and block on added, removed, changed, or reverified endpoints.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--before <file>` (required) | Previous JSON endpoint inventory |
+| `--after <file>` (required) | Current JSON endpoint inventory |
+
+### `coverage capture-graduation`
+
+Check that probe-only, planning-only, and manual-admin surfaces have redacted capture, endpoint evidence, and manual validation evidence before status changes.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--inventory <file>` (required) | JSON endpoint inventory report |
+| `--matrix <file>` | Optional matrix JSON fixture |
+
 ### `coverage safe-surface`
 
 Inspect one safe frontier surface.
@@ -106,6 +146,10 @@ Inspect one safe frontier surface.
 ### `coverage launch-check`
 
 Validate external launch and admin follow-through gates without performing external actions.
+
+### `coverage release-scorecard`
+
+Report local release readiness separately from external npm, GitHub release, MCP registry, marketplace, and Substack admin owner/admin gates.
 
 ### `coverage decisions`
 
@@ -276,6 +320,63 @@ Build a campaign growth report from a campaign plan and optional snapshots.
 |------|-------------|
 | `--campaign <file>` (required) | Campaign plan JSON file |
 | `--snapshots-dir <dir>` | Directory containing analytics snapshots |
+
+---
+
+## `warehouse`
+
+Export local-first Creator OS warehouse tables and attribution reports from existing campaign plans, analytics snapshots, and run logs. This surface writes local JSON/CSV only; it does not perform live Substack mutations or subscriber imports.
+
+### `warehouse export`
+
+Normalize campaigns, posts, Notes, referrers, subscriber growth probes, revenue probes, and run logs into local tables.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--campaign <file>` | Campaign plan JSON file. Repeatable | — |
+| `--analytics-dir <dir>` | Directory containing analytics snapshot JSON or JSONL files | — |
+| `--run-log-dir <dir>` | Directory containing run-log JSON artifacts | — |
+| `--out-dir <dir>` (required) | Directory for warehouse exports | — |
+| `--format <format>` | `json`, `csv`, or `both` | `both` |
+
+### `warehouse attribution`
+
+Build a campaign/cohort attribution report from the same local inputs.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--campaign <file>` | Campaign plan JSON file. Repeatable | — |
+| `--analytics-dir <dir>` | Directory containing analytics snapshot JSON or JSONL files | — |
+| `--run-log-dir <dir>` | Directory containing run-log JSON artifacts | — |
+| `--out <file>` | Write attribution report JSON to a file | — |
+
+---
+
+## `backup`
+
+Plan and validate redacted export-first backup snapshots. Restore remains a manual checklist because subscriber, revenue, and schedule recovery can expose private data or mutate publication state.
+
+### `backup plan`
+
+Write a redacted backup snapshot plan and validate local source artifacts.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--snapshot <file>` (required) | Snapshot plan JSON output file |
+| `--publication-url <url>` | Publication URL to redact into the plan |
+| `--source <path>` | Local source path to validate. Repeatable |
+
+### `backup validate`
+
+Validate a backup snapshot plan and print the manual restore checklist.
+
+**Options:**
+| Flag | Description |
+|------|-------------|
+| `--snapshot <file>` (required) | Snapshot plan JSON file |
 
 ### `recommendations inspect`
 

@@ -16,77 +16,77 @@
 
 ## Phase 2: API Contract Versioning
 
-- [ ] Task: Define first-party artifact schemas
-    - [ ] Campaign plan schema.
-    - [ ] Media/audio/live plan schemas.
-    - [ ] Analytics snapshot and trend schemas.
-    - [ ] Growth report schema.
-    - [ ] Run-log schema.
-    - [ ] Coverage and drift snapshot schemas.
-- [ ] Task: Generate local contract artifacts
-    - [ ] CLI command/options contract.
-    - [ ] MCP tools/resources/prompts contract.
-    - [ ] Safe-surface and capability status contract.
-    - [ ] Version metadata renderer.
-- [ ] Task: Add contract tests
-    - [ ] Snapshot generated contract artifacts.
-    - [ ] Fail when public surfaces change without a version decision.
-    - [ ] Add release checklist enforcement.
+- [x] Task: Define first-party artifact schemas
+    - [x] Campaign plan schema.
+    - [x] Media/audio/live plan schemas.
+    - [x] Analytics snapshot and trend schemas.
+    - [x] Growth report schema.
+    - [x] Run-log schema.
+    - [x] Coverage and drift snapshot schemas.
+- [x] Task: Generate local contract artifacts
+    - [x] CLI command/options contract.
+    - [x] MCP tools/resources/prompts contract.
+    - [x] Safe-surface and capability status contract.
+    - [x] Version metadata renderer.
+- [x] Task: Add contract tests
+    - [x] Snapshot generated contract artifacts.
+    - [x] Fail when public surfaces change without a version decision.
+    - [x] Add release checklist enforcement.
 
 ## Phase 3: Evidence and Capture Infrastructure
 
-- [ ] Task: Implement capture-kit validation
-    - [ ] Redaction rules for cookies, tokens, IDs, emails, private names, and payment/subscriber fields.
-    - [ ] Fixture minimizer.
-    - [ ] Endpoint inventory renderer.
-    - [ ] Endpoint diff report.
-- [ ] Task: Connect capture evidence to coverage status
-    - [ ] Evidence hash fields.
-    - [ ] Last verified timestamp fields.
-    - [ ] Graduation checks for planning/probe/manual surfaces.
+- [x] Task: Implement capture-kit validation
+    - [x] Redaction rules for cookies, tokens, IDs, emails, private names, and payment/subscriber fields.
+    - [x] Fixture minimizer.
+    - [x] Endpoint inventory renderer.
+    - [x] Endpoint diff report.
+- [x] Task: Connect capture evidence to coverage status
+    - [x] Evidence hash fields.
+    - [x] Last verified timestamp fields.
+    - [x] Graduation checks for planning/probe/manual surfaces.
 
 ## Phase 4: Creator OS Differentiators
 
-- [ ] Task: Add local creator data warehouse
-    - [ ] Normalize campaigns, posts, Notes, referrers, subscribers, revenue probes, and run logs.
-    - [ ] Export SQLite or DuckDB plus CSV/Parquet where practical.
-    - [ ] Add cohort and campaign attribution reports.
-- [ ] Task: Add deliverability and compliance preflight
-    - [ ] Subject and preview checks.
-    - [ ] Link and UTM checks.
-    - [ ] Canonical URL, social image, and alt text checks.
-    - [ ] Audience and schedule collision checks.
-- [ ] Task: Add backup/export-first safety
-    - [ ] Redacted backup plan.
-    - [ ] Snapshot validation.
-    - [ ] Manual restore checklist.
+- [x] Task: Add local creator data warehouse
+    - [x] Normalize campaigns, posts, Notes, referrers, subscribers, revenue probes, and run logs.
+    - [x] Export local JSON/CSV artifacts; SQLite/DuckDB remains deferred until a dependency is justified.
+    - [x] Add cohort and campaign attribution reports.
+- [x] Task: Add deliverability and compliance preflight
+    - [x] Subject and preview checks.
+    - [x] Link and UTM checks.
+    - [x] Canonical URL, social image, and alt text checks.
+    - [x] Audience and schedule collision checks.
+- [x] Task: Add backup/export-first safety
+    - [x] Redacted backup plan.
+    - [x] Snapshot validation.
+    - [x] Manual restore checklist.
 
 ## Phase 5: Hardening and Launch Completion
 
-- [ ] Task: Add strictest TypeScript lane
-    - [ ] `tsconfig.strictest.json`.
-    - [ ] Advisory CI job.
-    - [ ] Source fixes before test-helper fixes.
-- [ ] Task: Harden CI/CD
-    - [ ] Required audit and secret scan gates after false-positive cleanup.
-    - [ ] Stable Node matrix.
-    - [ ] Experimental dependency lane.
-    - [ ] SBOM and provenance evidence.
-    - [ ] Branch protection/ruleset documentation.
-- [ ] Task: Add release and external launch scorecard
-    - [ ] Local readiness report.
-    - [ ] External owner/admin gate report.
-    - [ ] Registry, marketplace, npm, GitHub release, docs, support, and rollback checks.
+- [x] Task: Add strictest TypeScript lane
+    - [x] `tsconfig.strictest.json`.
+    - [x] Advisory CI job.
+    - [x] Source fixes before test-helper fixes.
+- [x] Task: Harden CI/CD
+    - [x] Required audit and secret scan gates after false-positive cleanup.
+    - [x] Stable Node matrix.
+    - [x] Experimental dependency lane.
+    - [x] SBOM and provenance evidence.
+    - [x] Branch protection/ruleset documentation.
+- [x] Task: Add release and external launch scorecard
+    - [x] Local readiness report.
+    - [x] External owner/admin gate report.
+    - [x] Registry, marketplace, npm, GitHub release, docs, support, and rollback checks.
 
 ## Phase 6: Review and Closeout
 
-- [ ] Task: Run full local validation
-    - [ ] `npm run typecheck`
-    - [ ] `npm test`
-    - [ ] `npm run test:coverage`
-    - [ ] `npm run frontier:drift`
-- [ ] Task: Review and apply fixes
-    - [ ] Run Conductor review.
-    - [ ] Apply safe review fixes.
-    - [ ] Push branch.
-    - [ ] Check GitHub Actions and address failures.
+- [x] Task: Run full local validation
+    - [x] `npm run typecheck`
+    - [x] `npm test`
+    - [x] `npm run test:coverage`
+    - [x] `npm run frontier:drift`
+- [x] Task: Review and apply fixes
+    - [x] Run Conductor review.
+    - [x] Apply safe review fixes.
+    - [x] Push branch.
+    - [x] Check GitHub Actions and address failures.
