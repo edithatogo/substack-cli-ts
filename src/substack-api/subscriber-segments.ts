@@ -1,5 +1,6 @@
 import type { ApiAuthMaterial } from "./auth.js";
 import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type SegmentReadStatus =
   | "ok"
@@ -84,7 +85,8 @@ function parseSegments(body: unknown): SubscriberSegment[] | null {
 
   const segments: SubscriberSegment[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id

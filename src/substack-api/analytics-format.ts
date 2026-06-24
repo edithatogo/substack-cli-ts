@@ -30,7 +30,7 @@ export function formatPostAnalytics(result: PostAnalyticsResult, options: Format
       return JSON.stringify(result, null, 2);
     case "csv": {
       const header = "postId,title,views,readRate,emailOpens,emailClicks,referrerCount";
-      const row = `${a.postId},"${escapeCsv(a.title)}",${a.views},${a.readRate ?? ""},${a.emailOpens ?? ""},${a.emailClicks ?? ""},${a.referrers.length}`;
+      const row = `${a.postId},${escapeCsv(a.title)},${a.views},${a.readRate ?? ""},${a.emailOpens ?? ""},${a.emailClicks ?? ""},${a.referrers.length}`;
       const refHeader = "referrerSource,referrerViews";
       const refRows = a.referrers.map((r) => `${escapeCsv(r.source)},${r.views}`);
       return [header, row, "", refHeader, ...refRows].join("\n");
@@ -109,7 +109,7 @@ export function formatEmailPerformance(
         "postId,title,sentAt,recipients,delivered,opens,openRate,clicks,clickRate,unsubscribes";
       const rows = result.emails.map(
         (e) =>
-          `${e.postId},"${escapeCsv(e.title)}",${e.sentAt ?? ""},${e.recipients},${e.delivered},${e.opens},${e.openRate.toFixed(4)},${e.clicks},${e.clickRate.toFixed(4)},${e.unsubscribes}`,
+          `${e.postId},${escapeCsv(e.title)},${e.sentAt ?? ""},${e.recipients},${e.delivered},${e.opens},${e.openRate.toFixed(4)},${e.clicks},${e.clickRate.toFixed(4)},${e.unsubscribes}`,
       );
       return [header, ...rows].join("\n");
     }

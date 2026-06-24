@@ -162,6 +162,19 @@ describe("fetchTeamMembers", () => {
     assert.equal(result.status, "ok");
     assert.equal(result.members!.length, 0);
   });
+
+  it("skips malformed team member entries", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([null, "bad", { id: 9, name: "Valid", role: "admin" }]),
+    );
+
+    const result = await fetchTeamMembers("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.members!.length, 1);
+    assert.equal(result.members![0]!.name, "Valid");
+  });
 });
 
 describe("redactEmail", () => {

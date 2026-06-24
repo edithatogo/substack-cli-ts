@@ -6,6 +6,7 @@ import {
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type SuppressionReadStatus =
   | "ok"
@@ -138,7 +139,8 @@ function parseSuppressions(body: unknown): SuppressionEntry[] | null {
 
   const entries: SuppressionEntry[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const email =
       typeof record.email === "string"
         ? record.email

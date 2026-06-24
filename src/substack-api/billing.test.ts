@@ -240,6 +240,19 @@ describe("fetchSubscriptionTiers", () => {
     assert.equal(result.tiers?.[1]?.priceYearly, 50);
   });
 
+  it("skips malformed tier entries", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([null, "bad", { id: "tier-paid", name: "Paid", price: 5 }]),
+    );
+
+    const result = await fetchSubscriptionTiers("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.tiers?.length, 1);
+    assert.equal(result.tiers?.[0]?.id, "tier-paid");
+  });
+
   it("parses tiers from nested data field", async () => {
     const fetchFn = fakeFetch(
       200,

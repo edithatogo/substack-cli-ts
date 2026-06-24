@@ -6,6 +6,7 @@ import {
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type EmailReadStatus =
   | "ok"
@@ -389,7 +390,8 @@ function parseBroadcasts(body: unknown, limit: number): BroadcastEntry[] | null 
 
   const broadcasts: BroadcastEntry[] = [];
   for (const item of items.slice(0, limit)) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id

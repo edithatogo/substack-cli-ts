@@ -6,6 +6,7 @@ import {
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export interface CommentListEntry {
   id: number;
@@ -113,7 +114,8 @@ export async function fetchCommentsForPost(
 
   const comments: CommentListEntry[] = [];
   for (const item of body) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const parsed = parseCommentRecord(record);
     if (parsed) {
       comments.push(parsed);

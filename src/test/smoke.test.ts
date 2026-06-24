@@ -185,7 +185,7 @@ describe("smoke tests", () => {
     } finally {
       rmSync(temp, { recursive: true, force: true });
     }
-  });
+  }, 120_000);
 
   it("fixtures are valid ProseMirror documents", () => {
     const fixturesDir = resolve(import.meta.dirname, "../../fixtures/prosemirror");

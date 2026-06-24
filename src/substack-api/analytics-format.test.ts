@@ -93,6 +93,24 @@ describe("formatPostAnalytics", () => {
     assert.ok(lines[4].includes("Twitter"));
   });
 
+  it("escapes quoted CSV fields only once", () => {
+    const output = formatPostAnalytics(
+      {
+        ...postResult,
+        analytics: {
+          ...postResult.analytics,
+          title: 'A "quoted", comma title',
+          referrers: [{ source: 'Reader "share", direct', views: 3 }],
+        },
+      },
+      { format: "csv" },
+    );
+
+    const lines = output.split("\n");
+    assert.equal(lines[1], '42,"A ""quoted"", comma title",1000,0.65,200,50,1');
+    assert.equal(lines[4], '"Reader ""share"", direct",3');
+  });
+
   it("returns table for table format", () => {
     const output = formatPostAnalytics(postResult, { format: "table" });
     assert.ok(output.includes("Post Analytics"));
@@ -175,6 +193,21 @@ describe("formatEmailPerformance", () => {
     assert.ok(lines[1].includes("1"));
     assert.ok(lines[1].includes("Newsletter #1"));
     assert.ok(lines[1].includes("0.408"));
+  });
+
+  it("escapes email titles without adding extra quotes", () => {
+    const output = formatEmailPerformance(
+      {
+        ...emailResult,
+        emails: [{ ...emailResult.emails![0]!, title: 'Newsletter, "Special"' }],
+      },
+      { format: "csv" },
+    );
+
+    assert.equal(
+      output.split("\n")[1],
+      '1,"Newsletter, ""Special""",2026-01-01T00:00:00Z,1000,980,400,0.4080,100,0.1020,5',
+    );
   });
 
   it("returns table for table format", () => {

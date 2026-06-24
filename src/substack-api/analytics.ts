@@ -1,5 +1,6 @@
 import type { ApiAuthMaterial } from "./auth.js";
 import { apiHeaders, classifyFailure, type FetchLike, requestJson } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export type AnalyticsReadStatus =
   | "ok"
@@ -337,7 +338,8 @@ function mapPostAnalytics(postId: number, body: Record<string, unknown>): PostAn
   const rawReferrers = body.referrers ?? body.referrer_list;
   if (Array.isArray(rawReferrers)) {
     for (const item of rawReferrers) {
-      const record = item as Record<string, unknown>;
+      if (!isRecord(item)) continue;
+      const record = item;
       const source =
         typeof record.source === "string"
           ? record.source
@@ -415,7 +417,8 @@ function parseEmailPerformance(body: unknown, limit: number): EmailPerformance[]
 
   const results: EmailPerformance[] = [];
   for (const item of items.slice(0, limit)) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const postId =
       typeof record.post_id === "number"
         ? record.post_id

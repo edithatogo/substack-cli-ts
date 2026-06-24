@@ -6,6 +6,7 @@ import {
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 import { fetchPublication } from "./publication.js";
 
 export type BillingReadStatus =
@@ -268,7 +269,8 @@ function parseTiers(body: unknown): SubscriptionTier[] | null {
 
   const tiers: SubscriptionTier[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id
@@ -325,7 +327,8 @@ function parsePayouts(body: unknown): { payouts: PayoutEntry[]; nextPayout: stri
 
   const payouts: PayoutEntry[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id
@@ -567,7 +570,8 @@ function parseTaxForms(body: unknown): TaxFormStatus[] | null {
 
   const forms: TaxFormStatus[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const formType =
       typeof record.form_type === "string"
         ? record.form_type
@@ -609,7 +613,8 @@ function parsePromotions(body: unknown): PromotionEntry[] | null {
 
   const promotions: PromotionEntry[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id

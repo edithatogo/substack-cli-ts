@@ -6,6 +6,7 @@ import {
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 import { createSubstackClient } from "./substack-adapter.js";
 
 // ── Types ────────────────────────────────────────────────────────────────
@@ -379,7 +380,8 @@ function parseCommentList(body: unknown): CommentEntry[] | null {
 
   const comments: CommentEntry[] = [];
   for (const item of items) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "number"
         ? record.id

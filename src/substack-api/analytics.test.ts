@@ -246,6 +246,29 @@ describe("fetchEmailPerformance", () => {
     assert.equal(result.emails?.[0]?.openRate, 0.408);
   });
 
+  it("skips malformed email performance entries", async () => {
+    const fetchFn = fakeFetch(
+      200,
+      JSON.stringify([
+        null,
+        "bad",
+        {
+          post_id: 3,
+          title: "Valid Email",
+          recipients: 20,
+          opens: 10,
+          clicks: 2,
+        },
+      ]),
+    );
+
+    const result = await fetchEmailPerformance("https://test.substack.com", material, fetchFn);
+
+    assert.equal(result.status, "ok");
+    assert.equal(result.emails?.length, 1);
+    assert.equal(result.emails?.[0]?.title, "Valid Email");
+  });
+
   it("parses emails from nested object response", async () => {
     const fetchFn = fakeFetch(
       200,

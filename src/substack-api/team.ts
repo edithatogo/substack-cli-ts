@@ -6,6 +6,7 @@ import {
   requestJson,
   requestWrite,
 } from "./client.js";
+import { isRecord } from "./parse-utils.js";
 
 export interface TeamMember {
   id: number;
@@ -74,7 +75,8 @@ export async function fetchTeamMembers(
 
   const members: TeamMember[] = [];
   for (const item of body) {
-    const record = item as Record<string, unknown>;
+    if (!isRecord(item)) continue;
+    const record = item;
     const id =
       typeof record.id === "number"
         ? record.id
@@ -256,8 +258,9 @@ function parseTeamActivity(body: unknown): TeamActivityEntry[] | null {
         ? ((body as Record<string, unknown>).data as unknown[])
         : null;
   if (!items) return null;
-  return items.map((item, index) => {
-    const record = item as Record<string, unknown>;
+  return items.flatMap((item, index) => {
+    if (!isRecord(item)) return [];
+    const record = item;
     const id =
       typeof record.id === "string"
         ? record.id
