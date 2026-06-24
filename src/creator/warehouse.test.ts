@@ -183,6 +183,35 @@ describe("creator warehouse exports", () => {
       ["a-campaign", "z-campaign"],
     );
   });
+
+  it("handles empty inputs and sparse campaign plans", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-warehouse-sparse-"));
+    try {
+      const sparseCampaignFile = join(temp, "sparse-campaign.json");
+      await writeFile(
+        sparseCampaignFile,
+        JSON.stringify({
+          ...campaignPlan(),
+          publishAt: undefined,
+          post: {
+            filePath: "post.md",
+            title: "Post",
+          },
+        }),
+      );
+
+      const empty = await buildWarehouseExport({});
+      const sparse = await buildWarehouseExport({ campaignFiles: [sparseCampaignFile] });
+
+      assert.equal(empty.source.analyticsDir, undefined);
+      assert.equal(empty.tables.campaigns.length, 0);
+      assert.equal(sparse.tables.campaigns[0]?.publish_at, null);
+      assert.equal(sparse.tables.posts[0]?.slug, null);
+      assert.equal(sparse.tables.posts[0]?.planned_url, null);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
 });
 
 function campaignPlan() {

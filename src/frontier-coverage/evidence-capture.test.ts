@@ -83,6 +83,14 @@ describe("capture evidence fixtures", () => {
     assert.throws(
       () =>
         parseCaptureEvidenceFixture({
+          ...fixture(),
+          endpoints: "not-array",
+        }),
+      /endpoints/,
+    );
+    assert.throws(
+      () =>
+        parseCaptureEvidenceFixture({
           schemaVersion: 2,
           capabilityId: "x",
           capturedAt: "2026-06-24T00:00:00.000Z",
@@ -176,6 +184,17 @@ describe("capture evidence fixtures", () => {
       "[REDACTED]",
     );
     assert.equal((numeric.endpoints[0]?.responseBody as Record<string, unknown>).safe_count, 20);
+  });
+
+  it("normalizes optional notes and invalid last-verified timestamps", () => {
+    const parsed = parseCaptureEvidenceFixture({
+      ...fixture(),
+      notes: ["Keep", 1, false],
+      lastVerifiedAt: "not-a-date",
+    });
+
+    assert.deepEqual(parsed.notes, ["Keep"]);
+    assert.equal(parsed.lastVerifiedAt, undefined);
   });
 
   it("handles non-JSON body values without crashing minimization", () => {
