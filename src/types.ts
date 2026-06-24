@@ -11,6 +11,7 @@ export interface PostMetadata {
   comments?: "enabled" | "disabled" | "paid" | "free" | undefined;
   scheduleAt?: string | undefined;
   shouldSendEmail?: boolean | undefined;
+  previewText?: string | undefined;
   seoTitle?: string | undefined;
   seoDescription?: string | undefined;
   socialImage?: string | undefined;

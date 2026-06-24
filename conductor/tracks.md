@@ -294,14 +294,14 @@
 
 | Status | Count | Tracks |
 | --- | ---: | --- |
-| **Complete / Implemented** | 42 | 01–42 |
+| **Complete / Implemented** | 43 | 01–43 |
 | **Partial / Read-only / Probe-only** | 0 | — |
 | **In Progress** | 0 | — |
-| **Planned** | 1 | 43 |
+| **Planned** | 0 | — |
 | **Blocked** | 0 | — |
 | **Total** | **43** | |
 
-_Last updated: 2026-06-24_ — Tracks 01–42 are locally implemented. Track 42 records external launch/admin gates explicitly rather than claiming account-gated actions were performed. Track 43 is planned for completion hardening, API contract versioning, dependency lanes, and CI/CD strictness.
+_Last updated: 2026-06-24_ — Tracks 01–43 are locally implemented. Track 42 records external launch/admin gates explicitly rather than claiming account-gated actions were performed. Track 43 adds completion hardening, API contract versioning, capture evidence, Creator OS differentiators, dependency lanes, and CI/CD strictness.
 
 ---
 
@@ -340,5 +340,5 @@ _Last updated: 2026-06-24_ — Tracks 01–42 are locally implemented. Track 42 
 
 ---
 
-- [ ] **Track: Creator OS completion hardening with API contract versioning, evidence promotion, strict CI/CD, and dependency lanes.**
+- [x] **Track: Creator OS completion hardening with API contract versioning, evidence promotion, strict CI/CD, and dependency lanes.**
 *Link: [../tracks/creator_os_completion_hardening_20260624/](../tracks/creator_os_completion_hardening_20260624/)*

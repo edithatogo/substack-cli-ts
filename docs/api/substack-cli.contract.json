@@ -1,0 +1,2611 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "substack-cli contract renderer",
+  "package": {
+    "name": "@edithatogo/substack-cli",
+    "version": "0.1.0",
+    "mcpName": "io.github.edithatogo/substack-cli"
+  },
+  "contract": {
+    "id": "substack-cli.local-api",
+    "version": "0.1.0+contract.1",
+    "stability": "local-first",
+    "generatedAt": "static",
+    "note": "This is a local CLI/MCP/artifact contract. It does not claim Substack private endpoints are stable public APIs."
+  },
+  "cli": {
+    "commands": [
+      {
+        "command": "analytics snapshot",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "analytics.snapshot",
+          "run-log"
+        ]
+      },
+      {
+        "command": "analytics trend --snapshots-dir <dir>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "analytics.trend"
+        ]
+      },
+      {
+        "command": "api analytics inventory",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "analytics.snapshot"
+        ]
+      },
+      {
+        "command": "api analytics snapshot",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "analytics.snapshot"
+        ]
+      },
+      {
+        "command": "backup plan",
+        "surface": "cli",
+        "mode": "planning-only",
+        "artifacts": [
+          "backup.snapshot-plan"
+        ]
+      },
+      {
+        "command": "backup validate --file <file>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "backup.snapshot-plan"
+        ]
+      },
+      {
+        "command": "campaign execute --plan <file>",
+        "surface": "cli",
+        "mode": "planning-only",
+        "artifacts": [
+          "campaign.plan",
+          "run-log"
+        ]
+      },
+      {
+        "command": "campaign plan <file>",
+        "surface": "cli",
+        "mode": "planning-only",
+        "artifacts": [
+          "campaign.plan",
+          "run-log"
+        ]
+      },
+      {
+        "command": "campaign report --run-log-dir <dir>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "run-log"
+        ]
+      },
+      {
+        "command": "campaign validate --plan <file>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "campaign.plan"
+        ]
+      },
+      {
+        "command": "coverage capture-diff --before <file> --after <file>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "capture.evidence"
+        ]
+      },
+      {
+        "command": "coverage capture-graduation",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "capture.evidence",
+          "coverage.matrix"
+        ]
+      },
+      {
+        "command": "coverage capture-inventory --file <file>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "capture.evidence"
+        ]
+      },
+      {
+        "command": "coverage capture-validate --file <file>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "capture.evidence"
+        ]
+      },
+      {
+        "command": "coverage gaps",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "coverage.matrix"
+        ]
+      },
+      {
+        "command": "coverage inspect --id <id>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "coverage.matrix"
+        ]
+      },
+      {
+        "command": "coverage release-scorecard",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": []
+      },
+      {
+        "command": "coverage report",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "coverage.matrix"
+        ]
+      },
+      {
+        "command": "coverage safe-surface --id <id>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "coverage.safe-surface"
+        ]
+      },
+      {
+        "command": "coverage safe-surfaces",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "coverage.safe-surface"
+        ]
+      },
+      {
+        "command": "coverage validate",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "coverage.matrix"
+        ]
+      },
+      {
+        "command": "growth report --campaign <file>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "growth.report"
+        ]
+      },
+      {
+        "command": "live plan --title <title> --at <timestamp>",
+        "surface": "cli",
+        "mode": "planning-only",
+        "artifacts": [
+          "live.plan",
+          "run-log"
+        ]
+      },
+      {
+        "command": "mcp summary",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": []
+      },
+      {
+        "command": "mcp surface",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": []
+      },
+      {
+        "command": "media audio plan --file <file> --post <markdown>",
+        "surface": "cli",
+        "mode": "planning-only",
+        "artifacts": [
+          "media.plan",
+          "run-log"
+        ]
+      },
+      {
+        "command": "media video plan --file <file> --post <markdown>",
+        "surface": "cli",
+        "mode": "planning-only",
+        "artifacts": [
+          "media.plan",
+          "run-log"
+        ]
+      },
+      {
+        "command": "warehouse attribution",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "warehouse.attribution"
+        ]
+      },
+      {
+        "command": "warehouse export",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "warehouse.export"
+        ]
+      }
+    ]
+  },
+  "mcp": {
+    "name": "substack-cli",
+    "version": "0.1.0",
+    "transport": "stdio",
+    "status": "ready",
+    "toolCount": 27,
+    "resourceCount": 7,
+    "promptCount": 2,
+    "tools": [
+      {
+        "name": "analytics.trend",
+        "group": "creator",
+        "cliCommand": "analytics trend --snapshots-dir <dir>",
+        "redacted": true
+      },
+      {
+        "name": "api.auth.status",
+        "group": "read",
+        "cliCommand": "api auth status --source local-profile",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.compare",
+        "group": "capture",
+        "cliCommand": "api draft compare <expected-file> <actual-file>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.contract",
+        "group": "capture",
+        "cliCommand": "api draft contract <file>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.contract.matrix",
+        "group": "capture",
+        "cliCommand": "api draft contract-matrix <files...>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.contract.matrix.compare",
+        "group": "capture",
+        "cliCommand": "api draft contract-matrix-compare <expected-file> <actual-file>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.duplicates",
+        "group": "capture",
+        "cliCommand": "api draft duplicates <file>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.fixture",
+        "group": "capture",
+        "cliCommand": "api draft fixture <file> --out <file>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.inspect",
+        "group": "capture",
+        "cliCommand": "api draft inspect <file>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.review",
+        "group": "capture",
+        "cliCommand": "api draft review <file>",
+        "redacted": true
+      },
+      {
+        "name": "api.draft.section",
+        "group": "capture",
+        "cliCommand": "api draft section <file>",
+        "redacted": true
+      },
+      {
+        "name": "api.inventory",
+        "group": "read",
+        "cliCommand": "api inventory --source local-profile",
+        "redacted": true
+      },
+      {
+        "name": "api.media",
+        "group": "review",
+        "cliCommand": "api media <file>",
+        "redacted": true
+      },
+      {
+        "name": "campaign.plan",
+        "group": "creator",
+        "cliCommand": "campaign plan <file>",
+        "redacted": true
+      },
+      {
+        "name": "campaign.report",
+        "group": "creator",
+        "cliCommand": "campaign report --run-log-dir <dir>",
+        "redacted": true
+      },
+      {
+        "name": "campaign.validate",
+        "group": "creator",
+        "cliCommand": "campaign validate --plan <file>",
+        "redacted": true
+      },
+      {
+        "name": "coverage.gaps",
+        "group": "review",
+        "cliCommand": "coverage gaps",
+        "redacted": true
+      },
+      {
+        "name": "coverage.inspect",
+        "group": "review",
+        "cliCommand": "coverage inspect --id <capabilityId>",
+        "redacted": true
+      },
+      {
+        "name": "coverage.safe_surface",
+        "group": "review",
+        "cliCommand": "coverage safe-surface --id <id>",
+        "redacted": true
+      },
+      {
+        "name": "coverage.safe_surfaces",
+        "group": "review",
+        "cliCommand": "coverage safe-surfaces",
+        "redacted": true
+      },
+      {
+        "name": "coverage.validate",
+        "group": "review",
+        "cliCommand": "coverage validate",
+        "redacted": true
+      },
+      {
+        "name": "doctor",
+        "group": "review",
+        "cliCommand": "doctor",
+        "redacted": true
+      },
+      {
+        "name": "launch.check",
+        "group": "review",
+        "cliCommand": "coverage launch-check",
+        "redacted": true
+      },
+      {
+        "name": "policy",
+        "group": "review",
+        "cliCommand": "policy",
+        "redacted": true
+      },
+      {
+        "name": "schema.validate",
+        "group": "review",
+        "cliCommand": "schema validate <file>",
+        "redacted": true
+      },
+      {
+        "name": "trace.compare",
+        "group": "review",
+        "cliCommand": "trace compare <expected-file> <actual-file>",
+        "redacted": true
+      },
+      {
+        "name": "trace.review",
+        "group": "review",
+        "cliCommand": "trace review <file>",
+        "redacted": true
+      }
+    ],
+    "resources": [
+      {
+        "name": "coverage.decisions",
+        "uri": "substack-cli://coverage/decisions",
+        "mimeType": "application/json",
+        "redacted": true
+      },
+      {
+        "name": "coverage.matrix",
+        "uri": "substack-cli://coverage/matrix",
+        "mimeType": "application/json",
+        "redacted": true
+      },
+      {
+        "name": "coverage.roadmap",
+        "uri": "substack-cli://coverage/roadmap",
+        "mimeType": "text/markdown",
+        "redacted": true
+      },
+      {
+        "name": "coverage.safe-surfaces",
+        "uri": "substack-cli://coverage/safe-surfaces",
+        "mimeType": "application/json",
+        "redacted": true
+      },
+      {
+        "name": "launch.checklist",
+        "uri": "substack-cli://launch/checklist",
+        "mimeType": "text/markdown",
+        "redacted": true
+      },
+      {
+        "name": "mcp.summary",
+        "uri": "substack-cli://mcp/summary",
+        "mimeType": "application/json",
+        "redacted": true
+      },
+      {
+        "name": "mcp.surface",
+        "uri": "substack-cli://mcp/surface",
+        "mimeType": "application/json",
+        "redacted": true
+      }
+    ],
+    "prompts": [
+      "mcp.surface.overview",
+      "mcp.workflow.review"
+    ]
+  },
+  "safeSurfaces": {
+    "count": 7,
+    "surfaces": [
+      {
+        "id": "analytics-revenue-dashboards",
+        "status": "probe-only",
+        "safetyClass": "read-only",
+        "currentCommands": [
+          "analytics snapshot",
+          "analytics trend",
+          "growth report",
+          "api analytics inventory",
+          "api billing summary"
+        ],
+        "blockedOperations": [
+          "Dashboard scraping",
+          "Payout setup changes",
+          "Tax form automation",
+          "Paid tier mutation"
+        ],
+        "decisionRecordId": "DR-analytics-revenue-probe-only"
+      },
+      {
+        "id": "chat-dm-live-chat",
+        "status": "unsupported",
+        "safetyClass": "unsupported",
+        "currentCommands": [],
+        "blockedOperations": [
+          "Reading private chats",
+          "Sending DMs",
+          "Live-chat moderation",
+          "WebSocket replay"
+        ],
+        "decisionRecordId": "DR-chat-dm-public-contract-required"
+      },
+      {
+        "id": "integrations-import-crosspost-tokens",
+        "status": "manual-admin",
+        "safetyClass": "credential-sensitive",
+        "currentCommands": [
+          "api integrations list",
+          "api integrations tokens"
+        ],
+        "blockedOperations": [
+          "Cross-post sends",
+          "WordPress import",
+          "RSS import",
+          "Token creation or revelation"
+        ],
+        "decisionRecordId": "DR-integrations-import-crosspost-manual"
+      },
+      {
+        "id": "native-video-live-automation",
+        "status": "planning-only",
+        "safetyClass": "planning-only",
+        "currentCommands": [
+          "media video plan",
+          "media audio plan",
+          "live plan"
+        ],
+        "blockedOperations": [
+          "Native video upload automation",
+          "Live event creation",
+          "RTMP stream-key retrieval",
+          "Live chat automation"
+        ],
+        "decisionRecordId": "DR-native-video-live-planning-only"
+      },
+      {
+        "id": "publication-admin-writes",
+        "status": "manual-admin",
+        "safetyClass": "credential-sensitive",
+        "currentCommands": [
+          "api publication get",
+          "api publication get-details",
+          "api domain status",
+          "api billing summary",
+          "api team list"
+        ],
+        "blockedOperations": [
+          "Publication settings writes",
+          "Logo or favicon upload writes",
+          "Domain set/remove",
+          "Payment, payout, or tax writes",
+          "Team invite/remove/role changes"
+        ],
+        "decisionRecordId": "DR-publication-admin-manual-writes"
+      },
+      {
+        "id": "recommendations-boost-probe",
+        "status": "probe-only",
+        "safetyClass": "read-only",
+        "currentCommands": [
+          "recommendations inspect",
+          "boost inspect"
+        ],
+        "blockedOperations": [
+          "Creating recommendations",
+          "Editing Boost settings",
+          "Starting paid Boost spend"
+        ],
+        "decisionRecordId": "DR-recommendations-boost-probe-only"
+      },
+      {
+        "id": "subscriber-import-export-segments",
+        "status": "manual-admin",
+        "safetyClass": "credential-sensitive",
+        "currentCommands": [
+          "api subscriber count",
+          "api subscriber list"
+        ],
+        "blockedOperations": [
+          "Bulk subscriber export",
+          "Subscriber import",
+          "Segment mutation",
+          "Suppression-list mutation",
+          "Gift or referral changes"
+        ],
+        "decisionRecordId": "DR-subscriber-privacy-manual-admin"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "analytics.snapshot",
+      "title": "Analytics snapshot artifact",
+      "schemaVersion": 1,
+      "owner": "src/creator/growth.ts",
+      "commands": [
+        "analytics snapshot",
+        "api analytics snapshot"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "postUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "postId": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "campaignId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "analytics": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "publication": {},
+                  "postAnalytics": {},
+                  "subscriberGrowth": {},
+                  "emailPerformance": {},
+                  "revenue": {},
+                  "diagnostics": {
+                    "type": "array",
+                    "items": {}
+                  }
+                },
+                "additionalProperties": {}
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "diagnostics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "capturedAt",
+          "analytics",
+          "diagnostics"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "analytics.trend",
+      "title": "Analytics trend artifact",
+      "schemaVersion": 1,
+      "owner": "src/creator/growth.ts",
+      "commands": [
+        "analytics trend --snapshots-dir <dir>"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok"
+          },
+          "snapshotsDir": {
+            "type": "string",
+            "minLength": 1
+          },
+          "snapshotCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "firstCapturedAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "latestCapturedAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subscriberDelta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "viewDelta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "diagnostics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "status",
+          "snapshotsDir",
+          "snapshotCount",
+          "subscriberDelta",
+          "viewDelta",
+          "diagnostics"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "backup.snapshot-plan",
+      "title": "Redacted backup snapshot plan",
+      "schemaVersion": 1,
+      "owner": "src/creator/backup.ts",
+      "commands": [
+        "backup plan",
+        "backup validate"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "blocked"
+            ]
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "snapshotFile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "publicationUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "validations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pass",
+                    "fail"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "code",
+                "status",
+                "message"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "manualRestoreChecklist": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Keep the snapshot outside the repository and dependency directories.",
+                "Verify the redacted warehouse JSON/CSV files before restoring anything in Substack.",
+                "Recreate drafts from local Markdown files before publishing.",
+                "Restore schedules manually from campaign notes and run-log timestamps.",
+                "Use Substack dashboard exports for subscribers/revenue; do not import subscriber CSVs without owner approval.",
+                "Capture a new run log after each manual restore action."
+              ]
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "status",
+          "generatedAt",
+          "snapshotFile",
+          "publicationUrl",
+          "sources",
+          "validations",
+          "manualRestoreChecklist"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "campaign.plan",
+      "title": "Campaign plan artifact",
+      "schemaVersion": 1,
+      "owner": "src/creator/campaign.ts",
+      "commands": [
+        "campaign plan <file>",
+        "campaign validate --plan <file>"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "blocked"
+            ]
+          },
+          "campaignId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "publicationUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "post": {
+            "type": "object",
+            "properties": {
+              "filePath": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string",
+                "minLength": 1
+              },
+              "plannedUrl": {
+                "type": "string",
+                "minLength": 1
+              },
+              "seoTitle": {
+                "type": "string",
+                "minLength": 1
+              },
+              "seoDescription": {
+                "type": "string",
+                "minLength": 1
+              },
+              "canonicalUrl": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "filePath",
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "publishAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "scheduledAt": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "postUrl": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "const": "planned"
+                }
+              },
+              "required": [
+                "scheduledAt",
+                "postUrl",
+                "text",
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "channel": {
+                  "type": "string",
+                  "enum": [
+                    "notes",
+                    "linkedin",
+                    "x",
+                    "youtube"
+                  ]
+                },
+                "trackingUrl": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "plannedAction": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "channel",
+                "plannedAction"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "video",
+                    "audio",
+                    "transcript",
+                    "thumbnail",
+                    "socialImage"
+                  ]
+                },
+                "file": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "kind",
+                "file"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "utm": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "medium": {
+                "type": "string",
+                "minLength": 1
+              },
+              "campaign": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "source",
+              "medium",
+              "campaign"
+            ],
+            "additionalProperties": false
+          },
+          "runLogDir": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "error",
+                    "warning"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "code",
+                "severity",
+                "message"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextCommands": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "status",
+          "campaignId",
+          "createdAt",
+          "post",
+          "notes",
+          "channels",
+          "assets",
+          "utm",
+          "issues",
+          "nextCommands"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "capture.evidence",
+      "title": "Redacted endpoint capture evidence fixture",
+      "schemaVersion": 1,
+      "owner": "src/frontier-coverage/evidence-capture.ts",
+      "commands": [
+        "coverage capture-validate",
+        "coverage capture-inventory",
+        "coverage capture-diff",
+        "coverage capture-graduation"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "capabilityId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "browser",
+              "api",
+              "manual"
+            ]
+          },
+          "surface": {
+            "type": "string",
+            "minLength": 1
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "url": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "requestHeaders": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                },
+                "responseHeaders": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                },
+                "requestBody": {},
+                "responseBody": {}
+              },
+              "required": [
+                "method",
+                "url"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidenceHash": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lastVerifiedAt": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "capabilityId",
+          "capturedAt",
+          "source",
+          "surface",
+          "endpoints"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "coverage.drift",
+      "title": "Coverage drift artifact",
+      "schemaVersion": 1,
+      "owner": "src/frontier-coverage/drift.ts",
+      "commands": [
+        "npm run frontier:drift"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "operation": {
+            "type": "string",
+            "const": "coverage.drift"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "blocked"
+            ]
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "staleAfterDays": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "officialDocs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "capabilityId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "capability": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "fresh",
+                    "stale",
+                    "changed",
+                    "unavailable",
+                    "missing-snapshot"
+                  ]
+                },
+                "checkedAt": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "capabilityId",
+                "capability",
+                "ref",
+                "status"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "endpointCaptureDiagnostics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "capabilityId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "capability": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "decisionRecordId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "implemented",
+                    "partial",
+                    "read-only",
+                    "probe-only",
+                    "planning-only",
+                    "manual-admin",
+                    "unsupported",
+                    "unknown"
+                  ]
+                },
+                "diagnostic": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "capabilityId",
+                "capability",
+                "decisionRecordId",
+                "status",
+                "diagnostic"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "operation",
+          "status",
+          "generatedAt",
+          "staleAfterDays",
+          "officialDocs",
+          "endpointCaptureDiagnostics"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "coverage.matrix",
+      "title": "Coverage matrix artifact",
+      "schemaVersion": 1,
+      "owner": "src/frontier-coverage/schema.ts",
+      "commands": [
+        "coverage validate",
+        "coverage report"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "generatedAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "domain": {
+                  "type": "string",
+                  "enum": [
+                    "post-editor",
+                    "native-media",
+                    "live",
+                    "creator-os",
+                    "notes-community",
+                    "subscribers-growth",
+                    "analytics-revenue",
+                    "moderation",
+                    "publication-admin",
+                    "integrations-import-export",
+                    "distribution-agent"
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "implemented",
+                    "partial",
+                    "read-only",
+                    "probe-only",
+                    "planning-only",
+                    "manual-admin",
+                    "unsupported",
+                    "unknown"
+                  ]
+                },
+                "paths": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "cli",
+                      "mcp-readonly",
+                      "mcp-planning",
+                      "api",
+                      "browser",
+                      "local-only",
+                      "manual-admin",
+                      "external-service"
+                    ]
+                  }
+                },
+                "primaryPath": {
+                  "type": "string",
+                  "enum": [
+                    "cli",
+                    "mcp-readonly",
+                    "mcp-planning",
+                    "api",
+                    "browser",
+                    "local-only",
+                    "manual-admin",
+                    "external-service"
+                  ]
+                },
+                "fallbackPath": {
+                  "type": "string",
+                  "enum": [
+                    "cli",
+                    "mcp-readonly",
+                    "mcp-planning",
+                    "api",
+                    "browser",
+                    "local-only",
+                    "manual-admin",
+                    "external-service"
+                  ]
+                },
+                "manualPath": {
+                  "type": "string",
+                  "enum": [
+                    "cli",
+                    "mcp-readonly",
+                    "mcp-planning",
+                    "api",
+                    "browser",
+                    "local-only",
+                    "manual-admin",
+                    "external-service"
+                  ]
+                },
+                "safetyClass": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "ref": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "label",
+                      "ref"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "decisionRecord": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "nextReview": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "owner": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "reason"
+                  ],
+                  "additionalProperties": false
+                },
+                "missingEvidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "nextAction": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "ownerDependency": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "domain",
+                "status",
+                "paths",
+                "safetyClass",
+                "evidence",
+                "missingEvidence",
+                "nextAction"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "capabilities"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "coverage.safe-surface",
+      "title": "Safe surface artifact",
+      "schemaVersion": 1,
+      "owner": "src/frontier-coverage/safe-surfaces.ts",
+      "commands": [
+        "coverage safe-surfaces",
+        "coverage safe-surface --id <id>"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "native-video-live-automation",
+              "recommendations-boost-probe",
+              "subscriber-import-export-segments",
+              "analytics-revenue-dashboards",
+              "chat-dm-live-chat",
+              "publication-admin-writes",
+              "integrations-import-crosspost-tokens"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "implemented",
+              "partial",
+              "read-only",
+              "probe-only",
+              "planning-only",
+              "manual-admin",
+              "unsupported",
+              "unknown"
+            ]
+          },
+          "safetyClass": {
+            "type": "string",
+            "minLength": 1
+          },
+          "capabilityIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "currentCommands": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "safeAlternatives": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "manualRunbook": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "endpointCaptureRequirements": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "blockedOperations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "existingImplementations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "local",
+                    "external"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "learnings": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "limitations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "source",
+                "reference",
+                "learnings",
+                "limitations"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "implementationOptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "enum": [
+                    "A",
+                    "B",
+                    "C"
+                  ]
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "summary": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "risk": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high"
+                  ]
+                },
+                "selected": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "label",
+                "summary",
+                "risk",
+                "selected"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "selectedImplementation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decisionRecord": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "safetyClass",
+          "capabilityIds",
+          "currentCommands",
+          "safeAlternatives",
+          "manualRunbook",
+          "endpointCaptureRequirements",
+          "blockedOperations",
+          "existingImplementations",
+          "implementationOptions",
+          "selectedImplementation",
+          "decisionRecord"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "growth.report",
+      "title": "Growth report artifact",
+      "schemaVersion": 1,
+      "owner": "src/creator/growth.ts",
+      "commands": [
+        "growth report --campaign <file>"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok"
+          },
+          "campaignId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "postTitle": {
+            "type": "string"
+          },
+          "channelCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "noteCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "assetCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "trend": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "const": "ok"
+                  },
+                  "snapshotsDir": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "snapshotCount": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "firstCapturedAt": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "latestCapturedAt": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "subscriberDelta": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "viewDelta": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "diagnostics": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "status",
+                  "snapshotsDir",
+                  "snapshotCount",
+                  "subscriberDelta",
+                  "viewDelta",
+                  "diagnostics"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "status",
+          "campaignId",
+          "postTitle",
+          "channelCount",
+          "noteCount",
+          "assetCount",
+          "trend",
+          "recommendations"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "live.plan",
+      "title": "Live plan artifact",
+      "schemaVersion": 1,
+      "owner": "src/creator/media-plan.ts",
+      "commands": [
+        "live plan --title <title> --at <timestamp>"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "blocked"
+            ]
+          },
+          "operation": {
+            "type": "string",
+            "const": "live.plan"
+          },
+          "title": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "audience": {
+            "type": "string",
+            "enum": [
+              "everyone",
+              "subscribers",
+              "paid"
+            ]
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "error",
+                    "warning"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "code",
+                "severity",
+                "message"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "rtmpChecklist": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "status",
+          "operation",
+          "title",
+          "scheduledAt",
+          "audience",
+          "issues",
+          "rtmpChecklist"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "media.plan",
+      "title": "Media plan artifact",
+      "schemaVersion": 1,
+      "owner": "src/creator/media-plan.ts",
+      "commands": [
+        "media video plan --file <file> --post <markdown>",
+        "media audio plan --file <file> --post <markdown>"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "blocked"
+            ]
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "media.video.plan",
+              "media.audio.plan"
+            ]
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "postFile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "mimeType": {
+            "type": "string",
+            "minLength": 1
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "error",
+                    "warning"
+                  ]
+                },
+                "message": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "code",
+                "severity",
+                "message"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "nextSteps": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "status",
+          "operation",
+          "file",
+          "postFile",
+          "title",
+          "sizeBytes",
+          "mimeType",
+          "issues",
+          "nextSteps"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "run-log",
+      "title": "Run-log artifact",
+      "schemaVersion": 1,
+      "owner": "src/publish/run-log.ts",
+      "commands": [
+        "--run-log-dir <dir>"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "actionType": {
+            "type": "string",
+            "enum": [
+              "draft.create",
+              "draft.update",
+              "post.publish",
+              "post.schedule",
+              "note.create",
+              "note.schedule",
+              "campaign.plan",
+              "campaign.execute",
+              "analytics.snapshot",
+              "media.video.plan",
+              "media.audio.plan",
+              "live.plan",
+              "coverage.audit",
+              "coverage.validate",
+              "coverage.drift",
+              "launch.check",
+              "endpoint.capture.review",
+              "decision.record"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure"
+            ]
+          },
+          "publicationUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "publicationId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceFile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "selectorSourceFile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "draftId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "draftUrl": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sectionName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sectionId": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "slug": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scheduledTimeRequested": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scheduledTimeReturned": {
+            "type": "string",
+            "minLength": 1
+          },
+          "apiResponseIds": {
+            "type": "object",
+            "properties": {
+              "draftId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "postUrl": {
+                "type": "string",
+                "minLength": 1
+              },
+              "noteId": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "campaignId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "channel": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assetFile": {
+            "type": "string",
+            "minLength": 1
+          },
+          "diagnostics": {
+            "type": "object",
+            "properties": {
+              "unsupportedEndpoints": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "manualAdminGates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "staleDocs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "resultMessage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "minLength": 1
+              },
+              "body": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "timestamp",
+          "actionType",
+          "status",
+          "publicationUrl"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "warehouse.attribution",
+      "title": "Creator warehouse attribution report",
+      "schemaVersion": 1,
+      "owner": "src/creator/warehouse.ts",
+      "commands": [
+        "warehouse attribution"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "campaignCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "campaignId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "views": {
+                  "type": "number"
+                },
+                "referrals": {
+                  "type": "number"
+                },
+                "revenue": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "campaignId",
+                "views",
+                "referrals",
+                "revenue"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "status",
+          "generatedAt",
+          "campaignCount",
+          "campaigns"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "id": "warehouse.export",
+      "title": "Creator warehouse export artifact",
+      "schemaVersion": 1,
+      "owner": "src/creator/warehouse.ts",
+      "commands": [
+        "warehouse export"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "number",
+            "const": 1
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "campaignFiles": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "analyticsDir": {
+                "type": "string",
+                "minLength": 1
+              },
+              "runLogDir": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "campaignFiles"
+            ],
+            "additionalProperties": false
+          },
+          "tables": {
+            "type": "object",
+            "properties": {
+              "campaigns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "posts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "notes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "referrers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "subscribers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "revenue": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "run_logs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "required": [
+              "campaigns",
+              "posts",
+              "notes",
+              "referrers",
+              "subscribers",
+              "revenue",
+              "run_logs"
+            ],
+            "additionalProperties": false
+          },
+          "diagnostics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "schemaVersion",
+          "generatedAt",
+          "source",
+          "tables",
+          "diagnostics"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

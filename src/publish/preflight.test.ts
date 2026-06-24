@@ -15,12 +15,17 @@ subtitle: "Ready subtitle"
 slug: ready-post
 section: essays
 tags: [ops]
+previewText: "A concise preview that fits email client inbox snippets for readers."
+canonicalUrl: https://rareinsights.substack.com/p/ready-post
+socialImage: https://example.com/cover.png
+campaign: ready-post
+audience: everyone
 ---
 # Ready Post
 
 ![Cover](https://example.com/cover.png)
 
-Body text.
+[Body link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=ready-post)
 `,
         "ready.md",
       ),
@@ -38,6 +43,42 @@ Body text.
       report.checks.every((check) => check.status === "pass"),
       true,
     );
+  });
+
+  it("flags deliverability and compliance gaps", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "${"Long ".repeat(25)}"
+canonicalUrl: not-a-url
+socialImage: ftp://example.com/social.png
+---
+# Deliverability
+
+![missing alt](https://example.com/image.png)
+
+[Bad link](ftp://example.com/file)
+`,
+        "deliverability.md",
+      ),
+    };
+
+    prepared.post.media.assets[0]!.alt = "";
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+      strict: true,
+    });
+
+    assert.equal(report.status, "blocked");
+    assert.equal(checkStatus(report, "subject-length"), "fail");
+    assert.equal(checkStatus(report, "preview-text-present"), "fail");
+    assert.equal(checkStatus(report, "canonical-url-valid"), "fail");
+    assert.equal(checkStatus(report, "social-image-valid"), "fail");
+    assert.equal(checkStatus(report, "image-alt-text"), "fail");
+    assert.equal(checkStatus(report, "links-http-valid"), "fail");
+    assert.equal(checkStatus(report, "utm-present"), "fail");
   });
 
   it("blocks missing publication targets and editorial placeholders", async () => {
@@ -75,12 +116,17 @@ subtitle: "Ready subtitle"
 slug: almost-ready
 section: essays
 tags: [ops]
+previewText: "A concise preview that fits email client inbox snippets for readers."
+canonicalUrl: https://rareinsights.substack.com/p/almost-ready
+socialImage: https://example.com/cover.png
+campaign: almost-ready
+audience: everyone
 ---
 # Almost Ready
 
 ![Cover](https://example.com/cover.png)
 
-Body.
+[Body link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=almost-ready)
 `,
         "almost-ready.md",
       ),

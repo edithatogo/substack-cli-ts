@@ -1,4 +1,13 @@
 import { readFile } from "node:fs/promises";
+import {
+  buildCaptureValidationReport,
+  buildEndpointDiffReport,
+  buildEndpointInventoryReport,
+  buildGraduationCheckReport,
+  loadCaptureEvidenceFixture,
+  renderEndpointInventory,
+  type EndpointInventoryReport,
+} from "./evidence-capture.js";
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
 import { renderCoverageRoadmap } from "./roadmap.js";
 import {
@@ -67,6 +76,50 @@ export async function loadCoverageMatrix(path?: string | undefined): Promise<Cov
 export async function loadCoverageMatrixInput(path?: string | undefined): Promise<unknown> {
   if (!path) return FRONTIER_COVERAGE_MATRIX;
   return JSON.parse(await readFile(path, "utf8"));
+}
+
+export async function buildCaptureFixtureValidationOutput(path: string) {
+  return buildCaptureValidationReport(await loadCaptureEvidenceFixture(path));
+}
+
+export async function buildEndpointInventoryOutput(paths: string[]) {
+  const fixtures = await Promise.all(paths.map((path) => loadCaptureEvidenceFixture(path)));
+  return buildEndpointInventoryReport(fixtures);
+}
+
+export function renderEndpointInventoryReport(
+  report: EndpointInventoryReport,
+  format: "json" | "markdown",
+): string {
+  if (format === "markdown") return renderEndpointInventory(report);
+  return `${JSON.stringify(report, null, 2)}\n`;
+}
+
+export async function loadEndpointInventoryReport(path: string): Promise<EndpointInventoryReport> {
+  const value = JSON.parse(await readFile(path, "utf8")) as EndpointInventoryReport;
+  if (value.operation !== "coverage.endpoint.inventory" || !Array.isArray(value.entries)) {
+    throw new Error("Endpoint inventory report must be produced by coverage capture-inventory.");
+  }
+  return value;
+}
+
+export async function buildEndpointDiffOutput(beforePath: string, afterPath: string) {
+  const [before, after] = await Promise.all([
+    loadEndpointInventoryReport(beforePath),
+    loadEndpointInventoryReport(afterPath),
+  ]);
+  return buildEndpointDiffReport(before, after);
+}
+
+export async function buildCaptureGraduationOutput(
+  matrixPath: string | undefined,
+  inventoryPath: string,
+) {
+  const [matrix, inventory] = await Promise.all([
+    loadCoverageMatrix(matrixPath),
+    loadEndpointInventoryReport(inventoryPath),
+  ]);
+  return buildGraduationCheckReport(matrix, inventory);
 }
 
 export function buildCoverageValidationOutput(value: unknown): CoverageValidationOutput {

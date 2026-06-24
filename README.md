@@ -142,6 +142,9 @@ node dist\cli.js live plan --title "Launch Q&A" --at 2026-05-01T11:00:00Z --audi
 node dist\cli.js analytics snapshot --post-url https://example.substack.com/p/post --out snapshot.json --dry-run
 node dist\cli.js analytics trend --snapshots-dir .substack-cli\analytics
 node dist\cli.js growth report --campaign campaign.json
+node dist\cli.js warehouse export --campaign campaign.json --analytics-dir .substack-cli\analytics --run-log-dir .substack-cli\run-log --out-dir .substack-cli\warehouse
+node dist\cli.js warehouse attribution --campaign campaign.json --analytics-dir .substack-cli\analytics
+node dist\cli.js backup plan --snapshot .substack-cli\backup\snapshot.json --source .substack-cli\warehouse
 node dist\cli.js recommendations inspect
 node dist\cli.js boost inspect
 node dist\cli.js comments triage --post-id 123

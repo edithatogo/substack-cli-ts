@@ -61,6 +61,11 @@ import {
   readCampaignPlan,
   validateCampaignPlan,
 } from "./creator/campaign.js";
+import {
+  buildBackupSnapshotPlan,
+  validateBackupSnapshotFile,
+  writeBackupSnapshotPlan,
+} from "./creator/backup.js";
 import { buildCommentTriageReport, inspectCommunitySurface } from "./creator/community.js";
 import {
   buildAnalyticsSnapshot,
@@ -69,17 +74,28 @@ import {
   writeAnalyticsSnapshot,
 } from "./creator/growth.js";
 import { buildCreatorMediaPlan, buildLivePlan, type LiveAudience } from "./creator/media-plan.js";
+import {
+  buildAttributionReport,
+  buildWarehouseExport,
+  writeWarehouseExport,
+} from "./creator/warehouse.js";
 import { runDoctor } from "./doctor/doctor.js";
 import {
   buildCoverageDecisionOutput,
   buildCoverageGapOutput,
   buildCoverageInspectOutput,
   buildCoverageValidationOutput,
+  buildCaptureFixtureValidationOutput,
+  buildCaptureGraduationOutput,
+  buildEndpointDiffOutput,
+  buildEndpointInventoryOutput,
   loadCoverageMatrix,
   loadCoverageMatrixInput,
+  renderEndpointInventoryReport,
   renderCoverageReport,
 } from "./frontier-coverage/cli.js";
 import { validateLaunchChecklist } from "./frontier-coverage/launch-checklist.js";
+import { buildReleaseScorecard } from "./frontier-coverage/release-scorecard.js";
 import {
   buildSafeSurfaceInspectOutput,
   buildSafeSurfaceListOutput,
@@ -387,6 +403,64 @@ coverage
   });
 
 coverage
+  .command("capture-validate")
+  .description("Validate and minimize a redacted endpoint capture fixture.")
+  .requiredOption("--fixture <file>", "Capture evidence fixture JSON file")
+  .action(async (options: { fixture: string }) => {
+    const output = await buildCaptureFixtureValidationOutput(options.fixture);
+    console.log(JSON.stringify(output, null, 2));
+    if (output.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
+  .command("capture-inventory")
+  .description("Render an endpoint inventory from one or more redacted capture fixtures.")
+  .requiredOption("--fixture <file...>", "Capture evidence fixture JSON files")
+  .option("--format <format>", "json or markdown", "json")
+  .option("--out <file>", "Write the inventory to a file instead of stdout")
+  .action(async (options: { fixture: string[]; format: string; out?: string | undefined }) => {
+    const format = parseCoverageFormat(options.format);
+    const output = await buildEndpointInventoryOutput(options.fixture);
+    const rendered = renderEndpointInventoryReport(output, format);
+    if (options.out) {
+      await mkdir(dirname(options.out), { recursive: true });
+      await writeFile(options.out, rendered, "utf8");
+      console.log(
+        JSON.stringify({
+          operation: "coverage.endpoint.inventory",
+          outputFile: options.out,
+          status: output.status,
+        }),
+      );
+    } else {
+      process.stdout.write(rendered);
+    }
+    if (output.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
+  .command("capture-diff")
+  .description("Compare two endpoint inventory reports for private endpoint drift.")
+  .requiredOption("--before <file>", "Previous JSON endpoint inventory report")
+  .requiredOption("--after <file>", "Current JSON endpoint inventory report")
+  .action(async (options: { before: string; after: string }) => {
+    const output = await buildEndpointDiffOutput(options.before, options.after);
+    console.log(JSON.stringify(output, null, 2));
+    if (output.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
+  .command("capture-graduation")
+  .description("Check whether probe, planning, and manual surfaces have evidence to graduate.")
+  .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
+  .requiredOption("--inventory <file>", "JSON endpoint inventory report")
+  .action(async (options: { matrix?: string | undefined; inventory: string }) => {
+    const output = await buildCaptureGraduationOutput(options.matrix, options.inventory);
+    console.log(JSON.stringify(output, null, 2));
+    if (output.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
   .command("safe-surfaces")
   .description(
     "List frontier surfaces that are intentionally planning-only, probe-only, manual, or unsupported.",
@@ -423,6 +497,15 @@ coverage
       ),
     );
     if (checklist.status === "blocked") process.exitCode = 1;
+  });
+
+coverage
+  .command("release-scorecard")
+  .description("Report local release readiness and external owner/admin gates.")
+  .action(async () => {
+    const scorecard = await buildReleaseScorecard();
+    console.log(JSON.stringify(scorecard, null, 2));
+    if (scorecard.status === "blocked") process.exitCode = 1;
   });
 
 const mcp = program
@@ -846,6 +929,103 @@ growth
       snapshotsDir: options.snapshotsDir,
     });
     console.log(JSON.stringify(report, null, 2));
+  });
+
+const warehouse = program
+  .command("warehouse")
+  .description("Export local-first Creator OS warehouse tables and attribution reports.");
+
+warehouse
+  .command("export")
+  .description("Normalize campaigns, analytics probes, and run logs into JSON/CSV tables.")
+  .option("--campaign <file>", "Campaign plan JSON file. Repeatable.", collectCampaignOption, [])
+  .option("--analytics-dir <dir>", "Directory containing analytics snapshot JSON or JSONL files")
+  .option("--run-log-dir <dir>", "Directory containing run-log JSON artifacts")
+  .requiredOption("--out-dir <dir>", "Directory for warehouse exports")
+  .option("--format <format>", "json, csv, or both", "both")
+  .action(
+    async (options: {
+      campaign: string[];
+      analyticsDir?: string | undefined;
+      runLogDir?: string | undefined;
+      outDir: string;
+      format: string;
+    }) => {
+      const format = parseWarehouseFormat(options.format);
+      const exportData = await buildWarehouseExport({
+        campaignFiles: options.campaign,
+        analyticsDir: options.analyticsDir,
+        runLogDir: options.runLogDir,
+      });
+      const written = await writeWarehouseExport(exportData, options.outDir, format);
+      console.log(JSON.stringify({ status: "ok", ...written, warehouse: exportData }, null, 2));
+    },
+  );
+
+warehouse
+  .command("attribution")
+  .description("Build a cohort/campaign attribution report from local warehouse inputs.")
+  .option("--campaign <file>", "Campaign plan JSON file. Repeatable.", collectCampaignOption, [])
+  .option("--analytics-dir <dir>", "Directory containing analytics snapshot JSON or JSONL files")
+  .option("--run-log-dir <dir>", "Directory containing run-log JSON artifacts")
+  .option("--out <file>", "Write attribution report JSON to a file")
+  .action(
+    async (options: {
+      campaign: string[];
+      analyticsDir?: string | undefined;
+      runLogDir?: string | undefined;
+      out?: string | undefined;
+    }) => {
+      const exportData = await buildWarehouseExport({
+        campaignFiles: options.campaign,
+        analyticsDir: options.analyticsDir,
+        runLogDir: options.runLogDir,
+      });
+      const report = buildAttributionReport(exportData);
+      if (options.out) {
+        await mkdir(dirname(options.out), { recursive: true });
+        await writeFile(options.out, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+      }
+      console.log(
+        JSON.stringify(options.out ? { ...report, outputFile: options.out } : report, null, 2),
+      );
+    },
+  );
+
+const backup = program
+  .command("backup")
+  .description("Plan and validate redacted export-first backup snapshots.");
+
+backup
+  .command("plan")
+  .description("Write a redacted backup snapshot plan with a manual restore checklist.")
+  .requiredOption("--snapshot <file>", "Snapshot plan JSON output file")
+  .option("--publication-url <url>", "Publication URL to redact into the plan")
+  .option(
+    "--source <path>",
+    "Local source path to validate. Repeatable.",
+    collectCampaignOption,
+    [],
+  )
+  .action(async (options: { snapshot: string; publicationUrl?: string; source: string[] }) => {
+    const plan = await buildBackupSnapshotPlan({
+      snapshotFile: options.snapshot,
+      publicationUrl: options.publicationUrl,
+      sources: options.source,
+    });
+    await writeBackupSnapshotPlan(plan, options.snapshot);
+    console.log(JSON.stringify({ ...plan, outputFile: options.snapshot }, null, 2));
+    if (plan.status === "blocked") process.exitCode = 1;
+  });
+
+backup
+  .command("validate")
+  .description("Validate a backup snapshot plan and print the restore checklist.")
+  .requiredOption("--snapshot <file>", "Snapshot plan JSON file")
+  .action(async (options: { snapshot: string }) => {
+    const report = await validateBackupSnapshotFile(options.snapshot);
+    console.log(JSON.stringify(report, null, 2));
+    if (report.status === "blocked") process.exitCode = 1;
   });
 
 const recommendations = program
@@ -4054,6 +4234,11 @@ function buildScheduledQueue(
 function parseCoverageFormat(value: string): "json" | "markdown" {
   if (value === "json" || value === "markdown") return value;
   throw new Error(`Unsupported coverage report format: ${value}. Use json or markdown.`);
+}
+
+function parseWarehouseFormat(value: string): "json" | "csv" | "both" {
+  if (value === "json" || value === "csv" || value === "both") return value;
+  throw new Error(`Unsupported warehouse export format: ${value}. Use json, csv, or both.`);
 }
 
 function parseCoverageStatus(value: string): CoverageStatus {
