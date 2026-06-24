@@ -68,4 +68,4 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 - Update the relevant track file when a milestone is completed or deliberately deferred.
 - Record newly discovered tasks or blockers in `tracks/13-dependency-and-discovery-register.md` before expanding scope.
 - For Track 42 implementation, commit after each completed task, review and push after each phase, apply safe review fixes automatically, and check GitHub Actions after the track push.
-- For Track 43 implementation, keep API contract changes, capture infrastructure, data warehouse work, CI hardening, and dependency experiments in separate branches where possible.
+- For Track 43 implementation, use separate implementation branches for API contract changes, capture infrastructure, data warehouse work, CI hardening, and dependency experiments; commit after each task, review after each phase, push after review fixes, and verify GitHub Actions before merge.

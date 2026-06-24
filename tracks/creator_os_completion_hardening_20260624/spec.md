@@ -10,7 +10,7 @@ This track does not immediately automate unsafe Substack dashboard writes. It cr
 
 - Generate and validate a versioned local contract for CLI commands, MCP tools/resources, JSON artifacts, run-log actions, and safe-surface statuses.
 - Add JSON Schemas for first-party artifacts including campaign plans, analytics snapshots, media plans, live plans, run logs, coverage matrices, and drift snapshots.
-- Define evidence promotion states from public documentation through redacted trace, fixture, contract test, dry-run adapter, and confirmed write.
+- Define evidence promotion states from public documentation through manual runbook, redacted trace, fixture, contract test, dry-run adapter, and confirmed write.
 - Add a standard capture kit for dashboard/network traces with redaction, endpoint diffing, and fixture minimization.
 - Add Creator OS roadmap lanes for local data warehouse, deliverability/compliance preflight, backup/export-first safety, drift monitoring, operator modes, and release scorecards.
 - Document dependency upgrade candidates and experimental lanes separately from stable dependency PRs.
@@ -38,4 +38,3 @@ This track does not immediately automate unsafe Substack dashboard writes. It cr
 - Live Substack video, live, Boost, subscriber import/export, payments, team, or integration writes without safe endpoint evidence.
 - Automated CAPTCHA solving, access-control bypass, or deceptive traffic generation.
 - Publishing to npm, registries, marketplaces, or Substack dashboard admin surfaces without owner/admin credentials and approval.
-

@@ -50,7 +50,7 @@ Every endpoint capture kit should produce the same reviewable bundle:
 - redaction report showing which secret and identifier classes were removed
 - endpoint diff report against the previous fixture, when one exists
 - manual runbook and rollback note for the dashboard workflow
-- contract-test TODO or implemented test reference
+- implemented contract-test reference, or a tracked issue when a test cannot be added in the same change
 
 Do not promote a capture to automation if any redaction report is incomplete, if the workflow requires private payment/tax/subscriber data, or if the only viable path depends on CAPTCHA solving or access-control bypass.
 

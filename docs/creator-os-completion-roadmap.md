@@ -92,7 +92,7 @@ These features should be evaluated as differentiators rather than dashboard pari
 
 ## CI/CD Hardening Options
 
-Current CI already runs Biome, Knip, TypeScript, build, coverage, mutation, smoke, E2E dispatch, production audit, and secret scanning. The next hardening layer is to move optional or advisory checks into explicit lanes.
+Current CI already runs Biome, Knip, TypeScript, build, coverage, mutation, smoke, production audit, and secret scanning. The E2E job is workflow-dispatch only, not automatic on pull requests or pushes. Production Audit and Secret Pattern Scan currently use advisory `continue-on-error` behavior in CI, so making them required is a deliberate hardening step rather than the current baseline.
 
 Recommended additions:
 
@@ -128,7 +128,7 @@ Recommended adoption path:
 
 ## Dependency Options
 
-Current npm registry state checked on 2026-06-24:
+Current npm registry state checked on 2026-06-24. Reproduce the stable snapshot with `npm outdated --json` plus targeted `npm view <package> version dist-tags --json` checks for packages that have experimental tags.
 
 | Package | Current installed | Latest / wanted | Recommendation |
 | --- | ---: | ---: | --- |
