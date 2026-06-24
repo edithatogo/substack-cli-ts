@@ -29,6 +29,13 @@ describe("creator backup plans", () => {
       await writeBackupSnapshotPlan(plan, snapshot);
       const validation = await validateBackupSnapshotFile(snapshot);
       assert.equal(validation.status, "ready");
+
+      const nonPrivateUrl = await buildBackupSnapshotPlan({
+        snapshotFile: join(temp, "snapshot-public.json"),
+        publicationUrl: "https://private.example/p/public",
+        sources: [source],
+      });
+      assert.equal(nonPrivateUrl.publicationUrl, "https://private.example/p/public");
     } finally {
       await rm(temp, { recursive: true, force: true });
     }

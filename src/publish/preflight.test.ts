@@ -95,6 +95,7 @@ title: "Relative Links"
 [Relative](/archive)
 [Sibling](./next)
 [Parent](../previous)
+[Bare](relative-page)
 [Anchor](#section)
 [Mail](mailto:editor@example.com)
 <a href="/html-link">HTML link</a>
@@ -116,6 +117,7 @@ title: "Unsafe Link"
 # Unsafe Link
 
 [Bad](javascript:alert(1))
+[Also bad](foo:bar)
 `,
           "unsafe-link.md",
         ),
