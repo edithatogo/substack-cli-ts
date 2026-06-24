@@ -297,11 +297,11 @@
 | **Complete / Implemented** | 42 | 01–42 |
 | **Partial / Read-only / Probe-only** | 0 | — |
 | **In Progress** | 0 | — |
-| **Planned** | 0 | — |
+| **Planned** | 1 | 43 |
 | **Blocked** | 0 | — |
-| **Total** | **42** | |
+| **Total** | **43** | |
 
-_Last updated: 2026-06-17_ — Tracks 01–42 are locally implemented. Track 42 records external launch/admin gates explicitly rather than claiming account-gated actions were performed.
+_Last updated: 2026-06-24_ — Tracks 01–42 are locally implemented. Track 42 records external launch/admin gates explicitly rather than claiming account-gated actions were performed. Track 43 is planned for completion hardening, API contract versioning, dependency lanes, and CI/CD strictness.
 
 ---
 
@@ -337,3 +337,8 @@ _Last updated: 2026-06-17_ — Tracks 01–42 are locally implemented. Track 42 
 
 - [x] **Track: Integrations, import, crosspost, and token workflows remain probe/manual until safe captures exist.**
 *Link: [../tracks/integrations_import_crosspost_tokens_20260624/](../tracks/integrations_import_crosspost_tokens_20260624/)*
+
+---
+
+- [ ] **Track: Creator OS completion hardening with API contract versioning, evidence promotion, strict CI/CD, and dependency lanes.**
+*Link: [../tracks/creator_os_completion_hardening_20260624/](../tracks/creator_os_completion_hardening_20260624/)*

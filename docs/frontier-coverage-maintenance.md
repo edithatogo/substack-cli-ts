@@ -37,6 +37,17 @@ Every non-implemented, capture-first, planning-only, manual/admin, or unsupporte
 
 Do not remove a missing surface from the matrix to make coverage look better. If a surface cannot be automated, keep it visible with `unsupported`, `probe-only`, `planning-only`, or `manual-admin`.
 
+Use the promotion ladder in [Creator OS Completion and Hardening Roadmap](creator-os-completion-roadmap.md) before changing a surface from planning/probe/manual/unsupported into a write-capable implementation. The ladder requires public evidence, a manual runbook, redacted traces, fixtures, contract tests, dry-run adapters, and finally explicit confirmed writes.
+
+When a feature graduates, update all of these together:
+
+- `src/frontier-coverage/matrix.ts`
+- generated coverage roadmap and launch checklist
+- decision record or ADR that explains the graduation
+- local artifact schema or contract version when the public CLI/MCP surface changes
+- tests or fixtures that prove the new status
+- release notes that call out new write behavior and rollback paths
+
 ## Examples
 
 ### Fully Covered Feature

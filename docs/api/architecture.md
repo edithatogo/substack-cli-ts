@@ -205,6 +205,20 @@ The CLI maintains a local JSON file (`.substack-cli/draft-mappings.json`) that m
 | Mutation testing   | Stryker                 | Test quality assessment                                          |
 | E2E                | Vitest + Playwright     | Manual workflow-dispatch browser checks against live Substack     |
 
+## API Contract Versioning
+
+The current API documentation is comprehensive but not yet a formal generated contract. The command reference, architecture notes, fixtures, and coverage matrix describe the supported behavior, but they are not a dynamically versioned CLI/MCP/artifact schema.
+
+The target contract system is documented in [Creator OS Completion and Hardening Roadmap](../creator-os-completion-roadmap.md). It should version the local `substack-cli` contract, including command options, MCP tools/resources, JSON artifacts, run-log actions, and safe-surface statuses. It must not imply that Substack private endpoints are stable public APIs.
+
+Expected properties:
+
+- A semver `contractVersion` for the generated local contract.
+- Per-artifact `schemaVersion`, `minCliVersion`, and `generatedBy` fields.
+- Snapshot tests that fail when command, MCP, artifact, or run-log surfaces change without a versioning decision.
+- Endpoint evidence hashes and `lastVerifiedAt` metadata for captured private Substack contracts.
+- Compatibility notes that distinguish local CLI compatibility from private Substack endpoint drift.
+
 ## How to Add a New API Endpoint
 
 1. Add the endpoint URL pattern to the relevant module in `src/substack-api/` (or create a new module).

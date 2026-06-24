@@ -40,6 +40,20 @@ Endpoint captures remain capture-first until the following are true:
 
 Unavailable endpoints should be recorded as diagnostics, not silently removed from the roadmap.
 
+## Capture Kit Requirements
+
+Every endpoint capture kit should produce the same reviewable bundle:
+
+- redacted network trace or HAR
+- endpoint inventory with method, path template, request shape, response shape, and status codes
+- fixture-minimization output with private values replaced by stable placeholders
+- redaction report showing which secret and identifier classes were removed
+- endpoint diff report against the previous fixture, when one exists
+- manual runbook and rollback note for the dashboard workflow
+- contract-test TODO or implemented test reference
+
+Do not promote a capture to automation if any redaction report is incomplete, if the workflow requires private payment/tax/subscriber data, or if the only viable path depends on CAPTCHA solving or access-control bypass.
+
 ## Stale Evidence Rules
 
 - `ok`: evidence was reviewed and still matches the matrix.

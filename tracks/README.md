@@ -57,6 +57,7 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 | 40. Copilot Integration Packaging | Implemented | Copilot-through-VS-Code docs, workspace config, manifest scaffold, and validation checks are complete. |
 | 41. Creator OS Upgrade | Implemented | Campaign planning, media/live planning, analytics snapshots/trends, growth reports, community triage, Creator OS front matter/run-log actions, and read-only MCP creator tools are complete. |
 | 42. Frontier Coverage Roadmap | Implemented | Canonical 100% feature coverage roadmap, CLI/MCP review surfaces, launch/admin checklist, drift workflow, run-log actions, and maintenance docs are complete; external launches remain owner-approved gates. |
+| 43. Creator OS Completion Hardening | Planned | API contract versioning, evidence promotion, capture kit, data warehouse, deliverability, backup, drift, strictness, CI/CD, and dependency lanes are documented for implementation. |
 
 ## Operating Rules
 
@@ -67,3 +68,4 @@ This directory breaks the Substack CLI roadmap into implementation tracks that c
 - Update the relevant track file when a milestone is completed or deliberately deferred.
 - Record newly discovered tasks or blockers in `tracks/13-dependency-and-discovery-register.md` before expanding scope.
 - For Track 42 implementation, commit after each completed task, review and push after each phase, apply safe review fixes automatically, and check GitHub Actions after the track push.
+- For Track 43 implementation, keep API contract changes, capture infrastructure, data warehouse work, CI hardening, and dependency experiments in separate branches where possible.

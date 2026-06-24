@@ -30,6 +30,7 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
 - [Frontier Coverage Maintenance](frontier-coverage-maintenance.md) — How to update capabilities, evidence, decisions, and generated artifacts
 - [Frontier Launch/Admin Checklist](frontier-launch-admin-checklist.md) — External launch, registry, Substack admin, support, security, and rollback gates
 - [Frontier Drift Workflow](frontier-drift-workflow.md) — Official-doc and endpoint-capture drift refresh process
+- [Creator OS Completion Roadmap](creator-os-completion-roadmap.md) — API versioning, evidence promotion, dependency, strictness, and CI/CD hardening roadmap
 - [Autonomous Implementation Record](integrations/autonomous-implementation-record.md) — Completed execution record and external gates for integration tracks
 - [AI Integration Readiness](integrations/ai-readiness-matrix.md) — MCP distribution status across AI clients and registries
 
