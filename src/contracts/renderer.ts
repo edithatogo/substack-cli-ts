@@ -118,6 +118,7 @@ const CLI_CONTRACT_COMMANDS: ContractCliCommand[] = [
   command("coverage inspect --id <id>", "read-only", ["coverage.matrix"]),
   command("coverage safe-surfaces", "read-only", ["coverage.safe-surface"]),
   command("coverage safe-surface --id <id>", "read-only", ["coverage.safe-surface"]),
+  command("coverage capture-kit --id <id>", "read-only", ["capture.evidence"]),
   command("coverage capture-validate --file <file>", "read-only", ["capture.evidence"]),
   command("coverage capture-inventory --file <file>", "read-only", ["capture.evidence"]),
   command("coverage capture-diff --before <file> --after <file>", "read-only", [

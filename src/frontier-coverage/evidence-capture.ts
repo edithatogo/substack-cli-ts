@@ -104,6 +104,31 @@ export interface GraduationCheckReport {
   }>;
 }
 
+export interface CaptureKitReport {
+  operation: "coverage.capture.kit";
+  status: "ready" | "blocked";
+  generatedAt: string;
+  capabilityId: string;
+  capability?: {
+    name: string;
+    domain: CoverageCapability["domain"];
+    status: CoverageStatus;
+    safetyClass: CoverageCapability["safetyClass"];
+    primaryPath: CoverageCapability["primaryPath"];
+    fallbackPath?: CoverageCapability["fallbackPath"] | undefined;
+    manualPath?: CoverageCapability["manualPath"] | undefined;
+    nextAction: string;
+    decisionRecord?: CoverageCapability["decisionRecord"] | undefined;
+  };
+  fixtureTemplate?: CaptureEvidenceFixture | undefined;
+  requiredEvidence: string[];
+  redactionChecklist: string[];
+  validationCommands: string[];
+  manualRunbook: string[];
+  promotionBlockers: string[];
+  message: string;
+}
+
 const SENSITIVE_KEY_PATTERN =
   /cookie|authorization|password|token|secret|session|csrf|xsrf|stripe|card|payment|tax|payout|subscriber|customer|email|name|user[_-]?id|publication[_-]?id|account[_-]?id|id$/i;
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
@@ -286,6 +311,87 @@ export function buildGraduationCheckReport(
   };
 }
 
+export function buildCaptureKitReport(
+  matrix: CoverageMatrix,
+  capabilityId: string,
+  options: {
+    generatedAt?: Date | undefined;
+    fixtureDir?: string | undefined;
+    inventoryFile?: string | undefined;
+  } = {},
+): CaptureKitReport {
+  const capability = matrix.capabilities.find((candidate) => candidate.id === capabilityId);
+  const generatedAt = (options.generatedAt ?? new Date()).toISOString();
+  if (!capability) {
+    return {
+      operation: "coverage.capture.kit",
+      status: "blocked",
+      generatedAt,
+      capabilityId,
+      requiredEvidence: [],
+      redactionChecklist: [],
+      validationCommands: [],
+      manualRunbook: [],
+      promotionBlockers: [`Capability ${capabilityId} was not found in the coverage matrix.`],
+      message: "Capability ID was not found.",
+    };
+  }
+
+  const fixturePath = `${options.fixtureDir ?? "fixtures/captures"}/${capability.id}.json`;
+  const inventoryFile = options.inventoryFile ?? "fixtures/captures/endpoint-inventory.json";
+  const fixtureTemplate = buildFixtureTemplate(capability, generatedAt);
+  const requiredEvidence = [
+    `Create a redacted endpoint capture fixture at ${fixturePath}.`,
+    "Add or verify an endpoint-capture evidence entry in the coverage matrix.",
+    "Add or verify a manual-check evidence entry for owner-approved recovery.",
+    "Keep the active decision record until promotion review is complete.",
+  ];
+  const validationCommands = [
+    `node dist/cli.js coverage capture-validate --fixture ${fixturePath}`,
+    `node dist/cli.js coverage capture-inventory --fixture ${fixturePath} --out ${inventoryFile}`,
+    `node dist/cli.js coverage capture-graduation --inventory ${inventoryFile}`,
+    "npm run scan:secrets",
+  ];
+
+  return {
+    operation: "coverage.capture.kit",
+    status: "ready",
+    generatedAt,
+    capabilityId: capability.id,
+    capability: {
+      name: capability.name,
+      domain: capability.domain,
+      status: capability.status,
+      safetyClass: capability.safetyClass,
+      primaryPath: capability.primaryPath,
+      fallbackPath: capability.fallbackPath,
+      manualPath: capability.manualPath,
+      nextAction: capability.nextAction,
+      decisionRecord: capability.decisionRecord,
+    },
+    fixtureTemplate,
+    requiredEvidence,
+    redactionChecklist: [
+      "Remove cookies, Authorization headers, CSRF/XSRF values, session IDs, and bearer/basic tokens.",
+      "Remove account IDs, publication IDs, draft/post IDs, subscriber/customer IDs, and private path IDs.",
+      "Remove names, emails, subscriber records, payment, tax, payout, card, Stripe, and billing data.",
+      "Keep only deterministic request/response shape fields needed for contract tests.",
+      "Run capture-validate and scan:secrets before committing any fixture.",
+    ],
+    validationCommands,
+    manualRunbook: [
+      "Use a test publication or owner-approved dashboard session only.",
+      "Perform the Substack dashboard workflow manually while recording only network shape.",
+      "Confirm the workflow has a manual rollback or recovery path before proposing automation.",
+      "If redaction cannot be proven safe, keep the capability probe-only, planning-only, or unsupported.",
+    ],
+    promotionBlockers: missingGraduationEvidence(capability, new Set<string>()).concat(
+      "owner-approved redacted fixture review",
+    ),
+    message: "Capture kit generated. It does not perform live Substack actions.",
+  };
+}
+
 function parseCaptureEndpoint(value: unknown, index: number): CaptureEndpoint {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`Capture endpoint ${index} must be an object.`);
@@ -305,6 +411,34 @@ function parseCaptureEndpoint(value: unknown, index: number): CaptureEndpoint {
     responseHeaders: asRecord(record.responseHeaders),
     requestBody: record.requestBody,
     responseBody: record.responseBody,
+  };
+}
+
+function buildFixtureTemplate(
+  capability: CoverageCapability,
+  capturedAt: string,
+): CaptureEvidenceFixture {
+  return {
+    schemaVersion: 1,
+    capabilityId: capability.id,
+    capturedAt,
+    source: capability.primaryPath === "api" ? "api" : "browser",
+    surface: capability.name,
+    endpoints: [
+      {
+        method: "GET",
+        url: "https://example.substack.com/api/v1/replace-with-redacted-endpoint",
+        status: 200,
+        requestHeaders: { accept: "application/json" },
+        responseHeaders: { "content-type": "application/json" },
+        responseBody: {
+          shape: "replace with minimized contract shape only",
+        },
+      },
+    ],
+    notes: [
+      "Template only. Replace endpoint URL and body shape with redacted capture evidence before validation.",
+    ],
   };
 }
 
