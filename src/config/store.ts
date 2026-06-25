@@ -8,9 +8,21 @@ const AppConfigSchema = z.object({
   publicationUrl: z.string().url().optional(),
   browserRuntime: z.enum(["browserbase", "local", "camoufox"]).default("browserbase"),
   defaultMode: z.enum(["draft", "publish", "schedule"]).default("draft"),
+  operatorMode: z.enum(["solo", "team", "agency", "ci"]).default("solo"),
 });
 
 export type AppConfig = z.infer<typeof AppConfigSchema>;
+export type OperatorMode = AppConfig["operatorMode"];
+
+export interface OperatorPolicy {
+  mode: OperatorMode;
+  requiresExplicitConfirmation: boolean;
+  defaultBrowserRuntime: AppConfig["browserRuntime"];
+  secretsPolicy: "local-env" | "shared-env" | "ci-secrets";
+  retentionDays: number;
+  multiPublication: "single" | "review-required" | "required";
+  auditLevel: "standard" | "shared" | "strict";
+}
 
 export interface EffectiveConfig extends AppConfig {
   browserbaseApiKey?: string | undefined;
@@ -47,6 +59,51 @@ export async function updateConfig(patch: Partial<AppConfig>): Promise<AppConfig
   const next = AppConfigSchema.parse({ ...current, ...patch });
   await saveConfig(next);
   return next;
+}
+
+export function buildOperatorPolicy(mode: OperatorMode): OperatorPolicy {
+  switch (mode) {
+    case "solo":
+      return {
+        mode,
+        requiresExplicitConfirmation: true,
+        defaultBrowserRuntime: "local",
+        secretsPolicy: "local-env",
+        retentionDays: 30,
+        multiPublication: "single",
+        auditLevel: "standard",
+      };
+    case "team":
+      return {
+        mode,
+        requiresExplicitConfirmation: true,
+        defaultBrowserRuntime: "browserbase",
+        secretsPolicy: "shared-env",
+        retentionDays: 90,
+        multiPublication: "review-required",
+        auditLevel: "shared",
+      };
+    case "agency":
+      return {
+        mode,
+        requiresExplicitConfirmation: true,
+        defaultBrowserRuntime: "browserbase",
+        secretsPolicy: "shared-env",
+        retentionDays: 180,
+        multiPublication: "required",
+        auditLevel: "strict",
+      };
+    case "ci":
+      return {
+        mode,
+        requiresExplicitConfirmation: true,
+        defaultBrowserRuntime: "browserbase",
+        secretsPolicy: "ci-secrets",
+        retentionDays: 14,
+        multiPublication: "review-required",
+        auditLevel: "strict",
+      };
+  }
 }
 
 export async function loadEffectiveConfig(): Promise<EffectiveConfig> {

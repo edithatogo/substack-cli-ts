@@ -46,8 +46,10 @@ import {
   stateDir,
 } from "./config/paths.js";
 import {
+  buildOperatorPolicy,
   loadConfig,
   loadEffectiveConfig,
+  type OperatorMode,
   requirePublicationUrl,
   requireSubstackCredentials,
   updateConfig,
@@ -5289,6 +5291,8 @@ config
             publicationUrl: effective.publicationUrl ?? null,
             browserRuntime: effective.browserRuntime,
             defaultMode: effective.defaultMode,
+            operatorMode: effective.operatorMode,
+            operatorPolicy: buildOperatorPolicy(effective.operatorMode),
             browserbaseApiKey: redact(effective.browserbaseApiKey),
             browserbaseProjectId: redact(effective.browserbaseProjectId),
             stagehandModel: effective.stagehandModel,
@@ -5327,6 +5331,24 @@ config
   .action(async (runtime: "browserbase" | "local" | "camoufox") => {
     const next = await updateConfig({ browserRuntime: runtime });
     console.log(JSON.stringify(next, null, 2));
+  });
+
+config
+  .command("set-operator-mode")
+  .description("Set operator defaults for solo, team, agency, or CI use.")
+  .argument("<mode>", "solo, team, agency, or ci")
+  .action(async (mode: OperatorMode) => {
+    const next = await updateConfig({ operatorMode: mode });
+    console.log(
+      JSON.stringify(
+        {
+          ...next,
+          operatorPolicy: buildOperatorPolicy(next.operatorMode),
+        },
+        null,
+        2,
+      ),
+    );
   });
 
 const auth = program.command("auth").description("Manage authenticated browser sessions.");

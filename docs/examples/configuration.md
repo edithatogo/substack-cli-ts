@@ -40,6 +40,29 @@ substack-cli config show
 This prints the effective configuration without exposing secrets. It shows the
 publication URL, runtime setting, and status of various environment checks.
 
+## Setting Operator Mode
+
+Operator mode records local defaults for confirmation posture, audit retention,
+secret handling, and multi-publication review. It does not bypass `--yes` or
+typed confirmations for write operations.
+
+```bash
+# Individual owner/operator
+substack-cli config set-operator-mode solo
+
+# Shared publication team
+substack-cli config set-operator-mode team
+
+# Multiple client publications
+substack-cli config set-operator-mode agency
+
+# CI and scheduled automation
+substack-cli config set-operator-mode ci
+```
+
+`config show` includes the derived `operatorPolicy` so agents and scripts can
+choose the stricter behavior without reading secrets or mutating Substack.
+
 ## Authentication Status
 
 ```bash

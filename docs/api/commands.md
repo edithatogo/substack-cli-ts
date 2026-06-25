@@ -1559,6 +1559,13 @@ Set the default Substack publication URL.
 
 Set the browser runtime. Valid values: `browserbase`, `local`, `camoufox`.
 
+### `config set-operator-mode <mode>`
+
+Set operator defaults for `solo`, `team`, `agency`, or `ci` use. `config show`
+prints the derived policy for confirmation posture, audit retention, secret
+handling, and multi-publication review without exposing secrets or bypassing
+write confirmations.
+
 ---
 
 ## `auth`
