@@ -489,6 +489,31 @@ describe("capture kits", () => {
     assert.ok(report.promotionBlockers.includes("owner-approved redacted fixture review"));
   });
 
+  it("uses default capture kit paths and API source templates when appropriate", () => {
+    const apiMatrix = matrix();
+    apiMatrix.capabilities[0] = {
+      ...apiMatrix.capabilities[0]!,
+      primaryPath: "api",
+      decisionRecord: undefined,
+    };
+    const report = buildCaptureKitReport(apiMatrix, "analytics-growth-revenue", {
+      generatedAt: new Date("2026-06-25T00:00:00.000Z"),
+    });
+
+    assert.equal(report.status, "ready");
+    assert.equal(report.fixtureTemplate?.source, "api");
+    assert.match(
+      report.requiredEvidence[0] ?? "",
+      /fixtures\/captures\/analytics-growth-revenue\.json/,
+    );
+    assert.ok(
+      report.validationCommands.includes(
+        "node dist/cli.js coverage capture-graduation --inventory fixtures/captures/endpoint-inventory.json",
+      ),
+    );
+    assert.ok(report.promotionBlockers.includes("active decision record"));
+  });
+
   it("blocks capture kits for unknown capabilities", () => {
     const report = buildCaptureKitReport(matrix(), "missing-capability", {
       generatedAt: new Date("2026-06-25T00:00:00.000Z"),
