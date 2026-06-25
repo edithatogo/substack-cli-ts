@@ -165,6 +165,28 @@ export const WarehouseAttributionContractSchema = z.object({
   ),
 });
 
+export const WarehouseFunnelContractSchema = z.object({
+  status: z.literal("ok"),
+  generatedAt: z.string().datetime(),
+  campaignCount: z.number().int().nonnegative(),
+  campaigns: z.array(
+    z.object({
+      campaignId: z.string().min(1),
+      plannedPosts: z.number().int().nonnegative(),
+      observedPosts: z.number().int().nonnegative(),
+      scheduledNotes: z.number().int().nonnegative(),
+      successfulRunLogs: z.number().int().nonnegative(),
+      views: z.number(),
+      averageReadRate: z.number().nullable(),
+      emailOpens: z.number(),
+      emailClicks: z.number(),
+      clickThroughRate: z.number().nullable(),
+      subscriberNetChange: z.number(),
+      revenue: z.number(),
+    }),
+  ),
+});
+
 export const BackupSnapshotPlanContractSchema = z.object({
   schemaVersion: z.literal(1),
   status: z.enum(["ready", "blocked"]),
@@ -432,6 +454,14 @@ export const FIRST_PARTY_ARTIFACT_SCHEMAS = [
     owner: "src/creator/warehouse.ts",
     commands: ["warehouse attribution"],
     schema: WarehouseAttributionContractSchema,
+  },
+  {
+    id: "warehouse.funnel",
+    title: "Creator warehouse funnel report",
+    schemaVersion: 1,
+    owner: "src/creator/warehouse.ts",
+    commands: ["warehouse funnel"],
+    schema: WarehouseFunnelContractSchema,
   },
   {
     id: "backup.snapshot-plan",

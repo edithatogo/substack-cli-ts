@@ -146,6 +146,7 @@ const CLI_CONTRACT_COMMANDS: ContractCliCommand[] = [
   command("growth report --campaign <file>", "read-only", ["growth.report"]),
   command("warehouse export", "read-only", ["warehouse.export"]),
   command("warehouse attribution", "read-only", ["warehouse.attribution"]),
+  command("warehouse funnel", "read-only", ["warehouse.funnel"]),
   command("backup plan", "planning-only", ["backup.snapshot-plan"]),
   command("backup validate --file <file>", "read-only", ["backup.snapshot-plan"]),
   command("api analytics inventory", "read-only", ["analytics.snapshot"]),

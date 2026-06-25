@@ -4,7 +4,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "vitest";
 import { buildAnalyticsSnapshot } from "./growth.js";
-import { buildAttributionReport, buildWarehouseExport, writeWarehouseExport } from "./warehouse.js";
+import {
+  buildAttributionReport,
+  buildFunnelReport,
+  buildWarehouseExport,
+  writeWarehouseExport,
+} from "./warehouse.js";
 
 describe("creator warehouse exports", () => {
   it("normalizes campaigns, analytics probes, referrers, revenue, and run logs", async () => {
@@ -69,6 +74,20 @@ describe("creator warehouse exports", () => {
       assert.equal(report.campaigns[0]?.campaignId, "creator-os");
       assert.equal(report.campaigns[0]?.views, 42);
       assert.equal(report.campaigns[0]?.revenue, 123);
+
+      const funnel = buildFunnelReport(warehouse);
+      assert.equal(funnel.campaigns[0]?.campaignId, "creator-os");
+      assert.equal(funnel.campaigns[0]?.plannedPosts, 1);
+      assert.equal(funnel.campaigns[0]?.observedPosts, 1);
+      assert.equal(funnel.campaigns[0]?.scheduledNotes, 1);
+      assert.equal(funnel.campaigns[0]?.successfulRunLogs, 1);
+      assert.equal(funnel.campaigns[0]?.views, 100);
+      assert.equal(funnel.campaigns[0]?.averageReadRate, 0.6);
+      assert.equal(funnel.campaigns[0]?.emailOpens, 80);
+      assert.equal(funnel.campaigns[0]?.emailClicks, 20);
+      assert.equal(funnel.campaigns[0]?.clickThroughRate, 0.25);
+      assert.equal(funnel.campaigns[0]?.subscriberNetChange, 50);
+      assert.equal(funnel.campaigns[0]?.revenue, 123);
 
       warehouse.tables.referrers.push({
         campaign_id: null,
@@ -191,6 +210,39 @@ describe("creator warehouse exports", () => {
     assert.deepEqual(
       report.campaigns.map((campaign) => campaign.campaignId),
       ["a-campaign", "z-campaign"],
+    );
+  });
+
+  it("sorts funnel ties by views, revenue, and campaign id", () => {
+    const warehouse = {
+      schemaVersion: 1 as const,
+      generatedAt: "2099-01-01T00:00:00Z",
+      source: { campaignFiles: [] },
+      diagnostics: [],
+      tables: {
+        campaigns: [
+          { campaign_id: "z-campaign" },
+          { campaign_id: "a-campaign" },
+          { campaign_id: "revenue-campaign" },
+        ],
+        posts: [
+          { campaign_id: "z-campaign", views: 10 },
+          { campaign_id: "a-campaign", views: 10 },
+          { campaign_id: "revenue-campaign", views: 10 },
+        ],
+        notes: [],
+        referrers: [],
+        subscribers: [],
+        revenue: [{ campaign_id: "revenue-campaign", total_revenue: 50 }],
+        run_logs: [],
+      },
+    };
+
+    const report = buildFunnelReport(warehouse);
+
+    assert.deepEqual(
+      report.campaigns.map((campaign) => campaign.campaignId),
+      ["revenue-campaign", "a-campaign", "z-campaign"],
     );
   });
 

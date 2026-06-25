@@ -76,6 +76,7 @@ import {
 import { buildCreatorMediaPlan, buildLivePlan, type LiveAudience } from "./creator/media-plan.js";
 import {
   buildAttributionReport,
+  buildFunnelReport,
   buildWarehouseExport,
   writeWarehouseExport,
 } from "./creator/warehouse.js";
@@ -1064,6 +1065,36 @@ warehouse
         runLogDir: options.runLogDir,
       });
       const report = buildAttributionReport(exportData);
+      if (options.out) {
+        await mkdir(dirname(options.out), { recursive: true });
+        await writeFile(options.out, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+      }
+      console.log(
+        JSON.stringify(options.out ? { ...report, outputFile: options.out } : report, null, 2),
+      );
+    },
+  );
+
+warehouse
+  .command("funnel")
+  .description("Build a campaign funnel report from local warehouse inputs.")
+  .option("--campaign <file>", "Campaign plan JSON file. Repeatable.", collectCampaignOption, [])
+  .option("--analytics-dir <dir>", "Directory containing analytics snapshot JSON or JSONL files")
+  .option("--run-log-dir <dir>", "Directory containing run-log JSON artifacts")
+  .option("--out <file>", "Write funnel report JSON to a file")
+  .action(
+    async (options: {
+      campaign: string[];
+      analyticsDir?: string | undefined;
+      runLogDir?: string | undefined;
+      out?: string | undefined;
+    }) => {
+      const exportData = await buildWarehouseExport({
+        campaignFiles: options.campaign,
+        analyticsDir: options.analyticsDir,
+        runLogDir: options.runLogDir,
+      });
+      const report = buildFunnelReport(exportData);
       if (options.out) {
         await mkdir(dirname(options.out), { recursive: true });
         await writeFile(options.out, `${JSON.stringify(report, null, 2)}\n`, "utf8");

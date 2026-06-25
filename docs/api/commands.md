@@ -325,7 +325,7 @@ Build a campaign growth report from a campaign plan and optional snapshots.
 
 ## `warehouse`
 
-Export local-first Creator OS warehouse tables and attribution reports from existing campaign plans, analytics snapshots, and run logs. This surface writes local JSON/CSV only; it does not perform live Substack mutations or subscriber imports.
+Export local-first Creator OS warehouse tables, attribution reports, and funnel reports from existing campaign plans, analytics snapshots, and run logs. This surface writes local JSON/CSV only; it does not perform live Substack mutations or subscriber imports.
 
 ### `warehouse export`
 
@@ -351,6 +351,18 @@ Build a campaign/cohort attribution report from the same local inputs.
 | `--analytics-dir <dir>` | Directory containing analytics snapshot JSON or JSONL files | — |
 | `--run-log-dir <dir>` | Directory containing run-log JSON artifacts | — |
 | `--out <file>` | Write attribution report JSON to a file | — |
+
+### `warehouse funnel`
+
+Build a campaign funnel report from the same local inputs, including planned posts, analytics-observed posts, scheduled Notes, successful run-log actions, views, read rate, email opens/clicks, subscriber net change, and revenue.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--campaign <file>` | Campaign plan JSON file. Repeatable | — |
+| `--analytics-dir <dir>` | Directory containing analytics snapshot JSON or JSONL files | — |
+| `--run-log-dir <dir>` | Directory containing run-log JSON artifacts | — |
+| `--out <file>` | Write funnel report JSON to a file | — |
 
 ---
 
