@@ -2015,6 +2015,124 @@
         ],
         "additionalProperties": false
       }
+    },
+    {
+      "id": "warehouse.funnel",
+      "title": "Creator warehouse funnel report",
+      "schemaVersion": 1,
+      "owner": "src/creator/warehouse.ts",
+      "commands": [
+        "warehouse funnel"
+      ],
+      "jsonSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+          },
+          "campaignCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "campaignId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "plannedPosts": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "observedPosts": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "scheduledNotes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "successfulRunLogs": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "views": {
+                  "type": "number"
+                },
+                "averageReadRate": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "emailOpens": {
+                  "type": "number"
+                },
+                "emailClicks": {
+                  "type": "number"
+                },
+                "clickThroughRate": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "subscriberNetChange": {
+                  "type": "number"
+                },
+                "revenue": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "campaignId",
+                "plannedPosts",
+                "observedPosts",
+                "scheduledNotes",
+                "successfulRunLogs",
+                "views",
+                "averageReadRate",
+                "emailOpens",
+                "emailClicks",
+                "clickThroughRate",
+                "subscriberNetChange",
+                "revenue"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "status",
+          "generatedAt",
+          "campaignCount",
+          "campaigns"
+        ],
+        "additionalProperties": false
+      }
     }
   ]
 }

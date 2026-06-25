@@ -150,6 +150,91 @@ export function buildAttributionReport(warehouse: WarehouseExport) {
   };
 }
 
+export function buildFunnelReport(warehouse: WarehouseExport) {
+  const byCampaign: Record<
+    string,
+    {
+      plannedPosts: number;
+      observedPosts: number;
+      scheduledNotes: number;
+      successfulRunLogs: number;
+      views: number;
+      readRateTotal: number;
+      readRateSamples: number;
+      emailOpens: number;
+      emailClicks: number;
+      subscriberNetChange: number;
+      revenue: number;
+    }
+  > = {};
+
+  for (const campaign of warehouse.tables.campaigns) {
+    const id = campaignId(campaign.campaign_id);
+    byCampaign[id] ??= emptyFunnelMetrics();
+  }
+  for (const post of warehouse.tables.posts) {
+    const id = campaignId(post.campaign_id);
+    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    if (typeof post.file_path === "string") metrics.plannedPosts += 1;
+    if (post.post_id !== null && post.post_id !== undefined) metrics.observedPosts += 1;
+    metrics.views += numeric(post.views);
+    metrics.emailOpens += numeric(post.email_opens);
+    metrics.emailClicks += numeric(post.email_clicks);
+    const readRate = optionalNumeric(post.read_rate);
+    if (readRate !== null) {
+      metrics.readRateTotal += readRate;
+      metrics.readRateSamples += 1;
+    }
+  }
+  for (const note of warehouse.tables.notes) {
+    const id = campaignId(note.campaign_id);
+    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    metrics.scheduledNotes += 1;
+  }
+  for (const runLog of warehouse.tables.run_logs) {
+    const id = campaignId(runLog.campaign_id);
+    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    if (runLog.status === "success") metrics.successfulRunLogs += 1;
+  }
+  for (const subscribers of warehouse.tables.subscribers) {
+    const id = campaignId(subscribers.campaign_id);
+    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    metrics.subscriberNetChange += numeric(subscribers.net_change);
+  }
+  for (const revenue of warehouse.tables.revenue) {
+    const id = campaignId(revenue.campaign_id);
+    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    metrics.revenue += numeric(revenue.total_revenue);
+  }
+
+  return {
+    status: "ok",
+    generatedAt: new Date().toISOString(),
+    campaignCount: Object.keys(byCampaign).length,
+    campaigns: Object.entries(byCampaign)
+      .map(([id, metrics]) => ({
+        campaignId: id,
+        plannedPosts: metrics.plannedPosts,
+        observedPosts: metrics.observedPosts,
+        scheduledNotes: metrics.scheduledNotes,
+        successfulRunLogs: metrics.successfulRunLogs,
+        views: metrics.views,
+        averageReadRate:
+          metrics.readRateSamples === 0 ? null : metrics.readRateTotal / metrics.readRateSamples,
+        emailOpens: metrics.emailOpens,
+        emailClicks: metrics.emailClicks,
+        clickThroughRate:
+          metrics.emailOpens === 0 ? null : metrics.emailClicks / metrics.emailOpens,
+        subscriberNetChange: metrics.subscriberNetChange,
+        revenue: metrics.revenue,
+      }))
+      .sort(
+        (a, b) =>
+          b.views - a.views || b.revenue - a.revenue || a.campaignId.localeCompare(b.campaignId),
+      ),
+  };
+}
+
 function emptyTables(): WarehouseExport["tables"] {
   return {
     campaigns: [],
@@ -160,6 +245,34 @@ function emptyTables(): WarehouseExport["tables"] {
     revenue: [],
     run_logs: [],
   };
+}
+
+function campaignId(value: unknown): string {
+  return value === null || value === undefined || value === "" ? "unattributed" : String(value);
+}
+
+function emptyFunnelMetrics() {
+  return {
+    plannedPosts: 0,
+    observedPosts: 0,
+    scheduledNotes: 0,
+    successfulRunLogs: 0,
+    views: 0,
+    readRateTotal: 0,
+    readRateSamples: 0,
+    emailOpens: 0,
+    emailClicks: 0,
+    subscriberNetChange: 0,
+    revenue: 0,
+  };
+}
+
+function numeric(value: unknown): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function optionalNumeric(value: unknown): number | null {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
 async function readAnalyticsSnapshots(

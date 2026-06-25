@@ -14,6 +14,7 @@ import {
   RunLogContractSchema,
   WarehouseAttributionContractSchema,
   WarehouseExportContractSchema,
+  WarehouseFunnelContractSchema,
 } from "./schemas.js";
 
 describe("first-party artifact contract schemas", () => {
@@ -29,6 +30,7 @@ describe("first-party artifact contract schemas", () => {
         "growth.report",
         "warehouse.export",
         "warehouse.attribution",
+        "warehouse.funnel",
         "backup.snapshot-plan",
         "run-log",
         "coverage.drift",
@@ -139,6 +141,28 @@ describe("first-party artifact contract schemas", () => {
       generatedAt: "2026-06-24T00:00:00.000Z",
       campaignCount: 1,
       campaigns: [{ campaignId: campaign.campaignId, views: 10, referrals: 1, revenue: 0 }],
+    });
+
+    WarehouseFunnelContractSchema.parse({
+      status: "ok",
+      generatedAt: "2026-06-24T00:00:00.000Z",
+      campaignCount: 1,
+      campaigns: [
+        {
+          campaignId: campaign.campaignId,
+          plannedPosts: 1,
+          observedPosts: 1,
+          scheduledNotes: 1,
+          successfulRunLogs: 1,
+          views: 10,
+          averageReadRate: 0.5,
+          emailOpens: 8,
+          emailClicks: 2,
+          clickThroughRate: 0.25,
+          subscriberNetChange: 3,
+          revenue: 12,
+        },
+      ],
     });
 
     BackupSnapshotPlanContractSchema.parse({
