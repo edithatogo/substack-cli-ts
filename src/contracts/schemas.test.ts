@@ -172,6 +172,14 @@ describe("first-party artifact contract schemas", () => {
       snapshotFile: "backup.json",
       publicationUrl: null,
       sources: ["warehouse.json"],
+      sourceManifests: [
+        {
+          source: "warehouse.json",
+          kind: "file",
+          sizeBytes: 2,
+          sha256: "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        },
+      ],
       validations: [{ code: "source-readable", status: "pass", message: "Source is readable." }],
       manualRestoreChecklist: [
         "Keep the snapshot outside the repository and dependency directories.",

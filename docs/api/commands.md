@@ -372,7 +372,10 @@ Plan and validate redacted export-first backup snapshots. Restore remains a manu
 
 ### `backup plan`
 
-Write a redacted backup snapshot plan and validate local source artifacts.
+Write a redacted backup snapshot plan, validate local source artifacts, and record source
+integrity manifests. File sources include size and SHA-256; directory sources are recorded as
+directories without recursive hashing. The command blocks plans where the snapshot would be
+written inside a source artifact.
 
 **Options:**
 | Flag | Description |
