@@ -45,7 +45,7 @@ npm run sbom
 node dist/cli.js coverage release-scorecard
 ```
 
-`coverage release-scorecard` reports local readiness separately from npm, GitHub release, MCP registry, marketplace, and Substack admin owner gates.
+`coverage release-scorecard` reports local readiness separately from npm, GitHub release, MCP registry, marketplace, and Substack admin owner gates. Treat `localStatus: "ready"` plus `releaseVerdict: "ready-for-owner-launch"` as the handoff point for owner-approved release work; `externalStatus: "owner-gated"` still means account/admin follow-through remains outside autonomous automation.
 
 ## Branch Protection Recommendation
 

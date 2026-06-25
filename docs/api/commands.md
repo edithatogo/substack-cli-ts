@@ -149,7 +149,7 @@ Validate external launch and admin follow-through gates without performing exter
 
 ### `coverage release-scorecard`
 
-Report local release readiness separately from external npm, GitHub release, MCP registry, marketplace, and Substack admin owner/admin gates.
+Report machine-readable local release readiness separately from external npm, GitHub release, MCP registry, marketplace, and Substack admin owner/admin gates. The output includes `localStatus`, `externalStatus`, aggregate counts, package metadata checks, owner-gated checklist detail, rollback notes, and prioritized `nextActions`.
 
 ### `coverage decisions`
 

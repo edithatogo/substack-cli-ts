@@ -1,6 +1,10 @@
 import { access, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { FRONTIER_LAUNCH_CHECKLIST, validateLaunchChecklist } from "./launch-checklist.js";
+import {
+  FRONTIER_LAUNCH_CHECKLIST,
+  type LaunchSurface,
+  validateLaunchChecklist,
+} from "./launch-checklist.js";
 
 export interface ReleaseScorecardItem {
   id: string;
@@ -10,12 +14,37 @@ export interface ReleaseScorecardItem {
   nextAction?: string | undefined;
 }
 
+export interface ReleaseScorecardExternalGate extends ReleaseScorecardItem {
+  id: LaunchSurface;
+  status: "owner-gate";
+  checks: string[];
+  rollback: string;
+}
+
+export interface ReleaseScorecardSummary {
+  local: {
+    ready: number;
+    blocked: number;
+    total: number;
+  };
+  external: {
+    ownerGates: number;
+    missingSurfaces: LaunchSurface[];
+    total: number;
+  };
+}
+
 export interface ReleaseScorecard {
   operation: "release.scorecard";
   status: "ready" | "blocked";
   generatedAt: string;
+  localStatus: "ready" | "blocked";
+  externalStatus: "owner-gated" | "blocked";
+  releaseVerdict: "ready-for-owner-launch" | "blocked-local-readiness";
+  summary: ReleaseScorecardSummary;
   localReadiness: ReleaseScorecardItem[];
-  externalGates: ReleaseScorecardItem[];
+  externalGates: ReleaseScorecardExternalGate[];
+  nextActions: string[];
 }
 
 export async function buildReleaseScorecard(
@@ -32,29 +61,100 @@ export async function buildReleaseScorecard(
     scriptItem("audit:prod", scripts),
     scriptItem("scan:secrets", scripts),
     scriptItem("sbom", scripts),
+    scriptItem("prepublishOnly", scripts),
+    releaseMetadataItem("package-public", packageJson.private === false, "package.json", {
+      ready: "Package is marked public.",
+      blocked: "Set package.json private to false for npm publication.",
+    }),
+    releaseMetadataItem(
+      "package-bin",
+      hasStringRecordEntry(packageJson.bin, "substack-cli"),
+      "package.json",
+      {
+        ready: "substack-cli binary is declared.",
+        blocked: "Declare the substack-cli binary in package.json bin.",
+      },
+    ),
+    releaseMetadataItem(
+      "package-files",
+      stringArrayIncludes(packageJson.files, "dist/"),
+      "package.json",
+      {
+        ready: "Package files include dist/.",
+        blocked: "Include dist/ in package.json files.",
+      },
+    ),
+    releaseMetadataItem(
+      "publish-access",
+      asRecord(packageJson.publishConfig).access === "public",
+      "package.json",
+      {
+        ready: "npm publishConfig access is public.",
+        blocked: "Set publishConfig.access to public.",
+      },
+    ),
+    releaseMetadataItem(
+      "repository-url",
+      typeof asRecord(packageJson.repository).url === "string",
+      "package.json",
+      {
+        ready: "Repository URL is declared.",
+        blocked: "Declare package repository.url for release consumers.",
+      },
+    ),
     await fileItem("api-contract", "docs/api/substack-cli.contract.json", baseDir),
     await fileItem("artifact-schema", "docs/api/substack-cli.schema.json", baseDir),
     await fileItem("strictest-tsconfig", "tsconfig.strictest.json", baseDir),
     await fileItem("hardening-workflow", ".github/workflows/hardening.yml", baseDir),
+    await fileItem("publish-workflow", ".github/workflows/publish.yml", baseDir),
+    await fileItem("release-checklist", "docs/release-checklist.md", baseDir),
+    await fileItem("security-policy", "SECURITY.md", baseDir),
+    await fileItem("changelog", "CHANGELOG.md", baseDir),
   ];
 
   const checklist = validateLaunchChecklist();
-  const externalGates: ReleaseScorecardItem[] = FRONTIER_LAUNCH_CHECKLIST.map((item) => ({
+  const externalGates: ReleaseScorecardExternalGate[] = FRONTIER_LAUNCH_CHECKLIST.map((item) => ({
     id: item.surface,
     title: item.title,
     status: "owner-gate",
     evidence: item.evidence,
     nextAction: item.ownerGate,
+    checks: item.checks,
+    rollback: item.rollback,
   }));
 
-  const blocked =
-    localReadiness.some((item) => item.status === "blocked") || checklist.status === "blocked";
+  const localBlocked = localReadiness.filter((item) => item.status === "blocked");
+  const localStatus = localBlocked.length === 0 ? "ready" : "blocked";
+  const externalStatus = checklist.status === "ready" ? "owner-gated" : "blocked";
+  const status = localStatus === "ready" && externalStatus === "owner-gated" ? "ready" : "blocked";
+  const nextActions = [
+    ...localBlocked.map((item) => `${item.id}: ${item.nextAction ?? "Resolve local readiness."}`),
+    ...checklist.missing.map((surface) => `launch:${surface}: Add launch checklist coverage.`),
+    ...externalGates.map((item) => `${item.id}: ${item.nextAction ?? "Owner approval required."}`),
+  ];
+
   return {
     operation: "release.scorecard",
-    status: blocked ? "blocked" : "ready",
+    status,
     generatedAt: new Date().toISOString(),
+    localStatus,
+    externalStatus,
+    releaseVerdict: localStatus === "ready" ? "ready-for-owner-launch" : "blocked-local-readiness",
+    summary: {
+      local: {
+        ready: localReadiness.length - localBlocked.length,
+        blocked: localBlocked.length,
+        total: localReadiness.length,
+      },
+      external: {
+        ownerGates: externalGates.length,
+        missingSurfaces: checklist.missing,
+        total: externalGates.length + checklist.missing.length,
+      },
+    },
     localReadiness,
     externalGates,
+    nextActions,
   };
 }
 
@@ -66,6 +166,21 @@ function scriptItem(name: string, scripts: Record<string, unknown>): ReleaseScor
     status: exists ? "ready" : "blocked",
     evidence: ["package.json"],
     nextAction: exists ? undefined : `Add package script ${name}.`,
+  };
+}
+
+function releaseMetadataItem(
+  id: string,
+  ready: boolean,
+  evidence: string,
+  messages: { ready: string; blocked: string },
+): ReleaseScorecardItem {
+  return {
+    id: `release:${id}`,
+    title: messages.ready,
+    status: ready ? "ready" : "blocked",
+    evidence: [evidence],
+    nextAction: ready ? undefined : messages.blocked,
   };
 }
 
@@ -97,4 +212,13 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
+}
+
+function stringArrayIncludes(value: unknown, expected: string): boolean {
+  return Array.isArray(value) && value.includes(expected);
+}
+
+function hasStringRecordEntry(value: unknown, key: string): boolean {
+  const record = asRecord(value);
+  return typeof record[key] === "string";
 }

@@ -9,12 +9,23 @@ describe("release scorecard", () => {
     const scorecard = await buildReleaseScorecard();
 
     expect(scorecard.operation).toBe("release.scorecard");
+    expect(scorecard.localStatus).toBe("ready");
+    expect(scorecard.externalStatus).toBe("owner-gated");
+    expect(scorecard.releaseVerdict).toBe("ready-for-owner-launch");
+    expect(scorecard.summary.local.blocked).toBe(0);
     expect(scorecard.localReadiness.some((item) => item.id === "script:sbom")).toBe(true);
+    expect(scorecard.localReadiness.some((item) => item.id === "script:prepublishOnly")).toBe(true);
+    expect(scorecard.localReadiness.some((item) => item.id === "release:package-public")).toBe(
+      true,
+    );
     expect(scorecard.localReadiness.some((item) => item.id === "file:strictest-tsconfig")).toBe(
       true,
     );
     expect(scorecard.externalGates.length).toBeGreaterThan(0);
     expect(scorecard.externalGates.every((item) => item.status === "owner-gate")).toBe(true);
+    expect(scorecard.externalGates.every((item) => item.checks.length > 0)).toBe(true);
+    expect(scorecard.externalGates.every((item) => item.rollback.length > 0)).toBe(true);
+    expect(scorecard.nextActions.some((action) => action.startsWith("npm:"))).toBe(true);
   });
 
   it("blocks local readiness when required generated files are missing", async () => {
@@ -31,6 +42,18 @@ describe("release scorecard", () => {
           "audit:prod": "npm audit --omit=dev",
           "scan:secrets": "node scan.js",
           sbom: "node sbom.js",
+          prepublishOnly: "npm run quality",
+        },
+        private: false,
+        bin: {
+          "substack-cli": "dist/cli.js",
+        },
+        files: ["dist/"],
+        publishConfig: {
+          access: "public",
+        },
+        repository: {
+          url: "git+https://example.test/repo.git",
         },
       }),
     );
@@ -40,6 +63,8 @@ describe("release scorecard", () => {
     const scorecard = await buildReleaseScorecard({ baseDir: temp });
 
     expect(scorecard.status).toBe("blocked");
+    expect(scorecard.localStatus).toBe("blocked");
+    expect(scorecard.releaseVerdict).toBe("blocked-local-readiness");
     expect(
       scorecard.localReadiness.some(
         (item) => item.id === "file:api-contract" && item.status === "blocked",
@@ -59,5 +84,13 @@ describe("release scorecard", () => {
         (item) => item.id === "script:typecheck" && item.status === "blocked",
       ),
     ).toBe(true);
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "release:package-public" && item.status === "blocked",
+      ),
+    ).toBe(true);
+    expect(scorecard.nextActions.some((action) => action.startsWith("script:typecheck:"))).toBe(
+      true,
+    );
   });
 });
