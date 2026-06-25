@@ -110,4 +110,56 @@ describe("release scorecard", () => {
       ),
     ).toBe(true);
   });
+
+  it("accepts common npm metadata shorthands", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-scorecard-metadata-"));
+    await mkdir(join(temp, ".github", "workflows"), { recursive: true });
+    await mkdir(join(temp, "docs", "api"), { recursive: true });
+    await writeFile(
+      join(temp, "package.json"),
+      JSON.stringify({
+        scripts: {
+          typecheck: "tsc --noEmit",
+          test: "vitest run",
+          "test:coverage": "vitest run --coverage",
+          "frontier:drift": "node drift.js",
+          "audit:prod": "npm audit --omit=dev",
+          "scan:secrets": "node scan.js",
+          sbom: "node sbom.js",
+          prepublishOnly: "npm run quality",
+        },
+        private: false,
+        bin: {
+          "substack-cli": "dist/cli.js",
+        },
+        files: ["./dist"],
+        publishConfig: {
+          access: "public",
+        },
+        repository: "github:edithatogo/substack-cli-ts",
+      }),
+    );
+    await writeFile(join(temp, "docs", "api", "substack-cli.contract.json"), "{}");
+    await writeFile(join(temp, "docs", "api", "substack-cli.schema.json"), "{}");
+    await writeFile(join(temp, "tsconfig.strictest.json"), "{}");
+    await writeFile(join(temp, ".github", "workflows", "hardening.yml"), "name: Hardening\n");
+    await writeFile(join(temp, ".github", "workflows", "publish.yml"), "name: Publish\n");
+    await writeFile(join(temp, "docs", "release-checklist.md"), "# Release\n");
+    await writeFile(join(temp, "SECURITY.md"), "# Security\n");
+    await writeFile(join(temp, "CHANGELOG.md"), "# Changelog\n");
+
+    const scorecard = await buildReleaseScorecard({ baseDir: temp });
+
+    expect(scorecard.localStatus).toBe("ready");
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "release:package-files" && item.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "release:repository-url" && item.status === "ready",
+      ),
+    ).toBe(true);
+  });
 });

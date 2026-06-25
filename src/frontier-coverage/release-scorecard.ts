@@ -82,7 +82,7 @@ export async function buildReleaseScorecard(
     ),
     releaseMetadataItem(
       "package-files",
-      stringArrayIncludes(packageJson.files, "dist/"),
+      packageFilesInclude(packageJson.files, "dist"),
       "package.json",
       {
         ready: "Package files include dist/.",
@@ -98,15 +98,10 @@ export async function buildReleaseScorecard(
         blocked: "Set publishConfig.access to public.",
       },
     ),
-    releaseMetadataItem(
-      "repository-url",
-      typeof asRecord(packageJson.repository).url === "string",
-      "package.json",
-      {
-        ready: "Repository URL is declared.",
-        blocked: "Declare package repository.url for release consumers.",
-      },
-    ),
+    releaseMetadataItem("repository-url", hasRepository(packageJson.repository), "package.json", {
+      ready: "Repository URL is declared.",
+      blocked: "Declare package repository.url for release consumers.",
+    }),
     await fileItem("api-contract", "docs/api/substack-cli.contract.json", baseDir),
     await fileItem("artifact-schema", "docs/api/substack-cli.schema.json", baseDir),
     await fileItem("strictest-tsconfig", "tsconfig.strictest.json", baseDir),
@@ -219,11 +214,20 @@ function asRecord(value: unknown): Record<string, unknown> {
     : {};
 }
 
-function stringArrayIncludes(value: unknown, expected: string): boolean {
-  return Array.isArray(value) && value.includes(expected);
+function packageFilesInclude(value: unknown, expectedDirectory: string): boolean {
+  if (!Array.isArray(value)) return false;
+  return value.some(
+    (entry) =>
+      typeof entry === "string" &&
+      entry.replace(/^\.\//, "").replace(/\/$/, "") === expectedDirectory,
+  );
 }
 
 function hasStringRecordEntry(value: unknown, key: string): boolean {
   const record = asRecord(value);
   return typeof record[key] === "string";
+}
+
+function hasRepository(value: unknown): boolean {
+  return typeof value === "string" || typeof asRecord(value).url === "string";
 }
