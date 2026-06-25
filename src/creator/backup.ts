@@ -1,6 +1,14 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { createHash } from "node:crypto";
+import { access, mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { dirname, relative, resolve } from "node:path";
 import { redact, redactUrl } from "../util/redact.js";
+
+export interface BackupSourceManifest {
+  source: string;
+  kind: "file" | "directory" | "other" | "missing";
+  sizeBytes: number | null;
+  sha256: string | null;
+}
 
 export interface BackupSnapshotPlan {
   schemaVersion: 1;
@@ -9,6 +17,7 @@ export interface BackupSnapshotPlan {
   snapshotFile: string;
   publicationUrl: string | null;
   sources: string[];
+  sourceManifests: BackupSourceManifest[];
   validations: Array<{ code: string; status: "pass" | "fail"; message: string }>;
   manualRestoreChecklist: string[];
 }
@@ -28,8 +37,10 @@ export async function buildBackupSnapshotPlan(input: {
   sources: string[];
 }): Promise<BackupSnapshotPlan> {
   const validations = [];
+  const sourceManifests = [];
   for (const source of input.sources) {
     validations.push(await sourceExists(source));
+    sourceManifests.push(await buildSourceManifest(source));
   }
   if (input.sources.length === 0) {
     validations.push({
@@ -38,6 +49,7 @@ export async function buildBackupSnapshotPlan(input: {
       message: "At least one local export, campaign, snapshot, or run-log source is required.",
     });
   }
+  validations.push(validateSnapshotLocation(input.snapshotFile, input.sources));
 
   const status = validations.some((validation) => validation.status === "fail")
     ? "blocked"
@@ -49,6 +61,7 @@ export async function buildBackupSnapshotPlan(input: {
     snapshotFile: input.snapshotFile,
     publicationUrl: redactSensitive(redactUrl(input.publicationUrl) ?? null),
     sources: input.sources.map((source) => redactSensitive(redact(source) ?? source) ?? source),
+    sourceManifests,
     validations,
     manualRestoreChecklist: [...BACKUP_RESTORE_CHECKLIST],
   };
@@ -104,6 +117,14 @@ export async function validateBackupSnapshotFile(file: string): Promise<{
       message: "Snapshot plan must include a manual restore checklist.",
     });
   }
+  const sourceCount = Array.isArray(plan?.sources) ? plan.sources.length : 0;
+  if (!Array.isArray(plan?.sourceManifests) || plan.sourceManifests.length !== sourceCount) {
+    validations.push({
+      code: "source-manifests",
+      status: "fail" as const,
+      message: "Snapshot plan must include one source manifest per source.",
+    });
+  }
   return {
     status: validations.some((validation) => validation.status === "fail") ? "blocked" : "ready",
     snapshotFile: file,
@@ -127,4 +148,61 @@ async function sourceExists(source: string) {
       message: `Source is not readable: ${source}`,
     };
   }
+}
+
+async function buildSourceManifest(source: string): Promise<BackupSourceManifest> {
+  const redactedSource = redactSensitive(redact(source) ?? source) ?? source;
+  try {
+    const sourceStat = await stat(source);
+    if (sourceStat.isFile()) {
+      return {
+        source: redactedSource,
+        kind: "file",
+        sizeBytes: sourceStat.size,
+        sha256: await sha256File(source),
+      };
+    }
+    return {
+      source: redactedSource,
+      kind: sourceStat.isDirectory() ? "directory" : "other",
+      sizeBytes: sourceStat.isDirectory() ? null : sourceStat.size,
+      sha256: null,
+    };
+  } catch {
+    return {
+      source: redactedSource,
+      kind: "missing",
+      sizeBytes: null,
+      sha256: null,
+    };
+  }
+}
+
+async function sha256File(file: string): Promise<string> {
+  const hash = createHash("sha256");
+  hash.update(await readFile(file));
+  return hash.digest("hex");
+}
+
+function validateSnapshotLocation(snapshotFile: string, sources: string[]) {
+  const snapshotPath = resolve(snapshotFile);
+  const nestedSource = sources.find((source) => isPathInside(snapshotPath, resolve(source)));
+  if (nestedSource) {
+    return {
+      code: "snapshot-location",
+      status: "fail" as const,
+      message: `Snapshot file must not be written inside source artifact: ${nestedSource}`,
+    };
+  }
+
+  return {
+    code: "snapshot-location",
+    status: "pass" as const,
+    message: "Snapshot file is not nested inside a source artifact.",
+  };
+}
+
+function isPathInside(candidate: string, parent: string): boolean {
+  const path = relative(parent, candidate);
+  return path.length > 0 && !path.startsWith("..") && !path.startsWith("/");
 }

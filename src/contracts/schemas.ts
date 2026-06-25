@@ -194,6 +194,17 @@ export const BackupSnapshotPlanContractSchema = z.object({
   snapshotFile: z.string().min(1),
   publicationUrl: z.string().nullable(),
   sources: z.array(z.string().min(1)),
+  sourceManifests: z.array(
+    z.object({
+      source: z.string().min(1),
+      kind: z.enum(["file", "directory", "other", "missing"]),
+      sizeBytes: z.number().int().nonnegative().nullable(),
+      sha256: z
+        .string()
+        .regex(/^[a-f0-9]{64}$/)
+        .nullable(),
+    }),
+  ),
   validations: z.array(
     z.object({
       code: z.string().min(1),
