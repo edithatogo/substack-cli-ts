@@ -105,3 +105,47 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node scripts/experimental-dependency-lane.mjs ${{ matrix.lane }}
+
+  frontier-drift:
+    name: Frontier Drift Monitor
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Build drift artifacts
+        id: drift
+        continue-on-error: true
+        run: |
+          mkdir -p reports/frontier-drift
+          npm run frontier:drift -- --out reports/frontier-drift/report.json --issue-body-out reports/frontier-drift/issue.md
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: frontier-drift
+          path: reports/frontier-drift
+          if-no-files-found: error
+      - name: Open or update drift issue
+        if: steps.drift.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Frontier coverage drift requires review"
+          issue="$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number // empty')"
+          if [ -n "$issue" ]; then
+            gh issue edit "$issue" --body-file reports/frontier-drift/issue.md
+          else
+            gh issue create --title "$title" --body-file reports/frontier-drift/issue.md
+          fi
+      - name: Fail on drift
+        if: steps.drift.outcome == 'failure'
+        run: exit 1

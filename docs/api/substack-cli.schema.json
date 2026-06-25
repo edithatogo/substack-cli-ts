@@ -692,6 +692,44 @@
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
           },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "officialDocCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "freshOfficialDocCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "blockedOfficialDocCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "endpointDiagnosticCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "missingDecisionRecordCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "officialDocCount",
+              "freshOfficialDocCount",
+              "blockedOfficialDocCount",
+              "endpointDiagnosticCount",
+              "missingDecisionRecordCount"
+            ],
+            "additionalProperties": false
+          },
           "officialDocs": {
             "type": "array",
             "items": {
@@ -788,6 +826,7 @@
           "status",
           "generatedAt",
           "staleAfterDays",
+          "summary",
           "officialDocs",
           "endpointCaptureDiagnostics"
         ],

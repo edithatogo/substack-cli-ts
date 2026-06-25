@@ -13,6 +13,13 @@ export interface FrontierDriftReport {
   status: "ready" | "blocked";
   generatedAt: string;
   staleAfterDays: number;
+  summary: {
+    officialDocCount: number;
+    freshOfficialDocCount: number;
+    blockedOfficialDocCount: number;
+    endpointDiagnosticCount: number;
+    missingDecisionRecordCount: number;
+  };
   officialDocs: Array<{
     capabilityId: string;
     capability: string;
@@ -97,14 +104,90 @@ export function buildFrontierDriftReport(
       (diagnostic) => diagnostic.decisionRecordId === "missing-decision-record",
     );
 
+  const blockedOfficialDocs = officialDocs.filter((doc) =>
+    ["missing-snapshot", "stale", "changed", "unavailable"].includes(doc.status),
+  );
+  const missingDecisionRecordCount = endpointCaptureDiagnostics.filter(
+    (diagnostic) => diagnostic.decisionRecordId === "missing-decision-record",
+  ).length;
+
   return {
     operation: "coverage.drift",
     status: blocked ? "blocked" : "ready",
     generatedAt: now.toISOString(),
     staleAfterDays,
+    summary: {
+      officialDocCount: officialDocs.length,
+      freshOfficialDocCount: officialDocs.length - blockedOfficialDocs.length,
+      blockedOfficialDocCount: blockedOfficialDocs.length,
+      endpointDiagnosticCount: endpointCaptureDiagnostics.length,
+      missingDecisionRecordCount,
+    },
     officialDocs,
     endpointCaptureDiagnostics,
   };
+}
+
+export function renderFrontierDriftIssueBody(report: FrontierDriftReport): string {
+  const blockedDocs = report.officialDocs.filter((doc) =>
+    ["missing-snapshot", "stale", "changed", "unavailable"].includes(doc.status),
+  );
+  const missingDecisionRecords = report.endpointCaptureDiagnostics.filter(
+    (diagnostic) => diagnostic.decisionRecordId === "missing-decision-record",
+  );
+  const activeDiagnostics = report.endpointCaptureDiagnostics.filter(
+    (diagnostic) => diagnostic.decisionRecordId !== "missing-decision-record",
+  );
+
+  return [
+    "# Frontier Coverage Drift",
+    "",
+    `Generated: ${report.generatedAt}`,
+    `Status: ${report.status}`,
+    `Official docs: ${report.summary.freshOfficialDocCount}/${report.summary.officialDocCount} fresh`,
+    `Blocked official docs: ${report.summary.blockedOfficialDocCount}`,
+    `Endpoint diagnostics: ${report.summary.endpointDiagnosticCount}`,
+    `Missing decision records: ${report.summary.missingDecisionRecordCount}`,
+    "",
+    "## Required Follow-Up",
+    "",
+    ...renderIssueList(
+      blockedDocs.map(
+        (doc) =>
+          `${doc.status}: ${doc.capability} (${doc.capabilityId}) - ${doc.ref}${
+            doc.checkedAt ? ` checked ${doc.checkedAt}` : ""
+          }${doc.note ? ` - ${doc.note}` : ""}`,
+      ),
+      "No official-doc drift is blocking the roadmap.",
+    ),
+    "",
+    "## Missing Decision Records",
+    "",
+    ...renderIssueList(
+      missingDecisionRecords.map(
+        (diagnostic) =>
+          `${diagnostic.capability} (${diagnostic.capabilityId}) is ${diagnostic.status}: ${diagnostic.diagnostic}`,
+      ),
+      "Every non-implemented surface has a decision record.",
+    ),
+    "",
+    "## Active Safe-Boundary Diagnostics",
+    "",
+    ...renderIssueList(
+      activeDiagnostics.map(
+        (diagnostic) =>
+          `${diagnostic.capability} (${diagnostic.capabilityId}) remains ${diagnostic.status}: ${diagnostic.diagnostic}`,
+      ),
+      "No planning/probe/manual/unsupported diagnostics are active.",
+    ),
+    "",
+    "## Operator Commands",
+    "",
+    "- `npm run frontier:drift`",
+    "- Refresh `fixtures/frontier-drift-snapshots.json` after reviewing official Substack support pages.",
+    "- Update the relevant decision record before upgrading any planning/probe/manual surface.",
+    "",
+  ].join("\n");
 }
 
 export function parseDriftEvidenceSnapshots(value: unknown): DriftEvidenceSnapshot[] {
@@ -148,4 +231,9 @@ function assertUniqueSnapshotRefs(snapshots: DriftEvidenceSnapshot[]): void {
 
 function daysBetween(from: Date, to: Date): number {
   return Math.floor((to.getTime() - from.getTime()) / 86_400_000);
+}
+
+function renderIssueList(items: string[], emptyMessage: string): string[] {
+  if (items.length === 0) return [`- ${emptyMessage}`];
+  return items.map((item) => `- ${item}`);
 }

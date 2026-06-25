@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { buildFrontierDriftReport, parseDriftEvidenceSnapshots } from "./drift.js";
+import {
+  buildFrontierDriftReport,
+  parseDriftEvidenceSnapshots,
+  renderFrontierDriftIssueBody,
+} from "./drift.js";
 import type { CoverageMatrix } from "./schema.js";
 
 describe("frontier coverage drift", () => {
@@ -19,6 +23,13 @@ describe("frontier coverage drift", () => {
 
     assert.equal(report.status, "ready");
     assert.equal(report.officialDocs[0]?.status, "fresh");
+    assert.deepEqual(report.summary, {
+      officialDocCount: 1,
+      freshOfficialDocCount: 1,
+      blockedOfficialDocCount: 0,
+      endpointDiagnosticCount: 0,
+      missingDecisionRecordCount: 0,
+    });
   });
 
   it("blocks stale, changed, unavailable, and missing official evidence", () => {
@@ -67,6 +78,92 @@ describe("frontier coverage drift", () => {
     assert.equal(changed.officialDocs[0]?.status, "changed");
     assert.equal(missing.officialDocs[0]?.status, "missing-snapshot");
     assert.equal(unavailable.officialDocs[0]?.status, "unavailable");
+  });
+
+  it("renders an issue-ready drift body with blocked docs and diagnostics", () => {
+    const report = buildFrontierDriftReport({
+      matrix: {
+        schemaVersion: 1,
+        capabilities: [
+          {
+            ...matrix().capabilities[0],
+            status: "probe-only",
+            decisionRecord: undefined,
+          },
+        ],
+      },
+      snapshots: [
+        {
+          ref: "https://support.substack.com/video",
+          checkedAt: "2026-01-01T00:00:00.000Z",
+          status: "changed",
+          note: "Workflow changed.",
+        },
+      ],
+      now: new Date("2026-06-16T00:00:00.000Z"),
+    });
+
+    const body = renderFrontierDriftIssueBody(report);
+
+    assert.match(body, /# Frontier Coverage Drift/);
+    assert.match(body, /Status: blocked/);
+    assert.match(body, /changed: Video docs/);
+    assert.match(body, /Missing Decision Records/);
+    assert.match(body, /Missing decision record/);
+    assert.equal(report.summary.blockedOfficialDocCount, 1);
+    assert.equal(report.summary.missingDecisionRecordCount, 1);
+  });
+
+  it("renders empty issue body sections for ready reports", () => {
+    const report = buildFrontierDriftReport({
+      matrix: matrix(),
+      snapshots: [
+        {
+          ref: "https://support.substack.com/video",
+          checkedAt: "2026-06-01T00:00:00.000Z",
+          status: "ok",
+        },
+      ],
+      now: new Date("2026-06-16T00:00:00.000Z"),
+    });
+
+    const body = renderFrontierDriftIssueBody(report);
+
+    assert.match(body, /No official-doc drift is blocking/);
+    assert.match(body, /Every non-implemented surface has a decision record/);
+  });
+
+  it("renders active safe-boundary diagnostics with decision records", () => {
+    const report = buildFrontierDriftReport({
+      matrix: {
+        schemaVersion: 1,
+        capabilities: [
+          {
+            ...matrix().capabilities[0],
+            status: "planning-only",
+            decisionRecord: {
+              id: "ADR-test",
+              reason: "Unsafe without capture fixtures.",
+            },
+          },
+        ],
+      },
+      snapshots: [
+        {
+          ref: "https://support.substack.com/video",
+          checkedAt: "2026-06-01T00:00:00.000Z",
+          status: "ok",
+        },
+      ],
+      now: new Date("2026-06-16T00:00:00.000Z"),
+    });
+
+    const body = renderFrontierDriftIssueBody(report);
+
+    assert.match(body, /remains planning-only/);
+    assert.match(body, /Capture or manual\/admin decision remains active/);
+    assert.equal(report.summary.endpointDiagnosticCount, 1);
+    assert.equal(report.summary.missingDecisionRecordCount, 0);
   });
 
   it("parses snapshot fixtures and rejects invalid shapes", () => {

@@ -283,6 +283,13 @@ export const CoverageDriftContractSchema = z.object({
   status: z.enum(["ready", "blocked"]),
   generatedAt: z.string().datetime(),
   staleAfterDays: z.number().int().positive(),
+  summary: z.object({
+    officialDocCount: z.number().int().nonnegative(),
+    freshOfficialDocCount: z.number().int().nonnegative(),
+    blockedOfficialDocCount: z.number().int().nonnegative(),
+    endpointDiagnosticCount: z.number().int().nonnegative(),
+    missingDecisionRecordCount: z.number().int().nonnegative(),
+  }),
   officialDocs: z.array(
     z.object({
       capabilityId: z.string().min(1),
