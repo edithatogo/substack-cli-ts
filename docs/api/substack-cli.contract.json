@@ -124,6 +124,14 @@
         ]
       },
       {
+        "command": "coverage capture-kit --id <id>",
+        "surface": "cli",
+        "mode": "read-only",
+        "artifacts": [
+          "capture.evidence"
+        ]
+      },
+      {
         "command": "coverage capture-validate --file <file>",
         "surface": "cli",
         "mode": "read-only",

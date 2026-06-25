@@ -6,6 +6,7 @@ import { describe, it } from "vitest";
 import {
   buildCaptureFixtureValidationOutput,
   buildCaptureGraduationOutput,
+  buildCaptureKitOutput,
   buildEndpointDiffOutput,
   buildEndpointInventoryOutput,
   loadEndpointInventoryReport,
@@ -16,6 +17,7 @@ import {
   buildEndpointDiffReport,
   buildEndpointInventoryReport,
   buildGraduationCheckReport,
+  buildCaptureKitReport,
   minimizeCaptureFixture,
   parseCaptureEvidenceFixture,
   renderEndpointInventory,
@@ -244,6 +246,41 @@ describe("capture evidence fixtures", () => {
     assert.equal(minimized.endpoints[0]?.responseBody, undefined);
   });
 
+  it("redacts sensitive booleans and blocks residual token-like endpoint metadata", () => {
+    const booleanBody = minimizeCaptureFixture(
+      fixture({
+        responseBody: {
+          subscriber_active: true,
+          feature_enabled: false,
+        },
+      }),
+    );
+    assert.equal(
+      (booleanBody.endpoints[0]?.responseBody as Record<string, unknown>).subscriber_active,
+      "[REDACTED]",
+    );
+    assert.equal(
+      (booleanBody.endpoints[0]?.responseBody as Record<string, unknown>).feature_enabled,
+      false,
+    );
+
+    const scalarBooleanBody = minimizeCaptureFixture(
+      fixture({
+        responseBody: true,
+      }),
+    );
+    assert.equal(scalarBooleanBody.endpoints[0]?.responseBody, true);
+
+    const residual = buildCaptureValidationReport(
+      fixture({
+        method: "synthetic-secret-token-with-enough-length",
+        responseBody: { ok: true },
+      }),
+    );
+    assert.equal(residual.status, "blocked");
+    assert.equal(residual.issues[0]?.code, "sensitive-value");
+  });
+
   it("keeps sensitive-value validation deterministic across repeated global regex checks", () => {
     const first = buildCaptureValidationReport(
       fixture({ responseBody: { leaked: "owner@example.com" } }),
@@ -421,6 +458,86 @@ describe("graduation checks", () => {
       const report = await buildCaptureGraduationOutput(matrixPath, inventoryPath);
       assert.equal(report.status, "blocked");
       assert.ok(report.blockers.length > 0);
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("capture kits", () => {
+  it("generates a safe capture kit for a conservative capability", () => {
+    const report = buildCaptureKitReport(matrix(), "analytics-growth-revenue", {
+      generatedAt: new Date("2026-06-25T00:00:00.000Z"),
+      fixtureDir: "fixtures/captures/frontier",
+      inventoryFile: "fixtures/captures/frontier-inventory.json",
+    });
+
+    assert.equal(report.operation, "coverage.capture.kit");
+    assert.equal(report.status, "ready");
+    assert.equal(report.generatedAt, "2026-06-25T00:00:00.000Z");
+    assert.equal(report.capability?.status, "probe-only");
+    assert.equal(report.fixtureTemplate?.capabilityId, "analytics-growth-revenue");
+    assert.match(report.requiredEvidence[0] ?? "", /fixtures\/captures\/frontier/);
+    assert.ok(report.redactionChecklist.some((item) => /cookies/i.test(item)));
+    assert.ok(report.validationCommands.includes("npm run scan:secrets"));
+    assert.ok(
+      report.validationCommands.includes(
+        "node dist/cli.js coverage capture-graduation --inventory fixtures/captures/frontier-inventory.json",
+      ),
+    );
+    assert.ok(report.manualRunbook.some((item) => /test publication/i.test(item)));
+    assert.ok(report.promotionBlockers.includes("owner-approved redacted fixture review"));
+  });
+
+  it("uses default capture kit paths and API source templates when appropriate", () => {
+    const apiMatrix = matrix();
+    apiMatrix.capabilities[0] = {
+      ...apiMatrix.capabilities[0]!,
+      primaryPath: "api",
+      decisionRecord: undefined,
+    };
+    const report = buildCaptureKitReport(apiMatrix, "analytics-growth-revenue", {
+      generatedAt: new Date("2026-06-25T00:00:00.000Z"),
+    });
+
+    assert.equal(report.status, "ready");
+    assert.equal(report.fixtureTemplate?.source, "api");
+    assert.match(
+      report.requiredEvidence[0] ?? "",
+      /fixtures\/captures\/analytics-growth-revenue\.json/,
+    );
+    assert.ok(
+      report.validationCommands.includes(
+        "node dist/cli.js coverage capture-graduation --inventory fixtures/captures/endpoint-inventory.json",
+      ),
+    );
+    assert.ok(report.promotionBlockers.includes("active decision record"));
+  });
+
+  it("blocks capture kits for unknown capabilities", () => {
+    const report = buildCaptureKitReport(matrix(), "missing-capability", {
+      generatedAt: new Date("2026-06-25T00:00:00.000Z"),
+    });
+
+    assert.equal(report.status, "blocked");
+    assert.equal(report.capability, undefined);
+    assert.match(report.message, /not found/i);
+    assert.match(report.promotionBlockers[0] ?? "", /missing-capability/);
+  });
+
+  it("generates capture kits through file-backed CLI helpers", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-capture-kit-"));
+    try {
+      const matrixPath = join(temp, "matrix.json");
+      await writeFile(matrixPath, JSON.stringify(matrix(), null, 2));
+
+      const report = await buildCaptureKitOutput(matrixPath, "native-video-posts", {
+        fixtureDir: "fixtures/captures/native",
+      });
+
+      assert.equal(report.status, "ready");
+      assert.equal(report.capability?.status, "planning-only");
+      assert.match(report.validationCommands[0] ?? "", /native-video-posts\.json/);
     } finally {
       await rm(temp, { recursive: true, force: true });
     }

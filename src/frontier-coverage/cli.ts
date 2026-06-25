@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import {
+  buildCaptureKitReport,
   buildCaptureValidationReport,
   buildEndpointDiffReport,
   buildEndpointInventoryReport,
@@ -120,6 +121,14 @@ export async function buildCaptureGraduationOutput(
     loadEndpointInventoryReport(inventoryPath),
   ]);
   return buildGraduationCheckReport(matrix, inventory);
+}
+
+export async function buildCaptureKitOutput(
+  matrixPath: string | undefined,
+  capabilityId: string,
+  options: { fixtureDir?: string | undefined; inventoryFile?: string | undefined } = {},
+) {
+  return buildCaptureKitReport(await loadCoverageMatrix(matrixPath), capabilityId, options);
 }
 
 export function buildCoverageValidationOutput(value: unknown): CoverageValidationOutput {

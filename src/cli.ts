@@ -87,6 +87,7 @@ import {
   buildCoverageValidationOutput,
   buildCaptureFixtureValidationOutput,
   buildCaptureGraduationOutput,
+  buildCaptureKitOutput,
   buildEndpointDiffOutput,
   buildEndpointInventoryOutput,
   loadCoverageMatrix,
@@ -469,6 +470,29 @@ coverage
     console.log(JSON.stringify(output, null, 2));
     if (output.status === "blocked") process.exitCode = 1;
   });
+
+coverage
+  .command("capture-kit")
+  .description("Generate a safe endpoint capture kit for a frontier capability.")
+  .option("--matrix <file>", "Coverage matrix JSON file. Defaults to the built-in matrix.")
+  .requiredOption("--id <id>", "Capability ID to prepare")
+  .option("--fixture-dir <dir>", "Directory where the redacted fixture should live")
+  .option("--inventory <file>", "Endpoint inventory file used by graduation checks")
+  .action(
+    async (options: {
+      matrix?: string | undefined;
+      id: string;
+      fixtureDir?: string | undefined;
+      inventory?: string | undefined;
+    }) => {
+      const output = await buildCaptureKitOutput(options.matrix, options.id, {
+        fixtureDir: options.fixtureDir,
+        inventoryFile: options.inventory,
+      });
+      console.log(JSON.stringify(output, null, 2));
+      if (output.status === "blocked") process.exitCode = 1;
+    },
+  );
 
 coverage
   .command("capture-inventory")

@@ -31,6 +31,14 @@ The validator redacts cookies, authorization headers, bearer/basic tokens, long 
 
 ## Commands
 
+Generate a capability-specific capture kit before collecting evidence:
+
+```sh
+node dist/cli.js coverage capture-kit --id analytics-growth-revenue
+```
+
+The kit prints the fixture template, redaction checklist, validation commands, manual runbook, and promotion blockers for the requested capability. It does not open a browser, read local credentials, or perform live Substack actions.
+
 Validate and minimize a fixture:
 
 ```sh
@@ -78,3 +86,15 @@ Probe-only, planning-only, and manual-admin capabilities must not graduate until
 - An active decision record that explains why the surface is still conservative until review.
 
 Endpoint diffs are blocking by design. Added, removed, status-changed, hash-changed, or verification-time changes should be reviewed before updating the canonical inventory.
+
+## Capture Kit Workflow
+
+Use this sequence for every planning-only or probe-only frontier surface:
+
+1. Run `coverage capture-kit --id <capability-id>` and review the generated manual runbook.
+2. Capture against a test publication or owner-approved dashboard session.
+3. Replace the generated fixture template with minimized request/response shape only.
+4. Run the generated `capture-validate`, `capture-inventory`, `capture-graduation`, and `scan:secrets` commands.
+5. Add endpoint-capture and manual-check evidence links before proposing any status promotion.
+
+If the kit reports blockers that cannot be resolved without secrets, private subscriber data, payment/tax data, or unsupported app-only behavior, keep the surface conservative and update the decision record rather than automating it.
