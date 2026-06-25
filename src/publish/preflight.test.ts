@@ -81,6 +81,85 @@ socialImage: ftp://example.com/social.png
     assert.equal(checkStatus(report, "utm-present"), "fail");
   });
 
+  it("blocks conflicting UTM campaign values between front matter and links", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Campaign Conflict"
+campaign: launch
+utm: source=newsletter&medium=email&campaign=launch
+---
+# Campaign Conflict
+
+[Tracked link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=other)
+`,
+        "campaign-conflict.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(report.status, "blocked");
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "fail");
+  });
+
+  it("blocks inconsistent UTM values across link-only campaign links", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Link Campaign Conflict"
+---
+# Link Campaign Conflict
+
+[First](https://example.com/?utm_source=notes&utm_medium=social&utm_campaign=launch)
+[Second](https://example.com/?utm_source=linkedin&utm_medium=social&utm_campaign=launch)
+`,
+        "link-campaign-conflict.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(report.status, "blocked");
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "fail");
+  });
+
+  it("passes UTM consistency for matching front matter and tracked links", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Campaign Match"
+utm: source=newsletter&medium=email&campaign=launch
+---
+# Campaign Match
+
+[Tracked link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=launch)
+<a href="https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=launch">HTML link</a>
+`,
+        "campaign-match.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "pass");
+  });
+
   it("allows relative, anchor, and mailto markdown links while still blocking unsafe schemes", async () => {
     const valid = buildPreflightReport(
       {
