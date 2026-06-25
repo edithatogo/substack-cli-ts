@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { FRONTIER_LAUNCH_CHECKLIST } from "./launch-checklist.js";
 import { buildReleaseScorecard } from "./release-scorecard.js";
 
 describe("release scorecard", () => {
@@ -92,5 +93,21 @@ describe("release scorecard", () => {
     expect(scorecard.nextActions.some((action) => action.startsWith("script:typecheck:"))).toBe(
       true,
     );
+  });
+
+  it("blocks external status when the launch checklist is incomplete", async () => {
+    const scorecard = await buildReleaseScorecard({
+      launchChecklist: FRONTIER_LAUNCH_CHECKLIST.filter((item) => item.surface !== "npm"),
+    });
+
+    expect(scorecard.status).toBe("blocked");
+    expect(scorecard.localStatus).toBe("ready");
+    expect(scorecard.externalStatus).toBe("blocked");
+    expect(scorecard.summary.external.missingSurfaces).toEqual(["npm"]);
+    expect(
+      scorecard.nextActions.some((action) =>
+        action.startsWith("launch:npm: Add launch checklist coverage."),
+      ),
+    ).toBe(true);
   });
 });

@@ -2,6 +2,7 @@ import { access, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import {
   FRONTIER_LAUNCH_CHECKLIST,
+  type LaunchChecklistItem,
   type LaunchSurface,
   validateLaunchChecklist,
 } from "./launch-checklist.js";
@@ -48,9 +49,13 @@ export interface ReleaseScorecard {
 }
 
 export async function buildReleaseScorecard(
-  options: { baseDir?: string | undefined } = {},
+  options: {
+    baseDir?: string | undefined;
+    launchChecklist?: LaunchChecklistItem[] | undefined;
+  } = {},
 ): Promise<ReleaseScorecard> {
   const baseDir = options.baseDir ?? ".";
+  const launchChecklist = options.launchChecklist ?? FRONTIER_LAUNCH_CHECKLIST;
   const packageJson = await readJsonFile(join(baseDir, "package.json"));
   const scripts = asRecord(packageJson.scripts);
   const localReadiness: ReleaseScorecardItem[] = [
@@ -112,8 +117,8 @@ export async function buildReleaseScorecard(
     await fileItem("changelog", "CHANGELOG.md", baseDir),
   ];
 
-  const checklist = validateLaunchChecklist();
-  const externalGates: ReleaseScorecardExternalGate[] = FRONTIER_LAUNCH_CHECKLIST.map((item) => ({
+  const checklist = validateLaunchChecklist(launchChecklist);
+  const externalGates: ReleaseScorecardExternalGate[] = launchChecklist.map((item) => ({
     id: item.surface,
     title: item.title,
     status: "owner-gate",
