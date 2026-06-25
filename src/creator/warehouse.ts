@@ -169,12 +169,10 @@ export function buildFunnelReport(warehouse: WarehouseExport) {
   > = {};
 
   for (const campaign of warehouse.tables.campaigns) {
-    const id = campaignId(campaign.campaign_id);
-    byCampaign[id] ??= emptyFunnelMetrics();
+    funnelMetricsFor(byCampaign, campaign.campaign_id);
   }
   for (const post of warehouse.tables.posts) {
-    const id = campaignId(post.campaign_id);
-    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    const metrics = funnelMetricsFor(byCampaign, post.campaign_id);
     if (typeof post.file_path === "string") metrics.plannedPosts += 1;
     if (post.post_id !== null && post.post_id !== undefined) metrics.observedPosts += 1;
     metrics.views += numeric(post.views);
@@ -187,23 +185,19 @@ export function buildFunnelReport(warehouse: WarehouseExport) {
     }
   }
   for (const note of warehouse.tables.notes) {
-    const id = campaignId(note.campaign_id);
-    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    const metrics = funnelMetricsFor(byCampaign, note.campaign_id);
     metrics.scheduledNotes += 1;
   }
   for (const runLog of warehouse.tables.run_logs) {
-    const id = campaignId(runLog.campaign_id);
-    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    const metrics = funnelMetricsFor(byCampaign, runLog.campaign_id);
     if (runLog.status === "success") metrics.successfulRunLogs += 1;
   }
   for (const subscribers of warehouse.tables.subscribers) {
-    const id = campaignId(subscribers.campaign_id);
-    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    const metrics = funnelMetricsFor(byCampaign, subscribers.campaign_id);
     metrics.subscriberNetChange += numeric(subscribers.net_change);
   }
   for (const revenue of warehouse.tables.revenue) {
-    const id = campaignId(revenue.campaign_id);
-    const metrics = (byCampaign[id] ??= emptyFunnelMetrics());
+    const metrics = funnelMetricsFor(byCampaign, revenue.campaign_id);
     metrics.revenue += numeric(revenue.total_revenue);
   }
 
@@ -249,6 +243,15 @@ function emptyTables(): WarehouseExport["tables"] {
 
 function campaignId(value: unknown): string {
   return value === null || value === undefined || value === "" ? "unattributed" : String(value);
+}
+
+function funnelMetricsFor(
+  byCampaign: Record<string, ReturnType<typeof emptyFunnelMetrics>>,
+  rawCampaignId: unknown,
+): ReturnType<typeof emptyFunnelMetrics> {
+  const id = campaignId(rawCampaignId);
+  byCampaign[id] ??= emptyFunnelMetrics();
+  return byCampaign[id];
 }
 
 function emptyFunnelMetrics() {
