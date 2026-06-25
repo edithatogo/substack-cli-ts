@@ -205,6 +205,13 @@ describe("first-party artifact contract schemas", () => {
       status: "ready",
       generatedAt: "2026-06-24T00:00:00.000Z",
       staleAfterDays: 30,
+      summary: {
+        officialDocCount: 0,
+        freshOfficialDocCount: 0,
+        blockedOfficialDocCount: 0,
+        endpointDiagnosticCount: 0,
+        missingDecisionRecordCount: 0,
+      },
       officialDocs: [],
       endpointCaptureDiagnostics: [],
     });

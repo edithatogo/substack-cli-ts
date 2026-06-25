@@ -24,9 +24,13 @@ Use this workflow before upgrading any frontier coverage state, especially nativ
 npm run build
 npm run frontier:drift
 DRIFT_SNAPSHOT_FILE=path/to/snapshots.json npm run frontier:drift
+npm run frontier:drift -- --out reports/frontier-drift/report.json --issue-body-out reports/frontier-drift/issue.md
 ```
 
 The report blocks when an official doc is missing a snapshot, stale beyond the default 90-day window, changed, or unavailable.
+The optional `--issue-body-out` artifact renders a deterministic GitHub Issue body with blocked official-doc rows, missing decision records, active safe-boundary diagnostics, and the exact operator follow-up commands.
+
+The weekly Hardening workflow runs the drift monitor on scheduled and manual executions. When the report is blocked, it uploads `reports/frontier-drift/` and creates or updates a single issue titled `Frontier coverage drift requires review`, then fails the job so the roadmap cannot silently drift.
 
 ## Endpoint Capture Diagnostics
 
