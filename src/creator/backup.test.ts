@@ -174,6 +174,26 @@ describe("creator backup plans", () => {
       assert.ok(
         missingChecklist.validations.some((validation) => validation.code === "source-manifests"),
       );
+
+      const mismatchedManifests = join(temp, "mismatched-manifests.json");
+      await writeFile(
+        mismatchedManifests,
+        JSON.stringify({
+          schemaVersion: 1,
+          sources: ["warehouse.json"],
+          sourceManifests: [],
+          manualRestoreChecklist: [
+            "Keep the snapshot outside the repository and dependency directories.",
+            "Verify the redacted warehouse JSON/CSV files before restoring anything in Substack.",
+            "Recreate drafts from local Markdown files before publishing.",
+          ],
+        }),
+      );
+      const mismatched = await validateBackupSnapshotFile(mismatchedManifests);
+      assert.equal(mismatched.status, "blocked");
+      assert.ok(
+        mismatched.validations.some((validation) => validation.code === "source-manifests"),
+      );
     } finally {
       await rm(temp, { recursive: true, force: true });
     }

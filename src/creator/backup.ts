@@ -119,7 +119,10 @@ export async function validateBackupSnapshotFile(file: string): Promise<{
     });
   }
   const sourceCount = Array.isArray(plan?.sources) ? plan.sources.length : 0;
-  if (!Array.isArray(plan?.sourceManifests) || plan.sourceManifests.length !== sourceCount) {
+  const sourceManifestCount = Array.isArray(plan?.sourceManifests)
+    ? plan.sourceManifests.length
+    : -1;
+  if (sourceManifestCount !== sourceCount) {
     validations.push({
       code: "source-manifests",
       status: "fail" as const,
@@ -152,7 +155,7 @@ async function sourceExists(source: string) {
 }
 
 async function buildSourceManifest(source: string): Promise<BackupSourceManifest> {
-  const redactedSource = redactSensitive(redact(source) ?? source) ?? source;
+  const redactedSource = redactSensitive(redact(source)!)!;
   try {
     const sourceStat = await stat(source);
     if (sourceStat.isFile()) {
