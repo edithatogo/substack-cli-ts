@@ -264,6 +264,13 @@ describe("capture evidence fixtures", () => {
       false,
     );
 
+    const scalarBooleanBody = minimizeCaptureFixture(
+      fixture({
+        responseBody: true,
+      }),
+    );
+    assert.equal(scalarBooleanBody.endpoints[0]?.responseBody, true);
+
     const residual = buildCaptureValidationReport(
       fixture({
         method: "synthetic-secret-token-with-enough-length",
