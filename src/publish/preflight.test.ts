@@ -210,6 +210,81 @@ campaign: launch
     assert.equal(checkStatus(report, "utm-consistent"), "fail");
   });
 
+  it("treats shorthand UTM front matter as the campaign value", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Shorthand Campaign"
+utm: launch
+---
+# Shorthand Campaign
+
+[Tracked link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=launch)
+`,
+        "shorthand-campaign.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "pass");
+  });
+
+  it("ignores unparseable links while the link-validity check reports them", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Invalid Tracked Link"
+campaign: launch
+---
+# Invalid Tracked Link
+
+[Broken](http://[::1)
+`,
+        "invalid-tracked-link.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "links-http-valid"), "fail");
+    assert.equal(checkStatus(report, "utm-consistent"), "pass");
+  });
+
+  it("checks protocol-relative links with UTM parameters", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Protocol Relative UTM"
+campaign: launch
+---
+# Protocol Relative UTM
+
+<a href="//example.com/path?utm_source=newsletter&utm_medium=email&utm_campaign=other">Tracked</a>
+`,
+        "protocol-relative-utm.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "fail");
+  });
+
   it("allows relative, anchor, and mailto markdown links while still blocking unsafe schemes", async () => {
     const valid = buildPreflightReport(
       {
