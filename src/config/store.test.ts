@@ -10,7 +10,7 @@ import {
   saveSession,
 } from "../auth/session-store.js";
 import { configFilePath, sessionFilePath, stateDir } from "./paths.js";
-import { loadConfig, loadEffectiveConfig, updateConfig } from "./store.js";
+import { buildOperatorPolicy, loadConfig, loadEffectiveConfig, updateConfig } from "./store.js";
 
 describe("config store", () => {
   it("loads defaults when no config file exists", async () => {
@@ -19,6 +19,7 @@ describe("config store", () => {
 
       assert.equal(config.browserRuntime, "browserbase");
       assert.equal(config.defaultMode, "draft");
+      assert.equal(config.operatorMode, "solo");
       assert.equal(config.publicationUrl, undefined);
     });
   });
@@ -36,6 +37,25 @@ describe("config store", () => {
     });
   });
 
+  it("persists operator mode as non-secret local config", async () => {
+    await withTempCwd(async () => {
+      const config = await updateConfig({ operatorMode: "agency" });
+      const raw = await readFile(configFilePath(), "utf8");
+
+      assert.equal(config.operatorMode, "agency");
+      assert.match(raw, /"operatorMode": "agency"/);
+    });
+  });
+
+  it("rejects invalid operator modes", async () => {
+    await withTempCwd(async () => {
+      await assert.rejects(
+        () => updateConfig({ operatorMode: "ops" as never }),
+        /Invalid option|operatorMode/,
+      );
+    });
+  });
+
   it("prefers environment publication URL over local config", async () => {
     await withTempCwd(async () => {
       await updateConfig({ publicationUrl: "https://local.substack.com" });
@@ -69,6 +89,41 @@ describe("config store", () => {
         restoreEnv("SUBSTACK_EMAIL", previousEmail);
       }
     });
+  });
+});
+
+describe("buildOperatorPolicy", () => {
+  it("keeps all modes explicitly confirmed while changing operational defaults", () => {
+    assert.deepEqual(buildOperatorPolicy("solo"), {
+      mode: "solo",
+      requiresExplicitConfirmation: true,
+      defaultBrowserRuntime: "local",
+      secretsPolicy: "local-env",
+      retentionDays: 30,
+      multiPublication: "single",
+      auditLevel: "standard",
+    });
+    assert.deepEqual(buildOperatorPolicy("ci"), {
+      mode: "ci",
+      requiresExplicitConfirmation: true,
+      defaultBrowserRuntime: "browserbase",
+      secretsPolicy: "ci-secrets",
+      retentionDays: 14,
+      multiPublication: "review-required",
+      auditLevel: "strict",
+    });
+  });
+
+  it("uses stricter shared defaults for team and agency modes", () => {
+    assert.equal(buildOperatorPolicy("team").auditLevel, "shared");
+    assert.equal(buildOperatorPolicy("team").multiPublication, "review-required");
+    assert.equal(buildOperatorPolicy("agency").auditLevel, "strict");
+    assert.equal(buildOperatorPolicy("agency").multiPublication, "required");
+    assert.equal(buildOperatorPolicy("agency").retentionDays, 180);
+  });
+
+  it("throws explicitly for unsupported operator modes", () => {
+    assert.throws(() => buildOperatorPolicy("ops" as never), /Unsupported operator mode/);
   });
 });
 
