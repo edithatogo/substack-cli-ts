@@ -1,0 +1,23 @@
+## codex/track-43-hardening-release-slice
+ M .github/workflows/ci.yml
+ M README.md
+ M docs/api/commands.md
+ M docs/index.md
+ M docs/release-checklist.md
+ M package.json
+ M src/cli.ts
+ M src/frontier-coverage/launch-checklist.test.ts
+ M src/frontier-coverage/launch-checklist.ts
+ M src/parser/frontmatter.ts
+ M src/publish/preflight.test.ts
+ M src/publish/preflight.ts
+ M src/types.ts
+?? docs/branch-protection.md
+?? scripts/generate-sbom.mjs
+?? scripts/provenance-check.mjs
+?? scripts/release-scorecard.mjs
+?? src/creator/backup.test.ts
+?? src/creator/backup.ts
+?? src/creator/warehouse.test.ts
+?? src/creator/warehouse.ts
+?? tsconfig.strictest.json

@@ -1,0 +1,827 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 8205eed..7d235cd 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -80,6 +80,90 @@ jobs:
+       - run: npm ci && npm run build
+       - run: node dist/cli.js inspect examples/basic.md
+ 
++  strictest-typescript:
++    name: Strictest TypeScript (Advisory)
++    runs-on: ubuntu-latest
++    needs: quality
++    timeout-minutes: 10
++    continue-on-error: true
++
++    steps:
++      - uses: actions/checkout@v7
++      - uses: actions/setup-node@v6
++        with:
++          node-version: 22
++          cache: npm
++      - run: npm ci
++      - run: npm run typecheck:strictest
++
++  hardening:
++    name: Audit, Secret Scan, SBOM, and Provenance (Advisory)
++    runs-on: ubuntu-latest
++    needs: quality
++    timeout-minutes: 10
++    continue-on-error: true
++
++    steps:
++      - uses: actions/checkout@v7
++      - uses: actions/setup-node@v6
++        with:
++          node-version: 22
++          cache: npm
++      - run: npm ci
++      - name: Production Audit
++        run: npm run audit:prod
++      - name: Secret Pattern Scan
++        run: npm run scan:secrets
++      - name: Generate SBOM
++        run: npm run sbom:generate
++      - name: Provenance Configuration Check
++        run: npm run provenance:check
++      - name: Release Scorecard
++        run: npm run release:scorecard
++      - name: Upload SBOM and Scorecard
++        if: always()
++        uses: actions/upload-artifact@v7
++        with:
++          name: release-hardening-artifacts
++          path: |
++            reports/sbom/package-lock-sbom.json
++            docs/release-scorecard.md
++          if-no-files-found: ignore
++
++  experimental-dependencies:
++    name: Experimental Dependencies (Advisory)
++    runs-on: ubuntu-latest
++    if: github.event_name == 'workflow_dispatch'
++    timeout-minutes: 15
++    continue-on-error: true
++
++    strategy:
++      fail-fast: false
++      matrix:
++        lane:
++          - typescript-next
++          - playwright-next
++
++    steps:
++      - uses: actions/checkout@v7
++      - uses: actions/setup-node@v6
++        with:
++          node-version: 22
++          cache: npm
++      - run: npm ci
++      - name: Install TypeScript next
++        if: matrix.lane == 'typescript-next'
++        run: npm install --no-save --ignore-scripts typescript@next
++      - name: Install Playwright next
++        if: matrix.lane == 'playwright-next'
++        run: npm install --no-save --ignore-scripts playwright-core@next
++      - name: Typecheck
++        run: npm run typecheck
++      - name: Build
++        run: npm run build
++      - name: Smoke
++        run: node dist/cli.js inspect examples/basic.md
++
+   mutation:
+     name: Mutation
+     runs-on: ubuntu-latest
+diff --git a/README.md b/README.md
+index fcea467..d901b8b 100644
+--- a/README.md
++++ b/README.md
+@@ -142,6 +142,9 @@ node dist\cli.js live plan --title "Launch Q&A" --at 2026-05-01T11:00:00Z --audi
+ node dist\cli.js analytics snapshot --post-url https://example.substack.com/p/post --out snapshot.json --dry-run
+ node dist\cli.js analytics trend --snapshots-dir .substack-cli\analytics
+ node dist\cli.js growth report --campaign campaign.json
++node dist\cli.js warehouse export --campaign campaign.json --analytics-dir .substack-cli\analytics --run-log-dir .substack-cli\run-log --out-dir .substack-cli\warehouse
++node dist\cli.js warehouse attribution --campaign campaign.json --analytics-dir .substack-cli\analytics
++node dist\cli.js backup plan --snapshot .substack-cli\backup\snapshot.json --source .substack-cli\warehouse
+ node dist\cli.js recommendations inspect
+ node dist\cli.js boost inspect
+ node dist\cli.js comments triage --post-id 123
+diff --git a/docs/api/commands.md b/docs/api/commands.md
+index ca48ac6..bcce5e8 100644
+--- a/docs/api/commands.md
++++ b/docs/api/commands.md
+@@ -317,6 +317,63 @@ Build a campaign growth report from a campaign plan and optional snapshots.
+ | `--campaign <file>` (required) | Campaign plan JSON file |
+ | `--snapshots-dir <dir>` | Directory containing analytics snapshots |
+ 
++---
++
++## `warehouse`
++
++Export local-first Creator OS warehouse tables and attribution reports from existing campaign plans, analytics snapshots, and run logs. This surface writes local JSON/CSV only; it does not perform live Substack mutations or subscriber imports.
++
++### `warehouse export`
++
++Normalize campaigns, posts, Notes, referrers, subscriber growth probes, revenue probes, and run logs into local tables.
++
++**Options:**
++| Flag | Description | Default |
++|------|-------------|---------|
++| `--campaign <file>` | Campaign plan JSON file. Repeatable | — |
++| `--analytics-dir <dir>` | Directory containing analytics snapshot JSON or JSONL files | — |
++| `--run-log-dir <dir>` | Directory containing run-log JSON artifacts | — |
++| `--out-dir <dir>` (required) | Directory for warehouse exports | — |
++| `--format <format>` | `json`, `csv`, or `both` | `both` |
++
++### `warehouse attribution`
++
++Build a campaign/cohort attribution report from the same local inputs.
++
++**Options:**
++| Flag | Description | Default |
++|------|-------------|---------|
++| `--campaign <file>` | Campaign plan JSON file. Repeatable | — |
++| `--analytics-dir <dir>` | Directory containing analytics snapshot JSON or JSONL files | — |
++| `--run-log-dir <dir>` | Directory containing run-log JSON artifacts | — |
++| `--out <file>` | Write attribution report JSON to a file | — |
++
++---
++
++## `backup`
++
++Plan and validate redacted export-first backup snapshots. Restore remains a manual checklist because subscriber, revenue, and schedule recovery can expose private data or mutate publication state.
++
++### `backup plan`
++
++Write a redacted backup snapshot plan and validate local source artifacts.
++
++**Options:**
++| Flag | Description |
++|------|-------------|
++| `--snapshot <file>` (required) | Snapshot plan JSON output file |
++| `--publication-url <url>` | Publication URL to redact into the plan |
++| `--source <path>` | Local source path to validate. Repeatable |
++
++### `backup validate`
++
++Validate a backup snapshot plan and print the manual restore checklist.
++
++**Options:**
++| Flag | Description |
++|------|-------------|
++| `--snapshot <file>` (required) | Snapshot plan JSON file |
++
+ ### `recommendations inspect`
+ 
+ Probe recommendations availability for the current publication.
+diff --git a/docs/index.md b/docs/index.md
+index 77b3ddc..211eb53 100644
+--- a/docs/index.md
++++ b/docs/index.md
+@@ -31,6 +31,8 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
+ - [Frontier Launch/Admin Checklist](frontier-launch-admin-checklist.md) — External launch, registry, Substack admin, support, security, and rollback gates
+ - [Frontier Drift Workflow](frontier-drift-workflow.md) — Official-doc and endpoint-capture drift refresh process
+ - [Creator OS Completion Roadmap](creator-os-completion-roadmap.md) — API versioning, evidence promotion, dependency, strictness, and CI/CD hardening roadmap
++- [Branch Protection and Release Hardening](branch-protection.md) — Required and advisory checks for feature, dependency, and release work
++- [Release and External Launch Scorecard](release-scorecard.md) — Local readiness, advisory hardening, and owner/admin launch gates
+ - [Autonomous Implementation Record](integrations/autonomous-implementation-record.md) — Completed execution record and external gates for integration tracks
+ - [AI Integration Readiness](integrations/ai-readiness-matrix.md) — MCP distribution status across AI clients and registries
+ 
+diff --git a/docs/release-checklist.md b/docs/release-checklist.md
+index 19c42da..f65b6d9 100644
+--- a/docs/release-checklist.md
++++ b/docs/release-checklist.md
+@@ -16,3 +16,7 @@ Before cutting a release:
+ 12. Confirm npm publication of `@edithatogo/substack-cli`
+ 13. Submit/update MCP registry and Smithery metadata for the published version
+ 14. For feature releases that change command options, MCP tools, JSON artifacts, run-log actions, or safe-surface status, update the API contract/versioning artifacts described in [Creator OS Completion and Hardening Roadmap](creator-os-completion-roadmap.md)
++15. Run `npm run sbom:generate` and archive the generated SBOM with release evidence
++16. Run `npm run provenance:check` and confirm the publish workflow still uses npm provenance
++17. Run `npm run release:scorecard` and review [Release and External Launch Scorecard](release-scorecard.md)
++18. Confirm branch protection and dependency-lane expectations in [Branch Protection and Release Hardening](branch-protection.md)
+diff --git a/package.json b/package.json
+index 75ff84a..1de7503 100644
+--- a/package.json
++++ b/package.json
+@@ -53,6 +53,7 @@
+     "test:e2e": "vitest run --config vitest.e2e.config.ts",
+     "test:mutation": "stryker run",
+     "typecheck": "tsc --noEmit",
++    "typecheck:strictest": "tsc -p tsconfig.strictest.json --noEmit --pretty false",
+     "lint": "biome lint --diagnostic-level=error .",
+     "lint:fix": "biome lint --write --unsafe .",
+     "format": "biome format --write .",
+@@ -68,6 +69,9 @@
+     "frontier:drift": "npm run build && node scripts/frontier-coverage-drift.mjs",
+     "quality": "npm run ci && npm run knip && npm run typecheck && npm run build && npm run test:coverage",
+     "audit:prod": "npm audit --omit=dev",
++    "sbom:generate": "node scripts/generate-sbom.mjs",
++    "provenance:check": "node scripts/provenance-check.mjs",
++    "release:scorecard": "npm run build && node scripts/release-scorecard.mjs --format markdown --out docs/release-scorecard.md",
+     "knip": "knip",
+     "completions": "node dist/cli.js completion bash > scripts/completions.bash && node dist/cli.js completion zsh > scripts/completions.zsh && node dist/cli.js completion powershell > scripts/completions.ps1",
+     "bench": "node --experimental-vm-modules node_modules/.bin/vitest run src/benchmark",
+diff --git a/src/cli.ts b/src/cli.ts
+index d667f02..397cdd0 100644
+--- a/src/cli.ts
++++ b/src/cli.ts
+@@ -62,6 +62,11 @@ import {
+   validateCampaignPlan,
+ } from "./creator/campaign.js";
+ import { buildCommentTriageReport, inspectCommunitySurface } from "./creator/community.js";
++import {
++  buildBackupSnapshotPlan,
++  validateBackupSnapshotFile,
++  writeBackupSnapshotPlan,
++} from "./creator/backup.js";
+ import {
+   buildAnalyticsSnapshot,
+   buildAnalyticsTrend,
+@@ -69,6 +74,11 @@ import {
+   writeAnalyticsSnapshot,
+ } from "./creator/growth.js";
+ import { buildCreatorMediaPlan, buildLivePlan, type LiveAudience } from "./creator/media-plan.js";
++import {
++  buildAttributionReport,
++  buildWarehouseExport,
++  writeWarehouseExport,
++} from "./creator/warehouse.js";
+ import { runDoctor } from "./doctor/doctor.js";
+ import {
+   buildCoverageDecisionOutput,
+@@ -911,6 +921,103 @@ growth
+     console.log(JSON.stringify(report, null, 2));
+   });
+ 
++const warehouse = program
++  .command("warehouse")
++  .description("Export local-first Creator OS warehouse tables and attribution reports.");
++
++warehouse
++  .command("export")
++  .description("Normalize campaigns, analytics probes, and run logs into JSON/CSV tables.")
++  .option("--campaign <file>", "Campaign plan JSON file. Repeatable.", collectCampaignOption, [])
++  .option("--analytics-dir <dir>", "Directory containing analytics snapshot JSON or JSONL files")
++  .option("--run-log-dir <dir>", "Directory containing run-log JSON artifacts")
++  .requiredOption("--out-dir <dir>", "Directory for warehouse exports")
++  .option("--format <format>", "json, csv, or both", "both")
++  .action(
++    async (options: {
++      campaign: string[];
++      analyticsDir?: string | undefined;
++      runLogDir?: string | undefined;
++      outDir: string;
++      format: string;
++    }) => {
++      const format = parseWarehouseFormat(options.format);
++      const exportData = await buildWarehouseExport({
++        campaignFiles: options.campaign,
++        analyticsDir: options.analyticsDir,
++        runLogDir: options.runLogDir,
++      });
++      const written = await writeWarehouseExport(exportData, options.outDir, format);
++      console.log(JSON.stringify({ status: "ok", ...written, warehouse: exportData }, null, 2));
++    },
++  );
++
++warehouse
++  .command("attribution")
++  .description("Build a cohort/campaign attribution report from local warehouse inputs.")
++  .option("--campaign <file>", "Campaign plan JSON file. Repeatable.", collectCampaignOption, [])
++  .option("--analytics-dir <dir>", "Directory containing analytics snapshot JSON or JSONL files")
++  .option("--run-log-dir <dir>", "Directory containing run-log JSON artifacts")
++  .option("--out <file>", "Write attribution report JSON to a file")
++  .action(
++    async (options: {
++      campaign: string[];
++      analyticsDir?: string | undefined;
++      runLogDir?: string | undefined;
++      out?: string | undefined;
++    }) => {
++      const exportData = await buildWarehouseExport({
++        campaignFiles: options.campaign,
++        analyticsDir: options.analyticsDir,
++        runLogDir: options.runLogDir,
++      });
++      const report = buildAttributionReport(exportData);
++      if (options.out) {
++        await mkdir(dirname(options.out), { recursive: true });
++        await writeFile(options.out, `${JSON.stringify(report, null, 2)}\n`, "utf8");
++      }
++      console.log(
++        JSON.stringify(options.out ? { ...report, outputFile: options.out } : report, null, 2),
++      );
++    },
++  );
++
++const backup = program
++  .command("backup")
++  .description("Plan and validate redacted export-first backup snapshots.");
++
++backup
++  .command("plan")
++  .description("Write a redacted backup snapshot plan with a manual restore checklist.")
++  .requiredOption("--snapshot <file>", "Snapshot plan JSON output file")
++  .option("--publication-url <url>", "Publication URL to redact into the plan")
++  .option(
++    "--source <path>",
++    "Local source path to validate. Repeatable.",
++    collectCampaignOption,
++    [],
++  )
++  .action(async (options: { snapshot: string; publicationUrl?: string; source: string[] }) => {
++    const plan = await buildBackupSnapshotPlan({
++      snapshotFile: options.snapshot,
++      publicationUrl: options.publicationUrl,
++      sources: options.source,
++    });
++    await writeBackupSnapshotPlan(plan, options.snapshot);
++    console.log(JSON.stringify({ ...plan, outputFile: options.snapshot }, null, 2));
++    if (plan.status === "blocked") process.exitCode = 1;
++  });
++
++backup
++  .command("validate")
++  .description("Validate a backup snapshot plan and print the restore checklist.")
++  .requiredOption("--snapshot <file>", "Snapshot plan JSON file")
++  .action(async (options: { snapshot: string }) => {
++    const report = await validateBackupSnapshotFile(options.snapshot);
++    console.log(JSON.stringify(report, null, 2));
++    if (report.status === "blocked") process.exitCode = 1;
++  });
++
+ const recommendations = program
+   .command("recommendations")
+   .description("Inspect recommendations discovery surfaces.");
+@@ -4119,6 +4226,11 @@ function parseCoverageFormat(value: string): "json" | "markdown" {
+   throw new Error(`Unsupported coverage report format: ${value}. Use json or markdown.`);
+ }
+ 
++function parseWarehouseFormat(value: string): "json" | "csv" | "both" {
++  if (value === "json" || value === "csv" || value === "both") return value;
++  throw new Error(`Unsupported warehouse export format: ${value}. Use json, csv, or both.`);
++}
++
+ function parseCoverageStatus(value: string): CoverageStatus {
+   if (COVERAGE_STATUSES.includes(value as CoverageStatus)) return value as CoverageStatus;
+   throw new Error(`Unsupported coverage status: ${value}.`);
+diff --git a/src/frontier-coverage/launch-checklist.test.ts b/src/frontier-coverage/launch-checklist.test.ts
+index 848f636..f345c69 100644
+--- a/src/frontier-coverage/launch-checklist.test.ts
++++ b/src/frontier-coverage/launch-checklist.test.ts
+@@ -5,7 +5,9 @@ import {
+   FRONTIER_LAUNCH_CHECKLIST,
+   FRONTIER_LAUNCH_CHECKLIST_PATH,
+   REQUIRED_LAUNCH_SURFACES,
++  buildReleaseScorecard,
+   renderLaunchChecklist,
++  renderReleaseScorecard,
+   validateLaunchChecklist,
+ } from "./launch-checklist.js";
+ 
+@@ -47,4 +49,26 @@ describe("frontier launch checklist", () => {
+ 
+     assert.equal(checkedIn.replace(/\r\n/g, "\n"), renderLaunchChecklist().replace(/\r\n/g, "\n"));
+   });
++
++  it("builds a release scorecard that separates local readiness from owner gates", () => {
++    const scorecard = buildReleaseScorecard();
++
++    assert.equal(scorecard.operation, "release.scorecard");
++    assert.equal(scorecard.status, "ready");
++    assert.ok(scorecard.summary.ready >= 1);
++    assert.ok(scorecard.summary.ownerGated >= 1);
++    assert.ok(scorecard.summary.advisory >= 1);
++    assert.equal(scorecard.summary.blocked, 0);
++    assert.ok(scorecard.gates.some((gate) => gate.id === "sbom-provenance"));
++    assert.ok(scorecard.gates.some((gate) => gate.id === "external-launch"));
++  });
++
++  it("renders the release scorecard with advisory and owner/admin boundaries", () => {
++    const markdown = renderReleaseScorecard();
++
++    assert.match(markdown, /^# Release and External Launch Scorecard/);
++    assert.match(markdown, /Advisory gates:/);
++    assert.match(markdown, /Owner\/admin gated gates:/);
++    assert.match(markdown, /npm publish, GitHub Release creation/);
++  });
+ });
+diff --git a/src/frontier-coverage/launch-checklist.ts b/src/frontier-coverage/launch-checklist.ts
+index 57de7ed..a00ac69 100644
+--- a/src/frontier-coverage/launch-checklist.ts
++++ b/src/frontier-coverage/launch-checklist.ts
+@@ -26,6 +26,30 @@ export interface LaunchChecklistItem {
+   rollback: string;
+ }
+ 
++export type ReleaseScorecardGateStatus = "ready" | "owner-gated" | "advisory" | "blocked";
++
++export interface ReleaseScorecardGate {
++  id: string;
++  title: string;
++  status: ReleaseScorecardGateStatus;
++  localChecks: string[];
++  evidence: string[];
++  ownerGate?: string | undefined;
++  notes: string[];
++}
++
++export interface ReleaseScorecard {
++  operation: "release.scorecard";
++  status: "ready" | "blocked";
++  summary: {
++    ready: number;
++    ownerGated: number;
++    advisory: number;
++    blocked: number;
++  };
++  gates: ReleaseScorecardGate[];
++}
++
+ export const FRONTIER_LAUNCH_CHECKLIST: LaunchChecklistItem[] = [
+   {
+     surface: "npm",
+@@ -195,6 +219,124 @@ export function validateLaunchChecklist(items: LaunchChecklistItem[] = FRONTIER_
+   return { status: missing.length === 0 ? "ready" : "blocked", missing };
+ }
+ 
++export function buildReleaseScorecard(): ReleaseScorecard {
++  const gates: ReleaseScorecardGate[] = [
++    {
++      id: "local-quality",
++      title: "Local quality and packaging",
++      status: "ready",
++      localChecks: [
++        "npm run quality",
++        "npm test",
++        "node dist/cli.js inspect examples/basic.md",
++        "npm pack --dry-run --json",
++      ],
++      evidence: ["package.json", "package-lock.json", "dist/", "coverage/lcov.info"],
++      notes: ["Repo readiness is local and repeatable; it does not imply a package was published."],
++    },
++    {
++      id: "security-audit",
++      title: "Audit and secret scanning",
++      status: "advisory",
++      localChecks: ["npm run audit:prod", "npm run scan:secrets"],
++      evidence: ["scripts/secret-scan.mjs", "package-lock.json"],
++      notes: [
++        "CI keeps these checks visible in advisory lanes until false positives are consistently handled.",
++      ],
++    },
++    {
++      id: "sbom-provenance",
++      title: "SBOM and provenance readiness",
++      status: "advisory",
++      localChecks: ["npm run sbom:generate", "npm run provenance:check"],
++      evidence: ["reports/sbom/package-lock-sbom.json", ".github/workflows/publish.yml"],
++      ownerGate: "npm provenance evidence is produced by the tag-triggered publish workflow.",
++      notes: ["The local check verifies workflow intent; live provenance remains a release artifact."],
++    },
++    {
++      id: "external-launch",
++      title: "External launch and registry gates",
++      status: "owner-gated",
++      localChecks: [
++        "npm run registry:validate",
++        "npm run integrations:validate",
++        "node dist/cli.js coverage launch-check",
++      ],
++      evidence: [
++        "registry.server.json",
++        "docs/integrations/distribution-targets.md",
++        FRONTIER_LAUNCH_CHECKLIST_PATH,
++      ],
++      ownerGate:
++        "npm publish, GitHub Release creation, MCP registry submission, marketplace listings, and Substack admin changes require owner/admin action.",
++      notes: ["The CLI can validate readiness but must not perform account-gated launch actions."],
++    },
++    {
++      id: "branch-protection",
++      title: "Branch protection and dependency policy",
++      status: "owner-gated",
++      localChecks: ["Review docs/branch-protection.md"],
++      evidence: ["docs/branch-protection.md", ".github/dependabot.yml", ".github/renovate.json"],
++      ownerGate: "Repository rulesets must be configured by a maintainer in GitHub.",
++      notes: ["Required checks can be promoted only after advisory lanes are stable."],
++    },
++  ];
++
++  const summary = {
++    ready: gates.filter((gate) => gate.status === "ready").length,
++    ownerGated: gates.filter((gate) => gate.status === "owner-gated").length,
++    advisory: gates.filter((gate) => gate.status === "advisory").length,
++    blocked: gates.filter((gate) => gate.status === "blocked").length,
++  };
++
++  return {
++    operation: "release.scorecard",
++    status: summary.blocked === 0 ? "ready" : "blocked",
++    summary,
++    gates,
++  };
++}
++
++export function renderReleaseScorecard(scorecard: ReleaseScorecard = buildReleaseScorecard()): string {
++  const lines = [
++    "# Release and External Launch Scorecard",
++    "",
++    "This scorecard separates local repository readiness from advisory hardening lanes and owner/admin launch gates. It is a readiness report, not evidence that npm, GitHub Releases, registries, marketplaces, or Substack admin changes were performed.",
++    "",
++    "## Summary",
++    "",
++    `- Status: ${scorecard.status}`,
++    `- Ready gates: ${scorecard.summary.ready}`,
++    `- Advisory gates: ${scorecard.summary.advisory}`,
++    `- Owner/admin gated gates: ${scorecard.summary.ownerGated}`,
++    `- Blocked gates: ${scorecard.summary.blocked}`,
++    "",
++    "## Gates",
++    "",
++  ];
++
++  for (const gate of scorecard.gates) {
++    lines.push(
++      `### ${gate.title}`,
++      "",
++      `- ID: \`${gate.id}\``,
++      `- Status: \`${gate.status}\``,
++      "- Local checks:",
++      ...gate.localChecks.map((check) => `  - ${check}`),
++      "- Evidence:",
++      ...gate.evidence.map((evidence) => `  - ${evidence}`),
++    );
++
++    if (gate.ownerGate) {
++      lines.push(`- Owner/admin gate: ${gate.ownerGate}`);
++    }
++
++    lines.push("- Notes:", ...gate.notes.map((note) => `  - ${note}`), "");
++  }
++
++  return `${lines.join("\n").trimEnd()}\n`;
++}
++
+ export function renderLaunchChecklist(
+   items: LaunchChecklistItem[] = FRONTIER_LAUNCH_CHECKLIST,
+ ): string {
+diff --git a/src/parser/frontmatter.ts b/src/parser/frontmatter.ts
+index 0005f35..10d04ac 100644
+--- a/src/parser/frontmatter.ts
++++ b/src/parser/frontmatter.ts
+@@ -12,6 +12,7 @@ const MetadataSchema = z.object({
+   comments: z.enum(["enabled", "disabled", "paid", "free"]).optional(),
+   scheduleAt: z.string().optional(),
+   shouldSendEmail: z.coerce.boolean().optional(),
++  previewText: z.string().optional(),
+   seoTitle: z.string().optional(),
+   seoDescription: z.string().optional(),
+   socialImage: z.string().optional(),
+@@ -57,6 +58,7 @@ export function parseFrontmatter(markdown: string): FrontmatterResult {
+       comments: parsed.comments,
+       scheduleAt: parsed.scheduleAt,
+       shouldSendEmail: parsed.shouldSendEmail,
++      previewText: parsed.previewText,
+       seoTitle: parsed.seoTitle,
+       seoDescription: parsed.seoDescription,
+       socialImage: parsed.socialImage,
+diff --git a/src/publish/preflight.test.ts b/src/publish/preflight.test.ts
+index 13e8107..1be283b 100644
+--- a/src/publish/preflight.test.ts
++++ b/src/publish/preflight.test.ts
+@@ -15,12 +15,17 @@ subtitle: "Ready subtitle"
+ slug: ready-post
+ section: essays
+ tags: [ops]
++previewText: "A concise preview that fits email client inbox snippets for readers."
++canonicalUrl: https://rareinsights.substack.com/p/ready-post
++socialImage: https://example.com/cover.png
++campaign: ready-post
++audience: everyone
+ ---
+ # Ready Post
+ 
+ ![Cover](https://example.com/cover.png)
+ 
+-Body text.
++[Body link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=ready-post)
+ `,
+         "ready.md",
+       ),
+@@ -40,6 +45,42 @@ Body text.
+     );
+   });
+ 
++  it("flags deliverability and compliance gaps", async () => {
++    const prepared = {
++      mode: "publish" as const,
++      scheduleAt: undefined,
++      post: await parseMarkdownString(
++        `---
++title: "${"Long ".repeat(25)}"
++canonicalUrl: not-a-url
++socialImage: ftp://example.com/social.png
++---
++# Deliverability
++
++![missing alt](https://example.com/image.png)
++
++[Bad link](ftp://example.com/file)
++`,
++        "deliverability.md",
++      ),
++    };
++
++    prepared.post.media.assets[0]!.alt = "";
++    const report = buildPreflightReport(prepared, {
++      publicationUrl: "https://rareinsights.substack.com",
++      strict: true,
++    });
++
++    assert.equal(report.status, "blocked");
++    assert.equal(checkStatus(report, "subject-length"), "fail");
++    assert.equal(checkStatus(report, "preview-text-present"), "fail");
++    assert.equal(checkStatus(report, "canonical-url-valid"), "fail");
++    assert.equal(checkStatus(report, "social-image-valid"), "fail");
++    assert.equal(checkStatus(report, "image-alt-text"), "fail");
++    assert.equal(checkStatus(report, "links-http-valid"), "fail");
++    assert.equal(checkStatus(report, "utm-present"), "fail");
++  });
++
+   it("blocks missing publication targets and editorial placeholders", async () => {
+     const prepared = {
+       mode: "publish" as const,
+@@ -75,12 +116,17 @@ subtitle: "Ready subtitle"
+ slug: almost-ready
+ section: essays
+ tags: [ops]
++previewText: "A concise preview that fits email client inbox snippets for readers."
++canonicalUrl: https://rareinsights.substack.com/p/almost-ready
++socialImage: https://example.com/cover.png
++campaign: almost-ready
++audience: everyone
+ ---
+ # Almost Ready
+ 
+ ![Cover](https://example.com/cover.png)
+ 
+-Body.
++[Body link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=almost-ready)
+ `,
+         "almost-ready.md",
+       ),
+diff --git a/src/publish/preflight.ts b/src/publish/preflight.ts
+index f71c399..7a1ac75 100644
+--- a/src/publish/preflight.ts
++++ b/src/publish/preflight.ts
+@@ -62,6 +62,28 @@ export function buildPreflightReport(
+       "Subtitle is missing.",
+       strict,
+     ),
++    optionalCheck(
++      "preview-text-present",
++      Boolean(prepared.post.metadata.previewText ?? prepared.post.metadata.seoDescription),
++      "Preview text is present.",
++      "Preview text is missing. Add previewText or seoDescription front matter.",
++      strict,
++    ),
++    requiredCheck(
++      "subject-length",
++      title.trim().length > 0 && title.trim().length <= 90,
++      "Subject length is deliverable.",
++      "Subject should be 1-90 characters for email clients.",
++    ),
++    optionalCheck(
++      "preview-text-length",
++      isPreviewTextLengthReady(
++        prepared.post.metadata.previewText ?? prepared.post.metadata.seoDescription,
++      ),
++      "Preview text length is deliverable.",
++      "Preview text should be 35-160 characters.",
++      strict,
++    ),
+     optionalCheck(
+       "slug-present",
+       Boolean(prepared.post.metadata.slug),
+@@ -96,6 +118,64 @@ export function buildPreflightReport(
+       "Cover image is missing.",
+       strict,
+     ),
++    optionalCheck(
++      "canonical-url-present",
++      Boolean(prepared.post.metadata.canonicalUrl),
++      "Canonical URL is present.",
++      "Canonical URL is missing.",
++      strict,
++    ),
++    requiredCheck(
++      "canonical-url-valid",
++      !prepared.post.metadata.canonicalUrl || isValidHttpUrl(prepared.post.metadata.canonicalUrl),
++      "Canonical URL is valid.",
++      "Canonical URL must be an http or https URL.",
++    ),
++    optionalCheck(
++      "social-image-present",
++      Boolean(prepared.post.metadata.socialImage || prepared.post.media.assets.length > 0),
++      "Social image is present.",
++      "Social image is missing.",
++      strict,
++    ),
++    requiredCheck(
++      "social-image-valid",
++      !prepared.post.metadata.socialImage ||
++        isValidHttpUrl(prepared.post.metadata.socialImage) ||
++        !hasUrlScheme(prepared.post.metadata.socialImage),
++      "Social image reference is valid.",
++      "Social image must be an http URL or local file path.",
++    ),
++    requiredCheck(
++      "image-alt-text",
++      prepared.post.media.assets.every((asset) => Boolean(asset.alt?.trim())),
++      "All media assets have alt text.",
++      "One or more media assets are missing alt text.",
++    ),
++    requiredCheck(
++      "links-http-valid",
++      collectMarkdownLinks(prepared.post.markdown).every((url) => isValidHttpUrl(url)),
++      "Markdown links are valid http or https URLs.",
++      "One or more Markdown links are invalid or non-http URLs.",
++    ),
++    optionalCheck(
++      "utm-present",
++      Boolean(
++        prepared.post.metadata.utm ||
++          prepared.post.metadata.campaign ||
++          markdownHasUtm(prepared.post.markdown),
++      ),
++      "Campaign attribution is present.",
++      "No campaign, utm front matter, or UTM-tagged links were detected.",
++      strict,
++    ),
++    optionalCheck(
++      "audience-present",
++      Boolean(prepared.post.metadata.audience),
++      "Audience is explicit.",
++      "Audience is missing.",
++      strict,
++    ),
+     requiredCheck(
+       "no-editorial-placeholders",
+       !hasEditorialPlaceholders(prepared.post.markdown),
+@@ -248,6 +328,42 @@ function isValidSlug(value: string): boolean {
+   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+ }
+ 
++function isPreviewTextLengthReady(value: string | undefined): boolean {
++  if (!value) return false;
++  const length = value.trim().length;
++  return length >= 35 && length <= 160;
++}
++
++function isValidHttpUrl(value: string): boolean {
++  try {
++    const url = new URL(value);
++    return url.protocol === "http:" || url.protocol === "https:";
++  } catch {
++    return false;
++  }
++}
++
++function hasUrlScheme(value: string): boolean {
++  return /^[a-z][a-z0-9+.-]*:/i.test(value);
++}
++
++function collectMarkdownLinks(markdown: string): string[] {
++  const links: string[] = [];
++  for (const match of markdown.matchAll(/\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)) {
++    const url = match[1] ?? "";
++    if (!url.startsWith("#") && !url.startsWith("mailto:")) links.push(url);
++  }
++  for (const match of markdown.matchAll(/<a\s+[^>]*href=["']([^"']+)["']/gi)) {
++    const url = match[1] ?? "";
++    if (!url.startsWith("#") && !url.startsWith("mailto:")) links.push(url);
++  }
++  return links;
++}
++
++function markdownHasUtm(markdown: string): boolean {
++  return /[?&]utm_(source|medium|campaign)=/i.test(markdown);
++}
++
+ function hasEditorialPlaceholders(markdown: string): boolean {
+   const editorialToken = /\b(TODO|FIXME|TK|PLACEHOLDER)\b|\{\{\s*comment[:\s]/i;
+   if (editorialToken.test(markdown)) return true;
+diff --git a/src/types.ts b/src/types.ts
+index f23d948..44c63fe 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -11,6 +11,7 @@ export interface PostMetadata {
+   comments?: "enabled" | "disabled" | "paid" | "free" | undefined;
+   scheduleAt?: string | undefined;
+   shouldSendEmail?: boolean | undefined;
++  previewText?: string | undefined;
+   seoTitle?: string | undefined;
+   seoDescription?: string | undefined;
+   socialImage?: string | undefined;
