@@ -417,7 +417,7 @@ function parseExpectedUtm(
     return campaign ? { campaign } : undefined;
   }
 
-  const params = new URLSearchParams(frontMatterUtm);
+  const params = parseUtmSearchParams(frontMatterUtm);
   const source = normalizeUtmValue(params.get("source") ?? params.get("utm_source") ?? undefined);
   const medium = normalizeUtmValue(params.get("medium") ?? params.get("utm_medium") ?? undefined);
   const parsedCampaign = normalizeUtmValue(
@@ -449,11 +449,26 @@ function parseLinkUtm(link: string): UTMValues | undefined {
 
 function parseHttpLink(link: string): URL | undefined {
   try {
-    const url = link.startsWith("//") ? new URL(`https:${link}`) : new URL(link);
+    const url = link.startsWith("//")
+      ? new URL(`https:${link}`)
+      : new URL(link, "https://substack-cli.local");
     return url.protocol === "http:" || url.protocol === "https:" ? url : undefined;
   } catch {
     return undefined;
   }
+}
+
+function parseUtmSearchParams(value: string): URLSearchParams {
+  try {
+    const url = new URL(value);
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      return url.searchParams;
+    }
+  } catch {
+    // Fall back to key-value front matter such as source=notes&medium=social.
+  }
+
+  return new URLSearchParams(value);
 }
 
 function utmMatches(expected: UTMValues, observed: UTMValues): boolean {

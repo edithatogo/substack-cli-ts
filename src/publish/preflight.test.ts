@@ -160,6 +160,56 @@ utm: source=newsletter&medium=email&campaign=launch
     assert.equal(checkStatus(report, "utm-consistent"), "pass");
   });
 
+  it("parses full URL UTM front matter before comparing tracked links", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Full URL Campaign"
+utm: https://rareinsights.substack.com/p/post?utm_source=newsletter&utm_medium=email&utm_campaign=launch
+---
+# Full URL Campaign
+
+[Tracked link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=launch)
+`,
+        "full-url-campaign.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "pass");
+  });
+
+  it("checks relative links with UTM parameters", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Relative UTM Link"
+campaign: launch
+---
+# Relative UTM Link
+
+[Tracked link](/archive?utm_source=newsletter&utm_medium=email&utm_campaign=other)
+`,
+        "relative-utm-link.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "fail");
+  });
+
   it("allows relative, anchor, and mailto markdown links while still blocking unsafe schemes", async () => {
     const valid = buildPreflightReport(
       {
