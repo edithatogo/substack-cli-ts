@@ -169,6 +169,16 @@ export function buildPreflightReport(
       "No campaign, utm front matter, or UTM-tagged links were detected.",
       strict,
     ),
+    requiredCheck(
+      "utm-consistent",
+      isUtmConsistent(
+        prepared.post.metadata.utm,
+        prepared.post.metadata.campaign,
+        collectMarkdownLinks(prepared.post.markdown),
+      ),
+      "Campaign UTM parameters are consistent.",
+      "Campaign UTM parameters conflict between front matter and links.",
+    ),
     optionalCheck(
       "audience-present",
       Boolean(prepared.post.metadata.audience),
@@ -377,6 +387,105 @@ function isValidMarkdownLinkTarget(value: string): boolean {
 
 function markdownHasUtm(markdown: string): boolean {
   return /[?&]utm_(source|medium|campaign)=/i.test(markdown);
+}
+
+interface UTMValues {
+  source?: string | undefined;
+  medium?: string | undefined;
+  campaign?: string | undefined;
+}
+
+function isUtmConsistent(
+  frontMatterUtm: string | undefined,
+  frontMatterCampaign: string | undefined,
+  links: string[],
+): boolean {
+  const expected = parseExpectedUtm(frontMatterUtm, frontMatterCampaign);
+  const observed = links.map(parseLinkUtm).filter((utm): utm is UTMValues => utm !== undefined);
+  const baseline = expected ?? observed[0];
+  if (!baseline) return true;
+
+  return observed.every((utm) => utmMatches(baseline, utm));
+}
+
+function parseExpectedUtm(
+  frontMatterUtm: string | undefined,
+  frontMatterCampaign: string | undefined,
+): UTMValues | undefined {
+  const campaign = normalizeUtmValue(frontMatterCampaign);
+  if (!frontMatterUtm) {
+    return campaign ? { campaign } : undefined;
+  }
+
+  const params = parseUtmSearchParams(frontMatterUtm);
+  const source = normalizeUtmValue(params.get("source") ?? params.get("utm_source") ?? undefined);
+  const medium = normalizeUtmValue(params.get("medium") ?? params.get("utm_medium") ?? undefined);
+  const parsedCampaign = normalizeUtmValue(
+    params.get("campaign") ?? params.get("utm_campaign") ?? undefined,
+  );
+
+  if (source || medium || parsedCampaign) {
+    return {
+      source,
+      medium,
+      campaign: parsedCampaign ?? campaign,
+    };
+  }
+
+  return { campaign: normalizeUtmValue(frontMatterUtm) ?? campaign };
+}
+
+function parseLinkUtm(link: string): UTMValues | undefined {
+  const url = parseHttpLink(link);
+  if (!url) return undefined;
+
+  const source = normalizeUtmValue(url.searchParams.get("utm_source") ?? undefined);
+  const medium = normalizeUtmValue(url.searchParams.get("utm_medium") ?? undefined);
+  const campaign = normalizeUtmValue(url.searchParams.get("utm_campaign") ?? undefined);
+  if (!source && !medium && !campaign) return undefined;
+
+  return { source, medium, campaign };
+}
+
+function parseHttpLink(link: string): URL | undefined {
+  try {
+    const url = link.startsWith("//")
+      ? new URL(`https:${link}`)
+      : new URL(link, "https://substack-cli.local");
+    return url.protocol === "http:" || url.protocol === "https:" ? url : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function parseUtmSearchParams(value: string): URLSearchParams {
+  try {
+    const url = new URL(value);
+    if (url.protocol === "http:" || url.protocol === "https:") {
+      return url.searchParams;
+    }
+  } catch {
+    // Fall back to key-value front matter such as source=notes&medium=social.
+  }
+
+  return new URLSearchParams(value);
+}
+
+function utmMatches(expected: UTMValues, observed: UTMValues): boolean {
+  return (
+    utmFieldMatches(expected.source, observed.source) &&
+    utmFieldMatches(expected.medium, observed.medium) &&
+    utmFieldMatches(expected.campaign, observed.campaign)
+  );
+}
+
+function utmFieldMatches(expected: string | undefined, observed: string | undefined): boolean {
+  return !expected || !observed || expected === observed;
+}
+
+function normalizeUtmValue(value: string | undefined): string | undefined {
+  const normalized = value?.trim().toLowerCase();
+  return normalized ? normalized : undefined;
 }
 
 function hasEditorialPlaceholders(markdown: string): boolean {
