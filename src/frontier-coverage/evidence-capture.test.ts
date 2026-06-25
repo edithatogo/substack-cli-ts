@@ -246,6 +246,34 @@ describe("capture evidence fixtures", () => {
     assert.equal(minimized.endpoints[0]?.responseBody, undefined);
   });
 
+  it("redacts sensitive booleans and blocks residual token-like endpoint metadata", () => {
+    const booleanBody = minimizeCaptureFixture(
+      fixture({
+        responseBody: {
+          subscriber_active: true,
+          feature_enabled: false,
+        },
+      }),
+    );
+    assert.equal(
+      (booleanBody.endpoints[0]?.responseBody as Record<string, unknown>).subscriber_active,
+      "[REDACTED]",
+    );
+    assert.equal(
+      (booleanBody.endpoints[0]?.responseBody as Record<string, unknown>).feature_enabled,
+      false,
+    );
+
+    const residual = buildCaptureValidationReport(
+      fixture({
+        method: "synthetic-secret-token-with-enough-length",
+        responseBody: { ok: true },
+      }),
+    );
+    assert.equal(residual.status, "blocked");
+    assert.equal(residual.issues[0]?.code, "sensitive-value");
+  });
+
   it("keeps sensitive-value validation deterministic across repeated global regex checks", () => {
     const first = buildCaptureValidationReport(
       fixture({ responseBody: { leaked: "owner@example.com" } }),
