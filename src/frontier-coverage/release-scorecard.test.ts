@@ -19,9 +19,34 @@ describe("release scorecard", () => {
     expect(scorecard.localReadiness.some((item) => item.id === "release:package-public")).toBe(
       true,
     );
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "release:package-name" && item.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "release:mcp-name" && item.status === "ready",
+      ),
+    ).toBe(true);
     expect(scorecard.localReadiness.some((item) => item.id === "file:strictest-tsconfig")).toBe(
       true,
     );
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "file:publish-provenance" && item.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "file:publish-oidc" && item.status === "ready",
+      ),
+    ).toBe(true);
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "file:branch-protection" && item.status === "ready",
+      ),
+    ).toBe(true);
     expect(scorecard.externalGates.length).toBeGreaterThan(0);
     expect(scorecard.externalGates.every((item) => item.status === "owner-gate")).toBe(true);
     expect(scorecard.externalGates.every((item) => item.checks.length > 0)).toBe(true);
@@ -56,6 +81,8 @@ describe("release scorecard", () => {
         repository: {
           url: "git+https://example.test/repo.git",
         },
+        name: "@edithatogo/substack-cli",
+        mcpName: "io.github.edithatogo/substack-cli",
       }),
     );
     await writeFile(join(temp, "tsconfig.strictest.json"), "{}");
@@ -137,14 +164,20 @@ describe("release scorecard", () => {
           access: "public",
         },
         repository: "github:edithatogo/substack-cli-ts",
+        name: "@edithatogo/substack-cli",
+        mcpName: "io.github.edithatogo/substack-cli",
       }),
     );
     await writeFile(join(temp, "docs", "api", "substack-cli.contract.json"), "{}");
     await writeFile(join(temp, "docs", "api", "substack-cli.schema.json"), "{}");
     await writeFile(join(temp, "tsconfig.strictest.json"), "{}");
     await writeFile(join(temp, ".github", "workflows", "hardening.yml"), "name: Hardening\n");
-    await writeFile(join(temp, ".github", "workflows", "publish.yml"), "name: Publish\n");
+    await writeFile(
+      join(temp, ".github", "workflows", "publish.yml"),
+      "name: Publish\npermissions:\n  id-token: write\njobs:\n  publish:\n    steps:\n      - run: npm publish --provenance --access public\n",
+    );
     await writeFile(join(temp, "docs", "release-checklist.md"), "# Release\n");
+    await writeFile(join(temp, "docs", "branch-protection.md"), "# Branch Protection\n");
     await writeFile(join(temp, "SECURITY.md"), "# Security\n");
     await writeFile(join(temp, "CHANGELOG.md"), "# Changelog\n");
 
@@ -159,6 +192,61 @@ describe("release scorecard", () => {
     expect(
       scorecard.localReadiness.some(
         (item) => item.id === "release:repository-url" && item.status === "ready",
+      ),
+    ).toBe(true);
+  });
+
+  it("blocks provenance readiness when publish workflow lacks provenance or OIDC", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-scorecard-provenance-"));
+    await mkdir(join(temp, ".github", "workflows"), { recursive: true });
+    await mkdir(join(temp, "docs", "api"), { recursive: true });
+    await writeFile(
+      join(temp, "package.json"),
+      JSON.stringify({
+        scripts: {
+          typecheck: "tsc --noEmit",
+          test: "vitest run",
+          "test:coverage": "vitest run --coverage",
+          "frontier:drift": "node drift.js",
+          "audit:prod": "npm audit --omit=dev",
+          "scan:secrets": "node scan.js",
+          sbom: "node sbom.js",
+          prepublishOnly: "npm run quality",
+        },
+        private: false,
+        name: "@edithatogo/substack-cli",
+        mcpName: "io.github.edithatogo/substack-cli",
+        bin: {
+          "substack-cli": "dist/cli.js",
+        },
+        files: ["dist"],
+        publishConfig: {
+          access: "public",
+        },
+        repository: "github:edithatogo/substack-cli-ts",
+      }),
+    );
+    await writeFile(join(temp, "docs", "api", "substack-cli.contract.json"), "{}");
+    await writeFile(join(temp, "docs", "api", "substack-cli.schema.json"), "{}");
+    await writeFile(join(temp, "tsconfig.strictest.json"), "{}");
+    await writeFile(join(temp, ".github", "workflows", "hardening.yml"), "name: Hardening\n");
+    await writeFile(join(temp, ".github", "workflows", "publish.yml"), "name: Publish\n");
+    await writeFile(join(temp, "docs", "release-checklist.md"), "# Release\n");
+    await writeFile(join(temp, "docs", "branch-protection.md"), "# Branch Protection\n");
+    await writeFile(join(temp, "SECURITY.md"), "# Security\n");
+    await writeFile(join(temp, "CHANGELOG.md"), "# Changelog\n");
+
+    const scorecard = await buildReleaseScorecard({ baseDir: temp });
+
+    expect(scorecard.localStatus).toBe("blocked");
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "file:publish-provenance" && item.status === "blocked",
+      ),
+    ).toBe(true);
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "file:publish-oidc" && item.status === "blocked",
       ),
     ).toBe(true);
   });

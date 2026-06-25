@@ -98,6 +98,24 @@ export async function buildReleaseScorecard(
         blocked: "Set publishConfig.access to public.",
       },
     ),
+    releaseMetadataItem(
+      "package-name",
+      packageJson.name === "@edithatogo/substack-cli",
+      "package.json",
+      {
+        ready: "Registry package name is stable.",
+        blocked: "Set package.json name to @edithatogo/substack-cli.",
+      },
+    ),
+    releaseMetadataItem(
+      "mcp-name",
+      typeof packageJson.mcpName === "string" && packageJson.mcpName.length > 0,
+      "package.json",
+      {
+        ready: "MCP registry package name is declared.",
+        blocked: "Declare package.json mcpName for registry consumers.",
+      },
+    ),
     releaseMetadataItem("repository-url", hasRepository(packageJson.repository), "package.json", {
       ready: "Repository URL is declared.",
       blocked: "Declare package repository.url for release consumers.",
@@ -107,7 +125,28 @@ export async function buildReleaseScorecard(
     await fileItem("strictest-tsconfig", "tsconfig.strictest.json", baseDir),
     await fileItem("hardening-workflow", ".github/workflows/hardening.yml", baseDir),
     await fileItem("publish-workflow", ".github/workflows/publish.yml", baseDir),
+    await fileTextItem(
+      "publish-provenance",
+      ".github/workflows/publish.yml",
+      "npm publish --provenance --access public",
+      baseDir,
+      {
+        ready: "Publish workflow uses npm provenance.",
+        blocked: "Publish workflow must run npm publish --provenance --access public.",
+      },
+    ),
+    await filePatternItem(
+      "publish-oidc",
+      ".github/workflows/publish.yml",
+      /id-token:\s*write/,
+      baseDir,
+      {
+        ready: "Publish workflow grants OIDC id-token write.",
+        blocked: "Publish workflow needs id-token: write for npm provenance.",
+      },
+    ),
     await fileItem("release-checklist", "docs/release-checklist.md", baseDir),
+    await fileItem("branch-protection", "docs/branch-protection.md", baseDir),
     await fileItem("security-policy", "SECURITY.md", baseDir),
     await fileItem("changelog", "CHANGELOG.md", baseDir),
   ];
@@ -192,6 +231,49 @@ async function fileItem(id: string, path: string, baseDir: string): Promise<Rele
     status: exists ? "ready" : "blocked",
     evidence: [path],
     nextAction: exists ? undefined : `Generate or document ${path}.`,
+  };
+}
+
+async function fileTextItem(
+  id: string,
+  path: string,
+  expectedText: string,
+  baseDir: string,
+  messages: { ready: string; blocked: string },
+): Promise<ReleaseScorecardItem> {
+  return fileContentItem(id, path, baseDir, messages, (content) => content.includes(expectedText));
+}
+
+async function filePatternItem(
+  id: string,
+  path: string,
+  pattern: RegExp,
+  baseDir: string,
+  messages: { ready: string; blocked: string },
+): Promise<ReleaseScorecardItem> {
+  return fileContentItem(id, path, baseDir, messages, (content) => pattern.test(content));
+}
+
+async function fileContentItem(
+  id: string,
+  path: string,
+  baseDir: string,
+  messages: { ready: string; blocked: string },
+  predicate: (content: string) => boolean,
+): Promise<ReleaseScorecardItem> {
+  const fullPath = join(baseDir, path);
+  let ready = false;
+  try {
+    ready = predicate(await readFile(fullPath, "utf8"));
+  } catch {
+    ready = false;
+  }
+  return {
+    id: `file:${id}`,
+    title: ready ? messages.ready : path,
+    status: ready ? "ready" : "blocked",
+    evidence: [path],
+    nextAction: ready ? undefined : messages.blocked,
   };
 }
 
