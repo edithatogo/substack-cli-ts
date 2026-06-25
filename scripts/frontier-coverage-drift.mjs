@@ -28,18 +28,23 @@ process.exitCode = report.status === "blocked" ? 1 : 0;
 function parseArgs(argv) {
   const parsed = {};
   const positional = [];
-  for (let index = 0; index < argv.length; index += 1) {
+  let index = 0;
+  while (index < argv.length) {
     const arg = argv[index];
     if (arg === "--out") {
-      parsed.out = requireValue(argv, (index += 1), arg);
+      parsed.out = requireValue(argv, index + 1, arg);
+      index += 2;
     } else if (arg === "--issue-body-out") {
-      parsed.issueBodyOut = requireValue(argv, (index += 1), arg);
+      parsed.issueBodyOut = requireValue(argv, index + 1, arg);
+      index += 2;
     } else if (arg === "--snapshot-file") {
-      parsed.snapshotFile = requireValue(argv, (index += 1), arg);
+      parsed.snapshotFile = requireValue(argv, index + 1, arg);
+      index += 2;
     } else if (arg.startsWith("--")) {
       throw new Error(`Unknown option: ${arg}`);
     } else {
       positional.push(arg);
+      index += 1;
     }
   }
   if (!parsed.snapshotFile && positional[0]) parsed.snapshotFile = positional[0];

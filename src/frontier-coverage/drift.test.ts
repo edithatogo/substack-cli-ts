@@ -32,6 +32,16 @@ describe("frontier coverage drift", () => {
     });
   });
 
+  it("builds a default drift report from the canonical matrix", () => {
+    const report = buildFrontierDriftReport();
+
+    assert.equal(report.operation, "coverage.drift");
+    assert.equal(report.status, "blocked");
+    assert.ok(report.generatedAt.length > 0);
+    assert.equal(report.staleAfterDays, 90);
+    assert.ok(report.summary.officialDocCount > 0);
+  });
+
   it("blocks stale, changed, unavailable, and missing official evidence", () => {
     const report = buildFrontierDriftReport({
       matrix: matrix(),
@@ -164,6 +174,22 @@ describe("frontier coverage drift", () => {
     assert.match(body, /Capture or manual\/admin decision remains active/);
     assert.equal(report.summary.endpointDiagnosticCount, 1);
     assert.equal(report.summary.missingDecisionRecordCount, 0);
+  });
+
+  it("renders missing-snapshot rows without optional checkedAt or notes", () => {
+    const report = buildFrontierDriftReport({
+      matrix: matrix(),
+      snapshots: [],
+      now: new Date("2026-06-16T00:00:00.000Z"),
+    });
+
+    const body = renderFrontierDriftIssueBody(report);
+
+    assert.match(
+      body,
+      /missing-snapshot: Video docs \(video-doc\) - https:\/\/support\.substack\.com\/video/,
+    );
+    assert.doesNotMatch(body, /checked /);
   });
 
   it("parses snapshot fixtures and rejects invalid shapes", () => {

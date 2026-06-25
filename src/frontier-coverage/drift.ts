@@ -1,6 +1,10 @@
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
 import type { CoverageCapability, CoverageMatrix } from "./schema.js";
 
+const BLOCKING_OFFICIAL_DOC_STATUSES = new Set<
+  FrontierDriftReport["officialDocs"][number]["status"]
+>(["missing-snapshot", "stale", "changed", "unavailable"]);
+
 export interface DriftEvidenceSnapshot {
   ref: string;
   checkedAt: string;
@@ -97,15 +101,13 @@ export function buildFrontierDriftReport(
     }));
 
   const blocked =
-    officialDocs.some((doc) =>
-      ["missing-snapshot", "stale", "changed", "unavailable"].includes(doc.status),
-    ) ||
+    officialDocs.some((doc) => BLOCKING_OFFICIAL_DOC_STATUSES.has(doc.status)) ||
     endpointCaptureDiagnostics.some(
       (diagnostic) => diagnostic.decisionRecordId === "missing-decision-record",
     );
 
   const blockedOfficialDocs = officialDocs.filter((doc) =>
-    ["missing-snapshot", "stale", "changed", "unavailable"].includes(doc.status),
+    BLOCKING_OFFICIAL_DOC_STATUSES.has(doc.status),
   );
   const missingDecisionRecordCount = endpointCaptureDiagnostics.filter(
     (diagnostic) => diagnostic.decisionRecordId === "missing-decision-record",
@@ -130,7 +132,7 @@ export function buildFrontierDriftReport(
 
 export function renderFrontierDriftIssueBody(report: FrontierDriftReport): string {
   const blockedDocs = report.officialDocs.filter((doc) =>
-    ["missing-snapshot", "stale", "changed", "unavailable"].includes(doc.status),
+    BLOCKING_OFFICIAL_DOC_STATUSES.has(doc.status),
   );
   const missingDecisionRecords = report.endpointCaptureDiagnostics.filter(
     (diagnostic) => diagnostic.decisionRecordId === "missing-decision-record",
