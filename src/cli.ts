@@ -5337,8 +5337,9 @@ config
   .command("set-operator-mode")
   .description("Set operator defaults for solo, team, agency, or CI use.")
   .argument("<mode>", "solo, team, agency, or ci")
-  .action(async (mode: OperatorMode) => {
-    const next = await updateConfig({ operatorMode: mode });
+  .action(async (mode: string) => {
+    const operatorMode = parseOperatorMode(mode);
+    const next = await updateConfig({ operatorMode });
     console.log(
       JSON.stringify(
         {
@@ -5705,6 +5706,13 @@ function parseLiveAudience(value: string): LiveAudience {
     return value;
   }
   throw new Error(`Unsupported live audience "${value}". Use everyone, subscribers, or paid.`);
+}
+
+function parseOperatorMode(value: string): OperatorMode {
+  if (value === "solo" || value === "team" || value === "agency" || value === "ci") {
+    return value;
+  }
+  throw new Error(`Unsupported operator mode "${value}". Use solo, team, agency, or ci.`);
 }
 
 program.parseAsync().catch((error: unknown) => {

@@ -103,6 +103,8 @@ export function buildOperatorPolicy(mode: OperatorMode): OperatorPolicy {
         multiPublication: "review-required",
         auditLevel: "strict",
       };
+    default:
+      throw new Error(`Unsupported operator mode: ${String(mode)}`);
   }
 }
 

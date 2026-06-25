@@ -121,6 +121,10 @@ describe("buildOperatorPolicy", () => {
     assert.equal(buildOperatorPolicy("agency").multiPublication, "required");
     assert.equal(buildOperatorPolicy("agency").retentionDays, 180);
   });
+
+  it("throws explicitly for unsupported operator modes", () => {
+    assert.throws(() => buildOperatorPolicy("ops" as never), /Unsupported operator mode/);
+  });
 });
 
 describe("requireSubstackCredentials", () => {
