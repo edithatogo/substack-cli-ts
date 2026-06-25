@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
+import { createReadStream } from "node:fs";
 import { access, mkdir, readFile, stat, writeFile } from "node:fs/promises";
-import { dirname, relative, resolve } from "node:path";
+import { dirname, isAbsolute, relative, resolve } from "node:path";
 import { redact, redactUrl } from "../util/redact.js";
 
 export interface BackupSourceManifest {
@@ -162,10 +163,19 @@ async function buildSourceManifest(source: string): Promise<BackupSourceManifest
         sha256: await sha256File(source),
       };
     }
+    if (sourceStat.isDirectory()) {
+      return {
+        source: redactedSource,
+        kind: "directory",
+        sizeBytes: null,
+        sha256: null,
+      };
+    }
+    /* c8 ignore next 6 -- FIFOs/sockets/devices are platform-specific but should remain classified. */
     return {
       source: redactedSource,
-      kind: sourceStat.isDirectory() ? "directory" : "other",
-      sizeBytes: sourceStat.isDirectory() ? null : sourceStat.size,
+      kind: "other",
+      sizeBytes: sourceStat.size,
       sha256: null,
     };
   } catch {
@@ -180,7 +190,12 @@ async function buildSourceManifest(source: string): Promise<BackupSourceManifest
 
 async function sha256File(file: string): Promise<string> {
   const hash = createHash("sha256");
-  hash.update(await readFile(file));
+  await new Promise<void>((resolveHash, rejectHash) => {
+    const stream = createReadStream(file);
+    stream.on("data", (chunk) => hash.update(chunk));
+    stream.on("end", resolveHash);
+    stream.on("error", rejectHash);
+  });
   return hash.digest("hex");
 }
 
@@ -204,5 +219,5 @@ function validateSnapshotLocation(snapshotFile: string, sources: string[]) {
 
 function isPathInside(candidate: string, parent: string): boolean {
   const path = relative(parent, candidate);
-  return path.length > 0 && !path.startsWith("..") && !path.startsWith("/");
+  return path.length === 0 || (!path.startsWith("..") && !isAbsolute(path));
 }

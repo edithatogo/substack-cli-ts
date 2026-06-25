@@ -48,6 +48,17 @@ describe("creator backup plans", () => {
         sources: [source],
       });
       assert.equal(nonPrivateUrl.publicationUrl, "https://private.example/p/public");
+
+      const privateSource = join(temp, "account@example.com.json");
+      await writeFile(privateSource, "{}");
+      const privateSourcePlan = await buildBackupSnapshotPlan({
+        snapshotFile: join(temp, "snapshot-private-source.json"),
+        sources: [privateSource],
+      });
+      assert.doesNotMatch(
+        privateSourcePlan.sourceManifests[0]?.source ?? "",
+        /account@example\.com/,
+      );
     } finally {
       await rm(temp, { recursive: true, force: true });
     }
@@ -111,6 +122,27 @@ describe("creator backup plans", () => {
       const plan = await buildBackupSnapshotPlan({
         snapshotFile: join(sourceDir, "snapshot.json"),
         sources: [sourceDir],
+      });
+
+      assert.equal(plan.status, "blocked");
+      assert.equal(
+        plan.validations.find((validation) => validation.code === "snapshot-location")?.status,
+        "fail",
+      );
+    } finally {
+      await rm(temp, { recursive: true, force: true });
+    }
+  });
+
+  it("blocks snapshots that would overwrite a source artifact", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-backup-same-path-"));
+    try {
+      const source = join(temp, "warehouse.json");
+      await writeFile(source, "{}");
+
+      const plan = await buildBackupSnapshotPlan({
+        snapshotFile: source,
+        sources: [source],
       });
 
       assert.equal(plan.status, "blocked");
