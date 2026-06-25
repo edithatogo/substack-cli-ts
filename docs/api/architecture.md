@@ -207,15 +207,15 @@ The CLI maintains a local JSON file (`.substack-cli/draft-mappings.json`) that m
 
 ## API Contract Versioning
 
-The current API documentation is comprehensive but not yet a formal generated contract. The command reference, architecture notes, fixtures, and coverage matrix describe the supported behavior, but they are not a dynamically versioned CLI/MCP/artifact schema.
+The local API contract is generated from `src/contracts/` into `docs/api/substack-cli.contract.json` and `docs/api/substack-cli.schema.json`. The versioning policy is documented in [API Contract Versioning](versioning.md), and the hardening rationale is documented in [Creator OS Completion and Hardening Roadmap](../creator-os-completion-roadmap.md).
 
-The target contract system is documented in [Creator OS Completion and Hardening Roadmap](../creator-os-completion-roadmap.md). It should version the local `substack-cli` contract, including command options, MCP tools/resources, JSON artifacts, run-log actions, and safe-surface statuses. It must not imply that Substack private endpoints are stable public APIs.
+The contract versions the local `substack-cli` surface, including command options, MCP tools/resources, JSON artifacts, run-log actions, and safe-surface statuses. It must not imply that Substack private endpoints are stable public APIs.
 
-Expected properties:
+Contract properties:
 
 - A semver `contractVersion` for the generated local contract.
 - Per-artifact `schemaVersion`, `minCliVersion`, and `generatedBy` fields.
-- Snapshot tests that fail when command, MCP, artifact, or run-log surfaces change without a versioning decision.
+- Snapshot tests and `npm run contracts:check` fail when command, MCP, artifact, or run-log surfaces change without a generated artifact update.
 - Endpoint evidence hashes and `lastVerifiedAt` metadata for captured private Substack contracts.
 - Compatibility notes that distinguish local CLI compatibility from private Substack endpoint drift.
 

@@ -260,7 +260,6 @@ export async function fetchAnalyticsInventory(
   fetchFn: FetchLike,
   postId?: number,
 ): Promise<AnalyticsInventoryResult> {
-  const _headers = apiHeaders(material);
   const endpoints: string[] = [];
   let postAnalytics: PostAnalyticsResult | null = null;
   let subscriberGrowth: SubscriberGrowthResult | null = null;

@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.strictest.json",
+  "compilerOptions": {
+    "skipLibCheck": false,
+    "noPropertyAccessFromIndexSignature": false
+  }
+}

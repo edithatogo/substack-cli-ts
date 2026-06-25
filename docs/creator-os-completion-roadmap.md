@@ -8,13 +8,13 @@ This roadmap extends the Creator OS plan beyond feature enumeration. Its goal is
 - Architecture documentation exists in `docs/api/architecture.md`.
 - Endpoint captures and draft contract matrices exist for selected internal Substack API paths.
 - The frontier coverage matrix records coverage status, evidence, fallback paths, safety class, decision records, and owner/admin gates.
-- A formal, machine-readable, dynamically versioned API contract is not yet complete. The current API documentation is comprehensive prose plus fixtures, not a generated API/CLI/MCP specification with compatibility metadata.
+- A formal, machine-readable, dynamically versioned local API contract is implemented through `docs/api/substack-cli.contract.json`, `docs/api/substack-cli.schema.json`, `docs/api/versioning.md`, and `src/contracts/`. It versions the CLI, MCP, first-party artifacts, run-log actions, and safe-surface posture without claiming Substack private endpoints are stable public APIs.
 
 ## API and Contract Versioning Target
 
-Add a generated contract package that represents the public local API surface of this project, not a promise that Substack's private endpoints are stable.
+Maintain the generated contract package that represents the public local API surface of this project, not a promise that Substack's private endpoints are stable.
 
-Required artifacts:
+Implemented artifacts:
 
 - `docs/api/substack-cli.contract.json`: generated CLI, MCP, artifact, run-log, and safe-surface contract.
 - `docs/api/substack-cli.schema.json`: JSON Schema for first-party local artifacts such as campaign plans, analytics snapshots, media plans, live plans, run logs, drift snapshots, and coverage matrices.
@@ -92,39 +92,38 @@ These features should be evaluated as differentiators rather than dashboard pari
 
 ## CI/CD Hardening Options
 
-Current CI already runs Biome, Knip, TypeScript, build, coverage, mutation, smoke, production audit, and secret scanning. The E2E job is workflow-dispatch only, not automatic on pull requests or pushes. Production Audit and Secret Pattern Scan currently use advisory `continue-on-error` behavior in CI, so making them required is a deliberate hardening step rather than the current baseline.
+Current CI runs Biome, Knip, TypeScript, build, coverage, mutation, smoke, production audit, and secret scanning. The E2E job is workflow-dispatch only, not automatic on pull requests or pushes. Production Audit and Secret Pattern Scan are required in the main CI and hardening workflows.
 
-Recommended additions:
+Implemented additions:
 
-- Make production audit and secret scanning required once false positives are handled.
-- Add a Node compatibility matrix for the supported engine range and a separate `next` lane.
-- Add an experimental dependency lane for canary/beta packages without blocking normal merges.
-- Generate and diff the CLI/MCP/API contract in CI.
-- Add a custom SBOM generation script, package provenance verification, and package contents assertions.
-- Upload SLSA/npm provenance evidence and make it visible in the release scorecard.
-- Add branch protection/ruleset documentation listing required checks for dependency PRs and feature PRs.
-- Keep mutation testing advisory until runtime is stable, then raise thresholds per module rather than globally.
+- Production audit and secret scanning are required once false positives are handled.
+- A Node compatibility matrix covers the supported engine range.
+- Experimental dependency lanes cover canary/beta packages without blocking normal merges.
+- CLI/MCP/API contracts are generated and diffed with `npm run contracts:check`.
+- SBOM generation, package provenance verification, and package contents assertions are represented in release readiness.
+- Branch protection/ruleset documentation lists required checks for dependency PRs and feature PRs.
+- Mutation testing runs in CI; thresholds can continue to rise per module as the suite matures.
 
 ## Strictness Options
 
-The root `tsconfig.json` already enables `strict`, `exactOptionalPropertyTypes`, and `noUncheckedIndexedAccess`. Stricter settings to consider:
+The root `tsconfig.json` enables `strict`, `exactOptionalPropertyTypes`, and `noUncheckedIndexedAccess`. `tsconfig.strictest.json` now enforces the stable source strictness lane, while index-signature and dependency-declaration strictness remain separate advisory lanes to avoid mixing useful source gates with noisy dynamic API mappers or upstream `.d.ts` drift.
 
 - `noImplicitOverride`: catches accidental method overrides in future class-heavy adapters.
 - `noImplicitReturns`: forces explicit command and parser return paths.
 - `noFallthroughCasesInSwitch`: protects status and domain switch logic.
-- `noPropertyAccessFromIndexSignature`: makes dynamic endpoint and fixture maps more explicit.
+- `noPropertyAccessFromIndexSignature`: makes dynamic endpoint and fixture maps more explicit; tracked in `tsconfig.index-signature-strict.json` until dynamic Substack response mappers are migrated.
 - `noUnusedLocals` and `noUnusedParameters`: suitable after generated and test-helper churn is controlled.
 - `verbatimModuleSyntax`: aligns ESM imports with emitted JavaScript more strictly.
 - `isolatedDeclarations`: useful if the package starts publishing typed subpath exports.
 - `noUncheckedSideEffectImports`: useful once CSS/assets or setup-only imports are isolated.
-- `skipLibCheck: false`: useful as a nightly or dependency-lane gate before enabling on every PR.
+- `skipLibCheck: false`: tracked in `tsconfig.dependency-strict.json` before enabling on every PR.
 
 Recommended adoption path:
 
-1. Add `tsconfig.strictest.json` as an advisory CI job.
-2. Fix warnings in source modules first, then tests.
-3. Promote stable strict flags into `tsconfig.json`.
-4. Keep dependency-induced flags, especially `skipLibCheck: false`, in a scheduled lane until the dependency tree is quiet.
+1. Keep `tsconfig.strictest.json` as an enforced source hardening job.
+2. Migrate dynamic response maps toward `noPropertyAccessFromIndexSignature` in focused slices.
+3. Promote stable strict flags into `tsconfig.json` only after they are quiet in feature work.
+4. Keep dependency-induced flags, especially `skipLibCheck: false`, in an advisory lane until the dependency tree is quiet.
 
 ## Dependency Options
 

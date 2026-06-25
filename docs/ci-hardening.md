@@ -9,10 +9,15 @@ This repo separates stable merge gates from experimental hardening lanes so feat
 - `Hardening / Required Audit And Secret Scan`: production dependency audit and secret-pattern scan without advisory `continue-on-error`.
 - `Hardening / Node Compatibility`: build and smoke tests across the supported Node line.
 
+## Strictness Lanes
+
+- `Hardening / Strictest TypeScript`: runs `tsconfig.strictest.json` with stricter source compiler flags and is a required hardening check.
+- `Hardening / Index Signature Strictness`: runs `tsconfig.index-signature-strict.json` as an advisory migration lane for dynamic Substack response maps.
+- `Hardening / Dependency Declaration Strictness`: runs `tsconfig.dependency-strict.json` with library checking enabled as an advisory lane for upstream declaration compatibility.
+
 ## Advisory Lanes
 
-- `Hardening / Strictest TypeScript`: runs `tsconfig.strictest.json` with stricter compiler flags. It is advisory until source modules pass consistently.
-- `CI / Mutation`: remains advisory until module-level mutation thresholds are stable.
+- `CI / Mutation`: remains review-required while module-level mutation thresholds continue to mature.
 - `Hardening / Experimental Dependency Lane`: scheduled or manually dispatched only. It installs one prerelease lane with `--no-save` and keeps normal PRs on stable dependency releases. Current lanes are `playwright-next`, `stagehand-alpha`, `typescript-rc`, `typescript-next`, `vitest-beta`, `zod-canary`, and `prettier-alpha`.
 
 Run an experimental lane locally with:
@@ -60,4 +65,4 @@ Require these checks for feature and dependency PRs after the generated API cont
 - generated contract check
 - frontier drift check
 
-Keep strictest TypeScript, mutation, E2E, and experimental dependency checks advisory until their false-positive and fixture requirements are resolved.
+Keep index-signature strictness, dependency declaration strictness, E2E, and experimental dependency checks advisory until their false-positive, upstream declaration, and fixture requirements are resolved. Treat mutation as review-required and CI-visible; raise module thresholds gradually rather than using one global jump.

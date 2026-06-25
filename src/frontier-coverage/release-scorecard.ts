@@ -60,6 +60,7 @@ export async function buildReleaseScorecard(
   const scripts = asRecord(packageJson.scripts);
   const localReadiness: ReleaseScorecardItem[] = [
     scriptItem("typecheck", scripts),
+    scriptItem("typecheck:strictest", scripts),
     scriptItem("test", scripts),
     scriptItem("test:coverage", scripts),
     scriptItem("frontier:drift", scripts),

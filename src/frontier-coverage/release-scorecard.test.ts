@@ -14,6 +14,11 @@ describe("release scorecard", () => {
     expect(scorecard.externalStatus).toBe("owner-gated");
     expect(scorecard.releaseVerdict).toBe("ready-for-owner-launch");
     expect(scorecard.summary.local.blocked).toBe(0);
+    expect(
+      scorecard.localReadiness.some(
+        (item) => item.id === "script:typecheck:strictest" && item.status === "ready",
+      ),
+    ).toBe(true);
     expect(scorecard.localReadiness.some((item) => item.id === "script:sbom")).toBe(true);
     expect(scorecard.localReadiness.some((item) => item.id === "script:prepublishOnly")).toBe(true);
     expect(scorecard.localReadiness.some((item) => item.id === "release:package-public")).toBe(
@@ -62,6 +67,7 @@ describe("release scorecard", () => {
       JSON.stringify({
         scripts: {
           typecheck: "tsc --noEmit",
+          "typecheck:strictest": "tsc -p tsconfig.strictest.json",
           test: "vitest run",
           "test:coverage": "vitest run --coverage",
           "frontier:drift": "node drift.js",
@@ -147,6 +153,7 @@ describe("release scorecard", () => {
       JSON.stringify({
         scripts: {
           typecheck: "tsc --noEmit",
+          "typecheck:strictest": "tsc -p tsconfig.strictest.json",
           test: "vitest run",
           "test:coverage": "vitest run --coverage",
           "frontier:drift": "node drift.js",
@@ -205,6 +212,7 @@ describe("release scorecard", () => {
       JSON.stringify({
         scripts: {
           typecheck: "tsc --noEmit",
+          "typecheck:strictest": "tsc -p tsconfig.strictest.json",
           test: "vitest run",
           "test:coverage": "vitest run --coverage",
           "frontier:drift": "node drift.js",

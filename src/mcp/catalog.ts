@@ -52,7 +52,6 @@ import {
   summarizeApiAuthMaterial,
   validateApiAuthMaterial,
 } from "../substack-api/auth.js";
-import { fetchCommentsForPost } from "../substack-api/comment-list.js";
 import { buildDraftInspectionReport } from "../substack-api/draft-inspect.js";
 import { buildDraftDuplicateLookupReport } from "../substack-api/draft-lookup.js";
 import { loadDraftMappings } from "../substack-api/draft-mappings.js";
@@ -60,7 +59,6 @@ import { buildDraftSectionResolutionReport } from "../substack-api/draft-section
 import { listNotes } from "../substack-api/notes.js";
 import { readApiInventory } from "../substack-api/read-model.js";
 import { fetchRecommendationList } from "../substack-api/recommendations.js";
-import { fetchSubscriberList } from "../substack-api/subscriber-list.js";
 import type { McpSurfaceGroup, McpToolDescriptor } from "./types.js";
 
 type JsonToolResult = {

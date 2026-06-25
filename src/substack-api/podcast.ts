@@ -1,5 +1,5 @@
 import { access, readFile } from "node:fs/promises";
-import { dirname, extname, resolve } from "node:path";
+import { extname } from "node:path";
 import type { ApiAuthMaterial } from "./auth.js";
 import {
   apiHeaders,

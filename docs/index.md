@@ -33,6 +33,7 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
 - [CI Hardening](ci-hardening.md) — Required gates, advisory strictness lanes, SBOM evidence, and branch protection recommendations
 - [Branch Protection](branch-protection.md) — Required checks, advisory lanes, dependency PR policy, and release rules
 - [Creator OS Completion Roadmap](creator-os-completion-roadmap.md) — API versioning, evidence promotion, dependency, strictness, and CI/CD hardening roadmap
+- [API Contract Versioning](api/versioning.md) — Generated CLI/MCP/artifact contract policy and compatibility rules
 - [Autonomous Implementation Record](integrations/autonomous-implementation-record.md) — Completed execution record and external gates for integration tracks
 - [AI Integration Readiness](integrations/ai-readiness-matrix.md) — MCP distribution status across AI clients and registries
 

@@ -20,6 +20,19 @@ jobs:
     name: Strictest TypeScript
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck:strictest
+
+  dependency-declaration-strictness:
+    name: Dependency Declaration Strictness
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     continue-on-error: true
     steps:
       - uses: actions/checkout@v7
@@ -28,7 +41,21 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run typecheck:strictest || echo "Strictest TypeScript advisory failures recorded."
+      - run: npm run typecheck:dependency-types
+
+  index-signature-strictness:
+    name: Index Signature Strictness
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck:index-signatures
 
   required-security:
     name: Required Audit And Secret Scan

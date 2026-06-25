@@ -61,7 +61,6 @@ import {
   collectCampaignOption,
   parseCampaignChannels,
   readCampaignPlan,
-  validateCampaignPlan,
 } from "./creator/campaign.js";
 import {
   buildBackupSnapshotPlan,
@@ -209,13 +208,7 @@ import {
   sendTestEmail,
   updateEmailTemplate,
 } from "./substack-api/email.js";
-import {
-  crossPost,
-  fetchApiTokens,
-  fetchIntegrations,
-  importFromRss,
-  importFromWordPress,
-} from "./substack-api/integrations.js";
+import { fetchApiTokens, fetchIntegrations } from "./substack-api/integrations.js";
 import {
   buildNoteBatchPlan,
   executeNoteWrite,

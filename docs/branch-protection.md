@@ -25,6 +25,8 @@ Keep these checks visible but advisory until their runtime dependencies are stab
 - `Strictest TypeScript`
 - `Experimental Dependency Lane`
 - `Frontier Drift Monitor`
+- `Index Signature Strictness`
+- `Dependency Declaration Strictness`
 
 Mutation is already run and reviewed before track closeout, but it should not block emergency security fixes until module-level thresholds are stable. E2E stays manual because it needs live Substack credentials and a test publication.
 
@@ -48,4 +50,3 @@ Before creating a release tag, verify:
 - `.github/workflows/publish.yml` uses `npm publish --provenance --access public`.
 - `.github/workflows/publish.yml` grants `id-token: write` for npm provenance.
 - External npm, GitHub release, MCP registry, marketplace, and Substack admin gates remain owner-approved.
-

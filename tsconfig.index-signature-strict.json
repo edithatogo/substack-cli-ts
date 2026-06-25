@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.strictest.json",
+  "compilerOptions": {
+    "noPropertyAccessFromIndexSignature": true
+  }
+}
