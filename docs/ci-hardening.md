@@ -12,8 +12,8 @@ This repo separates stable merge gates from experimental hardening lanes so feat
 ## Strictness Lanes
 
 - `Hardening / Strictest TypeScript`: runs `tsconfig.strictest.json` with stricter source compiler flags and is a required hardening check.
-- `Hardening / Index Signature Strictness`: runs `tsconfig.index-signature-strict.json` as an advisory migration lane for dynamic Substack response maps.
-- `Hardening / Dependency Declaration Strictness`: runs `tsconfig.dependency-strict.json` with library checking enabled as an advisory lane for upstream declaration compatibility.
+- `Hardening / Index Signature Strictness`: runs `tsconfig.index-signature-strict.json` as a non-blocking diagnostic lane for dynamic Substack response maps, then uploads the advisory output as an artifact.
+- `Hardening / Dependency Declaration Strictness`: runs `tsconfig.dependency-strict.json` with library checking enabled as a non-blocking diagnostic lane for upstream declaration compatibility, then uploads the advisory output as an artifact.
 
 ## Advisory Lanes
 

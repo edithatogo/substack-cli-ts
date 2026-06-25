@@ -33,7 +33,6 @@ jobs:
     name: Dependency Declaration Strictness
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -41,13 +40,35 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run typecheck:dependency-types
+      - name: Run advisory dependency typecheck
+        shell: bash
+        run: |
+          set +e
+          npm run typecheck:dependency-types 2>&1 | tee advisory-dependency-types.log
+          status=${PIPESTATUS[0]}
+          {
+            echo "### Dependency Declaration Strictness"
+            echo
+            echo "Exit status: \`$status\`"
+            echo
+            if [ "$status" -eq 0 ]; then
+              echo "No advisory dependency type issues were detected."
+            else
+              echo "Advisory dependency type diagnostics were emitted. This lane is non-blocking by design."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: advisory-dependency-types
+          path: advisory-dependency-types.log
+          if-no-files-found: error
 
   index-signature-strictness:
     name: Index Signature Strictness
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -55,7 +76,30 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run typecheck:index-signatures
+      - name: Run advisory index signature typecheck
+        shell: bash
+        run: |
+          set +e
+          npm run typecheck:index-signatures 2>&1 | tee advisory-index-signatures.log
+          status=${PIPESTATUS[0]}
+          {
+            echo "### Index Signature Strictness"
+            echo
+            echo "Exit status: \`$status\`"
+            echo
+            if [ "$status" -eq 0 ]; then
+              echo "No advisory index-signature issues were detected."
+            else
+              echo "Advisory index-signature diagnostics were emitted. This lane is non-blocking by design."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: advisory-index-signatures
+          path: advisory-index-signatures.log
+          if-no-files-found: error
 
   required-security:
     name: Required Audit And Secret Scan
