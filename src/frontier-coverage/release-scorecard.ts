@@ -133,9 +133,9 @@ export async function buildReleaseScorecard(
   const externalStatus = checklist.status === "ready" ? "owner-gated" : "blocked";
   const status = localStatus === "ready" && externalStatus === "owner-gated" ? "ready" : "blocked";
   const nextActions = [
-    ...localBlocked.map((item) => `${item.id}: ${item.nextAction ?? "Resolve local readiness."}`),
+    ...localBlocked.map((item) => `${item.id}: ${item.nextAction}`),
     ...checklist.missing.map((surface) => `launch:${surface}: Add launch checklist coverage.`),
-    ...externalGates.map((item) => `${item.id}: ${item.nextAction ?? "Owner approval required."}`),
+    ...externalGates.map((item) => `${item.id}: ${item.nextAction}`),
   ];
 
   return {
