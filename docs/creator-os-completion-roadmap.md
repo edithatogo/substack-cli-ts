@@ -74,7 +74,7 @@ These tracks are intentionally parallelizable. Each should have its own implemen
 | Backup and export-first safety | Create local redacted snapshots before risky manual/admin or future write workflows. | Backup plans and snapshot validation exist before any new admin write is considered. |
 | Platform drift monitor | Turn official-doc and fixture drift into a scheduled gate with last-verified badges and issue output. | Drift checks can open or update an issue with stale/changed evidence. |
 | Operator modes | Support `solo`, `team`, `agency`, and `ci` defaults for confirmations, retention, secrets, and multi-publication handling. | Mode-specific config validation changes defaults without weakening safety. |
-| Release and external launch scorecard | Separate repo-complete from npm, GitHub release, MCP registry, docs site, provenance, support, and rollback readiness. | A single command reports local readiness and external owner/admin gates. |
+| Release and external launch scorecard | Separate repo-complete from npm, GitHub release, MCP registry, docs site, provenance, support, and rollback readiness. | `coverage release-scorecard` reports local readiness, package metadata, owner/admin gates, rollback notes, and prioritized next actions. |
 
 ## Features Beyond Native Substack
 
