@@ -235,6 +235,57 @@ utm: launch
     assert.equal(checkStatus(report, "utm-consistent"), "pass");
   });
 
+  it("falls back to campaign front matter when UTM params omit campaign", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Campaign Fallback"
+campaign: launch
+utm: source=newsletter&medium=email
+---
+# Campaign Fallback
+
+[Tracked link](https://example.com/?utm_source=newsletter&utm_medium=email&utm_campaign=launch)
+`,
+        "campaign-fallback.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "pass");
+  });
+
+  it("allows tracked links that omit a front matter UTM field", async () => {
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: undefined,
+      post: await parseMarkdownString(
+        `---
+title: "Partial Tracked Link"
+utm: source=newsletter&medium=email&campaign=launch
+---
+# Partial Tracked Link
+
+[Tracked link](https://example.com/?utm_source=newsletter&utm_medium=email)
+`,
+        "partial-tracked-link.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+    });
+
+    assert.equal(checkStatus(report, "utm-present"), "pass");
+    assert.equal(checkStatus(report, "utm-consistent"), "pass");
+  });
+
   it("ignores unparseable links while the link-validity check reports them", async () => {
     const prepared = {
       mode: "publish" as const,
