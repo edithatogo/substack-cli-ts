@@ -17,7 +17,7 @@ describe("local API contract renderer", () => {
     assert.equal(contract.schemaVersion, CONTRACT_SCHEMA_VERSION);
     assert.equal(contract.package.name, "@edithatogo/substack-cli");
     assert.equal(contract.contract.id, "substack-cli.local-api");
-    assert.match(contract.contract.version, /^0\.1\.0\+contract\.1$/);
+    assert.match(contract.contract.version, /^0\.2\.0\+contract\.1$/);
     assert.equal(contract.contract.generatedAt, "static");
     assert.ok(contract.cli.commands.some((command) => command.command === "campaign plan <file>"));
     assert.ok(

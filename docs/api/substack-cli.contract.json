@@ -3,12 +3,12 @@
   "generatedBy": "substack-cli contract renderer",
   "package": {
     "name": "@edithatogo/substack-cli",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "mcpName": "io.github.edithatogo/substack-cli"
   },
   "contract": {
     "id": "substack-cli.local-api",
-    "version": "0.1.0+contract.1",
+    "version": "0.2.0+contract.1",
     "stability": "local-first",
     "generatedAt": "static",
     "note": "This is a local CLI/MCP/artifact contract. It does not claim Substack private endpoints are stable public APIs."
@@ -268,7 +268,7 @@
   },
   "mcp": {
     "name": "substack-cli",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "transport": "stdio",
     "status": "ready",
     "toolCount": 29,

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "substack-cli contract renderer",
-  "contractVersion": "0.1.0+contract.1",
+  "contractVersion": "0.2.0+contract.1",
   "artifacts": [
     {
       "id": "analytics.snapshot",

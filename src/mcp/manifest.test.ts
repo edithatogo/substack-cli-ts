@@ -13,7 +13,7 @@ describe("buildMcpSurfaceManifest", () => {
     const manifest = buildMcpSurfaceManifest();
 
     assert.equal(manifest.name, "substack-cli");
-    assert.equal(manifest.version, "0.1.0");
+    assert.equal(manifest.version, "0.2.0");
     assert.equal(manifest.transport, "stdio");
     assert.equal(manifest.status, "ready");
     assert.ok(manifest.groups.length > 0);
