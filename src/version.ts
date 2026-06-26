@@ -25,9 +25,7 @@ function readVersion(): string {
   };
   const version = parsed.version;
   if (typeof version !== "string" || version.trim() === "") {
-    throw new Error(
-      `package.json at ${manifestPath} is missing a non-empty \`version\` field.`,
-    );
+    throw new Error(`package.json at ${manifestPath} is missing a non-empty \`version\` field.`);
   }
   return version;
 }

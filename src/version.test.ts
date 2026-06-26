@@ -6,9 +6,9 @@ import { PACKAGE_VERSION, getPackageVersion } from "./version.js";
 
 describe("PACKAGE_VERSION", () => {
   it("matches the version declared in package.json", () => {
-    const manifest = JSON.parse(
-      readFileSync(resolve(process.cwd(), "package.json"), "utf8"),
-    ) as { version: string };
+    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), "package.json"), "utf8")) as {
+      version: string;
+    };
     assert.equal(PACKAGE_VERSION, manifest.version);
   });
 

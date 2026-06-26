@@ -1,12 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { describe, it } from "vitest";
-import {
-  createLogger,
-  getLoggedPackageVersion,
-  rootLogger,
-  silentLogger,
-} from "./logger.js";
+import { createLogger, getLoggedPackageVersion, rootLogger, silentLogger } from "./logger.js";
 
 describe("createLogger", () => {
   it("returns a pino logger instance with the package version in base context", () => {

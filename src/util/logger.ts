@@ -24,14 +24,7 @@ import { PACKAGE_VERSION } from "../version.js";
 const moduleFile = fileURLToPath(import.meta.url);
 const projectRoot = resolve(dirname(moduleFile), "..");
 
-type LogLevel =
-  | "fatal"
-  | "error"
-  | "warn"
-  | "info"
-  | "debug"
-  | "trace"
-  | "silent";
+type LogLevel = "fatal" | "error" | "warn" | "info" | "debug" | "trace" | "silent";
 
 const VALID_LEVELS: readonly LogLevel[] = [
   "fatal",
@@ -82,13 +75,9 @@ export interface CreateLoggerOptions {
 
 function buildBaseOptions(options: CreateLoggerOptions): LoggerOptions {
   const level = options.level ?? resolveLevel(process.env.LOG_LEVEL);
-  const usePretty =
-    options.format === "pretty" || process.env.LOG_FORMAT === "pretty";
+  const usePretty = options.format === "pretty" || process.env.LOG_FORMAT === "pretty";
 
-  const redactPaths = [
-    ...DEFAULT_REDACT_PATHS,
-    ...(options.extraRedactPaths ?? []),
-  ];
+  const redactPaths = [...DEFAULT_REDACT_PATHS, ...(options.extraRedactPaths ?? [])];
 
   const base: LoggerOptions = {
     name: options.name ?? "substack-cli",
