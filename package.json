@@ -1,6 +1,6 @@
 {
   "name": "@edithatogo/substack-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "mcpName": "io.github.edithatogo/substack-cli",
   "description": "Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.",
   "private": false,
@@ -90,7 +90,9 @@
     "registry:publisher:dry-run": "node scripts/mcp-publisher-helper.mjs dry-run",
     "integrations:validate": "node scripts/validate-client-integrations.mjs",
     "frontier:drift": "npm run build && node scripts/frontier-coverage-drift.mjs",
-    "experimental:deps": "node scripts/experimental-dependency-lane.mjs"
+    "experimental:deps": "node scripts/experimental-dependency-lane.mjs",
+    "version:check": "node scripts/version-check.mjs check",
+    "version:sync": "node scripts/version-check.mjs sync"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.6.0",
@@ -107,6 +109,7 @@
     "dotenv": "^17.0.0",
     "js-yaml": "^5.1.0",
     "marked": "^18.0.5",
+    "pino": "^10.0.0",
     "playwright-core": "^1.61.1",
     "substack-api": "file:vendor/substack-api",
     "zod": "^4.4.3"
@@ -160,6 +163,7 @@
     "eslint": "^10.5.0",
     "fast-check": "^4.8.0",
     "knip": "^6.20.0",
+    "pino-pretty": "^11.0.0",
     "prettier": "^3.8.4",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.62.0",

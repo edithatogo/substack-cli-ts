@@ -3,11 +3,12 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { registerMcpTools } from "./catalog.js";
 import { registerMcpPrompts } from "./prompts.js";
 import { registerMcpResources } from "./resources.js";
+import { PACKAGE_VERSION } from "../version.js";
 
 export function createMcpServer(): McpServer {
   const server = new McpServer({
     name: "substack-cli",
-    version: "0.1.0",
+    version: PACKAGE_VERSION,
   });
 
   registerMcpTools(server);

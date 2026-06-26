@@ -3,12 +3,12 @@
   "name": "io.github.edithatogo/substack-cli",
   "description": "A TypeScript CLI for publishing local Markdown files to a user-owned Substack publication.",
   "repository": "https://github.com/edithatogo/substack-cli-ts",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@edithatogo/substack-cli",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "mcpName": "io.github.edithatogo/substack-cli",
       "runtime": "node",
       "entrypoint": "dist/cli.js",
@@ -24,3 +24,4 @@
     "repository": "substack-cli-ts"
   }
 }
+

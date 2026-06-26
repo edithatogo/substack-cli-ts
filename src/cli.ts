@@ -3,6 +3,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { Command } from "commander";
+import { PACKAGE_VERSION } from "./version.js";
 import { runLocalLogin } from "./auth/local-login.js";
 import {
   clearSession,
@@ -276,7 +277,7 @@ const program = new Command();
 program
   .name("substack-cli")
   .description("Publish local Markdown files to a user-owned Substack publication.")
-  .version("0.1.0");
+  .version(PACKAGE_VERSION);
 
 program
   .command("completion")

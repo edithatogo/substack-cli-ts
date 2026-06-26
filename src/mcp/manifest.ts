@@ -1,6 +1,7 @@
 import { buildMcpToolDescriptors, buildMcpToolGroups } from "./catalog.js";
 import { buildMcpPromptSurfaceDescriptors } from "./prompts.js";
 import type { McpResourceSurface, McpSurfaceGroup, McpSurfaceManifest } from "./types.js";
+import { PACKAGE_VERSION } from "../version.js";
 
 const MCP_RESOURCE_DESCRIPTORS: McpResourceSurface[] = [
   {
@@ -65,7 +66,7 @@ export function buildMcpSurfaceGroups(): McpSurfaceGroup[] {
 export function buildMcpSurfaceManifest(): McpSurfaceManifest {
   return {
     name: "substack-cli",
-    version: "0.1.0",
+    version: PACKAGE_VERSION,
     transport: "stdio",
     status: "ready",
     groups: buildMcpSurfaceGroups(),
