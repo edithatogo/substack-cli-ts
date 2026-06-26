@@ -10,8 +10,7 @@
  * - **Secret-safe:** Integrates with `redact()` so configured secret keys are
  *   masked before serialization, extending the existing redaction layer.
  * - **Level-aware:** `LOG_LEVEL` env var controls verbosity (`fatal` → `trace`),
- *   defaulting to `info`. `LOG_FORMAT=pretty` swaps to `pino-pretty` for local
- *   development; JSON is the default for machine consumption.
+ *   defaulting to `info`. JSON is the default for machine consumption.
  */
 
 import { readFileSync } from "node:fs";
@@ -67,15 +66,12 @@ export interface CreateLoggerOptions {
   name?: string;
   /** Override the level (defaults to `LOG_LEVEL` env or `info`). */
   level?: LogLevel;
-  /** Force JSON (`json`, default) or pretty (`pretty`) output. */
-  format?: "json" | "pretty";
   /** Additional pino redact paths beyond the secret defaults. */
   extraRedactPaths?: string[];
 }
 
 function buildBaseOptions(options: CreateLoggerOptions): LoggerOptions {
   const level = options.level ?? resolveLevel(process.env.LOG_LEVEL);
-  const usePretty = options.format === "pretty" || process.env.LOG_FORMAT === "pretty";
 
   const redactPaths = [...DEFAULT_REDACT_PATHS, ...(options.extraRedactPaths ?? [])];
 
@@ -90,17 +86,6 @@ function buildBaseOptions(options: CreateLoggerOptions): LoggerOptions {
     // Crucial for MCP safety: never write logs to stdout.
     timestamp: pino.stdTimeFunctions.isoTime,
   };
-
-  if (usePretty) {
-    base.transport = {
-      target: "pino-pretty",
-      options: {
-        destination: 2, // stderr
-        colorize: true,
-        translateTime: "SYS:standard",
-      },
-    };
-  }
 
   return base;
 }
