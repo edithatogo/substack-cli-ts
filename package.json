@@ -164,7 +164,7 @@
     "fast-check": "^4.8.0",
     "knip": "^6.20.0",
     "prettier": "^3.8.4",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.62.0",
     "vitest": "^4.1.9"
   }
