@@ -125,12 +125,10 @@ describe("doctor checks", () => {
         report.checks.find((check) => check.name === "editor-write-readiness")?.status,
         "warn",
       );
-      assert.ok(
-        (
-          report.checks.find((check) => check.name === "gitignore")?.details
-            ?.requiredPatterns as string[]
-        ).includes(".npm-cache/"),
-      );
+      const gitignoreDetails = report.checks.find((check) => check.name === "gitignore")?.details as
+        | { requiredPatterns?: string[] }
+        | undefined;
+      assert.ok(gitignoreDetails?.requiredPatterns?.includes(".npm-cache/"));
     });
   });
 });
