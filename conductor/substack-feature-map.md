@@ -205,7 +205,7 @@ noSecretsInOutput: ✅ (redact() on all output)
 gitignoreExcludes: .env, config/master.key, .substack-cli/, browser artifacts
 sessionStorage: local Chrome profile or env vars
 renovateEnabled: ✅
-dependabotEnabled: ✅
+dependabotEnabled: ❌ (migrated to Renovate)
 ```
 
 | Podcast settings | ✅ | `api podcast settings` | `podcast.test.ts` |

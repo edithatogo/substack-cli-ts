@@ -26,11 +26,12 @@ jobs:
           # Approve the PR
           gh pr review "$PR_URL" --approve
 
-          # Wait for CI checks to complete (up to 10 minutes)
+          # Wait for required CI checks (ignore SKIPPED/NEUTRAL; fail only on hard failures)
           for i in $(seq 1 60); do
             CI_STATE=$(gh pr view "$PR_URL" --json statusCheckRollup --jq '.statusCheckRollup | map(.conclusion // .status // "UNKNOWN") | join(",")')
-            if echo "$CI_STATE" | grep -Eq "FAILURE|CANCELLED|TIMED_OUT|ACTION_REQUIRED|SKIPPED|STALE"; then
+            if echo "$CI_STATE" | grep -Eq "FAILURE|CANCELLED|TIMED_OUT|ACTION_REQUIRED|STALE"; then
               echo "CI checks did not succeed; not enabling auto-merge"
+              echo "CI_STATE=$CI_STATE"
               exit 1
             fi
             if [ -n "$CI_STATE" ] && ! echo "$CI_STATE" | grep -Eq "PENDING|QUEUED|IN_PROGRESS|REQUESTED|WAITING|UNKNOWN"; then
@@ -41,5 +42,5 @@ jobs:
             sleep 10
           done
 
-          # Enable auto-merge
+          # Enable auto-merge for Renovate dependency PRs
           gh pr merge "$PR_URL" --auto --squash

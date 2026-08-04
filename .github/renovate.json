@@ -11,10 +11,11 @@
     "group:monorepos",
     "group:recommended"
   ],
-  "labels": ["dependencies"],
+  "labels": ["dependencies", "renovate"],
   "schedule": ["before 9am on Monday"],
   "timezone": "UTC",
   "rangeStrategy": "bump",
+  "dependencyDashboard": true,
   "lockFileMaintenance": {
     "enabled": true,
     "automerge": true,
@@ -28,10 +29,25 @@
       "automerge": true
     },
     {
+      "description": "Group runtime dependencies",
+      "matchDepTypes": ["dependencies"],
+      "groupName": "runtime dependencies"
+    },
+    {
       "description": "Group Tiptap ecosystem updates",
       "matchPackagePrefixes": ["@tiptap/"],
       "groupName": "Tiptap",
       "automerge": true
+    },
+    {
+      "description": "Group browser automation stack",
+      "matchPackageNames": [
+        "playwright-core",
+        "@browserbasehq/stagehand",
+        "camoufox-js"
+      ],
+      "groupName": "browser automation stack",
+      "separateMajorMinor": true
     },
     {
       "description": "Group GitHub Actions updates",
@@ -40,19 +56,24 @@
       "automerge": true
     },
     {
-      "description": "Pin critical tooling",
+      "description": "Pin critical tooling majors for manual review",
       "matchPackageNames": ["node", "typescript"],
+      "enabled": false
+    },
+    {
+      "description": "Ignore vendored substack-api package",
+      "matchPackageNames": ["substack-api"],
       "enabled": false
     },
     {
       "description": "Major updates need manual review",
       "matchUpdateTypes": ["major"],
       "automerge": false,
-      "labels": ["dependencies", "breaking"]
+      "labels": ["dependencies", "renovate", "breaking"]
     }
   ],
   "vulnerabilityAlerts": {
-    "labels": ["security"],
+    "labels": ["security", "renovate"],
     "automerge": true
   },
   "ignorePaths": ["vendor/**"],
