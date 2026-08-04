@@ -181,11 +181,9 @@ describe("capture evidence fixtures", () => {
         },
       }),
     );
-    assert.equal(
-      (numeric.endpoints[0]?.responseBody as Record<string, unknown>).subscriber_count,
-      "[REDACTED]",
-    );
-    assert.equal((numeric.endpoints[0]?.responseBody as Record<string, unknown>).safe_count, 20);
+    const numericBody = responseBodyRecord(numeric.endpoints[0]);
+    assert.equal(numericBody.subscriber_count, "[REDACTED]");
+    assert.equal(numericBody.safe_count, 20);
   });
 
   it("normalizes optional notes and invalid last-verified timestamps", () => {
@@ -229,10 +227,7 @@ describe("capture evidence fixtures", () => {
     assert.equal(report.minimized?.endpoints[0]?.requestHeaders, undefined);
     assert.equal(report.minimized?.endpoints[0]?.responseHeaders, undefined);
     assert.match(report.minimized?.endpoints[0]?.url ?? "", /utm_source=notes/);
-    assert.equal(
-      (report.minimized?.endpoints[0]?.responseBody as Record<string, unknown>).subscriber_ids,
-      "[REDACTED]",
-    );
+    assert.equal(responseBodyRecord(report.minimized?.endpoints[0]).subscriber_ids, "[REDACTED]");
   });
 
   it("handles non-JSON body values without crashing minimization", () => {
@@ -255,14 +250,9 @@ describe("capture evidence fixtures", () => {
         },
       }),
     );
-    assert.equal(
-      (booleanBody.endpoints[0]?.responseBody as Record<string, unknown>).subscriber_active,
-      "[REDACTED]",
-    );
-    assert.equal(
-      (booleanBody.endpoints[0]?.responseBody as Record<string, unknown>).feature_enabled,
-      false,
-    );
+    const booleanRecord = responseBodyRecord(booleanBody.endpoints[0]);
+    assert.equal(booleanRecord.subscriber_active, "[REDACTED]");
+    assert.equal(booleanRecord.feature_enabled, false);
 
     const scalarBooleanBody = minimizeCaptureFixture(
       fixture({
@@ -296,6 +286,14 @@ describe("capture evidence fixtures", () => {
     assert.doesNotMatch(JSON.stringify(second.minimized), /owner@example.com/);
   });
 });
+
+function responseBodyRecord(
+  endpoint: { responseBody?: unknown } | undefined,
+): Record<string, unknown> {
+  assert.ok(endpoint);
+  assert.ok(endpoint.responseBody && typeof endpoint.responseBody === "object");
+  return endpoint.responseBody as Record<string, unknown>;
+}
 
 function assertTruncatedPreview(value: unknown): unknown {
   assert.ok(value && typeof value === "object");
