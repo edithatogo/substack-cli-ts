@@ -149,8 +149,10 @@ export async function requestWrite(
   method: "POST" | "PUT",
   headers: Record<string, string>,
   body: Record<string, unknown>,
+  // Mutations are fail-closed by default. Callers must explicitly prove that
+  // an operation is idempotent before opting into retries.
   retryOptions: RetryOptions = {
-    maxRetries: 3,
+    maxRetries: 0,
     baseDelayMs: 1000,
     maxDelayMs: 10000,
   },
