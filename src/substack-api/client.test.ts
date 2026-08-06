@@ -197,7 +197,7 @@ describe("requestWrite", () => {
       "POST",
       {},
       {},
-      { maxRetries: 2, baseDelayMs: 5, maxDelayMs: 1000 },
+      { maxRetries: 2, baseDelayMs: 5, maxDelayMs: 1000, idempotencyKey: "rate-limit-retry-test" },
     );
 
     await vi.advanceTimersByTimeAsync(1000);
@@ -231,7 +231,7 @@ describe("requestWrite", () => {
       "POST",
       {},
       {},
-      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5000 },
+      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5000, idempotencyKey: "http-date-retry-test" },
     );
 
     await vi.advanceTimersByTimeAsync(1999);
@@ -242,6 +242,35 @@ describe("requestWrite", () => {
     assert.equal(result.status, 200);
     assert.equal(result.draftId, 790);
     assert.equal(result.retryAttempts, 1);
+  });
+
+  it("does not retry POST without idempotency proof", async () => {
+    const { requestWrite } = await import("./client.js");
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 503,
+        text: vi.fn(async () => JSON.stringify({ error: "temporarily unavailable" })),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        text: async () => JSON.stringify({ id: 792 }),
+      });
+
+    const result = await requestWrite(
+      fetchImpl,
+      "https://substack.com/api/v1/drafts",
+      "POST",
+      {},
+      {},
+      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5 },
+    );
+
+    assert.equal(result.status, 503);
+    const parsed = result.body as { id?: unknown };
+    assert.equal(parsed.id, undefined);
+    assert.equal(fetchImpl.mock.calls.length, 1);
+    assert.equal(result.retryAttempts, 0);
   });
 
   it("retries transient network write failures", async () => {
@@ -260,7 +289,7 @@ describe("requestWrite", () => {
       "POST",
       {},
       {},
-      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5 },
+      { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5, idempotencyKey: "transient-retry-test" },
     );
 
     await vi.advanceTimersByTimeAsync(5);

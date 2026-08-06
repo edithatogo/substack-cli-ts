@@ -2,6 +2,11 @@ export interface RetryOptions {
   maxRetries: number;
   baseDelayMs: number;
   maxDelayMs: number;
+  /**
+   * Optional idempotency hint for non-idempotent mutation endpoints.
+   * When absent, POST retrying is disabled to avoid uncertain replays.
+   */
+  idempotencyKey?: string | undefined;
 }
 
 export async function withRetry<T>(

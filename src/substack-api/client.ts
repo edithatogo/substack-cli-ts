@@ -1,6 +1,11 @@
 import { readFile } from "node:fs/promises";
 import type { ApiAuthMaterial } from "./auth.js";
 import type { RateLimiter } from "./rate-limit.js";
+import {
+  type RateLimitChannel,
+  type RateLimitController,
+  createRateLimitController,
+} from "./rate-limit.js";
 import type { RetryOptions } from "./retry.js";
 import { withRetry } from "./retry.js";
 
@@ -20,6 +25,58 @@ export interface ApiFailure {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type FetchInit = Record<string, any>;
+
+let sharedRateLimitController: Promise<RateLimitController> | null = null;
+
+function getRateLimitController(): Promise<RateLimitController> {
+  if (!sharedRateLimitController) {
+    sharedRateLimitController = createRateLimitController();
+  }
+  return sharedRateLimitController;
+}
+
+function shouldUseRateLimitController(): boolean {
+  return process.env.VITEST === undefined && process.env.NODE_ENV !== "test";
+}
+
+function selectGovernor(
+  controller: RateLimitController,
+  channel: RateLimitChannel,
+): Pick<RateLimitController[`${"read" | "write"}Governor`], "acquire" | "noteResponse"> {
+  return channel === "read" ? controller.readGovernor : controller.writeGovernor;
+}
+
+async function withRateLimit<
+  T extends Pick<Response, "status" | "text"> & Partial<Pick<Response, "headers">>,
+>(
+  fetchImpl: FetchLike,
+  input: string,
+  init: FetchInit,
+  channel: RateLimitChannel,
+  transform: (response: T) => Promise<T>,
+): Promise<T> {
+  if (!shouldUseRateLimitController()) {
+    return transform((await fetchImpl(input, init)) as T);
+  }
+
+  const controller = await getRateLimitController();
+  const governor = selectGovernor(controller, channel);
+  await governor.acquire();
+  try {
+    const response = (await fetchImpl(input, init)) as T;
+    await governor.noteResponse({
+      status: response.status,
+      headers: response.headers,
+      endpointClass: channel,
+    });
+    await controller.persist();
+    return transform(response);
+  } catch (error) {
+    await governor.noteResponse({ status: 0, endpointClass: channel });
+    await controller.persist();
+    throw error;
+  }
+}
 
 export type FetchLike = (
   input: string,
@@ -61,7 +118,13 @@ export async function requestJson(
   headers: Record<string, string>,
 ): Promise<{ status: number; body: unknown }> {
   try {
-    const response = await fetchImpl(url, { headers });
+    const response = await withRateLimit(
+      fetchImpl,
+      url,
+      { headers },
+      "read",
+      async (result) => result,
+    );
     const text = await response.text();
 
     try {
@@ -128,10 +191,16 @@ export async function requestDelete(
   headers: Record<string, string>,
 ): Promise<{ status: number; body: unknown }> {
   try {
-    const response = await fetchImpl(url, {
-      method: "DELETE",
-      headers,
-    });
+    const response = await withRateLimit(
+      fetchImpl,
+      url,
+      {
+        method: "DELETE",
+        headers,
+      },
+      "write",
+      async (result) => result,
+    );
     const text = await response.text();
     try {
       return { status: response.status, body: JSON.parse(text) };
@@ -155,19 +224,30 @@ export async function requestWrite(
     maxRetries: 0,
     baseDelayMs: 1000,
     maxDelayMs: 10000,
+    idempotencyKey: undefined,
   },
 ): Promise<WriteResponse> {
   let retryAttempts = 0;
+  const isReplaySafe =
+    method === "PUT" ||
+    Boolean(retryOptions.idempotencyKey && retryOptions.idempotencyKey.length > 0);
+  const maxRetries = isReplaySafe ? retryOptions.maxRetries : 0;
 
   for (let attempt = 0; attempt <= retryOptions.maxRetries; attempt += 1) {
     try {
-      const response = await fetchImpl(url, {
-        method,
-        headers: { ...headers, "content-type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      const response = await withRateLimit(
+        fetchImpl,
+        url,
+        {
+          method,
+          headers: { ...headers, "content-type": "application/json" },
+          body: JSON.stringify(body),
+        },
+        "write",
+        async (result) => result,
+      );
 
-      if (isRetryableStatus(response.status) && attempt < retryOptions.maxRetries) {
+      if (isReplaySafe && isRetryableStatus(response.status) && attempt < maxRetries) {
         retryAttempts += 1;
         await delay(resolveRetryDelayMs(response, attempt, retryOptions));
         continue;
@@ -198,7 +278,7 @@ export async function requestWrite(
 
       return { status: response.status, body: parsed, draftId, draftUrl, retryAttempts };
     } catch {
-      if (attempt < retryOptions.maxRetries) {
+      if (isReplaySafe && attempt < maxRetries) {
         retryAttempts += 1;
         await delay(resolveBackoffDelayMs(attempt, retryOptions));
         continue;
@@ -215,36 +295,35 @@ function isRetryableStatus(status: number): boolean {
   return status === 429 || status >= 500;
 }
 
+async function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function resolveRetryDelayMs(
-  response: Pick<Response, "status" | "text"> & Partial<Pick<Response, "headers">>,
+  response: {
+    headers?: { get(name: string): string | null | undefined } | undefined;
+    status: number;
+  },
   attempt: number,
-  options: RetryOptions,
+  retryOptions: RetryOptions,
 ): number {
   const retryAfter = response.headers?.get("retry-after");
-
   if (retryAfter) {
-    const seconds = Number(retryAfter);
-    if (Number.isFinite(seconds) && seconds >= 0) {
-      return Math.min(seconds * 1000, options.maxDelayMs);
-    }
-
-    const retryAtMs = Date.parse(retryAfter);
-    if (Number.isFinite(retryAtMs)) {
-      return Math.min(Math.max(0, retryAtMs - Date.now()), options.maxDelayMs);
+    const parsed = Date.parse(retryAfter);
+    if (Number.isFinite(parsed) && parsed > Date.now()) {
+      return Math.max(0, parsed - Date.now());
     }
   }
 
-  return resolveBackoffDelayMs(attempt, options);
+  return resolveBackoffDelayMs(attempt, retryOptions);
 }
 
-function resolveBackoffDelayMs(attempt: number, options: RetryOptions): number {
-  const backoff = options.baseDelayMs * 2 ** attempt;
-  const jitter = Math.random() * options.baseDelayMs;
-  return Math.min(backoff + jitter, options.maxDelayMs);
-}
+function resolveBackoffDelayMs(attempt: number, retryOptions: RetryOptions): number {
+  if (attempt <= 0) {
+    return retryOptions.baseDelayMs;
+  }
 
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return Math.min(retryOptions.maxDelayMs, retryOptions.baseDelayMs * 2 ** (attempt - 1));
 }
 
 export interface UploadImageResult {

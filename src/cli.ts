@@ -194,8 +194,10 @@ import { buildDraftIdInspectionReport } from "./substack-api/draft-id-inspect.js
 import { buildDraftInspectionReport } from "./substack-api/draft-inspect.js";
 import { buildDraftDuplicateLookupReport } from "./substack-api/draft-lookup.js";
 import {
+  buildDraftMappingsExport,
   findDraftMapping,
   loadDraftMappings,
+  importDraftMappings,
   saveDraftMapping,
 } from "./substack-api/draft-mappings.js";
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
@@ -241,6 +243,14 @@ import {
   fetchPublicationSettings,
   updatePublicationSettings,
 } from "./substack-api/publication-settings.js";
+import {
+  applyRateLimitReceipt,
+  loadRateLimitState,
+  parseRateLimitReceipt,
+  rateLimitStatePath,
+  saveRateLimitState,
+  toRateLimitStatusReport,
+} from "./substack-api/rate-limit.js";
 import { executePublishWrite, planPublishWrite } from "./substack-api/publish-write.js";
 import { type ApiReadInventory, readApiInventory } from "./substack-api/read-model.js";
 import {
@@ -2643,6 +2653,130 @@ api
     },
   );
 
+const apiRateLimit = api
+  .command("rate-limit")
+  .description("Inspect and manage conservative rate-limit runtime policy.");
+
+apiRateLimit
+  .command("status")
+  .description("Show current rate-limit controller state and metadata.")
+  .action(async () => {
+    const state = await loadRateLimitState();
+    const report = toRateLimitStatusReport(state);
+    console.log(
+      JSON.stringify(
+        {
+          statusFile: rateLimitStatePath(),
+          ...report,
+        },
+        null,
+        2,
+      ),
+    );
+  });
+
+apiRateLimit
+  .command("update")
+  .description("Apply an operator-controlled rate-limit policy receipt.")
+  .requiredOption("--file <file>", "JSON file with observed rate-limit receipt.")
+  .option("--dry-run", "Preview changes without saving.", false)
+  .action(async (options: { file: string; dryRun: boolean }) => {
+    const content = await readCliTextFile(options.file, "rate-limit receipt");
+    if (content === undefined) {
+      return;
+    }
+
+    const receipt = parseRateLimitReceipt(content);
+    if (!receipt) {
+      console.error(
+        JSON.stringify(
+          {
+            status: "failed",
+            message:
+              "Receipt payload is invalid. Expected schemaVersion: 1, source, confidence, and at least one channel entry.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    if (!receipt.note && receipt.source === "operator") {
+      console.error(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Operator receipts require a `note` field to satisfy provenance requirements.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    const currentState = await loadRateLimitState();
+    const nextState = applyRateLimitReceipt(currentState, receipt);
+    if (!nextState) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "noop",
+            statusFile: rateLimitStatePath(),
+            message: "Receipt did not change any rate-limit channel settings.",
+            source: receipt.source,
+            confidence: receipt.confidence,
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    }
+
+    const before = toRateLimitStatusReport(currentState);
+    const afterCandidate = toRateLimitStatusReport(nextState);
+
+    if (!options.dryRun) {
+      await saveRateLimitState(nextState);
+      console.log(
+        JSON.stringify(
+          {
+            status: "updated",
+            statusFile: rateLimitStatePath(),
+            before,
+            after: afterCandidate,
+            note: nextState.note,
+            source: receipt.source,
+            confidence: receipt.confidence,
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    }
+
+    console.log(
+      JSON.stringify(
+        {
+          status: "preview",
+          statusFile: rateLimitStatePath(),
+          before,
+          after: afterCandidate,
+          note: nextState.note,
+          source: receipt.source,
+          confidence: receipt.confidence,
+        },
+        null,
+        2,
+      ),
+    );
+  });
+
 const apiDraft = api
   .command("draft")
   .description("Plan future internal API draft create/update operations.");
@@ -2776,6 +2910,71 @@ apiDraft
         2,
       ),
     );
+  });
+
+apiDraft
+  .command("export")
+  .description("Export local draft mappings with immutable history metadata.")
+  .option("--out <file>", "Write the export payload to a file.")
+  .action(async (options: { out?: string | undefined }) => {
+    const mappings = await loadDraftMappings();
+    const payload = buildDraftMappingsExport(mappings);
+    if (options.out) {
+      await writeFile(options.out, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+      console.log(
+        JSON.stringify(
+          {
+            status: "mapped-exported",
+            outputFile: options.out,
+            mappingCount: payload.mappings.length,
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    }
+
+    console.log(JSON.stringify(payload, null, 2));
+  });
+
+apiDraft
+  .command("import")
+  .description("Import draft mappings from a previous export file or payload.")
+  .requiredOption("--file <file>", "JSON file containing a draft mappings export payload.")
+  .option("--dry-run", "Preview the import without mutating local mappings.", false)
+  .action(async (options: { file: string; dryRun: boolean }) => {
+    const content = await readCliTextFile(options.file, "draft mapping import");
+    if (content === undefined) {
+      return;
+    }
+
+    try {
+      const summary = await importDraftMappings(content, { dryRun: options.dryRun });
+      console.log(
+        JSON.stringify(
+          {
+            ...summary,
+            dryRun: options.dryRun,
+            mappingsFile: draftMappingsFilePath(),
+          },
+          null,
+          2,
+        ),
+      );
+    } catch (error) {
+      console.error(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: `Could not import draft mappings: ${error instanceof Error ? error.message : String(error)}`,
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+    }
   });
 
 apiDraft
