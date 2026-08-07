@@ -3227,13 +3227,16 @@ apiDraft
     },
   );
 
+apiDraft
   .command("create")
   .description("Build and validate a draft creation request without publishing content.")
   .argument("<file>", "Markdown file to convert")
   .option("--source <source>", "none, auto, env, or local-profile", "none")
   .option("--live", "Attempt the live write request after endpoint contract confirmation", false)
-  .action(async (file: string, options: { live: boolean; source: "none" | ApiAuthSource }) => {
-    if (options.live) {
+  .action(
+    async (file: string, options: { live: boolean; source: "none" | ApiAuthSource }) => {
+    const isLive = options.live;
+    if (isLive) {
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
       const prepared = await preparePost(file, { mode: "draft" });

@@ -43,7 +43,7 @@ describe("frontier coverage MCP resources", () => {
 
     assert.equal(payload.operation, "coverage.safe-surfaces");
     assert.equal(payload.status, "ready");
-    assert.equal(payload.count, 7);
+    assert.equal(payload.count, 8);
     assert.ok(payload.surfaces.some((surface) => surface.id === "native-video-live-automation"));
     assert.ok(payload.surfaces.some((surface) => surface.status === "unsupported"));
   });
