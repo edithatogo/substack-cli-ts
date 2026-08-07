@@ -49,6 +49,24 @@
         ]
       },
       {
+        "command": "api draft revise",
+        "surface": "cli",
+        "mode": "confirmed-write",
+        "artifacts": [
+          "draft.revise",
+          "run-log"
+        ]
+      },
+      {
+        "command": "api draft unschedule",
+        "surface": "cli",
+        "mode": "confirmed-write",
+        "artifacts": [
+          "draft.unschedule",
+          "run-log"
+        ]
+      },
+      {
         "command": "backup plan",
         "surface": "cli",
         "mode": "planning-only",
@@ -2248,6 +2266,8 @@
             "enum": [
               "draft.create",
               "draft.update",
+              "draft.unschedule",
+              "draft.revise",
               "post.publish",
               "post.schedule",
               "note.create",
