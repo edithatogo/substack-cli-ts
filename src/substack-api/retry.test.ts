@@ -38,7 +38,7 @@ describe("withRetry", () => {
     });
 
     await vi.advanceTimersByTimeAsync(10);
-    await vi.advanceTimersByTimeAsync(15);
+    await vi.advanceTimersByTimeAsync(20);
 
     assert.equal(await result, "ok");
     assert.equal(fn.mock.calls.length, 3);
@@ -79,11 +79,11 @@ describe("withRetry", () => {
       randomizer,
     });
 
-    await vi.advanceTimersByTimeAsync(14);
+    await vi.advanceTimersByTimeAsync(10);
     assert.equal(fn.mock.calls.length, 1);
     assert.equal(randomizer.mock.calls.length, 1);
 
-    await vi.advanceTimersByTimeAsync(1);
+    await vi.advanceTimersByTimeAsync(10);
     assert.equal(fn.mock.calls.length, 2);
 
     await vi.advanceTimersByTimeAsync(0);

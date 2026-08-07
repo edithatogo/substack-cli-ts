@@ -33,7 +33,7 @@ Use strict TypeScript, ESM imports, and explicit module boundaries. Keep command
 
 ## Testing Guidelines
 
-Tests use Node’s built-in `node:test` runner after TypeScript compilation. Name tests `*.test.ts` and keep them close to the module under test.
+Tests are written with Vitest. Name tests `*.test.ts` and keep them close to the module under test.
 
 Before changing parser or runtime behavior, verify:
 
