@@ -158,7 +158,7 @@ describe("registerMcpTools", () => {
     assert.equal(missing.structuredContent.status, "blocked");
     assert.equal(missing.structuredContent.message, "Capability ID was not found.");
     assert.equal(launch.structuredContent.checklist.status, "ready");
-    assert.equal(safeSurfaces.structuredContent.count, 7);
+    assert.equal(safeSurfaces.structuredContent.count, 8);
     assert.equal(safeSurface.structuredContent.status, "ready");
     assert.equal(safeSurface.structuredContent.surface.status, "unsupported");
   });

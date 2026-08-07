@@ -14,7 +14,7 @@ describe("safe frontier surfaces", () => {
 
     assert.equal(output.operation, "coverage.safe-surfaces");
     assert.equal(output.status, "ready");
-    assert.equal(output.count, 7);
+    assert.equal(output.count, 8);
     assert.deepEqual(
       output.surfaces.map((surface) => surface.id),
       [...SAFE_SURFACE_IDS],
@@ -73,5 +73,6 @@ describe("safe frontier surfaces", () => {
     assert.equal(byId["chat-dm-live-chat"]?.status, "unsupported");
     assert.equal(byId["publication-admin-writes"]?.status, "manual-admin");
     assert.equal(byId["integrations-import-crosspost-tokens"]?.status, "manual-admin");
+    assert.equal(byId["draft-lifecycle-mutations"]?.status, "planning-only");
   });
 });

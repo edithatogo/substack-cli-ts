@@ -201,6 +201,7 @@ import {
   saveDraftMapping,
 } from "./substack-api/draft-mappings.js";
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
+import { probeDraftMutationEndpoints } from "./substack-api/draft-operations.js";
 import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
 import {
   type BroadcastEntry,
@@ -3022,6 +3023,51 @@ apiDraft
   );
 
 apiDraft
+  .command("probe")
+  .description("Probe likely Substack mutation endpoint shapes for draft unschedule and revise.")
+  .requiredOption("--draft-id <id>", "Substack draft ID to probe")
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--out <file>", "Write the probe report to a JSON file.")
+  .action(
+    async (options: {
+      draftId: string;
+      source: "auto" | ApiAuthSource;
+      out?: string | undefined;
+    }) => {
+      const effective = await loadEffectiveConfig();
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.probe",
+              message: validation.message ?? "Could not validate API session.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const report = await probeDraftMutationEndpoints(material, fetch, options.draftId);
+
+      if (options.out) {
+        await writeFile(options.out, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+      }
+
+      console.log(JSON.stringify(report, null, 2));
+
+      if (!report.supportsUnschedule && !report.supportsRevise) {
+        process.exitCode = 1;
+      }
+    },
+  );
+
+apiDraft
   .command("revise")
   .description(
     "Build a safe published-post revision plan that preserves URL. Live execution is disabled pending endpoint confirmation.",
@@ -3185,7 +3231,8 @@ apiDraft
   .option("--source <source>", "none, auto, env, or local-profile", "none")
   .option("--live", "Attempt the live write request after endpoint contract confirmation", false)
   .action(async (file: string, options: { live: boolean; source: "none" | ApiAuthSource }) => {
-    if (options.live) {
+    const isLive = options.live;
+    if (isLive) {
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
       const prepared = await preparePost(file, { mode: "draft" });
