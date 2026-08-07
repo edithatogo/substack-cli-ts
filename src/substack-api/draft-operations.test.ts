@@ -394,7 +394,10 @@ describe("draft mutation execution", () => {
 
     assert.equal(result.status, "failed");
     assert.equal(result.error, "Network error");
-    assert.equal(result.message, "Network error: failed to reach Substack while attempting draft mutation.");
+    assert.equal(
+      result.message,
+      "Network error: failed to reach Substack while attempting draft mutation.",
+    );
     assert.equal(result.statusCode, 0);
   });
 
@@ -420,7 +423,9 @@ describe("draft mutation execution", () => {
 
     const report = await probeDraftMutationEndpoints(material(), fetchImpl, "321");
 
-    const probeSignals = new Map(report.probes.map((probe) => [probe.endpointTemplate, probe.signal]));
+    const probeSignals = new Map(
+      report.probes.map((probe) => [probe.endpointTemplate, probe.signal]),
+    );
     assert.equal(report.probes.length, 5);
     assert.equal(probeSignals.get("/api/v1/drafts/{draftId}/unpublish"), "method-mismatch");
     assert.equal(probeSignals.get("/api/v1/posts/{draftId}/unpublish"), "forbidden");

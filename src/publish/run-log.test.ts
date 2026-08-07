@@ -526,9 +526,9 @@ describe("run log artifacts", () => {
     const withoutDraftUrl = buildDraftMutationRunLog({
       publicationUrl: "https://rareinsights.substack.com/",
       plan: {
-      operation: "unschedule",
-      draftId: "789",
-      draftUrl: undefined,
+        operation: "unschedule",
+        draftId: "789",
+        draftUrl: undefined,
         publicationUrl: "https://rareinsights.substack.com/",
         endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
         endpoint: "https://rareinsights.substack.com/api/v1/drafts/789/unpublish",

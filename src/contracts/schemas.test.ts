@@ -251,7 +251,8 @@ describe("first-party artifact contract schemas", () => {
         actionType: "draft.unschedule",
         status: "success",
         publicationUrl: "local",
-      }));
+      }),
+    );
     assert.doesNotThrow(() =>
       RunLogContractSchema.parse({
         schemaVersion: 1,
@@ -259,6 +260,7 @@ describe("first-party artifact contract schemas", () => {
         actionType: "draft.revise",
         status: "success",
         publicationUrl: "local",
-      }));
+      }),
+    );
   });
 });
