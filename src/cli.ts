@@ -2715,78 +2715,72 @@ apiRateLimit
   .option("--dry-run", "Preview the reset without writing files.", false)
   .option("--force", "Confirm destructive reset and allow state replacement.", false)
   .option("--backup <file>", "Optional backup file path.")
-  .action(
-    async (options: {
-      dryRun: boolean;
-      force: boolean;
-      backup?: string | undefined;
-    }) => {
-      const currentState = await loadRateLimitState();
-      const nextState = defaultRateLimitRuntimeState();
-      const output = {
-        statusFile: rateLimitStatePath(),
-        backupFile: options.backup ?? `${rateLimitStatePath()}.backup.${Date.now()}.json`,
-        before: toRateLimitStatusReport(currentState),
-        after: toRateLimitStatusReport(nextState),
-      };
+  .action(async (options: { dryRun: boolean; force: boolean; backup?: string | undefined }) => {
+    const currentState = await loadRateLimitState();
+    const nextState = defaultRateLimitRuntimeState();
+    const output = {
+      statusFile: rateLimitStatePath(),
+      backupFile: options.backup ?? `${rateLimitStatePath()}.backup.${Date.now()}.json`,
+      before: toRateLimitStatusReport(currentState),
+      after: toRateLimitStatusReport(nextState),
+    };
 
-      if (options.dryRun) {
-        console.log(
-          JSON.stringify(
-            {
-              status: "rate-limit.reset-preview",
-              ...output,
-            },
-            null,
-            2,
-          ),
-        );
-        return;
-      }
-
-      if (!options.force) {
-        console.error(
-          JSON.stringify(
-            {
-              status: "failed",
-              message: "Reset requires --force because it replaces persisted rate-limit state.",
-            },
-            null,
-            2,
-          ),
-        );
-        process.exitCode = 1;
-        return;
-      }
-
-      await mkdir(dirname(output.backupFile), { recursive: true });
-      await writeFile(
-        output.backupFile,
-        `${JSON.stringify(
-          {
-            schemaVersion: 1,
-            createdAt: new Date().toISOString(),
-            statusFile: rateLimitStatePath(),
-            state: currentState,
-          },
-          null,
-          2,
-        )}\n`,
-        "utf8",
-      );
-      await saveRateLimitState(nextState);
+    if (options.dryRun) {
       console.log(
         JSON.stringify(
           {
-            status: "rate-limit.reset",
+            status: "rate-limit.reset-preview",
             ...output,
           },
           null,
           2,
         ),
       );
-    },
-  );
+      return;
+    }
+
+    if (!options.force) {
+      console.error(
+        JSON.stringify(
+          {
+            status: "failed",
+            message: "Reset requires --force because it replaces persisted rate-limit state.",
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    await mkdir(dirname(output.backupFile), { recursive: true });
+    await writeFile(
+      output.backupFile,
+      `${JSON.stringify(
+        {
+          schemaVersion: 1,
+          createdAt: new Date().toISOString(),
+          statusFile: rateLimitStatePath(),
+          state: currentState,
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+    await saveRateLimitState(nextState);
+    console.log(
+      JSON.stringify(
+        {
+          status: "rate-limit.reset",
+          ...output,
+        },
+        null,
+        2,
+      ),
+    );
+  });
 
 apiRateLimit
   .command("update")
@@ -2893,6 +2887,296 @@ apiRateLimit
 const apiDraft = api
   .command("draft")
   .description("Plan future internal API draft create/update operations.");
+
+apiDraft
+  .command("unschedule")
+  .description(
+    "Build a safe unschedule plan for an existing draft. Live execution is disabled pending endpoint confirmation.",
+  )
+  .requiredOption("--draft-id <id>", "Substack draft ID to unschedule")
+  .option("--draft-url <url>", "Optional draft editor URL override")
+  .option(
+    "--draft-limit <limit>",
+    "Number of drafts to inspect from API inventory",
+    parseInteger,
+    50,
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--live", "Attempt live execution after explicit endpoint confirmation", false)
+  .action(
+    async (options: {
+      draftId: string;
+      draftUrl?: string;
+      draftLimit: number;
+      source: "auto" | ApiAuthSource;
+      live: boolean;
+    }) => {
+      if (options.live) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.unschedule",
+              message:
+                "Draft unschedule live execution is intentionally disabled until endpoint contract is confirmed.",
+              requiresEvidence: [
+                "capture unschedule endpoint from live traffic",
+                "confirm safe payload and response schema",
+              ],
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.unschedule",
+              message: validation.message ?? "Could not validate API session.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const inventory = await readApiInventory(material, fetch, { draftLimit: options.draftLimit });
+      if (inventory.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.unschedule",
+              message: `Unable to read API inventory: ${inventory.message}`,
+              endpoints: inventory.endpoints,
+              readStatus: inventory.status,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const draft = inventory.drafts?.find((item) => String(item.id) === options.draftId);
+      if (!draft) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.unschedule",
+              message: `Draft ID ${options.draftId} was not found in read-only draft inventory.`,
+              endpoints: inventory.endpoints,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const draftUrl =
+        options.draftUrl ??
+        new URL(`/publish/post/${encodeURIComponent(String(draft.id))}`, publicationUrl).toString();
+
+      console.log(
+        JSON.stringify(
+          {
+            status: "planned",
+            operation: "draft.unschedule",
+            requiresLiveConfirmation: true,
+            requiresEndpointEvidence: true,
+            publicationUrl,
+            draftId: String(draft.id),
+            draftUrl,
+            before: {
+              isPublished: draft.isPublished,
+              scheduledAt: draft.scheduledAt,
+              title: draft.draftTitle ?? draft.title ?? "Draft",
+              audience: draft.audience,
+            },
+            after: {
+              isScheduled: false,
+              note: "Draft is expected to become unscheduled pending confirmed endpoint semantics.",
+            },
+          },
+          null,
+          2,
+        ),
+      );
+    },
+  );
+
+apiDraft
+  .command("revise")
+  .description(
+    "Build a safe published-post revision plan that preserves URL. Live execution is disabled pending endpoint confirmation.",
+  )
+  .requiredOption("--draft-id <id>", "Substack draft ID to revise")
+  .option("--published-url <url>", "Current published URL to preserve")
+  .option(
+    "--draft-limit <limit>",
+    "Number of drafts to inspect from API inventory",
+    parseInteger,
+    50,
+  )
+  .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option("--keep-url", "Preserve the canonical published URL when replacing content", true)
+  .option("--live", "Attempt live execution after explicit endpoint confirmation", false)
+  .action(
+    async (options: {
+      draftId: string;
+      publishedUrl?: string;
+      draftLimit: number;
+      source: "auto" | ApiAuthSource;
+      keepUrl: boolean;
+      live: boolean;
+    }) => {
+      if (options.live) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.revise",
+              message:
+                "Published revision live execution is intentionally disabled until endpoint contract is confirmed.",
+              requiresEvidence: [
+                "capture revise endpoint from live traffic",
+                "confirm keep-url behavior and response schema",
+              ],
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+      const material = await resolveApiAuthMaterial(effective, options.source);
+      const validation = await validateApiAuthMaterial(material, fetch);
+      if (validation.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.revise",
+              message: validation.message ?? "Could not validate API session.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const inventory = await readApiInventory(material, fetch, { draftLimit: options.draftLimit });
+      if (inventory.status !== "ok") {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.revise",
+              message: `Unable to read API inventory: ${inventory.message}`,
+              endpoints: inventory.endpoints,
+              readStatus: inventory.status,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const draft = inventory.drafts?.find((item) => String(item.id) === options.draftId);
+      if (!draft) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.revise",
+              message: `Draft ID ${options.draftId} was not found in read-only draft inventory.`,
+              endpoints: inventory.endpoints,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      if (!draft.isPublished) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              operation: "draft.revise",
+              message: `Draft ID ${options.draftId} is not published and cannot be revised as a posted item.`,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      const draftUrl =
+        options.publishedUrl ??
+        new URL(`/publish/post/${encodeURIComponent(String(draft.id))}`, publicationUrl).toString();
+
+      console.log(
+        JSON.stringify(
+          {
+            status: "planned",
+            operation: "draft.revise",
+            requiresLiveConfirmation: true,
+            requiresEndpointEvidence: true,
+            publicationUrl,
+            draftId: String(draft.id),
+            draftUrl,
+            keepUrl: options.keepUrl,
+            before: {
+              state: "published",
+              title: draft.draftTitle ?? draft.title ?? "Draft",
+              scheduledAt: draft.scheduledAt,
+              url: draftUrl,
+            },
+            after: {
+              state: "published-revised",
+              note: "Draft is expected to be revised against the same canonical URL.",
+            },
+            compensation: {
+              strategy: "manual",
+              action:
+                "If revision changes URL or fails, run browser workflow for corrective publish/revise.",
+            },
+          },
+          null,
+          2,
+        ),
+      );
+    },
+  );
 
 apiDraft
   .command("create")
