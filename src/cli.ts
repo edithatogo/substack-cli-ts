@@ -2994,6 +2994,11 @@ apiDraft
     50,
   )
   .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option(
+    "--freeze-policy <file>",
+    "Optional JSON scheduling-freeze policy file path (defaults to $env:SCHEDULING_FREEZE).",
+  )
+  .option("--catalogue <file>", "Optional external schedule catalogue path")
   .option("--live", "Attempt live execution after explicit endpoint confirmation", false)
   .option(
     "--probe-report <file>",
@@ -3010,6 +3015,8 @@ apiDraft
       live: boolean;
       probeReport?: string | undefined;
       approvalToken?: string | undefined;
+      freezePolicy?: string;
+      catalogue?: string;
       runLogDir?: string | undefined;
     }) => {
       const effective = await loadEffectiveConfig();
@@ -3042,8 +3049,7 @@ apiDraft
               {
                 status: "failed",
                 operation: "draft.unschedule",
-                message:
-                  "Live draft unschedule requires --probe-report argument.",
+                message: "Live draft unschedule requires --probe-report argument.",
                 requiresEndpointEvidence: true,
                 note: [
                   "Run `api draft probe --draft-id ...`.",
@@ -3057,6 +3063,13 @@ apiDraft
           process.exitCode = 1;
           return;
         }
+
+        const policyAllows = await enforceSchedulingFreezePolicy({
+          operation: "draft.unschedule",
+          freezePolicyPath: options.freezePolicy,
+          cataloguePath: options.catalogue,
+        });
+        if (!policyAllows) return;
 
         const inventory = await readApiInventory(material, fetch, {
           draftLimit: options.draftLimit,
@@ -3486,6 +3499,11 @@ apiDraft
   )
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--keep-url", "Preserve the canonical published URL when replacing content", true)
+  .option(
+    "--freeze-policy <file>",
+    "Optional JSON scheduling-freeze policy file path (defaults to $env:SCHEDULING_FREEZE).",
+  )
+  .option("--catalogue <file>", "Optional external schedule catalogue path")
   .option("--live", "Attempt live execution after explicit endpoint confirmation", false)
   .option(
     "--probe-report <file>",
@@ -3503,6 +3521,8 @@ apiDraft
       live: boolean;
       probeReport?: string | undefined;
       approvalToken?: string | undefined;
+      freezePolicy?: string;
+      catalogue?: string;
       runLogDir?: string | undefined;
     }) => {
       const effective = await loadEffectiveConfig();
@@ -3535,8 +3555,7 @@ apiDraft
               {
                 status: "failed",
                 operation: "draft.revise",
-                message:
-                  "Live draft revise requires --probe-report argument.",
+                message: "Live draft revise requires --probe-report argument.",
                 requiresEndpointEvidence: true,
                 note: [
                   "Run `api draft probe --draft-id ...`.",
@@ -3550,6 +3569,13 @@ apiDraft
           process.exitCode = 1;
           return;
         }
+
+        const policyAllows = await enforceSchedulingFreezePolicy({
+          operation: "draft.revise",
+          freezePolicyPath: options.freezePolicy,
+          cataloguePath: options.catalogue,
+        });
+        if (!policyAllows) return;
 
         const inventory = await readApiInventory(material, fetch, {
           draftLimit: options.draftLimit,
