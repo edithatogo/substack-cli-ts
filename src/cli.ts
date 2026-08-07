@@ -121,6 +121,10 @@ import {
 import { summarizeMediaManifest } from "./parser/media.js";
 import { evaluateDistributionPolicy, summarizeDistributionPolicy } from "./policy/distribution.js";
 import {
+  buildSchedulingFreezeBlockReport,
+  evaluateSchedulingFreezePolicy,
+} from "./policy/scheduling-freeze.js";
+import {
   maybeWriteTrace,
   printPreparedPost,
   runBrowserWorkflow,
@@ -1527,6 +1531,11 @@ draft
   .option("--draft-url <url>", "Substack draft editor URL")
   .option("--dry-run", "Print the generated API schedule plan without writing", false)
   .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option(
+    "--freeze-policy <file>",
+    "Optional JSON scheduling-freeze policy file path (defaults to $env:SCHEDULING_FREEZE).",
+  )
+  .option("--catalogue <file>", "Optional external schedule catalogue path")
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
   .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
   .action(
@@ -1536,6 +1545,8 @@ draft
       draftUrl?: string;
       dryRun: boolean;
       source: "auto" | ApiAuthSource;
+      freezePolicy?: string;
+      catalogue?: string;
       traceOut?: string;
       runLogDir?: string;
     }) => {
@@ -1566,6 +1577,13 @@ draft
         console.log(JSON.stringify(plan, null, 2));
         return;
       }
+
+      const policyAllows = await enforceSchedulingFreezePolicy({
+        operation: "draft.schedule",
+        freezePolicyPath: options.freezePolicy,
+        cataloguePath: options.catalogue,
+      });
+      if (!policyAllows) return;
 
       const material = await resolveApiAuthMaterial(effective, options.source);
       const validation = await validateApiAuthMaterial(material, fetch);
@@ -1789,6 +1807,11 @@ const scheduleCommand = program
   .option("--trace-out <file>", "Write the workflow result JSON to a file")
   .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
   .option("--schedule-file <file>", "Expected schedule file used to detect timestamp collisions")
+  .option(
+    "--freeze-policy <file>",
+    "Optional JSON scheduling-freeze policy file path (defaults to $env:SCHEDULING_FREEZE).",
+  )
+  .option("--catalogue <file>", "Optional external schedule catalogue path")
   .option("--experimental-inject-state", "Use experimental editor-state injection", false)
   .option("--review-only", "Stop at the schedule review screen without clicking Schedule", false)
   .option("--transport <transport>", "browser, api, or auto", "auto")
@@ -1804,6 +1827,8 @@ const scheduleCommand = program
         traceOut?: string;
         runLogDir?: string;
         scheduleFile?: string;
+        freezePolicy?: string;
+        catalogue?: string;
         experimentalInjectState: boolean;
         transport: "browser" | "api" | "auto";
       },
@@ -1879,6 +1904,13 @@ const scheduleCommand = program
           return;
         }
 
+        const policyAllows = await enforceSchedulingFreezePolicy({
+          operation: "schedule",
+          freezePolicyPath: options.freezePolicy,
+          cataloguePath: options.catalogue,
+        });
+        if (!policyAllows) return;
+
         const material = await resolveApiAuthMaterial(effective, "auto");
         const validation = await validateApiAuthMaterial(material, fetch);
         if (validation.status !== "ok") {
@@ -1946,6 +1978,13 @@ const scheduleCommand = program
         );
         return;
       }
+
+      const policyAllows = await enforceSchedulingFreezePolicy({
+        operation: "schedule",
+        freezePolicyPath: options.freezePolicy,
+        cataloguePath: options.catalogue,
+      });
+      if (!policyAllows) return;
 
       const existingDraft = await findDraftMapping(prepared.post.filePath, publicationUrl);
       await runBrowserWorkflow(prepared, { ...options, draftMapping: existingDraft ?? undefined });
@@ -2133,6 +2172,11 @@ note
   .requiredOption("--post-url <url>", "Matching post URL that must appear in the note")
   .requiredOption("--scheduled-at <timestamp>", "ISO timestamp for the scheduled note")
   .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option(
+    "--freeze-policy <file>",
+    "Optional JSON scheduling-freeze policy file path (defaults to $env:SCHEDULING_FREEZE).",
+  )
+  .option("--catalogue <file>", "Optional external schedule catalogue path")
   .option("--dry-run", "Print the local write plan without touching Substack", false)
   .option("--yes", "Confirm live note scheduling", false)
   .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
@@ -2142,6 +2186,8 @@ note
       postUrl: string;
       scheduledAt: string;
       source: "auto" | ApiAuthSource;
+      freezePolicy?: string;
+      catalogue?: string;
       dryRun: boolean;
       yes: boolean;
       runLogDir?: string | undefined;
@@ -2196,6 +2242,13 @@ note
         return;
       }
 
+      const policyAllows = await enforceSchedulingFreezePolicy({
+        operation: "note.schedule",
+        freezePolicyPath: options.freezePolicy,
+        cataloguePath: options.catalogue,
+      });
+      if (!policyAllows) return;
+
       const material = await resolveApiAuthMaterial(effective, options.source);
       const validation = await validateApiAuthMaterial(material, fetch);
       if (validation.status !== "ok") {
@@ -2231,6 +2284,11 @@ note
   .requiredOption("--schedule-file <file>", "JSON file with note text, post URLs, and timestamps")
   .option("--limit <limit>", "Maximum selected note items to touch", parseInteger)
   .option("--source <source>", "auto, env, or local-profile", "auto")
+  .option(
+    "--freeze-policy <file>",
+    "Optional JSON scheduling-freeze policy file path (defaults to $env:SCHEDULING_FREEZE).",
+  )
+  .option("--catalogue <file>", "Optional external schedule catalogue path")
   .option("--dry-run", "Print exactly which notes would be touched", false)
   .option("--yes", "Confirm live batch note scheduling", false)
   .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
@@ -2239,6 +2297,8 @@ note
       scheduleFile: string;
       limit?: number | undefined;
       source: "auto" | ApiAuthSource;
+      freezePolicy?: string;
+      catalogue?: string;
       dryRun: boolean;
       yes: boolean;
       runLogDir?: string | undefined;
@@ -2298,6 +2358,13 @@ note
         process.exitCode = 1;
         return;
       }
+
+      const policyAllows = await enforceSchedulingFreezePolicy({
+        operation: "note.batch",
+        freezePolicyPath: options.freezePolicy,
+        cataloguePath: options.catalogue,
+      });
+      if (!policyAllows) return;
 
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
@@ -2411,6 +2478,11 @@ batch
   .option("--ids-file <file>", "Line-delimited IDs to include")
   .option("--draft-ids-file <file>", "Line-delimited draft IDs to include")
   .option("--limit <limit>", "Maximum selected schedule items to touch", parseInteger)
+  .option(
+    "--freeze-policy <file>",
+    "Optional JSON scheduling-freeze policy file path (defaults to $env:SCHEDULING_FREEZE).",
+  )
+  .option("--catalogue <file>", "Optional external schedule catalogue path")
   .option("--dry-run", "Print exactly which items would be touched", false)
   .option("--yes", "Confirm live batch scheduling", false)
   .option("--run-log-dir <dir>", "Write durable JSON run logs for live mutations")
@@ -2420,6 +2492,8 @@ batch
       idsFile?: string | undefined;
       draftIdsFile?: string | undefined;
       limit?: number | undefined;
+      freezePolicy?: string;
+      catalogue?: string;
       dryRun: boolean;
       yes: boolean;
       runLogDir?: string | undefined;
@@ -2470,6 +2544,13 @@ batch
         process.exitCode = 1;
         return;
       }
+
+      const policyAllows = await enforceSchedulingFreezePolicy({
+        operation: "batch.schedule",
+        freezePolicyPath: options.freezePolicy,
+        cataloguePath: options.catalogue,
+      });
+      if (!policyAllows) return;
 
       const effective = await loadEffectiveConfig();
       const publicationUrl = requirePublicationUrl(effective);
@@ -6902,6 +6983,36 @@ function buildScheduledQueue(
     }));
 
   return [...postItems, ...draftItems, ...broadcastItems];
+}
+
+async function enforceSchedulingFreezePolicy(options: {
+  operation: string;
+  freezePolicyPath: string | undefined;
+  cataloguePath: string | undefined;
+}): Promise<boolean> {
+  const decision = await evaluateSchedulingFreezePolicy({
+    freezePolicyPath: resolveSchedulingFreezePolicyPath(options.freezePolicyPath),
+    cataloguePath: options.cataloguePath,
+  });
+
+  if (!decision.allowed) {
+    console.log(JSON.stringify(buildSchedulingFreezeBlockReport(options.operation, decision), null, 2));
+    process.exitCode = 1;
+    return false;
+  }
+
+  return true;
+}
+
+function resolveSchedulingFreezePolicyPath(value?: string): string | undefined {
+  if (value && value.trim()) return value;
+
+  const raw = process.env.SCHEDULING_FREEZE?.trim();
+  if (!raw) return undefined;
+
+  const lowered = raw.toLowerCase();
+  if (["0", "false", "off", "inactive", "disabled", "no"].includes(lowered)) return undefined;
+  return raw;
 }
 
 function parseCoverageFormat(value: string): "json" | "markdown" {
