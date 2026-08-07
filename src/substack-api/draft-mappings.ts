@@ -356,13 +356,23 @@ export function parseDraftMappingsPayload(raw: string): DraftMapping[] {
   }
 
   if (candidate && typeof candidate === "object") {
-    const envelope = DraftMappingsFileSchema.safeParse(candidate);
-    if (envelope.success && envelope.data.mappings.length > 0) {
+    const payload = candidate as Record<string, unknown>;
+    const envelope = DraftMappingsFileSchema.safeParse(payload);
+    if (Object.hasOwn(payload, "schemaVersion")) {
+      if (!Object.hasOwn(payload, "mappings")) {
+        throw new Error("Draft mappings payload envelopes must include a mappings array.");
+      }
+      if (!envelope.success) {
+        throw new Error("Invalid draft mappings payload envelope.");
+      }
       return DraftMappingSchema.array().parse(envelope.data.mappings);
     }
 
-    if (DraftMappingSchema.array().safeParse(candidate.mappings).success) {
-      return DraftMappingSchema.array().parse(candidate.mappings);
+    if (Object.hasOwn(payload, "mappings")) {
+      if (!envelope.success) {
+        throw new Error("Invalid draft mappings payload.");
+      }
+      return DraftMappingSchema.array().parse(envelope.data.mappings);
     }
 
     if (DraftMappingLegacyRecordSchema.safeParse(candidate).success) {
@@ -370,11 +380,14 @@ export function parseDraftMappingsPayload(raw: string): DraftMapping[] {
         (value): value is DraftMapping =>
           typeof value === "object" && value !== null && "sourceFile" in value,
       );
+      if (records.length === 0) {
+        throw new Error("Invalid draft mappings payload.");
+      }
       return DraftMappingSchema.array().parse(records);
     }
   }
 
-  return [];
+  throw new Error("Invalid draft mappings payload. Expected an array or draft mappings envelope.");
 }
 
 export function normalizeSourceFile(sourceFile: string): string {

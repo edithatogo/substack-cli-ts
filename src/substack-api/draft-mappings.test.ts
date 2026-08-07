@@ -153,6 +153,12 @@ describe("draft mappings", () => {
     assert.equal(parseDraftMappingsPayload(legacy).length, 1);
   });
 
+  it("throws on malformed payload shapes", () => {
+    assert.throws(() => {
+      parseDraftMappingsPayload("true");
+    }, /Invalid draft mappings payload/);
+  });
+
   it("supports dry-run import without mutating local mappings", async () => {
     await withTempState(async () => {
       const payload = {
