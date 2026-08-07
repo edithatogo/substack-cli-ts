@@ -521,6 +521,63 @@ describe("run log artifacts", () => {
     assert.equal(failure.error?.body?.includes("top-secret"), false);
     assert.equal(failure.resultMessage, "Substack returned HTTP 500.");
   });
+
+  it("supports draft mutation run-log redaction fallbacks for missing URLs and errors", () => {
+    const withoutDraftUrl = buildDraftMutationRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+      operation: "unschedule",
+      draftId: "789",
+      draftUrl: undefined,
+        publicationUrl: "https://rareinsights.substack.com/",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/789/unpublish",
+        method: "POST",
+        sourceProbe: {
+          operation: "unschedule",
+          endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+          endpoint: "https://rareinsights.substack.com/api/v1/drafts/789/unpublish",
+          probeMethod: "GET",
+          status: 404,
+          signal: "not-found",
+          evidence: [],
+        },
+      },
+      result: {
+        status: "failed",
+        operation: "unschedule",
+        method: "POST",
+        draftId: "789",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/789/unpublish",
+        statusCode: 500,
+        message: "Draft mutation failed.",
+      },
+    });
+
+    assert.equal(withoutDraftUrl.draftUrl, undefined);
+    assert.equal(withoutDraftUrl.error?.message, "Draft mutation failed.");
+  });
+
+  it("records browser workflow draft failure details with fallback message/body values", () => {
+    const failedBrowser = buildBrowserWorkflowRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      prepared: { ...prepared, mode: "publish", scheduleAt: "2026-06-20T09:00:00Z" },
+      result: {
+        status: "validation-failed",
+        message: "",
+        operation: "publish",
+        mode: "publish",
+        title: "Example",
+        currentUrl: "https://rareinsights.substack.com/publish/post/999",
+        trace: [],
+      },
+    });
+
+    assert.equal(failedBrowser.status, "failure");
+    assert.equal(failedBrowser.error?.message, "Workflow failed.");
+    assert.equal(failedBrowser.error?.body, null);
+  });
 });
 
 function draftPlan(): DraftWritePlan {

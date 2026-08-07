@@ -37,6 +37,8 @@ describe("local API contract renderer", () => {
     );
     assert.ok(contract.artifacts.some((artifact) => artifact.id === "campaign.plan"));
     assert.ok(contract.artifacts.some((artifact) => artifact.id === "coverage.drift"));
+    assert.ok(contract.cli.commands.some((command) => command.command === "api draft unschedule"));
+    assert.ok(contract.cli.commands.some((command) => command.command === "api draft revise"));
   });
 
   it("writes deterministic generated artifacts and detects stale files", async () => {

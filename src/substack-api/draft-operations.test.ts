@@ -75,6 +75,10 @@ describe("draft mutation endpoint probing", () => {
       report.probes.every((probe) => probe.signal === "not-found"),
       true,
     );
+    assert.equal(
+      report.message,
+      "No draft mutation endpoint shapes were confirmed. Use capture-in-loop methods to gather first-party evidence before attempting writes.",
+    );
   });
 
   it("marks unschedule as likely when method mismatch indicates route existence", async () => {
@@ -94,6 +98,28 @@ describe("draft mutation endpoint probing", () => {
     assert.equal(unscheduleProbe?.signal, "method-mismatch");
   });
 
+  it("marks network failures as probe-level network errors", async () => {
+    const fetchImpl: FetchLike = (url) => {
+      if (url.includes("/api/v1/posts/123/revise")) {
+        return Promise.resolve(response(500));
+      }
+      throw new Error("offline");
+    };
+
+    const report = await probeDraftMutationEndpoints(material(), fetchImpl, "123");
+
+    const networkProbe = report.probes.find(
+      (probe) => probe.endpointTemplate === "/api/v1/drafts/{draftId}/unpublish",
+    );
+    assert.equal(networkProbe?.signal, "network-error");
+    assert.equal(report.supportsUnschedule, false);
+    assert.equal(report.supportsRevise, false);
+    assert.equal(
+      report.message,
+      "No draft mutation endpoint shapes were confirmed. Use capture-in-loop methods to gather first-party evidence before attempting writes.",
+    );
+  });
+
   it("marks revise as likely when endpoint responds with readable status", async () => {
     const fetchImpl: FetchLike = (url) => {
       if (url.includes("/api/v1/posts/123/revise")) {
@@ -105,6 +131,10 @@ describe("draft mutation endpoint probing", () => {
 
     assert.equal(report.supportsRevise, true);
     assert.equal(report.supportsUnschedule, false);
+    assert.equal(
+      report.message,
+      "At least one mutation endpoint shape appears reachable under the current session.",
+    );
     const reviseProbe = report.probes.find(
       (probe) => probe.endpointTemplate === "/api/v1/posts/{draftId}/revise",
     );
@@ -217,6 +247,42 @@ describe("draft mutation execution planning", () => {
     assert.equal(plan?.endpoint, "https://rareinsights.substack.com/api/v1/drafts/123/unpublish");
   });
 
+  it("ignores malformed probes when building execution plans", () => {
+    const report = {
+      status: "probed" as const,
+      operation: "draft.mutation-probe" as const,
+      publicationUrl: "https://rareinsights.substack.com/",
+      draftId: "123",
+      endpointCount: 1,
+      reportId: "report-123",
+      generatedAt: "2026-08-07T10:00:00.000Z",
+      approvalToken: "token",
+      supportsUnschedule: false,
+      supportsRevise: true,
+      message: "",
+      probes: [
+        {
+          operation: "unschedule",
+          endpointTemplate: "/api/v1/drafts/{draftId}/revise",
+          endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/revise",
+          probeMethod: "GET",
+          status: 200,
+          signal: "likely-route",
+          evidence: [],
+        },
+      ],
+    };
+
+    const plan = buildDraftMutationExecutionPlan({
+      operation: "revise",
+      publicationUrl: report.publicationUrl,
+      draftId: "123",
+      probeReport: report,
+    });
+
+    assert.equal(plan, null);
+  });
+
   it("returns null for an execution plan when probe evidence cannot be reconciled", () => {
     const plan = buildDraftMutationExecutionPlan({
       operation: "revise",
@@ -302,5 +368,80 @@ describe("draft mutation execution", () => {
     assert.equal(result.method, "DELETE");
     assert.equal(result.error, undefined);
     assert.equal(result.message, "Unschedule mutation succeeded for draft 123.");
+  });
+
+  it("accepts publish URL from `url` fallback field", async () => {
+    const plan = draftMutationPlan("unschedule");
+    const result = await executeDraftMutation(plan, material(), () =>
+      responseWithText(204, '{"url":"https://rareinsights.substack.com/p/fallback"}'),
+    );
+
+    assert.equal(result.status, "success");
+    assert.equal(result.statusCode, 204);
+    assert.equal(result.publishedUrl, "https://rareinsights.substack.com/p/fallback");
+    assert.equal(result.message, "Unschedule mutation succeeded for draft 123.");
+  });
+
+  it("reports delete-path network failures as failed mutations", async () => {
+    const plan = {
+      ...draftMutationPlan("unschedule"),
+      method: "DELETE" as const,
+      endpointTemplate: "/api/v1/drafts/{draftId}",
+      endpoint: "https://rareinsights.substack.com/api/v1/drafts/123",
+    };
+
+    const result = await executeDraftMutation(plan, material(), () => responseWithText(0, "{}"));
+
+    assert.equal(result.status, "failed");
+    assert.equal(result.error, "Network error");
+    assert.equal(result.message, "Network error: failed to reach Substack while attempting draft mutation.");
+    assert.equal(result.statusCode, 0);
+  });
+
+  it("classifies and reports all status families from probe candidates", async () => {
+    const fetchImpl: FetchLike = (url) => {
+      if (url.includes("/api/v1/drafts/321/unpublish")) {
+        return response(405);
+      }
+      if (url.includes("/api/v1/posts/321/unpublish")) {
+        return response(403);
+      }
+      if (url.includes("/api/v1/drafts/321/schedule")) {
+        return response(404);
+      }
+      if (url.includes("/api/v1/posts/321/revise")) {
+        return response(199);
+      }
+      if (url.includes("/api/v1/drafts/321/revise")) {
+        return response(401);
+      }
+      throw new Error("offline");
+    };
+
+    const report = await probeDraftMutationEndpoints(material(), fetchImpl, "321");
+
+    const probeSignals = new Map(report.probes.map((probe) => [probe.endpointTemplate, probe.signal]));
+    assert.equal(report.probes.length, 5);
+    assert.equal(probeSignals.get("/api/v1/drafts/{draftId}/unpublish"), "method-mismatch");
+    assert.equal(probeSignals.get("/api/v1/posts/{draftId}/unpublish"), "forbidden");
+    assert.equal(probeSignals.get("/api/v1/drafts/{draftId}/schedule"), "not-found");
+    assert.equal(probeSignals.get("/api/v1/posts/{draftId}/revise"), "unexpected");
+    assert.equal(probeSignals.get("/api/v1/drafts/{draftId}/revise"), "unauthorized");
+  });
+
+  it("reports delete-path failures as failed mutations", async () => {
+    const plan = {
+      ...draftMutationPlan("unschedule"),
+      method: "DELETE" as const,
+      endpointTemplate: "/api/v1/drafts/{draftId}",
+      endpoint: "https://rareinsights.substack.com/api/v1/drafts/123",
+    };
+
+    const result = await executeDraftMutation(plan, material(), () => responseWithText(500, "{}"));
+
+    assert.equal(result.status, "failed");
+    assert.equal(result.error, "HTTP 500");
+    assert.equal(result.message, "Substack returned HTTP 500.");
+    assert.equal(result.statusCode, 500);
   });
 });
