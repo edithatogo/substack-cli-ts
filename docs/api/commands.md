@@ -599,6 +599,44 @@ Build and validate a draft creation request without publishing content.
 | `--source <source>` | `none`, `auto`, `env`, or `local-profile` | `none` |
 | `--live` | Attempt the live write request after endpoint contract confirmation | `false` |
 
+### `api draft unschedule`
+
+Build a safe unschedule plan for an existing draft. Live execution is disabled pending endpoint confirmation.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--draft-id <id>` (required) | Substack draft ID to unschedule | — |
+| `--draft-url <url>` | Optional draft editor URL override | — |
+| `--draft-limit <limit>` | Max drafts to inspect from API inventory | `50` |
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--live` | Attempt live execution after endpoint confirmation (disabled by default) | `false` |
+
+### `api draft revise`
+
+Build a safe published-post revision plan that preserves URL. Live execution is disabled pending endpoint confirmation.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--draft-id <id>` (required) | Substack draft ID to revise | — |
+| `--published-url <url>` | Published URL to preserve | — |
+| `--draft-limit <limit>` | Max drafts to inspect from API inventory | `50` |
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--keep-url` | Preserve canonical URL when replacing content | `true` |
+| `--live` | Attempt live execution after endpoint confirmation | `false` |
+
+### `api draft probe`
+
+Probe likely draft unschedule and revision endpoint shapes without performing writes.
+
+**Options:**
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--draft-id <id>` (required) | Substack draft ID to probe | — |
+| `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
+| `--out <file>` | Write the probe artifact JSON report | — |
+
 ### `api draft inspect <file>`
 
 Bundle payload compatibility, section resolution, duplicate lookup, and draft planning.

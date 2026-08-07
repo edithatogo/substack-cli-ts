@@ -8,6 +8,7 @@ export const SAFE_SURFACE_IDS = [
   "chat-dm-live-chat",
   "publication-admin-writes",
   "integrations-import-crosspost-tokens",
+  "draft-lifecycle-mutations",
 ] as const;
 
 export type SafeSurfaceId = (typeof SAFE_SURFACE_IDS)[number];
@@ -410,6 +411,47 @@ export const SAFE_SURFACES: SafeSurface[] = [
     decisionRecord: {
       id: "DR-integrations-import-crosspost-manual",
       reason: "Imports and cross-posting can mutate external platforms or expose secrets.",
+    },
+  },
+  {
+    id: "draft-lifecycle-mutations",
+    title: "Draft unschedule and published revision",
+    status: "planning-only",
+    safetyClass: "planning-only",
+    capabilityIds: ["draft-unschedule", "draft-revise-published"],
+    currentCommands: ["api draft unschedule", "api draft revise", "api draft probe"],
+    safeAlternatives: [
+      "Use api draft inspect and draft lookup to build non-destructive plans.",
+      "Use `api draft probe` to collect endpoint shape evidence before any live attempts.",
+      "Perform unschedule/revision through the browser workflow manually until endpoint writes are proven.",
+    ],
+    manualRunbook: [
+      "Validate the targeted draft ID against read-only inventory.",
+      "Run `api draft probe` and store the resulting JSON artifact.",
+      "Run `api draft unschedule`/`api draft revise` plans and review before applying.",
+      "Use browser workflow for corrective actions when probe evidence is absent.",
+    ],
+    endpointCaptureRequirements: [
+      "Confirmed endpoint URL and method for unschedule behavior.",
+      "Confirmed endpoint URL and method for published revision keeping canonical URL.",
+      "Response schema proof for idempotent-safe operation.",
+    ],
+    blockedOperations: ["Draft unschedule mutation", "Published revision mutation", "Canonical URL changes"],
+    existingImplementations: [
+      localReference("Draft planning commands", "src/cli.ts", [
+        "Safe planning outputs for unschedule and revise already block unsafe writes.",
+      ]),
+      localReference("Draft mutation probe", "src/substack-api/draft-operations.ts", [
+        "Provides read-only endpoint-shape probes for safe planning and evidence capture.",
+      ]),
+    ],
+    implementationOptions: selectedOptionSet("Keep local planning mandatory with mandatory probe artifact before enabling writes."),
+    selectedImplementation:
+      "Keep planning-only behavior by default, and gate any future live execution behind explicit endpoint evidence.",
+    decisionRecord: {
+      id: "DR-draft-lifecycle-planning-only",
+      reason:
+        "Unscheduling and published revision directly affect public post state and can invalidate publication history.",
     },
   },
 ];
