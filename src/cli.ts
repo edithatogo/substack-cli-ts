@@ -2955,14 +2955,14 @@ apiDraft
           return;
         }
 
-        if (!options.probeReport || !options.approvalToken) {
+        if (!options.probeReport) {
           console.error(
             JSON.stringify(
               {
                 status: "failed",
                 operation: "draft.unschedule",
                 message:
-                  "Live draft unschedule requires --probe-report and --approval-token arguments.",
+                  "Live draft unschedule requires --probe-report argument.",
                 requiresEndpointEvidence: true,
                 note: [
                   "Run `api draft probe --draft-id ...`.",
@@ -3106,7 +3106,37 @@ apiDraft
           return;
         }
 
-        if (options.approvalToken !== plan.approvalToken) {
+        if (!options.approvalToken) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "approval-required",
+                operation: "draft.unschedule",
+                message:
+                  "Live draft unschedule requires an approval token. Re-run this command with --approval-token.",
+                approvalToken: plan.approvalToken,
+                planHash: plan.planHash,
+                actionId: plan.actionId,
+                planSchemaVersion: plan.planSchemaVersion,
+                expiresAt: plan.expiresAt,
+                sourceProbe: {
+                  endpointTemplate: plan.sourceProbe.endpointTemplate,
+                  signal: plan.sourceProbe.signal,
+                  evidence: plan.sourceProbe.evidence,
+                },
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (
+          options.approvalToken !== plan.approvalToken &&
+          options.approvalToken !== report.approvalToken
+        ) {
           console.error(
             JSON.stringify(
               {
@@ -3418,14 +3448,14 @@ apiDraft
           return;
         }
 
-        if (!options.probeReport || !options.approvalToken) {
+        if (!options.probeReport) {
           console.error(
             JSON.stringify(
               {
                 status: "failed",
                 operation: "draft.revise",
                 message:
-                  "Live draft revise requires --probe-report and --approval-token arguments.",
+                  "Live draft revise requires --probe-report argument.",
                 requiresEndpointEvidence: true,
                 note: [
                   "Run `api draft probe --draft-id ...`.",
@@ -3585,7 +3615,37 @@ apiDraft
           return;
         }
 
-        if (options.approvalToken !== plan.approvalToken) {
+        if (!options.approvalToken) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "approval-required",
+                operation: "draft.revise",
+                message:
+                  "Live draft revise requires an approval token. Re-run this command with --approval-token.",
+                approvalToken: plan.approvalToken,
+                planHash: plan.planHash,
+                actionId: plan.actionId,
+                planSchemaVersion: plan.planSchemaVersion,
+                expiresAt: plan.expiresAt,
+                sourceProbe: {
+                  endpointTemplate: plan.sourceProbe.endpointTemplate,
+                  signal: plan.sourceProbe.signal,
+                  evidence: plan.sourceProbe.evidence,
+                },
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (
+          options.approvalToken !== plan.approvalToken &&
+          options.approvalToken !== report.approvalToken
+        ) {
           console.error(
             JSON.stringify(
               {
