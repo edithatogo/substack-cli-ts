@@ -436,7 +436,11 @@ export const SAFE_SURFACES: SafeSurface[] = [
       "Confirmed endpoint URL and method for published revision keeping canonical URL.",
       "Response schema proof for idempotent-safe operation.",
     ],
-    blockedOperations: ["Draft unschedule mutation", "Published revision mutation", "Canonical URL changes"],
+    blockedOperations: [
+      "Draft unschedule mutation",
+      "Published revision mutation",
+      "Canonical URL changes",
+    ],
     existingImplementations: [
       localReference("Draft planning commands", "src/cli.ts", [
         "Safe planning outputs for unschedule and revise already block unsafe writes.",
@@ -445,7 +449,9 @@ export const SAFE_SURFACES: SafeSurface[] = [
         "Provides read-only endpoint-shape probes for safe planning and evidence capture.",
       ]),
     ],
-    implementationOptions: selectedOptionSet("Keep local planning mandatory with mandatory probe artifact before enabling writes."),
+    implementationOptions: selectedOptionSet(
+      "Keep local planning mandatory with mandatory probe artifact before enabling writes.",
+    ),
     selectedImplementation:
       "Keep planning-only behavior by default, and gate any future live execution behind explicit endpoint evidence.",
     decisionRecord: {

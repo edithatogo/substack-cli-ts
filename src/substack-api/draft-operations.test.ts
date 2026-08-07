@@ -27,7 +27,10 @@ describe("draft mutation endpoint probing", () => {
     assert.equal(report.endpointCount, 5);
     assert.equal(report.supportsUnschedule, false);
     assert.equal(report.supportsRevise, false);
-    assert.equal(report.probes.every((probe) => probe.signal === "not-found"), true);
+    assert.equal(
+      report.probes.every((probe) => probe.signal === "not-found"),
+      true,
+    );
   });
 
   it("marks unschedule as likely when method mismatch indicates route existence", async () => {
@@ -58,7 +61,9 @@ describe("draft mutation endpoint probing", () => {
 
     assert.equal(report.supportsRevise, true);
     assert.equal(report.supportsUnschedule, false);
-    const reviseProbe = report.probes.find((probe) => probe.endpointTemplate === "/api/v1/posts/{draftId}/revise");
+    const reviseProbe = report.probes.find(
+      (probe) => probe.endpointTemplate === "/api/v1/posts/{draftId}/revise",
+    );
     assert.equal(reviseProbe?.signal, "likely-route");
     assert.equal(reviseProbe?.status, 200);
   });

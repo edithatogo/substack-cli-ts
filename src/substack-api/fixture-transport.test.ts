@@ -30,19 +30,22 @@ describe("fixture transport", () => {
 
     const responseOne = await transport.fetch("https://rareinsights.substack.com/api/v1/drafts", {
       method: "POST",
-      body: "{\"title\":\"Retry me\"}",
+      body: '{"title":"Retry me"}',
     });
     const responseTwo = await transport.fetch("https://rareinsights.substack.com/api/v1/drafts", {
       method: "POST",
-      body: "{\"title\":\"Retry me\"}",
+      body: '{"title":"Retry me"}',
     });
     const responseThree = await transport.fetch("https://rareinsights.substack.com/api/v1/drafts", {
       method: "POST",
-      body: "{\"title\":\"Retry me\"}",
+      body: '{"title":"Retry me"}',
     });
-    const responseFallback = await transport.fetch("https://rareinsights.substack.com/api/v1/other", {
-      method: "GET",
-    });
+    const responseFallback = await transport.fetch(
+      "https://rareinsights.substack.com/api/v1/other",
+      {
+        method: "GET",
+      },
+    );
 
     assert.equal(responseOne.status, 429);
     assert.equal(responseTwo.status, 503);
@@ -69,7 +72,10 @@ describe("fixture transport", () => {
 
   it("validates fixture input and throws a helpful error", () => {
     assert.throws(
-      () => parseMockTransportFixture(`{"scenario":"bad-fixture","generatedAt":"2026-08-07T00:00:00.000Z","calls":[]}`),
+      () =>
+        parseMockTransportFixture(
+          `{"scenario":"bad-fixture","generatedAt":"2026-08-07T00:00:00.000Z","calls":[]}`,
+        ),
       /requires at least one route call fixture/i,
     );
   });

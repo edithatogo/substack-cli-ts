@@ -41,7 +41,11 @@ export interface MockTransportOptions {
 export type MockTransportFetch = (
   input: string,
   init?: { method?: string; body?: unknown },
-) => Promise<{ status: number; text: () => Promise<string>; headers: { get(name: string): string | null } }>;
+) => Promise<{
+  status: number;
+  text: () => Promise<string>;
+  headers: { get(name: string): string | null };
+}>;
 
 interface MutableFixtureCall {
   responses: MockTransportFixtureResponse[];
@@ -103,7 +107,10 @@ function normalizeFixture(fixture: unknown): MockTransportFixture {
       }
 
       const candidateResponse = response as Record<string, unknown>;
-      if (typeof candidateResponse.status !== "number" || !Number.isFinite(candidateResponse.status)) {
+      if (
+        typeof candidateResponse.status !== "number" ||
+        !Number.isFinite(candidateResponse.status)
+      ) {
         throw new Error(`Response status for ${entry.method} ${entry.url} must be numeric.`);
       }
 
@@ -112,7 +119,8 @@ function normalizeFixture(fixture: unknown): MockTransportFixture {
         body: normalizeResponseBody(candidateResponse.body),
         headers: normalizeHeaders(candidateResponse.headers),
         delayMs:
-          typeof candidateResponse.delayMs === "number" && Number.isFinite(candidateResponse.delayMs)
+          typeof candidateResponse.delayMs === "number" &&
+          Number.isFinite(candidateResponse.delayMs)
             ? candidateResponse.delayMs
             : undefined,
         error: typeof candidateResponse.error === "string" ? candidateResponse.error : undefined,
@@ -159,9 +167,7 @@ function serializeBody(value: MockTransportFixtureResponse["body"]): string {
   }
 }
 
-function normalizeResponseBody(
-  raw: unknown,
-): MockTransportFixtureResponse["body"] {
+function normalizeResponseBody(raw: unknown): MockTransportFixtureResponse["body"] {
   if (raw === undefined) return undefined;
   if (raw === null) return null;
   if (typeof raw === "string" || typeof raw === "number" || typeof raw === "boolean") return raw;
@@ -206,10 +212,7 @@ export class FixtureTransport {
   private readonly now: () => number;
   private readonly sleep: (ms: number) => Promise<void>;
 
-  constructor(
-    fixture: MockTransportFixture,
-    options: MockTransportOptions = {},
-  ) {
+  constructor(fixture: MockTransportFixture, options: MockTransportOptions = {}) {
     this.now = options.now ?? DEFAULT_NOW;
     this.sleep = options.sleep ?? defaultSleep;
 
@@ -224,7 +227,11 @@ export class FixtureTransport {
   async fetch(
     input: string,
     init: { method?: string; body?: unknown } = {},
-  ): Promise<{ status: number; text: () => Promise<string>; headers: { get(name: string): string | null } }> {
+  ): Promise<{
+    status: number;
+    text: () => Promise<string>;
+    headers: { get(name: string): string | null };
+  }> {
     const method = (init.method ?? "GET").toUpperCase();
     const route = this.routes.get(routeKey(method, input));
 

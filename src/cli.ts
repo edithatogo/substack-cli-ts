@@ -201,9 +201,7 @@ import {
   saveDraftMapping,
 } from "./substack-api/draft-mappings.js";
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
-import {
-  probeDraftMutationEndpoints,
-} from "./substack-api/draft-operations.js";
+import { probeDraftMutationEndpoints } from "./substack-api/draft-operations.js";
 import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
 import {
   type BroadcastEntry,
@@ -3232,8 +3230,7 @@ apiDraft
   .argument("<file>", "Markdown file to convert")
   .option("--source <source>", "none, auto, env, or local-profile", "none")
   .option("--live", "Attempt the live write request after endpoint contract confirmation", false)
-  .action(
-    async (file: string, options: { live: boolean; source: "none" | ApiAuthSource }) => {
+  .action(async (file: string, options: { live: boolean; source: "none" | ApiAuthSource }) => {
     const isLive = options.live;
     if (isLive) {
       const effective = await loadEffectiveConfig();

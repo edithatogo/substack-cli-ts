@@ -92,17 +92,17 @@ export async function probeDraftMutationEndpoints(
         status = 0;
       }
 
-        const signal = classifyProbeStatus(status);
-        return {
-          operation: candidate.operation,
-          endpointTemplate: candidate.endpointTemplate,
-          endpoint,
-          probeMethod: "GET" as const,
-          status,
-          signal,
-          evidence: buildProbeEvidence(signal, candidate.endpointTemplate, status),
-        };
-      }),
+      const signal = classifyProbeStatus(status);
+      return {
+        operation: candidate.operation,
+        endpointTemplate: candidate.endpointTemplate,
+        endpoint,
+        probeMethod: "GET" as const,
+        status,
+        signal,
+        evidence: buildProbeEvidence(signal, candidate.endpointTemplate, status),
+      };
+    }),
   );
 
   const supportsUnschedule = probes.some(
@@ -159,14 +159,14 @@ function buildProbeEvidence(
     ];
   }
   if (signal === "forbidden") {
-    return [
-      `${endpointTemplate} returned 403; account role likely blocked this endpoint path.`,
-    ];
+    return [`${endpointTemplate} returned 403; account role likely blocked this endpoint path.`];
   }
   if (signal === "network-error") {
     return [
       `${endpointTemplate} could not be reached from local probe transport; retry with network access restored.`,
     ];
   }
-  return [`${endpointTemplate} returned ${status}; classification is uncertain without route-level evidence.`];
+  return [
+    `${endpointTemplate} returned ${status}; classification is uncertain without route-level evidence.`,
+  ];
 }
