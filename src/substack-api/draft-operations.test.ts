@@ -1,19 +1,27 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, it } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
 import type { FetchLike } from "./client.js";
 import {
+  buildDraftMutationActionId,
   buildDraftMutationApprovalToken,
   buildDraftMutationExecutionPlan,
-  executeDraftMutation,
+  buildDraftMutationPlanHash,
+  consumeDraftMutationActionPlan,
+  hasMatchingDraftMutationBeforeState,
+  isDraftMutationPlanReplaySafe,
+  isDraftMutationPlanExpired,
   makeDraftMutationProbeSignalSeed,
   probeDraftMutationEndpoints,
+  executeDraftMutation,
 } from "./draft-operations.js";
 import type {
   DraftMutationExecutionPlan,
   DraftMutationProbeCandidate,
 } from "./draft-operations.js";
-import { createHash } from "node:crypto";
 
 function material() {
   return materialFromCookieHeader(
@@ -37,30 +45,62 @@ function responseWithText(status: number, body: string): ReturnType<FetchLike> {
   });
 }
 
-function draftMutationPlan(operation: "unschedule" | "revise"): DraftMutationExecutionPlan {
-  const probe: DraftMutationProbeCandidate = {
-    operation,
-    endpointTemplate:
-      operation === "unschedule"
-        ? "/api/v1/drafts/{draftId}/unpublish"
-        : "/api/v1/posts/{draftId}/revise",
-    endpoint: `https://rareinsights.substack.com${operation === "unschedule" ? "/api/v1/drafts/123/unpublish" : "/api/v1/posts/123/revise"}`,
-    probeMethod: "GET",
-    status: 405,
-    signal: "method-mismatch",
-    evidence: ["Probe evidence"],
-  };
+function draftProbeReport(operation: "unschedule" | "revise", draftId = "123") {
+  const endpointTemplate =
+    operation === "unschedule" ? "/api/v1/drafts/{draftId}/unpublish" : "/api/v1/posts/{draftId}/revise";
 
   return {
-    operation,
-    draftId: "123",
-    draftUrl: `https://rareinsights.substack.com/publish/post/${operation === "unschedule" ? "123" : "456"}`,
+    status: "probed" as const,
+    operation: "draft.mutation-probe" as const,
     publicationUrl: "https://rareinsights.substack.com/",
-    endpointTemplate: probe.endpointTemplate,
-    endpoint: probe.endpoint,
-    method: "POST",
-    sourceProbe: probe,
+    draftId,
+    endpointCount: 1,
+    reportId: "report-123",
+    generatedAt: "2026-08-07T10:00:00.000Z",
+    approvalToken: "token",
+    supportsUnschedule: operation === "unschedule",
+    supportsRevise: operation === "revise",
+    message: "ok",
+    probes: [
+      {
+        operation,
+        endpointTemplate,
+        endpoint: `https://rareinsights.substack.com${endpointTemplate.replaceAll(
+          "{draftId}",
+          draftId,
+        )}`,
+        probeMethod: "GET",
+        status: 200,
+        signal: "likely-route",
+        evidence: [],
+      },
+    ],
   };
+}
+
+function draftMutationPlan(operation: "unschedule" | "revise"): DraftMutationExecutionPlan {
+  const draftId = operation === "unschedule" ? "123" : "456";
+  const plan = buildDraftMutationExecutionPlan({
+    operation,
+    publicationUrl: "https://rareinsights.substack.com/",
+    draftId,
+    probeReport: draftProbeReport(operation, draftId),
+    actor: "tester@example.com",
+    publicationId: 42,
+    beforeState: {
+      isPublished: operation === "revise",
+      scheduledAt: null,
+    },
+    afterState: {
+      isPublished: operation === "unschedule" ? false : true,
+      scheduledAt: null,
+    },
+    draftUpdatedAt: "2026-08-07T09:00:00.000Z",
+  });
+  if (!plan) {
+    throw new Error("Failed to build plan in test");
+  }
+  return plan;
 }
 
 describe("draft mutation endpoint probing", () => {
@@ -172,35 +212,6 @@ describe("draft mutation execution planning", () => {
     );
   });
 
-  it("derives deterministic approval tokens from normalized inputs", () => {
-    const publicationUrl = "https://rareinsights.substack.com/blog";
-    const seed = makeDraftMutationProbeSignalSeed([
-      {
-        operation: "revise",
-        endpointTemplate: "/api/v1/posts/{draftId}/revise",
-        endpoint: "https://rareinsights.substack.com/api/v1/posts/123/revise",
-        probeMethod: "GET",
-        status: 405,
-        signal: "method-mismatch",
-        evidence: [],
-      },
-    ]);
-    const generatedAt = "2026-08-07T10:00:00.000Z";
-    const token = buildDraftMutationApprovalToken(
-      `${publicationUrl}/?utm=abc#anchor`,
-      "123",
-      generatedAt,
-      seed,
-    );
-    const expected = createHash("sha256")
-      .update(
-        `https://rareinsights.substack.com/|123|${generatedAt}|/api/v1/posts/{draftId}/revise:method-mismatch`,
-      )
-      .digest("hex");
-
-    assert.equal(token, expected);
-  });
-
   it("builds a mutation execution plan with deterministic probe priority", () => {
     const report = {
       status: "probed" as const,
@@ -241,13 +252,49 @@ describe("draft mutation execution planning", () => {
       publicationUrl: report.publicationUrl,
       draftId: "123",
       probeReport: report,
+      actor: "tester@example.com",
+      publicationId: 99,
+      beforeState: {
+        isPublished: true,
+        scheduledAt: "2026-08-07T09:00:00.000Z",
+      },
+      afterState: {
+        isPublished: false,
+        scheduledAt: null,
+      },
+      draftUpdatedAt: "2026-08-07T09:00:00.000Z",
     });
 
     assert.equal(plan?.endpointTemplate, "/api/v1/drafts/{draftId}/unpublish");
     assert.equal(plan?.endpoint, "https://rareinsights.substack.com/api/v1/drafts/123/unpublish");
+    assert.equal(plan?.planSchemaVersion, 1);
+    assert.equal(plan?.actor, "tester@example.com");
+    assert.equal(plan?.publicationId, 99);
+    assert.equal(plan?.beforeState.isPublished, true);
   });
 
-  it("ignores malformed probes when building execution plans", () => {
+  it("derives immutable approval artifacts from plan inputs", () => {
+    const plan = buildDraftMutationExecutionPlan({
+      operation: "revise",
+      publicationUrl: "https://rareinsights.substack.com/blog",
+      draftId: "999",
+      probeReport: draftProbeReport("revise", "999"),
+      actor: "revise@example.com",
+      publicationId: 101,
+      beforeState: { isPublished: true, scheduledAt: null },
+      afterState: { isPublished: true, scheduledAt: null },
+      draftUpdatedAt: "2026-08-07T11:00:00.000Z",
+      ttlSeconds: 60,
+    });
+
+    assert.ok(plan);
+    const expectedToken = buildDraftMutationApprovalToken(plan.planHash, plan.actor, plan.expiresAt);
+    assert.equal(plan?.approvalToken, expectedToken);
+    assert.equal(plan?.planHash, buildDraftMutationPlanHash(plan));
+    assert.equal(plan?.actionId, buildDraftMutationActionId("https://rareinsights.substack.com/blog", "revise@example.com", "revise", "999", 101));
+  });
+
+  it("rejects malformed probe evidence when building execution plans", () => {
     const report = {
       status: "probed" as const,
       operation: "draft.mutation-probe" as const,
@@ -278,40 +325,10 @@ describe("draft mutation execution planning", () => {
       publicationUrl: report.publicationUrl,
       draftId: "123",
       probeReport: report,
-    });
-
-    assert.equal(plan, null);
-  });
-
-  it("returns null for an execution plan when probe evidence cannot be reconciled", () => {
-    const plan = buildDraftMutationExecutionPlan({
-      operation: "revise",
-      publicationUrl: "https://rareinsights.substack.com/",
-      draftId: "123",
-      probeReport: {
-        status: "probed" as const,
-        operation: "draft.mutation-probe" as const,
-        publicationUrl: "https://rareinsights.substack.com/",
-        draftId: "123",
-        endpointCount: 1,
-        reportId: "report-123",
-        generatedAt: "2026-08-07T10:00:00.000Z",
-        approvalToken: "token",
-        supportsUnschedule: true,
-        supportsRevise: false,
-        message: "",
-        probes: [
-          {
-            operation: "unschedule",
-            endpointTemplate: "/api/v1/posts/{draftId}/unpublish",
-            endpoint: "https://rareinsights.substack.com/api/v1/posts/123/unpublish",
-            probeMethod: "GET",
-            status: 200,
-            signal: "likely-route",
-            evidence: [],
-          },
-        ],
-      },
+      actor: "tester@example.com",
+      publicationId: 42,
+      beforeState: {},
+      afterState: {},
     });
 
     assert.equal(plan, null);
@@ -319,6 +336,85 @@ describe("draft mutation execution planning", () => {
 });
 
 describe("draft mutation execution", () => {
+  it("supports replay and reuse safety checks with deterministic action IDs", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-draft-mutation-"));
+    const state = join(temp, "actions.json");
+    const plan = draftMutationPlan("unschedule");
+
+    const firstCheck = await isDraftMutationPlanReplaySafe(plan, state);
+    assert.equal(firstCheck.status, "ok");
+
+    const consumed = await consumeDraftMutationActionPlan(plan, state);
+    assert.equal(consumed.status, "ok");
+
+    const secondCheck = await consumeDraftMutationActionPlan(plan, state);
+    assert.equal(secondCheck.status, "consumed");
+
+    const payload = JSON.parse(await readFile(state, "utf8"));
+    assert.equal(payload.actions.length, 1);
+    assert.equal(payload.actions[0].actionId, plan.actionId);
+    assert.equal(payload.actions[0].planHash, plan.planHash);
+
+    await rm(temp, { recursive: true, force: true });
+  });
+
+  it("detects hash mismatch for action replay", async () => {
+    const temp = await mkdtemp(join(tmpdir(), "substack-cli-draft-mutation-"));
+    const state = join(temp, "actions.json");
+    const plan = draftMutationPlan("unschedule");
+
+    const consumed = await consumeDraftMutationActionPlan(plan, state);
+    assert.equal(consumed.status, "ok");
+
+    const mutatedPlan = {
+      ...plan,
+      beforeState: { isPublished: true, scheduledAt: "changed" },
+    };
+    const replayPlanHash = buildDraftMutationPlanHash({
+      ...mutatedPlan,
+      planHash: "",
+    });
+    const mutatedPlanWithHash = {
+      ...mutatedPlan,
+      planHash: replayPlanHash,
+      approvalToken: buildDraftMutationApprovalToken(
+        replayPlanHash,
+        mutatedPlan.actor,
+        plan.expiresAt,
+      ),
+    };
+    const replay = await isDraftMutationPlanReplaySafe(mutatedPlanWithHash, state);
+    assert.equal(replay.status, "hash-mismatch");
+    assert.equal(replay.existingPlanHash, plan.planHash);
+
+    await rm(temp, { recursive: true, force: true });
+  });
+
+  it("checks before-state expectations", () => {
+    assert.equal(
+      hasMatchingDraftMutationBeforeState(
+        { isPublished: true, scheduledAt: null },
+        { isPublished: true, scheduledAt: null },
+      ),
+      true,
+    );
+    assert.equal(
+      hasMatchingDraftMutationBeforeState(
+        { isPublished: true, scheduledAt: null },
+        { isPublished: false, scheduledAt: null },
+      ),
+      false,
+    );
+  });
+
+  it("flags expired plans", () => {
+    const plan = {
+      ...draftMutationPlan("revise"),
+      expiresAt: "2000-01-01T00:00:00.000Z",
+    };
+    assert.equal(isDraftMutationPlanExpired(plan, new Date("2000-01-02T00:00:00.000Z")), true);
+  });
+
   it("treats write-network errors as failed mutation results", async () => {
     const plan = draftMutationPlan("unschedule");
     const result = await executeDraftMutation(plan, material(), () => responseWithText(0, "{}"));

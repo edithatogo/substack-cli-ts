@@ -204,8 +204,10 @@ import {
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
 import {
   buildDraftMutationExecutionPlan,
-  buildDraftMutationApprovalToken,
-  makeDraftMutationProbeSignalSeed,
+  consumeDraftMutationActionPlan,
+  hasMatchingDraftMutationBeforeState,
+  isDraftMutationPlanExpired,
+  verifyDraftMutationExecutionPlan,
   executeDraftMutation,
   type DraftMutationProbeReport,
   probeDraftMutationEndpoints,
@@ -3068,19 +3070,33 @@ apiDraft
           return;
         }
 
-        const expectedToken = buildDraftMutationApprovalToken(
+        const plan = buildDraftMutationExecutionPlan({
+          operation: "unschedule",
           publicationUrl,
-          options.draftId,
-          report.generatedAt,
-          makeDraftMutationProbeSignalSeed(report.probes),
-        );
-        if (options.approvalToken !== expectedToken) {
+          draftId: options.draftId,
+          probeReport: report,
+          actor: validation.handle ?? "operator",
+          publicationId: draft.publicationId,
+          beforeState: {
+            isPublished: draft.isPublished,
+            scheduledAt: draft.scheduledAt,
+            draftUpdatedAt: draft.draftUpdatedAt,
+            audience: draft.audience,
+            sectionId: draft.sectionId,
+          },
+          afterState: {
+            isPublished: false,
+            scheduledAt: null,
+          },
+          draftUpdatedAt: draft.draftUpdatedAt ?? undefined,
+        });
+        if (!plan) {
           console.error(
             JSON.stringify(
               {
                 status: "failed",
                 operation: "draft.unschedule",
-                message: "Approval token does not match the provided probe report.",
+                message: "No confirmed mutation endpoint was available in this probe report.",
               },
               null,
               2,
@@ -3090,19 +3106,102 @@ apiDraft
           return;
         }
 
-        const plan = buildDraftMutationExecutionPlan({
-          operation: "unschedule",
-          publicationUrl,
-          draftId: options.draftId,
-          probeReport: report,
-        });
-        if (!plan) {
+        if (options.approvalToken !== plan.approvalToken) {
           console.error(
             JSON.stringify(
               {
                 status: "failed",
                 operation: "draft.unschedule",
-                message: "No confirmed mutation endpoint was available in this probe report.",
+                message: "Approval token does not match the constructed draft-mutation plan.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (isDraftMutationPlanExpired(plan, new Date())) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "Draft mutation approval token has expired. Re-run probe and re-authorize.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const expectedBefore = {
+          isPublished: draft.isPublished,
+          scheduledAt: draft.scheduledAt,
+          audience: draft.audience,
+          sectionId: draft.sectionId,
+          draftUpdatedAt: draft.draftUpdatedAt,
+        };
+        if (!hasMatchingDraftMutationBeforeState(plan.beforeState, expectedBefore)) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "Draft state changed since plan build. Re-run probe before execution.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!(await verifyDraftMutationExecutionPlan(plan))) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "Draft mutation execution plan failed integrity checks.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const replayCheck = await consumeDraftMutationActionPlan(plan);
+        if (replayCheck.status === "consumed") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "This mutation plan was already consumed.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+        if (replayCheck.status === "hash-mismatch") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message:
+                  "Draft mutation replay hash mismatch indicates plan drift for this action-id. Rebuild from fresh probe + updated draft state.",
+                existingPlanHash: replayCheck.existingPlanHash,
               },
               null,
               2,
@@ -3450,19 +3549,33 @@ apiDraft
           return;
         }
 
-        const expectedToken = buildDraftMutationApprovalToken(
+        const plan = buildDraftMutationExecutionPlan({
+          operation: "revise",
           publicationUrl,
-          options.draftId,
-          report.generatedAt,
-          makeDraftMutationProbeSignalSeed(report.probes),
-        );
-        if (options.approvalToken !== expectedToken) {
+          draftId: options.draftId,
+          probeReport: report,
+          actor: validation.handle ?? "operator",
+          publicationId: draft.publicationId,
+          beforeState: {
+            isPublished: draft.isPublished,
+            scheduledAt: draft.scheduledAt,
+            draftUpdatedAt: draft.draftUpdatedAt,
+            audience: draft.audience,
+            sectionId: draft.sectionId,
+          },
+          afterState: {
+            isPublished: draft.isPublished,
+            scheduledAt: draft.scheduledAt,
+          },
+          draftUpdatedAt: draft.draftUpdatedAt ?? undefined,
+        });
+        if (!plan) {
           console.error(
             JSON.stringify(
               {
                 status: "failed",
                 operation: "draft.revise",
-                message: "Approval token does not match the provided probe report.",
+                message: "No confirmed mutation endpoint was available in this probe report.",
               },
               null,
               2,
@@ -3472,19 +3585,102 @@ apiDraft
           return;
         }
 
-        const plan = buildDraftMutationExecutionPlan({
-          operation: "revise",
-          publicationUrl,
-          draftId: options.draftId,
-          probeReport: report,
-        });
-        if (!plan) {
+        if (options.approvalToken !== plan.approvalToken) {
           console.error(
             JSON.stringify(
               {
                 status: "failed",
                 operation: "draft.revise",
-                message: "No confirmed mutation endpoint was available in this probe report.",
+                message: "Approval token does not match the constructed draft-mutation plan.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (isDraftMutationPlanExpired(plan, new Date())) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "Draft mutation approval token has expired. Re-run probe and re-authorize.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const expectedBefore = {
+          isPublished: draft.isPublished,
+          scheduledAt: draft.scheduledAt,
+          audience: draft.audience,
+          sectionId: draft.sectionId,
+          draftUpdatedAt: draft.draftUpdatedAt,
+        };
+        if (!hasMatchingDraftMutationBeforeState(plan.beforeState, expectedBefore)) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "Draft state changed since plan build. Re-run probe before execution.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!(await verifyDraftMutationExecutionPlan(plan))) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "Draft mutation execution plan failed integrity checks.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const replayCheck = await consumeDraftMutationActionPlan(plan);
+        if (replayCheck.status === "consumed") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "This mutation plan was already consumed.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+        if (replayCheck.status === "hash-mismatch") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message:
+                  "Draft mutation replay hash mismatch indicates plan drift for this action-id. Rebuild from fresh probe + updated draft state.",
+                existingPlanHash: replayCheck.existingPlanHash,
               },
               null,
               2,
@@ -6774,7 +6970,7 @@ function isDraftMutationProbeReport(value: unknown): value is DraftMutationProbe
   if (!Number.isInteger(value.endpointCount)) return false;
   if (typeof value.reportId !== "string" || value.reportId.length === 0) return false;
   if (typeof value.generatedAt !== "string" || value.generatedAt.length === 0) return false;
-  if (typeof value.approvalToken !== "string" || value.approvalToken.length === 0) return false;
+  if (typeof value.approvalToken !== "string") return false;
   if (!Array.isArray(value.probes)) return false;
   if (typeof value.supportsUnschedule !== "boolean" || typeof value.supportsRevise !== "boolean")
     return false;

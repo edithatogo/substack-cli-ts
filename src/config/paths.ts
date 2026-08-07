@@ -35,6 +35,10 @@ export function localBrowserProfileDir(): string {
   return join(stateDir(), "chrome-profile");
 }
 
+export function draftMutationActionsFilePath(): string {
+  return join(stateDir(), "draft-mutation-actions.json");
+}
+
 export function analyticsSnapshotsDir(): string {
   return join(stateDir(), "analytics-snapshots");
 }
