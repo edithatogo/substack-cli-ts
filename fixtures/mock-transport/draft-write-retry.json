@@ -1,0 +1,35 @@
+{
+  "scenario": "draft-write-retry-with-backoff",
+  "generatedAt": "2026-08-07T00:00:00.000Z",
+  "calls": [
+    {
+      "method": "POST",
+      "url": "https://rareinsights.substack.com/api/v1/drafts",
+      "responses": [
+        {
+          "status": 429,
+          "headers": {
+            "retry-after": "Wed, 07 Aug 2026 00:00:02 GMT"
+          },
+          "body": {
+            "error": "rate limited"
+          }
+        },
+        {
+          "status": 503,
+          "body": {
+            "error": "temporary outage"
+          }
+        },
+        {
+          "status": 200,
+          "body": {
+            "id": 321,
+            "draft_url": "https://rareinsights.substack.com/p/retried-draft",
+            "title": "Retried Draft"
+          }
+        }
+      ]
+    }
+  ]
+}
