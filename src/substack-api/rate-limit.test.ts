@@ -49,27 +49,31 @@ describe("RateLimiter", () => {
 
 describe("RateLimitGovernor", () => {
   it("serializes read requests with the configured minimum interval", async () => {
-    const state = defaultRateLimitRuntimeState();
-    state.read.minIntervalMs = 5;
-    const governor = new RateLimitGovernor(state, "read");
-    const beforeNextAllowedAt = state.read.runtime.nextAllowedAtMs;
-    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    vi.useFakeTimers();
+    try {
+      const state = defaultRateLimitRuntimeState();
+      state.read.minIntervalMs = 5;
+      const governor = new RateLimitGovernor(state, "read");
+      const beforeNextAllowedAt = state.read.runtime.nextAllowedAtMs;
 
-    const first = governor.acquire();
-    let secondStarted = false;
-    const second = governor.acquire().then(() => {
-      secondStarted = true;
-    });
+      const first = governor.acquire();
+      let secondStarted = false;
+      const second = governor.acquire().then(() => {
+        secondStarted = true;
+      });
 
-    await first;
-    await wait(1);
-    assert.equal(secondStarted, false);
+      await first;
+      await vi.advanceTimersByTimeAsync(1);
+      assert.equal(secondStarted, false);
 
-    await wait(6);
-    await second;
+      await vi.advanceTimersByTimeAsync(5);
+      await second;
 
-    assert.equal(secondStarted, true);
-    assert.equal(state.read.runtime.nextAllowedAtMs > beforeNextAllowedAt, true);
+      assert.equal(secondStarted, true);
+      assert.equal(state.read.runtime.nextAllowedAtMs > beforeNextAllowedAt, true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

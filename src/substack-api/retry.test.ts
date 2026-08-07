@@ -34,10 +34,11 @@ describe("withRetry", () => {
       maxRetries: 3,
       baseDelayMs: 10,
       maxDelayMs: 15,
+      randomizer: () => 0,
     });
 
     await vi.advanceTimersByTimeAsync(10);
-    await vi.advanceTimersByTimeAsync(15);
+    await vi.advanceTimersByTimeAsync(20);
 
     assert.equal(await result, "ok");
     assert.equal(fn.mock.calls.length, 3);
@@ -61,6 +62,32 @@ describe("withRetry", () => {
     await vi.advanceTimersByTimeAsync(5);
 
     await rejection;
+    assert.equal(fn.mock.calls.length, 2);
+  });
+
+  it("uses injected randomizer to keep retry timing deterministic", async () => {
+    const fn = vi
+      .fn<() => Promise<string>>()
+      .mockRejectedValueOnce(new Error("first"))
+      .mockResolvedValue("ok");
+    const randomizer = vi.fn(() => 0.5);
+
+    const result = withRetry(fn, {
+      maxRetries: 1,
+      baseDelayMs: 10,
+      maxDelayMs: 20,
+      randomizer,
+    });
+
+    await vi.advanceTimersByTimeAsync(10);
+    assert.equal(fn.mock.calls.length, 1);
+    assert.equal(randomizer.mock.calls.length, 1);
+
+    await vi.advanceTimersByTimeAsync(10);
+    assert.equal(fn.mock.calls.length, 2);
+
+    await vi.advanceTimersByTimeAsync(0);
+    assert.equal(await result, "ok");
     assert.equal(fn.mock.calls.length, 2);
   });
 });
