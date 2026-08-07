@@ -1068,7 +1068,8 @@
               "analytics-revenue-dashboards",
               "chat-dm-live-chat",
               "publication-admin-writes",
-              "integrations-import-crosspost-tokens"
+              "integrations-import-crosspost-tokens",
+              "draft-lifecycle-mutations"
             ]
           },
           "title": {

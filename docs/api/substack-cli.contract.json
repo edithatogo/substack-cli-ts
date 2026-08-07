@@ -500,7 +500,7 @@
     ]
   },
   "safeSurfaces": {
-    "count": 7,
+    "count": 8,
     "surfaces": [
       {
         "id": "analytics-revenue-dashboards",
@@ -533,6 +533,22 @@
           "WebSocket replay"
         ],
         "decisionRecordId": "DR-chat-dm-public-contract-required"
+      },
+      {
+        "id": "draft-lifecycle-mutations",
+        "status": "planning-only",
+        "safetyClass": "planning-only",
+        "currentCommands": [
+          "api draft unschedule",
+          "api draft revise",
+          "api draft probe"
+        ],
+        "blockedOperations": [
+          "Draft unschedule mutation",
+          "Published revision mutation",
+          "Canonical URL changes"
+        ],
+        "decisionRecordId": "DR-draft-lifecycle-planning-only"
       },
       {
         "id": "integrations-import-crosspost-tokens",
@@ -1687,7 +1703,8 @@
               "analytics-revenue-dashboards",
               "chat-dm-live-chat",
               "publication-admin-writes",
-              "integrations-import-crosspost-tokens"
+              "integrations-import-crosspost-tokens",
+              "draft-lifecycle-mutations"
             ]
           },
           "title": {
