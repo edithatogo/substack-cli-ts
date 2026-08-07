@@ -601,7 +601,7 @@ Build and validate a draft creation request without publishing content.
 
 ### `api draft unschedule`
 
-Build a safe unschedule plan for an existing draft. Live execution is disabled pending endpoint confirmation.
+Build a safe unschedule plan for an existing draft. Live execution requires prior endpoint probing evidence.
 
 **Options:**
 | Flag | Description | Default |
@@ -610,11 +610,14 @@ Build a safe unschedule plan for an existing draft. Live execution is disabled p
 | `--draft-url <url>` | Optional draft editor URL override | — |
 | `--draft-limit <limit>` | Max drafts to inspect from API inventory | `50` |
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
-| `--live` | Attempt live execution after endpoint confirmation (disabled by default) | `false` |
+| `--live` | Attempt live execution after endpoint confirmation | `false` |
+| `--probe-report <file>` | Path to a prior `api draft probe` report | — |
+| `--approval-token <token>` | Proof token for the matching `api draft probe` report | — |
+| `--run-log-dir <dir>` | Write a durable JSON run-log artifact | — |
 
 ### `api draft revise`
 
-Build a safe published-post revision plan that preserves URL. Live execution is disabled pending endpoint confirmation.
+Build a safe published-post revision plan that preserves URL. Live execution requires prior endpoint probing evidence.
 
 **Options:**
 | Flag | Description | Default |
@@ -625,6 +628,9 @@ Build a safe published-post revision plan that preserves URL. Live execution is 
 | `--source <source>` | `auto`, `env`, or `local-profile` | `auto` |
 | `--keep-url` | Preserve canonical URL when replacing content | `true` |
 | `--live` | Attempt live execution after endpoint confirmation | `false` |
+| `--probe-report <file>` | Path to a prior `api draft probe` report | — |
+| `--approval-token <token>` | Proof token for the matching `api draft probe` report | — |
+| `--run-log-dir <dir>` | Write a durable JSON run-log artifact | — |
 
 ### `api draft probe`
 

@@ -221,6 +221,8 @@ export const RunLogContractSchema = z.object({
   actionType: z.enum([
     "draft.create",
     "draft.update",
+    "draft.unschedule",
+    "draft.revise",
     "post.publish",
     "post.schedule",
     "note.create",

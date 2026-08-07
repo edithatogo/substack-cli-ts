@@ -11,6 +11,7 @@ import {
   buildBrowserWorkflowRunLog,
   buildCreatorWorkflowRunLog,
   buildDraftWriteRunLog,
+  buildDraftMutationRunLog,
   buildNoteWriteRunLog,
   buildPublishWriteRunLog,
   writeRunLog,
@@ -413,6 +414,169 @@ describe("run log artifacts", () => {
       assert.equal(artifact.actionType, actionType);
       assert.equal(artifact.diagnostics, undefined);
     }
+  });
+
+  it("builds draft mutation run-log artifacts for unschedule and revise", () => {
+    const source = {
+      status: "success" as const,
+      operation: "unschedule" as const,
+      method: "POST" as const,
+      draftId: "123",
+      endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+      endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/unpublish",
+      statusCode: 204,
+      message: "Unschedule mutation succeeded for draft 123.",
+      sourceProbe: {
+        operation: "unschedule",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/unpublish",
+        probeMethod: "GET",
+        status: 404,
+        signal: "not-found",
+        evidence: [],
+      },
+    };
+
+    const unschedule = buildDraftMutationRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        operation: "unschedule",
+        draftId: "123",
+        draftUrl: "https://rareinsights.substack.com/publish/post/123",
+        publicationUrl: "https://rareinsights.substack.com/",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/unpublish",
+        method: "POST",
+        sourceProbe: source.sourceProbe,
+      },
+      result: source,
+    });
+
+    assert.equal(unschedule.actionType, "draft.unschedule");
+    assert.equal(unschedule.status, "success");
+
+    const revise = buildDraftMutationRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        operation: "revise",
+        draftId: "123",
+        draftUrl: "https://rareinsights.substack.com/publish/post/123",
+        publicationUrl: "https://rareinsights.substack.com/",
+        endpointTemplate: "/api/v1/posts/{draftId}/revise",
+        endpoint: "https://rareinsights.substack.com/api/v1/posts/123/revise",
+        method: "POST",
+        sourceProbe: source.sourceProbe,
+      },
+      result: {
+        ...source,
+        operation: "revise",
+        message: "Revise mutation succeeded for draft 123.",
+      },
+    });
+
+    assert.equal(revise.actionType, "draft.revise");
+    assert.equal(revise.status, "success");
+    assert.equal(revise.resultMessage, "Revise mutation succeeded for draft 123.");
+    assert.equal(revise.draftId, "123");
+  });
+
+  it("records draft mutation failures and redacts failed-body material", () => {
+    const failure = buildDraftMutationRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        operation: "revise",
+        draftId: "456",
+        draftUrl: "https://rareinsights.substack.com/publish/post/456",
+        publicationUrl: "https://rareinsights.substack.com/",
+        endpointTemplate: "/api/v1/posts/{draftId}/revise",
+        endpoint: "https://rareinsights.substack.com/api/v1/posts/456/revise",
+        method: "POST",
+        sourceProbe: {
+          operation: "revise",
+          endpointTemplate: "/api/v1/posts/{draftId}/revise",
+          endpoint: "https://rareinsights.substack.com/api/v1/posts/456/revise",
+          probeMethod: "GET",
+          status: 500,
+          signal: "method-mismatch",
+          evidence: ["probe"],
+        },
+      },
+      result: {
+        status: "failed",
+        operation: "revise",
+        method: "POST",
+        draftId: "456",
+        endpointTemplate: "/api/v1/posts/{draftId}/revise",
+        endpoint: "https://rareinsights.substack.com/api/v1/posts/456/revise",
+        statusCode: 500,
+        error: "Authorization=Bearer abcdef123456; token=top-secret",
+        message: "Substack returned HTTP 500.",
+      },
+    });
+
+    assert.equal(failure.actionType, "draft.revise");
+    assert.equal(failure.status, "failure");
+    assert.equal(failure.error?.message, "Authorization=Bearer abcdef123456; token=top-secret");
+    assert.equal(failure.error?.body?.includes("abcdef123456"), false);
+    assert.equal(failure.error?.body?.includes("top-secret"), false);
+    assert.equal(failure.resultMessage, "Substack returned HTTP 500.");
+  });
+
+  it("supports draft mutation run-log redaction fallbacks for missing URLs and errors", () => {
+    const withoutDraftUrl = buildDraftMutationRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        operation: "unschedule",
+        draftId: "789",
+        draftUrl: undefined,
+        publicationUrl: "https://rareinsights.substack.com/",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/789/unpublish",
+        method: "POST",
+        sourceProbe: {
+          operation: "unschedule",
+          endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+          endpoint: "https://rareinsights.substack.com/api/v1/drafts/789/unpublish",
+          probeMethod: "GET",
+          status: 404,
+          signal: "not-found",
+          evidence: [],
+        },
+      },
+      result: {
+        status: "failed",
+        operation: "unschedule",
+        method: "POST",
+        draftId: "789",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/789/unpublish",
+        statusCode: 500,
+        message: "Draft mutation failed.",
+      },
+    });
+
+    assert.equal(withoutDraftUrl.draftUrl, undefined);
+    assert.equal(withoutDraftUrl.error?.message, "Draft mutation failed.");
+  });
+
+  it("records browser workflow draft failure details with fallback message/body values", () => {
+    const failedBrowser = buildBrowserWorkflowRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      prepared: { ...prepared, mode: "publish", scheduleAt: "2026-06-20T09:00:00Z" },
+      result: {
+        status: "validation-failed",
+        message: "",
+        operation: "publish",
+        mode: "publish",
+        title: "Example",
+        currentUrl: "https://rareinsights.substack.com/publish/post/999",
+        trace: [],
+      },
+    });
+
+    assert.equal(failedBrowser.status, "failure");
+    assert.equal(failedBrowser.error?.message, "Workflow failed.");
+    assert.equal(failedBrowser.error?.body, null);
   });
 });
 

@@ -151,6 +151,8 @@ const CLI_CONTRACT_COMMANDS: ContractCliCommand[] = [
   command("backup validate --file <file>", "read-only", ["backup.snapshot-plan"]),
   command("api analytics inventory", "read-only", ["analytics.snapshot"]),
   command("api analytics snapshot", "read-only", ["analytics.snapshot"]),
+  command("api draft unschedule", "confirmed-write", ["draft.unschedule", "run-log"]),
+  command("api draft revise", "confirmed-write", ["draft.revise", "run-log"]),
 ];
 
 export async function buildLocalApiContract(

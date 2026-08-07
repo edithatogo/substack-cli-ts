@@ -3,6 +3,10 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { DraftWritePlan, DraftWriteResult } from "../substack-api/draft-write.js";
 import type { NoteWritePlan, NoteWriteResult } from "../substack-api/note-write.js";
+import type {
+  DraftMutationExecutionPlan,
+  DraftMutationExecutionResult,
+} from "../substack-api/draft-operations.js";
 import type { PublishWritePlan, PublishWriteResult } from "../substack-api/publish-write.js";
 import type { PreparedPost } from "../types.js";
 import { redactUrl } from "../util/redact.js";
@@ -12,6 +16,8 @@ import { resolvePostTitle } from "./title.js";
 export type RunLogActionType =
   | "draft.create"
   | "draft.update"
+  | "draft.unschedule"
+  | "draft.revise"
   | "post.publish"
   | "post.schedule"
   | "note.create"
@@ -140,6 +146,42 @@ function buildRunLogDiagnostics(input: {
     diagnostics.staleDocs?.length
     ? diagnostics
     : undefined;
+}
+
+export function buildDraftMutationRunLog(input: {
+  publicationUrl: string;
+  plan: DraftMutationExecutionPlan;
+  result: DraftMutationExecutionResult;
+  sourceFile?: string | undefined;
+  selectorSourceFile?: string | undefined;
+}): RunLogArtifact {
+  const actionType = input.plan.operation === "unschedule" ? "draft.unschedule" : "draft.revise";
+  const resultMessage = input.result.message;
+
+  return {
+    schemaVersion: 1,
+    timestamp: new Date().toISOString(),
+    actionType,
+    status: input.result.status === "failed" ? "failure" : "success",
+    publicationUrl: input.publicationUrl,
+    publicationId: null,
+    sourceFile: input.sourceFile,
+    selectorSourceFile: input.selectorSourceFile,
+    draftId: input.plan.draftId,
+    draftUrl: redactUrl(input.plan.draftUrl) ?? undefined,
+    apiResponseIds: {
+      draftId: input.result.draftId,
+      postUrl: input.result.publishedUrl ?? undefined,
+    },
+    resultMessage,
+    error:
+      input.result.status === "failed"
+        ? {
+            message: input.result.error ?? resultMessage,
+            body: redactErrorBody(input.result.error),
+          }
+        : undefined,
+  };
 }
 
 export async function writeRunLog(

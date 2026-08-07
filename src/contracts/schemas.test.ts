@@ -244,5 +244,23 @@ describe("first-party artifact contract schemas", () => {
         publicationUrl: "local",
       }),
     );
+    assert.doesNotThrow(() =>
+      RunLogContractSchema.parse({
+        schemaVersion: 1,
+        timestamp: "2026-06-24T00:00:00.000Z",
+        actionType: "draft.unschedule",
+        status: "success",
+        publicationUrl: "local",
+      }),
+    );
+    assert.doesNotThrow(() =>
+      RunLogContractSchema.parse({
+        schemaVersion: 1,
+        timestamp: "2026-06-24T00:00:00.000Z",
+        actionType: "draft.revise",
+        status: "success",
+        publicationUrl: "local",
+      }),
+    );
   });
 });
