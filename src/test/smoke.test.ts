@@ -114,7 +114,7 @@ describe("smoke tests", () => {
       const safeSurfacesOutput = runCli(["coverage", "safe-surfaces"]);
       const safeSurfaces = JSON.parse(safeSurfacesOutput);
       expect(safeSurfaces.status).toBe("ready");
-      expect(safeSurfaces.count).toBe(7);
+      expect(safeSurfaces.count).toBe(8);
 
       const safeSurfaceOutput = runCli([
         "coverage",

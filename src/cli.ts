@@ -1371,7 +1371,6 @@ draft
   );
 
 draft
-apiDraft
   .command("create")
   .description("Create or update a draft through the API and capture its draft ID.")
   .argument("<file>", "Markdown file to draft")
