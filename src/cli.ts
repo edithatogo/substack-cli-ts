@@ -245,6 +245,7 @@ import {
 } from "./substack-api/publication-settings.js";
 import {
   applyRateLimitReceipt,
+  defaultRateLimitRuntimeState,
   loadRateLimitState,
   parseRateLimitReceipt,
   rateLimitStatePath,
@@ -2658,6 +2659,39 @@ const apiRateLimit = api
   .description("Inspect and manage conservative rate-limit runtime policy.");
 
 apiRateLimit
+  .command("backup")
+  .description("Create a backup copy of the current rate-limit runtime state.")
+  .option("--out <file>", "Write the backup payload to a JSON file.")
+  .action(async (options: { out?: string | undefined }) => {
+    const state = await loadRateLimitState();
+    const payload = {
+      schemaVersion: 1,
+      createdAt: new Date().toISOString(),
+      statusFile: rateLimitStatePath(),
+      state,
+    };
+
+    if (!options.out) {
+      console.log(JSON.stringify(payload, null, 2));
+      return;
+    }
+
+    await mkdir(dirname(options.out), { recursive: true });
+    await writeFile(options.out, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+    console.log(
+      JSON.stringify(
+        {
+          status: "rate-limit.backup",
+          outputFile: options.out,
+          statusFile: payload.statusFile,
+        },
+        null,
+        2,
+      ),
+    );
+  });
+
+apiRateLimit
   .command("status")
   .description("Show current rate-limit controller state and metadata.")
   .action(async () => {
@@ -2674,6 +2708,85 @@ apiRateLimit
       ),
     );
   });
+
+apiRateLimit
+  .command("reset")
+  .description("Reset local rate-limit state to defaults.")
+  .option("--dry-run", "Preview the reset without writing files.", false)
+  .option("--force", "Confirm destructive reset and allow state replacement.", false)
+  .option("--backup <file>", "Optional backup file path.")
+  .action(
+    async (options: {
+      dryRun: boolean;
+      force: boolean;
+      backup?: string | undefined;
+    }) => {
+      const currentState = await loadRateLimitState();
+      const nextState = defaultRateLimitRuntimeState();
+      const output = {
+        statusFile: rateLimitStatePath(),
+        backupFile: options.backup ?? `${rateLimitStatePath()}.backup.${Date.now()}.json`,
+        before: toRateLimitStatusReport(currentState),
+        after: toRateLimitStatusReport(nextState),
+      };
+
+      if (options.dryRun) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "rate-limit.reset-preview",
+              ...output,
+            },
+            null,
+            2,
+          ),
+        );
+        return;
+      }
+
+      if (!options.force) {
+        console.error(
+          JSON.stringify(
+            {
+              status: "failed",
+              message: "Reset requires --force because it replaces persisted rate-limit state.",
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return;
+      }
+
+      await mkdir(dirname(output.backupFile), { recursive: true });
+      await writeFile(
+        output.backupFile,
+        `${JSON.stringify(
+          {
+            schemaVersion: 1,
+            createdAt: new Date().toISOString(),
+            statusFile: rateLimitStatePath(),
+            state: currentState,
+          },
+          null,
+          2,
+        )}\n`,
+        "utf8",
+      );
+      await saveRateLimitState(nextState);
+      console.log(
+        JSON.stringify(
+          {
+            status: "rate-limit.reset",
+            ...output,
+          },
+          null,
+          2,
+        ),
+      );
+    },
+  );
 
 apiRateLimit
   .command("update")
