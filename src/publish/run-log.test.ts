@@ -11,6 +11,7 @@ import {
   buildBrowserWorkflowRunLog,
   buildCreatorWorkflowRunLog,
   buildDraftWriteRunLog,
+  buildDraftMutationRunLog,
   buildNoteWriteRunLog,
   buildPublishWriteRunLog,
   writeRunLog,
@@ -413,6 +414,70 @@ describe("run log artifacts", () => {
       assert.equal(artifact.actionType, actionType);
       assert.equal(artifact.diagnostics, undefined);
     }
+  });
+
+  it("builds draft mutation run-log artifacts for unschedule and revise", () => {
+    const source = {
+      status: "success" as const,
+      operation: "unschedule" as const,
+      method: "POST" as const,
+      draftId: "123",
+      endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+      endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/unpublish",
+      statusCode: 204,
+      message: "Unschedule mutation succeeded for draft 123.",
+      sourceProbe: {
+        operation: "unschedule",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/unpublish",
+        probeMethod: "GET",
+        status: 404,
+        signal: "not-found",
+        evidence: [],
+      },
+    };
+
+    const unschedule = buildDraftMutationRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        operation: "unschedule",
+        draftId: "123",
+        draftUrl: "https://rareinsights.substack.com/publish/post/123",
+        publicationUrl: "https://rareinsights.substack.com/",
+        endpointTemplate: "/api/v1/drafts/{draftId}/unpublish",
+        endpoint: "https://rareinsights.substack.com/api/v1/drafts/123/unpublish",
+        method: "POST",
+        sourceProbe: source.sourceProbe,
+      },
+      result: source,
+    });
+
+    assert.equal(unschedule.actionType, "draft.unschedule");
+    assert.equal(unschedule.status, "success");
+
+    const revise = buildDraftMutationRunLog({
+      publicationUrl: "https://rareinsights.substack.com/",
+      plan: {
+        operation: "revise",
+        draftId: "123",
+        draftUrl: "https://rareinsights.substack.com/publish/post/123",
+        publicationUrl: "https://rareinsights.substack.com/",
+        endpointTemplate: "/api/v1/posts/{draftId}/revise",
+        endpoint: "https://rareinsights.substack.com/api/v1/posts/123/revise",
+        method: "POST",
+        sourceProbe: source.sourceProbe,
+      },
+      result: {
+        ...source,
+        operation: "revise",
+        message: "Revise mutation succeeded for draft 123.",
+      },
+    });
+
+    assert.equal(revise.actionType, "draft.revise");
+    assert.equal(revise.status, "success");
+    assert.equal(revise.resultMessage, "Revise mutation succeeded for draft 123.");
+    assert.equal(revise.draftId, "123");
   });
 });
 

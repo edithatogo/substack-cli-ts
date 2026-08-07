@@ -131,6 +131,7 @@ import { prepublishPost } from "./publish/prepublish.js";
 import {
   buildCreatorWorkflowRunLog,
   buildDraftWriteRunLog,
+  buildDraftMutationRunLog,
   buildNoteWriteRunLog,
   buildPublishWriteRunLog,
   writeRunLog,
@@ -201,7 +202,15 @@ import {
   saveDraftMapping,
 } from "./substack-api/draft-mappings.js";
 import { buildDraftSectionResolutionReport } from "./substack-api/draft-section.js";
-import { probeDraftMutationEndpoints } from "./substack-api/draft-operations.js";
+import {
+  buildDraftMutationExecutionPlan,
+  buildDraftMutationApprovalToken,
+  makeDraftMutationProbeSignalSeed,
+  executeDraftMutation,
+  type DraftMutationExecutionPlan,
+  type DraftMutationProbeReport,
+  probeDraftMutationEndpoints,
+} from "./substack-api/draft-operations.js";
 import { executeDraftWrite, planCreateDraft } from "./substack-api/draft-write.js";
 import {
   type BroadcastEntry,
@@ -2892,7 +2901,7 @@ const apiDraft = api
 apiDraft
   .command("unschedule")
   .description(
-    "Build a safe unschedule plan for an existing draft. Live execution is disabled pending endpoint confirmation.",
+    "Build a safe unschedule plan for an existing draft. Live execution requires confirmed endpoint evidence.",
   )
   .requiredOption("--draft-id <id>", "Substack draft ID to unschedule")
   .option("--draft-url <url>", "Optional draft editor URL override")
@@ -2904,6 +2913,12 @@ apiDraft
   )
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--live", "Attempt live execution after explicit endpoint confirmation", false)
+  .option(
+    "--probe-report <file>",
+    "Path to a prior `api draft probe` report generated for this draft",
+  )
+  .option("--approval-token <token>", "Proof token from the matching `api draft probe` report")
+  .option("--run-log-dir <dir>", "Write a durable JSON draft mutation run-log entry")
   .action(
     async (options: {
       draftId: string;
@@ -2911,30 +2926,205 @@ apiDraft
       draftLimit: number;
       source: "auto" | ApiAuthSource;
       live: boolean;
+      probeReport?: string | undefined;
+      approvalToken?: string | undefined;
+      runLogDir?: string | undefined;
     }) => {
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+
       if (options.live) {
-        console.error(
-          JSON.stringify(
-            {
-              status: "failed",
-              operation: "draft.unschedule",
-              message:
-                "Draft unschedule live execution is intentionally disabled until endpoint contract is confirmed.",
-              requiresEvidence: [
-                "capture unschedule endpoint from live traffic",
-                "confirm safe payload and response schema",
-              ],
-            },
-            null,
-            2,
-          ),
+        const material = await resolveApiAuthMaterial(effective, options.source);
+        const validation = await validateApiAuthMaterial(material, fetch);
+        if (validation.status !== "ok") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: validation.message ?? "Could not validate API session.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!options.probeReport || !options.approvalToken) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message:
+                  "Live draft unschedule requires --probe-report and --approval-token arguments.",
+                requiresEndpointEvidence: true,
+                note: [
+                  "Run `api draft probe --draft-id ...`.",
+                  "Capture the JSON output and re-run with --live and these flags.",
+                ].join(" "),
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const inventory = await readApiInventory(material, fetch, { draftLimit: options.draftLimit });
+        if (inventory.status !== "ok") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: `Unable to read API inventory: ${inventory.message}`,
+                endpoints: inventory.endpoints,
+                readStatus: inventory.status,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const draft = inventory.drafts?.find((item) => String(item.id) === options.draftId);
+        if (!draft) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: `Draft ID ${options.draftId} was not found in read-only draft inventory.`,
+                endpoints: inventory.endpoints,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const report = await loadDraftMutationProbeReport(options.probeReport);
+        if (!report) {
+          process.exitCode = 1;
+          return;
+        }
+
+        if (report.draftId !== options.draftId) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "Probe report draft ID does not match the requested draft-id.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!report.supportsUnschedule) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: `Probe report does not currently support a live unschedule endpoint for draft ${options.draftId}.`,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!isDraftUrlMatch(report.publicationUrl, publicationUrl)) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "Probe report publication URL does not match current config.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const expectedToken = buildDraftMutationApprovalToken(
+          publicationUrl,
+          options.draftId,
+          report.generatedAt,
+          makeDraftMutationProbeSignalSeed(report.probes),
         );
-        process.exitCode = 1;
+        if (options.approvalToken !== expectedToken) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "Approval token does not match the provided probe report.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const plan = buildDraftMutationExecutionPlan({
+          operation: "unschedule",
+          publicationUrl,
+          draftId: options.draftId,
+          probeReport: report,
+        });
+        if (!plan) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.unschedule",
+                message: "No confirmed mutation endpoint was available in this probe report.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const result = await executeDraftMutation(plan, material, fetch);
+        await writeRunLog(
+          options.runLogDir,
+          buildDraftMutationRunLog({
+            publicationUrl,
+            plan,
+            result,
+          }),
+        );
+        console.log(JSON.stringify(result, null, 2));
+        if (result.status === "failed") {
+          process.exitCode = 1;
+        }
         return;
       }
 
-      const effective = await loadEffectiveConfig();
-      const publicationUrl = requirePublicationUrl(effective);
       const material = await resolveApiAuthMaterial(effective, options.source);
       const validation = await validateApiAuthMaterial(material, fetch);
       if (validation.status !== "ok") {
@@ -3070,7 +3260,7 @@ apiDraft
 apiDraft
   .command("revise")
   .description(
-    "Build a safe published-post revision plan that preserves URL. Live execution is disabled pending endpoint confirmation.",
+    "Build a safe published-post revision plan that preserves URL. Live execution requires confirmed endpoint evidence.",
   )
   .requiredOption("--draft-id <id>", "Substack draft ID to revise")
   .option("--published-url <url>", "Current published URL to preserve")
@@ -3083,6 +3273,12 @@ apiDraft
   .option("--source <source>", "auto, env, or local-profile", "auto")
   .option("--keep-url", "Preserve the canonical published URL when replacing content", true)
   .option("--live", "Attempt live execution after explicit endpoint confirmation", false)
+  .option(
+    "--probe-report <file>",
+    "Path to a prior `api draft probe` report generated for this draft",
+  )
+  .option("--approval-token <token>", "Proof token from the matching `api draft probe` report")
+  .option("--run-log-dir <dir>", "Write a durable JSON draft mutation run-log entry")
   .action(
     async (options: {
       draftId: string;
@@ -3091,30 +3287,220 @@ apiDraft
       source: "auto" | ApiAuthSource;
       keepUrl: boolean;
       live: boolean;
+      probeReport?: string | undefined;
+      approvalToken?: string | undefined;
+      runLogDir?: string | undefined;
     }) => {
+      const effective = await loadEffectiveConfig();
+      const publicationUrl = requirePublicationUrl(effective);
+
       if (options.live) {
-        console.error(
-          JSON.stringify(
-            {
-              status: "failed",
-              operation: "draft.revise",
-              message:
-                "Published revision live execution is intentionally disabled until endpoint contract is confirmed.",
-              requiresEvidence: [
-                "capture revise endpoint from live traffic",
-                "confirm keep-url behavior and response schema",
-              ],
-            },
-            null,
-            2,
-          ),
+        const material = await resolveApiAuthMaterial(effective, options.source);
+        const validation = await validateApiAuthMaterial(material, fetch);
+        if (validation.status !== "ok") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: validation.message ?? "Could not validate API session.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!options.probeReport || !options.approvalToken) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "Live draft revise requires --probe-report and --approval-token arguments.",
+                requiresEndpointEvidence: true,
+                note: [
+                  "Run `api draft probe --draft-id ...`.",
+                  "Capture the JSON output and re-run with --live and these flags.",
+                ].join(" "),
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const inventory = await readApiInventory(material, fetch, { draftLimit: options.draftLimit });
+        if (inventory.status !== "ok") {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: `Unable to read API inventory: ${inventory.message}`,
+                endpoints: inventory.endpoints,
+                readStatus: inventory.status,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const draft = inventory.drafts?.find((item) => String(item.id) === options.draftId);
+        if (!draft) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: `Draft ID ${options.draftId} was not found in read-only draft inventory.`,
+                endpoints: inventory.endpoints,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!draft.isPublished) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: `Draft ID ${options.draftId} is not published and cannot be revised as a posted item.`,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const report = await loadDraftMutationProbeReport(options.probeReport);
+        if (!report) {
+          process.exitCode = 1;
+          return;
+        }
+
+        if (report.draftId !== options.draftId) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "Probe report draft ID does not match the requested draft-id.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!report.supportsRevise) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: `Probe report does not currently support a live revise endpoint for draft ${options.draftId}.`,
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        if (!isDraftUrlMatch(report.publicationUrl, publicationUrl)) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "Probe report publication URL does not match current config.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const expectedToken = buildDraftMutationApprovalToken(
+          publicationUrl,
+          options.draftId,
+          report.generatedAt,
+          makeDraftMutationProbeSignalSeed(report.probes),
         );
-        process.exitCode = 1;
+        if (options.approvalToken !== expectedToken) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "Approval token does not match the provided probe report.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const plan = buildDraftMutationExecutionPlan({
+          operation: "revise",
+          publicationUrl,
+          draftId: options.draftId,
+          probeReport: report,
+        });
+        if (!plan) {
+          console.error(
+            JSON.stringify(
+              {
+                status: "failed",
+                operation: "draft.revise",
+                message: "No confirmed mutation endpoint was available in this probe report.",
+              },
+              null,
+              2,
+            ),
+          );
+          process.exitCode = 1;
+          return;
+        }
+
+        const result = await executeDraftMutation(plan, material, fetch);
+        await writeRunLog(
+          options.runLogDir,
+          buildDraftMutationRunLog({
+            publicationUrl,
+            plan,
+            result,
+          }),
+        );
+        console.log(JSON.stringify(result, null, 2));
+        if (result.status === "failed") {
+          process.exitCode = 1;
+        }
         return;
       }
 
-      const effective = await loadEffectiveConfig();
-      const publicationUrl = requirePublicationUrl(effective);
       const material = await resolveApiAuthMaterial(effective, options.source);
       const validation = await validateApiAuthMaterial(material, fetch);
       if (validation.status !== "ok") {
@@ -6327,6 +6713,106 @@ async function readCliTextFile(file: string, label: string): Promise<string | un
     process.exitCode = 1;
     return undefined;
   }
+}
+
+async function loadDraftMutationProbeReport(
+  file: string,
+): Promise<DraftMutationProbeReport | undefined> {
+  try {
+    const payload = JSON.parse(await readFile(file, "utf8"));
+    if (!isDraftMutationProbeReport(payload)) {
+      console.error(
+        JSON.stringify(
+          {
+            status: "failed",
+            operation: "draft.probe",
+            message: `Invalid probe-report format in ${file}.`,
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return undefined;
+    }
+    return payload;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(
+      JSON.stringify(
+        {
+          status: "failed",
+          operation: "draft.probe",
+          message: `Could not read or parse ${file}: ${message}`,
+        },
+        null,
+        2,
+      ),
+    );
+    process.exitCode = 1;
+    return undefined;
+  }
+}
+
+function isDraftMutationProbeReport(
+  value: unknown,
+): value is DraftMutationProbeReport {
+  if (!isRecord(value)) return false;
+  if (value.status !== "probed") return false;
+  if (value.operation !== "draft.mutation-probe") return false;
+  if (typeof value.publicationUrl !== "string" || value.publicationUrl.length === 0) return false;
+  if (typeof value.draftId !== "string" || value.draftId.length === 0) return false;
+  if (!Number.isInteger(value.endpointCount)) return false;
+  if (typeof value.reportId !== "string" || value.reportId.length === 0) return false;
+  if (typeof value.generatedAt !== "string" || value.generatedAt.length === 0) return false;
+  if (typeof value.approvalToken !== "string" || value.approvalToken.length === 0) return false;
+  if (!Array.isArray(value.probes)) return false;
+  if (typeof value.supportsUnschedule !== "boolean" || typeof value.supportsRevise !== "boolean")
+    return false;
+  if (typeof value.message !== "string") return false;
+
+  return value.probes.every((probe) => {
+    if (!isRecord(probe)) return false;
+    if (probe.operation !== "unschedule" && probe.operation !== "revise") return false;
+    if (typeof probe.endpointTemplate !== "string" || probe.endpointTemplate.length === 0)
+      return false;
+    if (typeof probe.endpoint !== "string" || probe.endpoint.length === 0) return false;
+    if (probe.probeMethod !== "GET") return false;
+    if (!Number.isInteger(probe.status)) return false;
+    if (
+      probe.signal !== "likely-route" &&
+      probe.signal !== "method-mismatch" &&
+      probe.signal !== "not-found" &&
+      probe.signal !== "unauthorized" &&
+      probe.signal !== "forbidden" &&
+      probe.signal !== "network-error" &&
+      probe.signal !== "unexpected"
+    ) {
+      return false;
+    }
+    if (!Array.isArray(probe.evidence)) return false;
+    return true;
+  });
+}
+
+function isDraftUrlMatch(a: string, b: string): boolean {
+  try {
+    return normalizeDraftPublicationUrl(a) === normalizeDraftPublicationUrl(b);
+  } catch {
+    return false;
+  }
+}
+
+function normalizeDraftPublicationUrl(publicationUrl: string): string {
+  const url = new URL(publicationUrl);
+  url.pathname = "/";
+  url.search = "";
+  url.hash = "";
+  return url.toString();
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function parseInteger(value: string): number {
