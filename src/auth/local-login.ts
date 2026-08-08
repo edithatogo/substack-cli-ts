@@ -2,6 +2,10 @@ import { mkdir } from "node:fs/promises";
 import { getChromePath } from "chrome-launcher";
 import { chromium, type Locator, type Page } from "playwright-core";
 import { localBrowserProfileDir } from "../config/paths.js";
+import {
+  captureAuthenticatedStorageState,
+  type StorageStateCaptureOutcome,
+} from "./storage-state.js";
 
 export interface LocalLoginOptions {
   publicationUrl: string;
@@ -16,6 +20,7 @@ export interface LocalLoginResult {
   profileDir: string;
   finalUrl: string;
   signInStillVisible: boolean;
+  storageState: StorageStateCaptureOutcome;
   autoLogin: null | {
     emailInserted: boolean;
     passwordOptionSelected?: boolean | undefined;
@@ -59,6 +64,16 @@ export async function runLocalLogin(options: LocalLoginOptions): Promise<LocalLo
     const authenticationFailed =
       Boolean(autoLogin?.submitted) && Boolean(autoLogin?.passwordInserted) && signInStillVisible;
 
+    let storageState: StorageStateCaptureOutcome;
+    try {
+      storageState = await captureAuthenticatedStorageState(context);
+    } catch (error) {
+      storageState = {
+        status: "not-saved",
+        message: error instanceof Error ? error.message : "Storage state could not be saved.",
+      };
+    }
+
     if (authenticationFailed && autoLogin) {
       autoLogin.failureReason = "post_login_authentication_failed";
       autoLogin.note =
@@ -71,6 +86,7 @@ export async function runLocalLogin(options: LocalLoginOptions): Promise<LocalLo
       profileDir: localBrowserProfileDir(),
       finalUrl,
       signInStillVisible,
+      storageState,
       autoLogin,
     };
   } finally {

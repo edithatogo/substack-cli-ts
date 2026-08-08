@@ -95,6 +95,7 @@ describe("API auth material", () => {
     const validation = await validateApiAuthMaterial(material, fakeFetch(routes));
 
     assert.equal(validation.status, "ok");
+    assert.equal(validation.browserFallback, "not-needed");
     assert.equal(validation.handle, "rareinsights");
     assert.deepEqual(validation.publication, {
       id: 456,
@@ -114,7 +115,51 @@ describe("API auth material", () => {
       Promise.resolve(response(403, { error: "forbidden" })),
     );
 
-    assert.equal(validation.status, "forbidden");
+    assert.equal(validation.status, "browser-fallback-required");
+    assert.equal(validation.browserFallback, "required");
+  });
+
+  it("surfaces fallback guidance and supports one explicit local-profile refresh", async () => {
+    const stale = materialFromCookieHeader(
+      "substack.sid=stale",
+      "https://rareinsights.substack.com",
+      "env",
+    );
+    const fresh = materialFromCookieHeader(
+      "substack.sid=fresh",
+      "https://rareinsights.substack.com",
+      "local-profile",
+    );
+    const routes = new Map<string, unknown>([
+      [
+        "https://substack.com/api/v1/handle/options",
+        { potentialHandles: [{ id: "rareinsights", handle: "rareinsights", type: "existing" }] },
+      ],
+      [
+        "https://substack.com/api/v1/user/rareinsights/public_profile",
+        { id: 123, name: "Example", handle: "rareinsights", publicationUsers: [] },
+      ],
+    ]);
+    let challenged = false;
+    const fetchImpl: FetchLike = (input, init) => {
+      const cookie = (init?.headers as Record<string, string> | undefined)?.cookie;
+      if (!challenged && cookie?.includes("stale")) {
+        challenged = true;
+        return Promise.resolve(response(403, "Just a moment... cf-chl-test"));
+      }
+      const body = routes.get(input);
+      return Promise.resolve(response(body === undefined ? 404 : 200, body ?? {}));
+    };
+
+    const required = await validateApiAuthMaterial(stale, () =>
+      Promise.resolve(response(403, "forbidden")),
+    );
+    assert.equal(required.status, "browser-fallback-required");
+
+    challenged = false;
+    const refreshed = await validateApiAuthMaterial(stale, fetchImpl, async () => fresh);
+    assert.equal(refreshed.status, "ok");
+    assert.equal(refreshed.browserFallback, "used");
   });
 });
 

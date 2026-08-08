@@ -12,7 +12,7 @@ import {
   apiHeaders,
   classifyFailure,
   type FetchLike,
-  requestJson,
+  requestJsonWithBrowserFallback,
 } from "./client.js";
 
 export type ApiAuthSource = "env" | "local-profile";
@@ -45,7 +45,7 @@ export interface ApiAuthStatus {
   cookies: ApiCookieSummary[];
 }
 
-export type ApiAuthValidationStatus = ApiReadStatus;
+export type ApiAuthValidationStatus = ApiReadStatus | "browser-fallback-required";
 
 export interface ApiAuthValidation {
   status: ApiAuthValidationStatus;
@@ -63,6 +63,7 @@ export interface ApiAuthValidation {
   authorizedSession?: AuthorizedPublicationSession | undefined;
   checkedEndpoints: string[];
   message: string;
+  browserFallback: "not-needed" | "required" | "used";
 }
 
 const LIKELY_SESSION_COOKIE_NAMES = new Set(["connect.sid", "substack.sid", "substack_session"]);
@@ -153,14 +154,34 @@ export function summarizeApiAuthMaterial(material: ApiAuthMaterial): ApiAuthStat
 export async function validateApiAuthMaterial(
   material: ApiAuthMaterial,
   fetchImpl: FetchLike = fetch,
+  browserFallback?: (() => Promise<ApiAuthMaterial>) | undefined,
 ): Promise<ApiAuthValidation> {
   const handleOptionsEndpoint = "https://substack.com/api/v1/handle/options";
   const checkedEndpoints = [handleOptionsEndpoint];
-  const headers = apiHeaders(material);
+  let headers = apiHeaders(material);
+  let refreshedMaterial: ApiAuthMaterial | undefined;
+  const refreshHeaders = browserFallback
+    ? async () => {
+        refreshedMaterial ??= await browserFallback();
+        headers = apiHeaders(refreshedMaterial);
+        return headers;
+      }
+    : undefined;
 
-  const handleResponse = await requestJson(fetchImpl, handleOptionsEndpoint, headers);
+  const handleResponse = await requestJsonWithBrowserFallback(
+    fetchImpl,
+    handleOptionsEndpoint,
+    headers,
+    {
+      refreshHeaders,
+    },
+  );
   if (handleResponse.status !== 200) {
-    return validationFailure(handleResponse.status, checkedEndpoints);
+    return validationFailure(
+      handleResponse.status,
+      checkedEndpoints,
+      handleResponse.browserFallback ?? "not-needed",
+    );
   }
 
   const handleOptions = HandleOptionsSchema.safeParse(handleResponse.body);
@@ -168,6 +189,7 @@ export async function validateApiAuthMaterial(
     return {
       status: "schema-drift",
       checkedEndpoints,
+      browserFallback: handleResponse.browserFallback ?? "not-needed",
       message: "The handle options response did not match the expected shape.",
     };
   }
@@ -180,6 +202,7 @@ export async function validateApiAuthMaterial(
     return {
       status: "schema-drift",
       checkedEndpoints,
+      browserFallback: handleResponse.browserFallback ?? "not-needed",
       message: "The authenticated session returned no usable Substack handle.",
     };
   }
@@ -187,9 +210,20 @@ export async function validateApiAuthMaterial(
   const profileEndpoint = `https://substack.com/api/v1/user/${encodeURIComponent(handle)}/public_profile`;
   checkedEndpoints.push(profileEndpoint);
 
-  const profileResponse = await requestJson(fetchImpl, profileEndpoint, headers);
+  const profileResponse = await requestJsonWithBrowserFallback(
+    fetchImpl,
+    profileEndpoint,
+    headers,
+    {
+      refreshHeaders,
+    },
+  );
   if (profileResponse.status !== 200) {
-    return validationFailure(profileResponse.status, checkedEndpoints);
+    return validationFailure(
+      profileResponse.status,
+      checkedEndpoints,
+      profileResponse.browserFallback ?? handleResponse.browserFallback ?? "not-needed",
+    );
   }
 
   const profile = PublicProfileSchema.safeParse(profileResponse.body);
@@ -197,6 +231,8 @@ export async function validateApiAuthMaterial(
     return {
       status: "schema-drift",
       checkedEndpoints,
+      browserFallback:
+        profileResponse.browserFallback ?? handleResponse.browserFallback ?? "not-needed",
       handle,
       message: "The public profile response did not match the expected shape.",
     };
@@ -219,6 +255,10 @@ export async function validateApiAuthMaterial(
 
   return {
     status: "ok",
+    browserFallback:
+      profileResponse.browserFallback === "used" || handleResponse.browserFallback === "used"
+        ? "used"
+        : "not-needed",
     checkedEndpoints,
     handle: profile.data.handle,
     userId: profile.data.id,
@@ -327,13 +367,27 @@ function summarizeCookie(cookie: Cookie): ApiCookieSummary {
   };
 }
 
-function validationFailure(status: number, checkedEndpoints: string[]): ApiAuthValidation {
+function validationFailure(
+  status: number,
+  checkedEndpoints: string[],
+  browserFallback: "not-needed" | "required" | "used",
+): ApiAuthValidation {
+  if (browserFallback === "required") {
+    return {
+      status: "browser-fallback-required",
+      browserFallback,
+      checkedEndpoints,
+      message:
+        "Substack requires a refreshed browser session. Run `substack-publisher auth refresh-state`, then retry.",
+    };
+  }
   const failure = classifyFailure(
     status,
     checkedEndpoints[checkedEndpoints.length - 1] ?? "unknown",
   );
   return {
     status: failure.status,
+    browserFallback,
     checkedEndpoints,
     message: failure.message,
   };

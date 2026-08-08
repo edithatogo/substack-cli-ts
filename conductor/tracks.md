@@ -34,3 +34,6 @@
 
 ## P14 Substack API drift early warning
 - [x] **Track: Scheduled live API drift canary and alerting** ([#466](https://github.com/edithatogo/substack-cli-ts/issues/466)) *Link: [T14-01](./tracks/T14-01/index.md)*
+
+## P15 Upstream browser and authentication resilience
+- [ ] **Track: Playwright authentication fallback and storage-state refresh** ([#469](https://github.com/edithatogo/substack-cli-ts/issues/469)) *Link: [T15-01](./tracks/T15-01/index.md)*

@@ -11,6 +11,10 @@ export interface LocalBrowserSession {
   close: () => Promise<void>;
 }
 
+export interface LocalBrowserOptions {
+  headless?: boolean | undefined;
+}
+
 async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -32,13 +36,15 @@ async function findChromeBinary(): Promise<string> {
   }
 }
 
-export async function createLocalBrowserSession(): Promise<LocalBrowserSession> {
+export async function createLocalBrowserSession(
+  options: LocalBrowserOptions = {},
+): Promise<LocalBrowserSession> {
   await mkdir(localBrowserProfileDir(), { recursive: true });
   const executablePath = await findChromeBinary();
 
   const context = await chromium.launchPersistentContext(localBrowserProfileDir(), {
     executablePath,
-    headless: false,
+    headless: options.headless ?? false,
     args: ["--no-first-run", "--no-default-browser-check", "--disable-quic"],
   });
   const page = await context.newPage();
@@ -52,12 +58,13 @@ export async function createLocalBrowserSession(): Promise<LocalBrowserSession> 
 
 export async function createLocalBrowserSessionWithRetry(
   retries = 3,
+  options: LocalBrowserOptions = {},
 ): Promise<LocalBrowserSession> {
   let lastError: Error | undefined;
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      return await createLocalBrowserSession();
+      return await createLocalBrowserSession(options);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
 

@@ -65,6 +65,7 @@
     "test:live-canary": "node scripts/substack-live-canary.mjs",
     "test:live-canary:unit": "node --test scripts/substack-live-canary.test.mjs scripts/notify-canary-failure.test.mjs",
     "canary:notify": "node scripts/notify-canary-failure.mjs",
+    "auth:refresh-state": "npm run build && node dist/cli.js auth refresh-state",
     "test:smoke": "npm run build && vitest run src/test/smoke.test.ts",
     "test:edge": "vitest run src/test/assurance/edge.test.ts",
     "test:mutation": "stryker run",
