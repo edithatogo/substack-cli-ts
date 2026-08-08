@@ -1,0 +1,1 @@
+T14-01 task note: Implemented six-hour read-only Substack HTML and JSON drift probes, redacted receipts, Slack/Discord/PagerDuty failure alerts, deterministic tests, operator guidance, and Conductor/GitHub traceability. Local evidence: 5 tests passed; Prettier and JSON validation passed. Live activation remains credential-gated.
