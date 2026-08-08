@@ -273,7 +273,7 @@ describe("requestWrite", () => {
     assert.equal(result.retryAttempts, 0);
   });
 
-  it("retries transient network write failures", async () => {
+  it("does not replay transient network write failures", async () => {
     const { requestWrite } = await import("./client.js");
     const fetchImpl = vi
       .fn()
@@ -283,7 +283,7 @@ describe("requestWrite", () => {
         text: async () => JSON.stringify({ id: 101 }),
       });
 
-    const resultPromise = requestWrite(
+    const result = await requestWrite(
       fetchImpl,
       "https://substack.com/api/v1/drafts",
       "POST",
@@ -292,12 +292,9 @@ describe("requestWrite", () => {
       { maxRetries: 1, baseDelayMs: 5, maxDelayMs: 5, idempotencyKey: "transient-retry-test" },
     );
 
-    await vi.advanceTimersByTimeAsync(5);
-
-    const result = await resultPromise;
-    assert.equal(result.status, 200);
-    assert.equal(result.draftId, 101);
-    assert.equal(result.retryAttempts, 1);
+    assert.equal(result.status, 0);
+    assert.equal(result.outcome, "unknown");
+    assert.equal(fetchImpl.mock.calls.length, 1);
   });
 });
 

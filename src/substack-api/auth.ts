@@ -31,6 +31,7 @@ export interface ApiCookieSummary {
 export interface ApiAuthMaterial {
   source: ApiAuthSource;
   publicationUrl: string;
+  configuredPublicationId?: number | undefined;
   cookieHeader: string;
   cookies: ApiCookieSummary[];
   hasLikelySessionCookie: boolean;
@@ -99,7 +100,12 @@ export async function resolveApiAuthMaterial(
   source: "auto" | ApiAuthSource = "auto",
 ): Promise<ApiAuthMaterial> {
   if ((source === "auto" || source === "env") && config.substackCookie) {
-    return materialFromCookieHeader(config.substackCookie, requirePublicationUrl(config), "env");
+    return materialFromCookieHeader(
+      config.substackCookie,
+      requirePublicationUrl(config),
+      "env",
+      config.publicationId,
+    );
   }
 
   if (source === "env") {
@@ -128,7 +134,7 @@ export async function extractApiAuthFromLocalProfile(
 
     const cookies = await session.context.cookies(["https://substack.com", publicationUrl]);
 
-    return materialFromCookies(cookies, publicationUrl, "local-profile");
+    return materialFromCookies(cookies, publicationUrl, "local-profile", config.publicationId);
   } finally {
     await session.close();
   }
@@ -201,10 +207,10 @@ export async function validateApiAuthMaterial(
     (candidate) => candidate.publication.subdomain === publicationSubdomain,
   );
 
-  const authorizedSession = publicationUser
+  const authorizedSession = publicationUser && material.configuredPublicationId !== undefined
     ? authorizePublicationSession({
         publicationId: publicationUser.publication.id,
-        configuredPublicationId: publicationUser.publication.id,
+        configuredPublicationId: material.configuredPublicationId,
         publicationOrigin: material.publicationUrl,
         ...(publicationUser.role ? { role: publicationUser.role } : {}),
       })
@@ -235,6 +241,7 @@ export function materialFromCookieHeader(
   cookieHeader: string,
   publicationUrl: string,
   source: ApiAuthSource,
+  configuredPublicationId?: number,
 ): ApiAuthMaterial {
   const cookies = cookieHeader
     .split(";")
@@ -257,13 +264,14 @@ export function materialFromCookieHeader(
       };
     });
 
-  return materialFromCookies(cookies, publicationUrl, source);
+  return materialFromCookies(cookies, publicationUrl, source, configuredPublicationId);
 }
 
 export function materialFromCookies(
   cookies: Cookie[],
   publicationUrl: string,
   source: ApiAuthSource,
+  configuredPublicationId?: number,
 ): ApiAuthMaterial {
   const usableCookies = dedupeCookies(cookies).filter((cookie) =>
     isRelevantCookie(cookie, publicationUrl),
@@ -274,6 +282,7 @@ export function materialFromCookies(
   return {
     source,
     publicationUrl,
+    configuredPublicationId,
     cookieHeader,
     cookies: summaries,
     hasLikelySessionCookie: summaries.some((cookie) =>
