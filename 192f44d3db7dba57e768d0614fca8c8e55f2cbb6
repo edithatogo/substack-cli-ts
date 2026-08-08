@@ -1,0 +1,1 @@
+T16-01: canonical strict Zod schemas for all 29 MCP tools; bounded pagination preprocessing; native Zod 4 JSON Schema generation; 15 focused tests and 911 full tests passed; typecheck, build, Biome CI, and production audit passed.
