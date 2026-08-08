@@ -31,3 +31,6 @@
 
 ## P13 Comprehensive deterministic assurance
 - [ ] **Track: Comprehensive deterministic test taxonomy and assurance harness** *Link: [T13-01](./tracks/T13-01/index.md)*
+
+## P14 Substack API drift early warning
+- [x] **Track: Scheduled live API drift canary and alerting** ([#466](https://github.com/edithatogo/substack-cli-ts/issues/466)) *Link: [T14-01](./tracks/T14-01/index.md)*
