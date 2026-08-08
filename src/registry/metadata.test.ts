@@ -89,8 +89,16 @@ describe("validateRegistryServerMetadata contract failures", () => {
 
   it("reports missing package metadata", () => {
     const metadata = loadRegistryServerMetadata();
-    expect(validateRegistryServerMetadata({ ...metadata, packages: [] })).toContain(
+    const withoutPackages = { ...metadata, packages: [] };
+    expect(validateRegistryServerMetadata(withoutPackages)).toContain(
       "Missing npm package launch metadata.",
     );
+    expect(buildRegistrySubmissionPlan(withoutPackages).packageLaunchCommand).toEqual([
+      "npx",
+      "-y",
+      "@edithatogo/substack-publisher",
+      "mcp",
+      "serve",
+    ]);
   });
 });
