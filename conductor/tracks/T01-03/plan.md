@@ -1,12 +1,12 @@
 # Plan T01-03
 
 ## Tasks
-- [ ] T01-03-TASK-01 Implement per-origin cookie scoping, redirect policy, trusted origins, and SSRF protections.
-- [ ] T01-03-TASK-02 Introduce AuthorizedPublicationSession with publication ID and role.
-- [ ] T01-03-TASK-03 Implement WorkspaceGuard across CLI/MCP/media/fixtures.
-- [ ] T01-03-TASK-04 Separate and protect credential/config/state/cache locations.
-- [ ] T01-03-TASK-05 Centralize structured redaction and minimal audit logging.
-- [ ] T01-03-TASK-06 Create/update the threat model.
+- [x] T01-03-TASK-01 Implement per-origin cookie scoping, redirect policy, trusted origins, and SSRF protections.
+- [x] T01-03-TASK-02 Introduce AuthorizedPublicationSession with publication ID and role.
+- [x] T01-03-TASK-03 Implement WorkspaceGuard across CLI/MCP/media/fixtures.
+- [x] T01-03-TASK-04 Separate and protect credential/config/state/cache locations.
+- [x] T01-03-TASK-05 Centralize structured redaction and minimal audit logging.
+- [x] T01-03-TASK-06 Create/update the threat model.
 
 ## Contract IDs
 - SEC-ORIGIN-005
