@@ -1,10 +1,10 @@
 # Plan T05-02
 
 ## Tasks
-- [ ] T05-02-TASK-01 Integrate platform credential storage or an equivalent encrypted design.
-- [ ] T05-02-TASK-02 Implement privacy classes and retention policies.
-- [ ] T05-02-TASK-03 Implement a hash-chained minimal event ledger.
-- [ ] T05-02-TASK-04 Verify file permissions and redaction across platforms.
+- [x] T05-02-TASK-01 Integrate platform credential storage or an equivalent encrypted design.
+- [x] T05-02-TASK-02 Implement privacy classes and retention policies.
+- [x] T05-02-TASK-03 Implement a hash-chained minimal event ledger.
+- [x] T05-02-TASK-04 Verify file permissions and redaction across platforms.
 
 ## Contract IDs
 - SEC-WORKSPACE-007
