@@ -38,7 +38,14 @@ export class TrustedOriginPolicy {
 
 function normalizeTrustedOrigin(value: string): string {
   const url = new URL(value);
-  if (url.protocol !== "https:" || url.username || url.password || url.pathname !== "/" || url.search || url.hash) {
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.pathname !== "/" ||
+    url.search ||
+    url.hash
+  ) {
     throw new Error(`Trusted origins must be HTTPS origins: ${value}`);
   }
   return url.origin;

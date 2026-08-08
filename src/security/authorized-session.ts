@@ -12,7 +12,10 @@ export function authorizePublicationSession(input: {
   publicationOrigin: string;
   role?: string;
 }): AuthorizedPublicationSession {
-  if (!Number.isInteger(input.publicationId) || input.publicationId !== input.configuredPublicationId) {
+  if (
+    !Number.isInteger(input.publicationId) ||
+    input.publicationId !== input.configuredPublicationId
+  ) {
     throw new Error("Authenticated session is not authorized for the configured publication.");
   }
   if (!isPublicationRole(input.role)) {

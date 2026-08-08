@@ -1,15 +1,15 @@
 {
   "$schema": "https://registry.modelcontextprotocol.io/schemas/server.json",
-  "name": "io.github.edithatogo/substack-cli",
+  "name": "io.github.edithatogo/substack-publisher",
   "description": "A TypeScript CLI for publishing local Markdown files to a user-owned Substack publication.",
   "repository": "https://github.com/edithatogo/substack-cli-ts",
   "version": "0.2.0",
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "@edithatogo/substack-cli",
+      "identifier": "@edithatogo/substack-publisher",
       "version": "0.2.0",
-      "mcpName": "io.github.edithatogo/substack-cli",
+      "mcpName": "io.github.edithatogo/substack-publisher",
       "runtime": "node",
       "entrypoint": "dist/cli.js",
       "transport": "stdio",
@@ -24,4 +24,3 @@
     "repository": "substack-cli-ts"
   }
 }
-

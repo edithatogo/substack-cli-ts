@@ -1,7 +1,7 @@
 {
-  "name": "@edithatogo/substack-cli",
+  "name": "@edithatogo/substack-publisher",
   "version": "0.2.0",
-  "mcpName": "io.github.edithatogo/substack-cli",
+  "mcpName": "io.github.edithatogo/substack-publisher",
   "description": "Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.",
   "private": false,
   "license": "Apache-2.0",
@@ -28,7 +28,7 @@
     "node": ">=18.0.0"
   },
   "bin": {
-    "substack-cli": "dist/cli.js"
+    "substack-publisher": "dist/cli.js"
   },
   "files": [
     "dist/",

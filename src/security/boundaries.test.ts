@@ -10,28 +10,36 @@ describe("security boundaries", () => {
     expect(policy.isTrusted("https://substack.com/api/v1/user")).toBe(true);
     expect(policy.isTrusted("http://example.substack.com/publish")).toBe(false);
     expect(policy.isTrusted("https://evil.example/publish")).toBe(false);
-    expect(() => policy.assertRedirect("https://example.substack.com", "https://evil.example")).toThrow();
+    expect(() =>
+      policy.assertRedirect("https://example.substack.com", "https://evil.example"),
+    ).toThrow();
   });
 
   it("binds authorization to publication id and role", () => {
-    expect(authorizePublicationSession({
-      publicationId: 7,
-      configuredPublicationId: 7,
-      publicationOrigin: "https://example.substack.com",
-      role: "admin",
-    }).publicationId).toBe(7);
-    expect(() => authorizePublicationSession({
-      publicationId: 8,
-      configuredPublicationId: 7,
-      publicationOrigin: "https://example.substack.com",
-      role: "admin",
-    })).toThrow();
-    expect(() => authorizePublicationSession({
-      publicationId: 7,
-      configuredPublicationId: 7,
-      publicationOrigin: "https://example.substack.com",
-      role: "viewer",
-    })).toThrow();
+    expect(
+      authorizePublicationSession({
+        publicationId: 7,
+        configuredPublicationId: 7,
+        publicationOrigin: "https://example.substack.com",
+        role: "admin",
+      }).publicationId,
+    ).toBe(7);
+    expect(() =>
+      authorizePublicationSession({
+        publicationId: 8,
+        configuredPublicationId: 7,
+        publicationOrigin: "https://example.substack.com",
+        role: "admin",
+      }),
+    ).toThrow();
+    expect(() =>
+      authorizePublicationSession({
+        publicationId: 7,
+        configuredPublicationId: 7,
+        publicationOrigin: "https://example.substack.com",
+        role: "viewer",
+      }),
+    ).toThrow();
   });
 
   it("rejects workspace escapes while allowing contained outputs", () => {

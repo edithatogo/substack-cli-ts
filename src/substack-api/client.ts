@@ -277,7 +277,14 @@ export async function requestWrite(
             ? record.url
             : undefined;
 
-      return { status: response.status, body: parsed, draftId, draftUrl, retryAttempts, outcome: "known" };
+      return {
+        status: response.status,
+        body: parsed,
+        draftId,
+        draftUrl,
+        retryAttempts,
+        outcome: "known",
+      };
     } catch {
       return { status: 0, body: null, retryAttempts, outcome: "unknown" };
     }

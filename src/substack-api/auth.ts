@@ -207,14 +207,15 @@ export async function validateApiAuthMaterial(
     (candidate) => candidate.publication.subdomain === publicationSubdomain,
   );
 
-  const authorizedSession = publicationUser && material.configuredPublicationId !== undefined
-    ? authorizePublicationSession({
-        publicationId: publicationUser.publication.id,
-        configuredPublicationId: material.configuredPublicationId,
-        publicationOrigin: material.publicationUrl,
-        ...(publicationUser.role ? { role: publicationUser.role } : {}),
-      })
-    : undefined;
+  const authorizedSession =
+    publicationUser && material.configuredPublicationId !== undefined
+      ? authorizePublicationSession({
+          publicationId: publicationUser.publication.id,
+          configuredPublicationId: material.configuredPublicationId,
+          publicationOrigin: material.publicationUrl,
+          ...(publicationUser.role ? { role: publicationUser.role } : {}),
+        })
+      : undefined;
 
   return {
     status: "ok",
