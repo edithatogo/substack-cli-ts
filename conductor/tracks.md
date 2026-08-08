@@ -9,7 +9,6 @@
 ## P06 Content fidelity, publishing workflows and Creator OS maturity
 ## P07 MCP v2, 2026-07-28, extensions and distributable transports
 ## P08 Assurance harness, context and observability
-- [x] T08-02
 - T08-03
 - T08-04
 
