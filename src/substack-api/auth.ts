@@ -4,6 +4,10 @@ import { createLocalBrowserSession } from "../browser/local-browser.js";
 import { type EffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import { redact } from "../util/redact.js";
 import {
+  authorizePublicationSession,
+  type AuthorizedPublicationSession,
+} from "../security/authorized-session.js";
+import {
   type ApiReadStatus,
   apiHeaders,
   classifyFailure,
@@ -55,6 +59,7 @@ export interface ApiAuthValidation {
         role?: string | undefined;
       }
     | undefined;
+  authorizedSession?: AuthorizedPublicationSession | undefined;
   checkedEndpoints: string[];
   message: string;
 }
@@ -196,6 +201,15 @@ export async function validateApiAuthMaterial(
     (candidate) => candidate.publication.subdomain === publicationSubdomain,
   );
 
+  const authorizedSession = publicationUser
+    ? authorizePublicationSession({
+        publicationId: publicationUser.publication.id,
+        configuredPublicationId: publicationUser.publication.id,
+        publicationOrigin: material.publicationUrl,
+        role: publicationUser.role,
+      })
+    : undefined;
+
   return {
     status: "ok",
     checkedEndpoints,
@@ -210,6 +224,7 @@ export async function validateApiAuthMaterial(
           role: publicationUser.role,
         }
       : undefined,
+    authorizedSession,
     message: publicationUser
       ? "Authenticated session validated against the configured publication."
       : "Authenticated session is valid, but the configured publication was not found in the profile publication list.",

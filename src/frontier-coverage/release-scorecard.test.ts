@@ -78,7 +78,7 @@ describe("release scorecard", () => {
         },
         private: false,
         bin: {
-          "substack-cli": "dist/cli.js",
+          "substack-publisher": "dist/cli.js",
         },
         files: ["dist/"],
         publishConfig: {
@@ -87,8 +87,8 @@ describe("release scorecard", () => {
         repository: {
           url: "git+https://example.test/repo.git",
         },
-        name: "@edithatogo/substack-cli",
-        mcpName: "io.github.edithatogo/substack-cli",
+        name: "@edithatogo/substack-publisher",
+        mcpName: "io.github.edithatogo/substack-publisher",
       }),
     );
     await writeFile(join(temp, "tsconfig.strictest.json"), "{}");
@@ -164,15 +164,15 @@ describe("release scorecard", () => {
         },
         private: false,
         bin: {
-          "substack-cli": "dist/cli.js",
+          "substack-publisher": "dist/cli.js",
         },
         files: ["./dist"],
         publishConfig: {
           access: "public",
         },
         repository: "github:edithatogo/substack-cli-ts",
-        name: "@edithatogo/substack-cli",
-        mcpName: "io.github.edithatogo/substack-cli",
+        name: "@edithatogo/substack-publisher",
+        mcpName: "io.github.edithatogo/substack-publisher",
       }),
     );
     await writeFile(join(temp, "docs", "api", "substack-cli.contract.json"), "{}");
@@ -222,10 +222,10 @@ describe("release scorecard", () => {
           prepublishOnly: "npm run quality",
         },
         private: false,
-        name: "@edithatogo/substack-cli",
-        mcpName: "io.github.edithatogo/substack-cli",
+        name: "@edithatogo/substack-publisher",
+        mcpName: "io.github.edithatogo/substack-publisher",
         bin: {
-          "substack-cli": "dist/cli.js",
+          "substack-publisher": "dist/cli.js",
         },
         files: ["dist"],
         publishConfig: {
