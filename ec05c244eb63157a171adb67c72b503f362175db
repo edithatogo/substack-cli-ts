@@ -1,0 +1,1 @@
+T15-01 blocker note: Closed remaining Codecov patch gaps with tests for the production browser factory, multi-cookie expiry sorting, and session-only null expiry. Focused V8 map reports no statement, function, or branch gaps in storage-state.ts; TypeScript and Biome CI passed.
