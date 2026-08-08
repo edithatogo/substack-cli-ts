@@ -7,7 +7,7 @@
 ## P04 Common policy, planning, approval and reconciliation kernel
 ## P05 Transactional state, privacy, media and recovery
 ## P06 Content fidelity, publishing workflows and Creator OS maturity
-- [~] T06-03
+- [x] T06-03
 - T06-04
 
 ## P07 MCP v2, 2026-07-28, extensions and distributable transports

@@ -1,10 +1,10 @@
 # Plan T06-03
 
 ## Tasks
-- [ ] T06-03-TASK-01 Mature draft/create/update/publish/schedule/revise/unschedule semantics.
-- [ ] T06-03-TASK-02 Mature notes, comments, community, settings, domain, team, subscriber, billing and analytics surfaces only where exact evidence exists.
-- [ ] T06-03-TASK-03 Return successful empty lists correctly.
-- [ ] T06-03-TASK-04 Separate official, internal and browser support status.
+- [x] T06-03-TASK-01 Mature draft/create/update/publish/schedule/revise/unschedule semantics.
+- [x] T06-03-TASK-02 Mature notes, comments, community, settings, domain, team, subscriber, billing and analytics surfaces only where exact evidence exists.
+- [x] T06-03-TASK-03 Return successful empty lists correctly.
+- [x] T06-03-TASK-04 Separate official, internal and browser support status.
 
 ## Contract IDs
 - COR-BOOLEAN-001
