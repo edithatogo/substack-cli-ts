@@ -251,7 +251,7 @@ for (const tr of flatTracks) {
     `Tracks in this plan: ${contractIds.join(', ') || 'TBD'}`,
     '',
     '## Boundaries',
-    '- No runtime implementation is to be performed in the planning phase.',
+    '- Runtime implementation is permitted after the plan-only first-invocation gate and must pass required verification.',
     '- Tracks shall be represented only in planning artefacts and issue topology.',
     '- Reuse existing upstream-constrained issues where explicitly provided.',
     '',
@@ -361,8 +361,9 @@ writeFile(files.product, [
   ...(prompt.nonNegotiableOperatorDecisions || []).map((d,i)=>`${i+1}. ${d.area ? d.area + ': ' : ''}${d.decision || d.description || d}`),
   '',
   '## Primary constraints',
-  '- Planning-only execution until explicit approval phrase is captured in implementation PR.',
+  '- Implementation proceeds under the track contract after the plan-only first-invocation gate.',
   '- Canonical contract and traceability are authoritative for scope and mapping.',
+  '- Every implementation task must add or update automated tests, or record a bounded applicability receipt explaining why tests do not apply.',
 ].join('\n'));
 
 writeFile(files.productGuidelines, [

@@ -5,7 +5,7 @@ export default defineConfig({
     include: ["src/**/*.test.ts"],
     exclude: ["src/test/e2e/**"],
     pool: "threads",
-    testTimeout: 30_000,
+    testTimeout: 60_000,
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],

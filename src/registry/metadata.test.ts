@@ -9,8 +9,8 @@ import {
 describe("loadRegistryServerMetadata", () => {
   it("loads the registry metadata", () => {
     const metadata = loadRegistryServerMetadata();
-    expect(metadata.name).toBe("io.github.edithatogo/substack-cli");
-    expect(metadata.packages[0]?.identifier).toBe("@edithatogo/substack-cli");
+    expect(metadata.name).toBe("io.github.edithatogo/substack-publisher");
+    expect(metadata.packages[0]?.identifier).toBe("@edithatogo/substack-publisher");
     expect(metadata.packages[0]?.version).toBe("0.2.0");
   });
 });
@@ -20,9 +20,9 @@ describe("summarizeRegistryServerMetadata", () => {
     const metadata = loadRegistryServerMetadata();
     const summary = summarizeRegistryServerMetadata(metadata);
     expect(summary).toMatchObject({
-      name: "io.github.edithatogo/substack-cli",
-      packageIdentifier: "@edithatogo/substack-cli",
-      mcpName: "io.github.edithatogo/substack-cli",
+      name: "io.github.edithatogo/substack-publisher",
+      packageIdentifier: "@edithatogo/substack-publisher",
+      mcpName: "io.github.edithatogo/substack-publisher",
     });
   });
 });
@@ -48,7 +48,7 @@ describe("buildRegistrySubmissionPlan", () => {
     expect(plan.packageLaunchCommand).toEqual([
       "npx",
       "-y",
-      "@edithatogo/substack-cli",
+      "@edithatogo/substack-publisher",
       "mcp",
       "serve",
     ]);
@@ -80,7 +80,7 @@ describe("validateRegistryServerMetadata contract failures", () => {
       "Repository must point at the GitHub project namespace.",
       "Registry transport must be stdio.",
       "Primary package must use npm.",
-      "Primary package identifier must be @edithatogo/substack-cli.",
+      "Primary package identifier must be @edithatogo/substack-publisher.",
       "Package mcpName must match registry server name.",
       "Package entrypoint must be the built CLI entrypoint.",
       "Package transport must be stdio.",
@@ -89,8 +89,16 @@ describe("validateRegistryServerMetadata contract failures", () => {
 
   it("reports missing package metadata", () => {
     const metadata = loadRegistryServerMetadata();
-    expect(validateRegistryServerMetadata({ ...metadata, packages: [] })).toContain(
+    const withoutPackages = { ...metadata, packages: [] };
+    expect(validateRegistryServerMetadata(withoutPackages)).toContain(
       "Missing npm package launch metadata.",
     );
+    expect(buildRegistrySubmissionPlan(withoutPackages).packageLaunchCommand).toEqual([
+      "npx",
+      "-y",
+      "@edithatogo/substack-publisher",
+      "mcp",
+      "serve",
+    ]);
   });
 });

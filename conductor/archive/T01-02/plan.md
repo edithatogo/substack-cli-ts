@@ -14,3 +14,6 @@
 
 ## Risk controls
 - Preserve native hierarchy and evidence-first progress.
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions eb5ff09

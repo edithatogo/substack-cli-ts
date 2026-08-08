@@ -100,7 +100,7 @@ describe("fixture transport", () => {
       "url": "https://rareinsights.substack.com/api/v1/drafts",
       "responses": [
         { "status": 503 },
-        { "status": 503, "error": "network outage" },
+        { "status": 503, "body": { "error": "network outage" } },
         { "status": 200, "body": { "id": "123", "draft_url": "https://rareinsights.substack.com/p/recovered" } }
       ]
     }

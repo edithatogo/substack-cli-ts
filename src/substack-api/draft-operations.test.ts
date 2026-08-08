@@ -94,7 +94,7 @@ function draftMutationPlan(operation: "unschedule" | "revise"): DraftMutationExe
       scheduledAt: null,
     },
     afterState: {
-      isPublished: operation === "unschedule" ? false : true,
+      isPublished: operation !== "unschedule",
       scheduledAt: null,
     },
     draftUpdatedAt: "2026-08-07T09:00:00.000Z",

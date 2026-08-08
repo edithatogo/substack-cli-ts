@@ -183,6 +183,7 @@ export interface WriteResponse {
   draftId?: number | undefined;
   draftUrl?: string | undefined;
   retryAttempts?: number | undefined;
+  outcome?: "known" | "unknown" | undefined;
 }
 
 export async function requestDelete(
@@ -259,7 +260,7 @@ export async function requestWrite(
       try {
         parsed = JSON.parse(text);
       } catch {
-        return { status: response.status, body: null, retryAttempts };
+        return { status: response.status, body: null, retryAttempts, outcome: "known" };
       }
 
       const record = parsed as Record<string, unknown> | undefined;
@@ -276,19 +277,20 @@ export async function requestWrite(
             ? record.url
             : undefined;
 
-      return { status: response.status, body: parsed, draftId, draftUrl, retryAttempts };
+      return {
+        status: response.status,
+        body: parsed,
+        draftId,
+        draftUrl,
+        retryAttempts,
+        outcome: "known",
+      };
     } catch {
-      if (isReplaySafe && attempt < maxRetries) {
-        retryAttempts += 1;
-        await delay(resolveBackoffDelayMs(attempt, retryOptions));
-        continue;
-      }
-
-      return { status: 0, body: null, retryAttempts };
+      return { status: 0, body: null, retryAttempts, outcome: "unknown" };
     }
   }
 
-  return { status: 0, body: null, retryAttempts };
+  return { status: 0, body: null, retryAttempts, outcome: "unknown" };
 }
 
 function isRetryableStatus(status: number): boolean {

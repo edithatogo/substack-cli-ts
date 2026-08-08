@@ -191,7 +191,7 @@ for (const t of flattenedTracks) {
     `Release target: ${t.releaseTarget}`,
     '',
     '## Scope',
-    '- Planning-only work for bootstrap and planning artifacts.',
+    '- Implementation work for the track scope, including runtime code, tests, and required planning artifacts.',
     '- Native hierarchy, contract, and traceability preparation.',
     '',
   ].join('\n');
@@ -241,7 +241,7 @@ for (const t of flattenedTracks) {
     '# Risks',
     '',
     ...mustContracts.map((c) => `- ${c.id}: ${c.statement}`),
-    '- Planning-only scope could drift into implementation tasks.',
+    '- Implementation scope must remain bounded by the track contract and verification evidence.',
     '- Some legacy issue lineage may not support native subissue links.',
     '- Registry claims need deferred verification in implementation',
   ].join('\n');
@@ -278,9 +278,10 @@ writeText(path.join(conductorRoot, 'product.md'), [
 writeText(path.join(conductorRoot, 'product-guidelines.md'), [
   '# Product Guidelines',
   '- Contract-first planning and traceability.',
-  '- Zero runtime changes in planning-only phase.',
+  '- Runtime implementation is permitted after the plan-only first-invocation gate and must pass required verification.',
   '- Native GitHub hierarchy and canonical mapping.',
   '- Explicit evidence for every mapped contract.',
+  '- Every implementation task must add or update automated tests, or record a bounded applicability receipt explaining why tests do not apply.',
 ].join('\n'));
 
 writeText(path.join(conductorRoot, 'tech-stack.md'), [

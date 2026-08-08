@@ -6,6 +6,6 @@
 - DEP-EXPERIMENTAL-FEATURE-AUDIT-003: Inspect every direct dependency and runtime for relevant experimental APIs, flags, transports, extensions, performance controls, and security features; adopt all relevant features in mainline.
 - DEP-COHERENCE-007: Keep tightly coupled dependency families on coherent versions and eliminate accidental duplicate majors.
 - DEP-RENOVATE-009: Configure Renovate to track the same prerelease channels used by mainline, pin exact versions and action digests, and open normal blocking PRs rather than experimental-lane updates.
-- Planning-only scope could drift into implementation tasks.
+- Implementation scope must remain bounded by the track contract and verification evidence.
 - Some legacy issue lineage may not support native subissue links.
 - Registry claims need deferred verification in implementation

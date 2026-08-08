@@ -4,6 +4,6 @@
 - SEC-PUBLICATION-AUTHORITY-006: Distinguish authentication from authorization and require verified publication identity and role for every mutation.
 - PLAN-CANONICAL-001: Every significant mutation must be represented by a canonical immutable machine-readable plan before execution.
 - PLAN-INDEPENDENT-APPROVAL-002: Approval must be cryptographically or independently bound to the exact plan and must not be a self-generated unhashed checksum available to the planner.
-- Planning-only scope could drift into implementation tasks.
+- Implementation scope must remain bounded by the track contract and verification evidence.
 - Some legacy issue lineage may not support native subissue links.
 - Registry claims need deferred verification in implementation

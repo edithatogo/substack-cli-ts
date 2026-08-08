@@ -74,11 +74,11 @@ export async function buildReleaseScorecard(
     }),
     releaseMetadataItem(
       "package-bin",
-      hasStringRecordEntry(packageJson.bin, "substack-cli"),
+      hasStringRecordEntry(packageJson.bin, "substack-publisher"),
       "package.json",
       {
-        ready: "substack-cli binary is declared.",
-        blocked: "Declare the substack-cli binary in package.json bin.",
+        ready: "substack-publisher binary is declared.",
+        blocked: "Declare the substack-publisher binary in package.json bin.",
       },
     ),
     releaseMetadataItem(
@@ -101,11 +101,11 @@ export async function buildReleaseScorecard(
     ),
     releaseMetadataItem(
       "package-name",
-      packageJson.name === "@edithatogo/substack-cli",
+      packageJson.name === "@edithatogo/substack-publisher",
       "package.json",
       {
         ready: "Registry package name is stable.",
-        blocked: "Set package.json name to @edithatogo/substack-cli.",
+        blocked: "Set package.json name to @edithatogo/substack-publisher.",
       },
     ),
     releaseMetadataItem(

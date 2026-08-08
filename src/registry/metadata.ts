@@ -53,8 +53,8 @@ export function validateRegistryServerMetadata(metadata: RegistryServerMetadata)
     return issues;
   }
   if (primaryPackage.registryType !== "npm") issues.push("Primary package must use npm.");
-  if (primaryPackage.identifier !== "@edithatogo/substack-cli") {
-    issues.push("Primary package identifier must be @edithatogo/substack-cli.");
+  if (primaryPackage.identifier !== "@edithatogo/substack-publisher") {
+    issues.push("Primary package identifier must be @edithatogo/substack-publisher.");
   }
   if (primaryPackage.mcpName !== metadata.name) {
     issues.push("Package mcpName must match registry server name.");
@@ -72,7 +72,7 @@ export function buildRegistrySubmissionPlan(
   metadataFile = "registry.server.json",
 ): RegistrySubmissionPlan {
   const primaryPackage = metadata.packages[0];
-  const packageIdentifier = primaryPackage?.identifier ?? "@edithatogo/substack-cli";
+  const packageIdentifier = primaryPackage?.identifier ?? "@edithatogo/substack-publisher";
 
   return {
     metadataFile,

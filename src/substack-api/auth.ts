@@ -4,6 +4,10 @@ import { createLocalBrowserSession } from "../browser/local-browser.js";
 import { type EffectiveConfig, requirePublicationUrl } from "../config/store.js";
 import { redact } from "../util/redact.js";
 import {
+  authorizePublicationSession,
+  type AuthorizedPublicationSession,
+} from "../security/authorized-session.js";
+import {
   type ApiReadStatus,
   apiHeaders,
   classifyFailure,
@@ -27,6 +31,7 @@ export interface ApiCookieSummary {
 export interface ApiAuthMaterial {
   source: ApiAuthSource;
   publicationUrl: string;
+  configuredPublicationId?: number | undefined;
   cookieHeader: string;
   cookies: ApiCookieSummary[];
   hasLikelySessionCookie: boolean;
@@ -55,6 +60,7 @@ export interface ApiAuthValidation {
         role?: string | undefined;
       }
     | undefined;
+  authorizedSession?: AuthorizedPublicationSession | undefined;
   checkedEndpoints: string[];
   message: string;
 }
@@ -94,7 +100,12 @@ export async function resolveApiAuthMaterial(
   source: "auto" | ApiAuthSource = "auto",
 ): Promise<ApiAuthMaterial> {
   if ((source === "auto" || source === "env") && config.substackCookie) {
-    return materialFromCookieHeader(config.substackCookie, requirePublicationUrl(config), "env");
+    return materialFromCookieHeader(
+      config.substackCookie,
+      requirePublicationUrl(config),
+      "env",
+      config.publicationId,
+    );
   }
 
   if (source === "env") {
@@ -123,7 +134,7 @@ export async function extractApiAuthFromLocalProfile(
 
     const cookies = await session.context.cookies(["https://substack.com", publicationUrl]);
 
-    return materialFromCookies(cookies, publicationUrl, "local-profile");
+    return materialFromCookies(cookies, publicationUrl, "local-profile", config.publicationId);
   } finally {
     await session.close();
   }
@@ -196,6 +207,16 @@ export async function validateApiAuthMaterial(
     (candidate) => candidate.publication.subdomain === publicationSubdomain,
   );
 
+  const authorizedSession =
+    publicationUser && material.configuredPublicationId !== undefined
+      ? authorizePublicationSession({
+          publicationId: publicationUser.publication.id,
+          configuredPublicationId: material.configuredPublicationId,
+          publicationOrigin: material.publicationUrl,
+          ...(publicationUser.role ? { role: publicationUser.role } : {}),
+        })
+      : undefined;
+
   return {
     status: "ok",
     checkedEndpoints,
@@ -210,6 +231,7 @@ export async function validateApiAuthMaterial(
           role: publicationUser.role,
         }
       : undefined,
+    authorizedSession,
     message: publicationUser
       ? "Authenticated session validated against the configured publication."
       : "Authenticated session is valid, but the configured publication was not found in the profile publication list.",
@@ -220,6 +242,7 @@ export function materialFromCookieHeader(
   cookieHeader: string,
   publicationUrl: string,
   source: ApiAuthSource,
+  configuredPublicationId?: number,
 ): ApiAuthMaterial {
   const cookies = cookieHeader
     .split(";")
@@ -242,13 +265,14 @@ export function materialFromCookieHeader(
       };
     });
 
-  return materialFromCookies(cookies, publicationUrl, source);
+  return materialFromCookies(cookies, publicationUrl, source, configuredPublicationId);
 }
 
 export function materialFromCookies(
   cookies: Cookie[],
   publicationUrl: string,
   source: ApiAuthSource,
+  configuredPublicationId?: number,
 ): ApiAuthMaterial {
   const usableCookies = dedupeCookies(cookies).filter((cookie) =>
     isRelevantCookie(cookie, publicationUrl),
@@ -259,6 +283,7 @@ export function materialFromCookies(
   return {
     source,
     publicationUrl,
+    configuredPublicationId,
     cookieHeader,
     cookies: summaries,
     hasLikelySessionCookie: summaries.some((cookie) =>

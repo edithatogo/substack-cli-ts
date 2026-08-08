@@ -6,6 +6,7 @@ import { configFilePath } from "./paths.js";
 
 const AppConfigSchema = z.object({
   publicationUrl: z.string().url().optional(),
+  publicationId: z.number().int().positive().optional(),
   browserRuntime: z.enum(["browserbase", "local", "camoufox"]).default("browserbase"),
   defaultMode: z.enum(["draft", "publish", "schedule"]).default("draft"),
   operatorMode: z.enum(["solo", "team", "agency", "ci"]).default("solo"),
