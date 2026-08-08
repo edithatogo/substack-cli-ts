@@ -2,8 +2,6 @@
 
 ## P00 Programme bootstrap, contract and planning PR
 ## P01 Emergency correctness, authority and mutation safety
-- [x] T01-03
-
 ## P02 Bleeding-edge mainline runtime and dependency migration
 - T02-01
 - T02-02
