@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T10:22:44.169Z",
+  "generatedAt": "2026-08-08T13:23:07.426Z",
   "sourceFile": "examples/basic.md",
   "mode": "draft",
   "metadata": {
@@ -11,22 +11,10 @@
     ],
     "audience": "everyone"
   },
-  "html": "<h1>Example Substack Draft</h1>\n<p>This is a local Markdown draft with <strong>bold text</strong> and a <a href=\"https://substack.com\">link</a>.</p>\n<div data-substack-cli-node=\"paywall\"></div>\n<div data-substack-cli-node=\"subscribe-widget\" data-label=\"Subscribe for future posts\"></div>",
+  "html": "<p>This is a local Markdown draft with <strong>bold text</strong> and a <a href=\"https://substack.com\">link</a>.</p>\n<div data-substack-cli-node=\"paywall\"></div>\n<div data-substack-cli-node=\"subscribe-widget\" data-label=\"Subscribe for future posts\"></div>",
   "document": {
     "type": "doc",
     "content": [
-      {
-        "type": "heading",
-        "attrs": {
-          "level": 1
-        },
-        "content": [
-          {
-            "type": "text",
-            "text": "Example Substack Draft"
-          }
-        ]
-      },
       {
         "type": "paragraph",
         "content": [
@@ -84,7 +72,6 @@
     "valid": true,
     "nodeTypes": [
       "doc",
-      "heading",
       "paragraph",
       "paywallDivider",
       "subscribeWidget",

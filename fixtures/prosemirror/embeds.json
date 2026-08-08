@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T10:22:36.428Z",
+  "generatedAt": "2026-08-08T13:23:07.452Z",
   "sourceFile": "examples/embeds.md",
   "mode": "draft",
   "metadata": {
@@ -9,22 +9,10 @@
       "embeds"
     ]
   },
-  "html": "<h1>Embed Examples</h1>\n<h2>YouTube Video</h2>\n<div data-substack-cli-node=\"embed\" data-embed-type=\"youtube\" data-url=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"></div>\n## Generic URL Embed\n<div data-substack-cli-node=\"embed\" data-embed-type=\"embed\" data-url=\"https://example.com/article\"></div>\n## Podcast Embed\n<div data-substack-cli-node=\"embed\" data-embed-type=\"podcast\" data-url=\"https://open.spotify.com/episode/12345\"></div>\n## Content with text around embeds\n\n<p>Before the embed.</p>\n<div data-substack-cli-node=\"embed\" data-embed-type=\"youtube\" data-url=\"https://youtu.be/abcdefg\"></div>\nAfter the embed.\n",
+  "html": "<h2>YouTube Video</h2>\n<div data-substack-cli-node=\"embed\" data-embed-type=\"youtube\" data-url=\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"></div>\n## Generic URL Embed\n<div data-substack-cli-node=\"embed\" data-embed-type=\"embed\" data-url=\"https://example.com/article\"></div>\n## Podcast Embed\n<div data-substack-cli-node=\"embed\" data-embed-type=\"podcast\" data-url=\"https://open.spotify.com/episode/12345\"></div>\n## Content with text around embeds<p>Before the embed.</p>\n<div data-substack-cli-node=\"embed\" data-embed-type=\"youtube\" data-url=\"https://youtu.be/abcdefg\"></div>\nAfter the embed.\n",
   "document": {
     "type": "doc",
     "content": [
-      {
-        "type": "heading",
-        "attrs": {
-          "level": 1
-        },
-        "content": [
-          {
-            "type": "text",
-            "text": "Embed Examples"
-          }
-        ]
-      },
       {
         "type": "heading",
         "attrs": {

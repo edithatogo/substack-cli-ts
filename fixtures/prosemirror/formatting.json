@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T10:22:36.431Z",
+  "generatedAt": "2026-08-08T13:23:07.492Z",
   "sourceFile": "examples/formatting.md",
   "mode": "draft",
   "metadata": {
@@ -12,22 +12,10 @@
     ],
     "audience": "everyone"
   },
-  "html": "<h1>Formatting Examples</h1>\n<p>This article covers common Markdown formatting patterns for Substack newsletters.</p>\n<h2>Lists</h2>\n<h3>Unordered List</h3>\n<ul>\n<li>First item</li>\n<li>Second item</li>\n<li>Third item<ul>\n<li>Nested item A</li>\n<li>Nested item B</li>\n</ul>\n</li>\n<li>Fourth item</li>\n</ul>\n<h3>Ordered List</h3>\n<ol>\n<li>Step one</li>\n<li>Step two</li>\n<li>Step three<ol>\n<li>Sub-step A</li>\n<li>Sub-step B</li>\n</ol>\n</li>\n<li>Step four</li>\n</ol>\n<h2>Blockquotes</h2>\n<blockquote>\n<p>This is a simple blockquote.</p>\n</blockquote>\n<blockquote>\n<p>Multi-paragraph blockquote:</p>\n<p>This is the second paragraph of the blockquote.</p>\n<blockquote>\n<p>A nested blockquote for emphasis.</p>\n</blockquote>\n</blockquote>\n<h2>Code</h2>\n<p>Here is some <code>inline code</code> within a paragraph.</p>\n<pre><code class=\"language-javascript\">function greet(name) {\n  return `Hello, ${name}!`;\n}\n</code></pre>\n<pre><code class=\"language-python\">def factorial(n):\n    if n &lt;= 1:\n        return 1\n    return n * factorial(n - 1)\n</code></pre>\n<p>A standalone code span: <code>const x = 42;</code></p>\n<h2>Horizontal Rules</h2>\n<hr>\n<p>Three dashes above.</p>\n<hr>\n<p>Three asterisks above.</p>\n<h2>Mixed Content</h2>\n<blockquote>\n<p>A blockquote with a list inside:</p>\n<ul>\n<li>Item one</li>\n<li>Item two</li>\n</ul>\n<p>And a code block:</p>\n<pre><code>echo &quot;hello&quot;\n</code></pre>\n</blockquote>\n",
+  "html": "<p>This article covers common Markdown formatting patterns for Substack newsletters.</p>\n<h2>Lists</h2>\n<h3>Unordered List</h3>\n<ul>\n<li>First item</li>\n<li>Second item</li>\n<li>Third item<ul>\n<li>Nested item A</li>\n<li>Nested item B</li>\n</ul>\n</li>\n<li>Fourth item</li>\n</ul>\n<h3>Ordered List</h3>\n<ol>\n<li>Step one</li>\n<li>Step two</li>\n<li>Step three<ol>\n<li>Sub-step A</li>\n<li>Sub-step B</li>\n</ol>\n</li>\n<li>Step four</li>\n</ol>\n<h2>Blockquotes</h2>\n<blockquote>\n<p>This is a simple blockquote.</p>\n</blockquote>\n<blockquote>\n<p>Multi-paragraph blockquote:</p>\n<p>This is the second paragraph of the blockquote.</p>\n<blockquote>\n<p>A nested blockquote for emphasis.</p>\n</blockquote>\n</blockquote>\n<h2>Code</h2>\n<p>Here is some <code>inline code</code> within a paragraph.</p>\n<pre><code class=\"language-javascript\">function greet(name) {\n  return `Hello, ${name}!`;\n}\n</code></pre>\n<pre><code class=\"language-python\">def factorial(n):\n    if n &lt;= 1:\n        return 1\n    return n * factorial(n - 1)\n</code></pre>\n<p>A standalone code span: <code>const x = 42;</code></p>\n<h2>Horizontal Rules</h2>\n<hr>\n<p>Three dashes above.</p>\n<hr>\n<p>Three asterisks above.</p>\n<h2>Mixed Content</h2>\n<blockquote>\n<p>A blockquote with a list inside:</p>\n<ul>\n<li>Item one</li>\n<li>Item two</li>\n</ul>\n<p>And a code block:</p>\n<pre><code>echo &quot;hello&quot;\n</code></pre>\n</blockquote>\n",
   "document": {
     "type": "doc",
     "content": [
-      {
-        "type": "heading",
-        "attrs": {
-          "level": 1
-        },
-        "content": [
-          {
-            "type": "text",
-            "text": "Formatting Examples"
-          }
-        ]
-      },
       {
         "type": "paragraph",
         "content": [
