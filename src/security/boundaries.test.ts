@@ -24,8 +24,8 @@ describe("security boundaries", () => {
     expect(
       () => new TrustedOriginPolicy({ publicationOrigin: "http://example.substack.com" }),
     ).toThrow();
-    expect(() =>
-      new TrustedOriginPolicy({ publicationOrigin: "https://example.substack.com/path" }),
+    expect(
+      () => new TrustedOriginPolicy({ publicationOrigin: "https://example.substack.com/path" }),
     ).toThrow();
   });
 
