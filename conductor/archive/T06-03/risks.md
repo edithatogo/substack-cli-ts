@@ -7,6 +7,6 @@
 - SETTINGS-ALLOWLIST-004: Publication settings updates require an approved plan and transmit only a strict allowlisted patch with before-state evidence.
 - ARCH-ADAPTERS-003: Separate official Substack API, undocumented internal creator API, browser automation, and simulator adapters with explicit support and stability labels.
 - FEATURE-FIDELITY-008: Expand content, media, scheduling, notes, comments, analytics, backup, and publication-management features only through evidence-backed contracts.
-- Planning-only scope could drift into implementation tasks.
+- Implementation scope must remain bounded by the track contract and verification evidence.
 - Some legacy issue lineage may not support native subissue links.
 - Registry claims need deferred verification in implementation

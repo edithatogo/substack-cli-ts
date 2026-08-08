@@ -7,6 +7,6 @@
 - CI-ONE-COMMAND-006: Provide one deterministic verification command that runs contracts, generation drift, types, lint, tests, coverage, mutation, fuzz smoke, package checks, MCP conformance, security checks, and receipt generation.
 - SEC-SUPPLY-CHAIN-008: Implement mature supply-chain controls: immutable action SHAs, CodeQL, dependency review, actionlint, zizmor, OpenSSF Scorecard, maintained secret scanning, OSV scanning, licence policy, npm signature audit, SBOMs, provenance, and signed attestations.
 - RELEASE-REPRODUCIBLE-010: Use trusted publishing, reproducible artefacts, provenance, clean-room installation, version synchronization, release notes, rollback, and staged release channels.
-- Planning-only scope could drift into implementation tasks.
+- Implementation scope must remain bounded by the track contract and verification evidence.
 - Some legacy issue lineage may not support native subissue links.
 - Registry claims need deferred verification in implementation

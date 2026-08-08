@@ -230,7 +230,7 @@ for (const phase of phases) {
       JSON.stringify({ trackId: track.id, contracts: uniqueTrackContractIds }, null, 2) + '\n'
     );
 
-    fs.writeFileSync(path.join(trackDir, 'risks.md'), '# Risks\n\n- Planning-only constraint is the primary gate.\n- Existing issue dependencies may require manual confirmation before execution starts.\n- CI lanes can include pre-existing failures unrelated to planning changes.\n');
+    fs.writeFileSync(path.join(trackDir, 'risks.md'), '# Risks\n\n- Contract scope and verification evidence are the primary gates.\n- Existing issue dependencies may require manual confirmation before execution starts.\n- CI lanes can include pre-existing failures unrelated to planning changes.\n');
 
     fs.writeFileSync(
       path.join(trackDir, 'verification.md'),

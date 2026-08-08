@@ -7,6 +7,6 @@
 - TEST-RISK-WEIGHTED-002: Replace misleading headline coverage with risk-weighted assurance and remove blanket exclusions from high-risk modules.
 - TEST-ADVANCED-003: Use property-based, model-based, fuzz, mutation, differential, metamorphic, contract, concurrency, fault-injection, and snapshot testing where warranted.
 - CI-ONE-COMMAND-006: Provide one deterministic verification command that runs contracts, generation drift, types, lint, tests, coverage, mutation, fuzz smoke, package checks, MCP conformance, security checks, and receipt generation.
-- Planning-only scope could drift into implementation tasks.
+- Implementation scope must remain bounded by the track contract and verification evidence.
 - Some legacy issue lineage may not support native subissue links.
 - Registry claims need deferred verification in implementation
