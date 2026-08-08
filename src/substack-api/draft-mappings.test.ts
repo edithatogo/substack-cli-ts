@@ -51,32 +51,26 @@ describe("draft mappings", () => {
 
   it("imports mappings idempotently with queue checks", async () => {
     await withTempState(async () => {
-      const seed = [
-        {
-          sourceFile: normalizeSourceFile("post.md"),
-          publicationUrl: "https://rareinsights.substack.com/",
-          publicationId: "rareinsights.substack.com",
-          draftId: "999",
-          draftUrl: "https://rareinsights.substack.com/publish/post/999",
-          title: "Seed title",
-          slug: "seed-title",
-          updatedAt: new Date("2026-08-01T00:00:00.000Z").toISOString(),
-          eventId: "seed-event",
-          eventSequence: 1,
-          eventType: "import",
-        },
-      ];
+      await saveDraftMapping({
+        sourceFile: normalizeSourceFile("post.md"),
+        publicationUrl: "https://rareinsights.substack.com/",
+        draftId: "999",
+        draftUrl: "https://rareinsights.substack.com/publish/post/999",
+        title: "Seed title",
+        slug: "seed-title",
+        eventType: "import",
+      });
 
-      await importDraftMappings(JSON.stringify({ mappings: seed }));
+      const seed = buildDraftMappingsExport(await loadDraftMappings());
 
-      const first = await importDraftMappings(JSON.stringify({ mappings: seed, schemaVersion: 1 }));
+      const first = await importDraftMappings(JSON.stringify(seed));
       assert.equal(first.status, "no-op");
       assert.equal(first.appended, 0);
       assert.equal(first.skipped, 1);
       assert.equal(first.duplicates, 1);
 
       const withDelta = [
-        ...seed,
+        ...seed.mappings,
         {
           sourceFile: "post.md",
           publicationUrl: "https://rareinsights.substack.com/",
@@ -102,6 +96,31 @@ describe("draft mappings", () => {
       assert.equal(final.length, 2);
       assert.equal(final[1]?.draftId, "1000");
       assert.equal(final[1]?.queueHash?.length, 64);
+    });
+  });
+
+  it("rejects imports with invalid incoming queue hashes", async () => {
+    await withTempState(async () => {
+      await saveDraftMapping({
+        sourceFile: normalizeSourceFile("post.md"),
+        publicationUrl: "https://rareinsights.substack.com/",
+        draftId: "100",
+        title: "First title",
+        eventType: "import",
+      });
+
+      const exportPayload = buildDraftMappingsExport(await loadDraftMappings());
+      const tampered = {
+        ...exportPayload,
+        mappings: exportPayload.mappings.map((mapping, index) => ({
+          ...mapping,
+          queueHash: index === exportPayload.mappings.length - 1 ? "0".repeat(64) : mapping.queueHash,
+        })),
+      };
+
+      await assert.rejects(() => importDraftMappings(JSON.stringify(tampered)), {
+        message: /Incoming draft mapping queue hash mismatch/,
+      });
     });
   });
 

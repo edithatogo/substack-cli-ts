@@ -216,6 +216,23 @@ export async function loadDraftMappings(): Promise<DraftMapping[]> {
   }
 }
 
+function validateIncomingQueueHashes(payload: DraftMapping[]): void {
+  const prefix: DraftMapping[] = [];
+  for (const [index, candidate] of payload.entries()) {
+    prefix.push({
+      ...candidate,
+      queueHash: undefined,
+    });
+    if (candidate.queueHash === undefined) {
+      continue;
+    }
+
+    if (buildQueueHash(prefix) !== candidate.queueHash) {
+      throw new Error(`Incoming draft mapping queue hash mismatch at index ${index}.`);
+    }
+  }
+}
+
 export function buildDraftMappingsExport(mappings?: DraftMapping[]): DraftMappingsExport {
   return {
     schemaVersion: 1,
@@ -257,6 +274,7 @@ export async function importDraftMappings(
   options?: { dryRun?: boolean | undefined },
 ): Promise<DraftMappingEventSummary> {
   const payload = parseDraftMappingsPayload(raw);
+  validateIncomingQueueHashes(payload);
   const current = await loadDraftMappings();
   const beforeHash = buildQueueHash(current);
   const sequenceByKey = buildLatestSequenceByKey(current);
