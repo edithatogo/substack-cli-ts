@@ -206,7 +206,7 @@ export async function validateApiAuthMaterial(
         publicationId: publicationUser.publication.id,
         configuredPublicationId: publicationUser.publication.id,
         publicationOrigin: material.publicationUrl,
-        role: publicationUser.role,
+        ...(publicationUser.role ? { role: publicationUser.role } : {}),
       })
     : undefined;
 
