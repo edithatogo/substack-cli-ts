@@ -44,6 +44,25 @@ Body.
     }
   });
 
+  it("promotes a leading Setext heading without duplicating it in the body", async () => {
+    const file = await writeTempMarkdown(`Setext Title
+============
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.metadata.title, "Setext Title");
+      assert.equal(prepared.post.markdown, "Body.\n");
+      assert.doesNotMatch(prepared.post.html, /<h1>Setext Title<\/h1>/);
+      assert.equal(prepared.post.document.content?.[0]?.type, "paragraph");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
   it("removes a matching leading heading when frontmatter already supplies the title", async () => {
     const file = await writeTempMarkdown(`---
 title: Same Title
