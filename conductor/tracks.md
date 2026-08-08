@@ -2,7 +2,7 @@
 
 ## P00 Programme bootstrap, contract and planning PR
 ## P01 Emergency correctness, authority and mutation safety
-- T01-01
+- [~] T01-01
 - T01-02
 - T01-03
 
