@@ -3,7 +3,7 @@
 ## P00 Programme bootstrap, contract and planning PR
 ## P01 Emergency correctness, authority and mutation safety
 ## P02 Bleeding-edge mainline runtime and dependency migration
-- [~] T02-03
+- [x] T02-03
 - T02-04
 
 ## P03 Contract-first architecture and generated surfaces
