@@ -1,0 +1,56 @@
+{
+  "trackId": "T11-01",
+  "contractIds": [
+    "GOV-APPROVAL-GATE-005",
+    "RELEASE-REPRODUCIBLE-010",
+    "MATURITY-ROADMAP-004"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-APPROVAL-GATE-005",
+      "priority": "MUST",
+      "statement": "Implementation may begin only after the user explicitly approves the green planning PR using the approved plan hash.",
+      "acceptanceCriteria": [
+        "The planning receipt emits a canonical plan hash.",
+        "The prompt defines the required approval phrase and Codex verifies it before implementation.",
+        "No code implementation, dependency migration, release, registry submission, or live mutation occurs before approval."
+      ],
+      "requiredEvidence": [
+        "Plan hash",
+        "Approval-gate logic in the canonical contract",
+        "Implementation-stage receipt showing approval reference"
+      ]
+    },
+    {
+      "id": "RELEASE-REPRODUCIBLE-010",
+      "priority": "MUST",
+      "statement": "Use trusted publishing, reproducible artefacts, provenance, clean-room installation, version synchronization, release notes, rollback, and staged release channels.",
+      "acceptanceCriteria": [
+        "Long-lived npm publishing tokens are removed after OIDC trusted publishing is verified.",
+        "The exact tested tarball is published.",
+        "Tags, package metadata, registry metadata, SBOMs, MCPB, OCI image, and GitHub Release use one version."
+      ],
+      "requiredEvidence": [
+        "Release workflow",
+        "Trusted-publishing receipt",
+        "Clean-room install",
+        "Rollback drill"
+      ]
+    },
+    {
+      "id": "MATURITY-ROADMAP-004",
+      "priority": "MUST",
+      "statement": "Bring the project through a staged release train to a defensible 1.0 and maintain a post-1.0 roadmap.",
+      "acceptanceCriteria": [
+        "Release gates are defined for 0.3 safety, 0.4 architecture, 0.5 frontier toolchain/MCP v2, 0.6 content fidelity, 0.7 Creator OS, 0.8 assurance/observability, 0.9 release candidate, and 1.0 maturity.",
+        "1.0 requires all MUST contracts satisfied or explicitly approved exceptions with expiry.",
+        "The post-1.0 roadmap covers official API evolution, plugin SDK, hosted gateway, team/agency workflows, ecosystem integrations, deprecations, and maintenance."
+      ],
+      "requiredEvidence": [
+        "Versioned roadmap",
+        "Release scorecards",
+        "1.0 go/no-go record"
+      ]
+    }
+  ]
+}

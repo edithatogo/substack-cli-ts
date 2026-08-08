@@ -1,0 +1,14 @@
+{
+  "id": "T08-04",
+  "phaseId": "P08",
+  "phaseTitle": "Assurance harness, context and observability",
+  "title": "Disposable-publication canary and compatibility matrix",
+  "status": "planned",
+  "contractIds": [
+    "TEST-CANARY-004"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

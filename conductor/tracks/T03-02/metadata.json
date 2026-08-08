@@ -1,0 +1,17 @@
+{
+  "id": "T03-02",
+  "phaseId": "P03",
+  "phaseTitle": "Contract-first architecture and generated surfaces",
+  "title": "Canonical capability registry and code generation",
+  "status": "planned",
+  "contractIds": [
+    "GOV-CONTRACT-002",
+    "ARCH-CAPABILITY-REGISTRY-002",
+    "MCP-ANNOTATIONS-006",
+    "DOC-GENERATED-TRUTH-011"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

@@ -1,0 +1,22 @@
+{
+  "id": "T08-02",
+  "phaseId": "P08",
+  "phaseTitle": "Assurance harness, context and observability",
+  "title": "Risk-weighted quality harness and verification receipt",
+  "status": "planned",
+  "contractIds": [
+    "GOV-CONTRACT-002",
+    "GOV-REPOSITORY-STANDARDS-007",
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "BACKUP-RECOVERY-007",
+    "TEST-RISK-WEIGHTED-002",
+    "TEST-ADVANCED-003",
+    "CI-ONE-COMMAND-006"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [
+    161
+  ],
+  "riskLevel": "high",
+  "issue": null
+}

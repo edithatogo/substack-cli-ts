@@ -1,0 +1,58 @@
+{
+  "trackId": "T02-04",
+  "contractIds": [
+    "DEP-FRONTIER-MAINLINE-002",
+    "DEP-PUBLIC-PACKAGE-008",
+    "ARCH-PUBLIC-API-004"
+  ],
+  "mappedContracts": [
+    {
+      "id": "DEP-FRONTIER-MAINLINE-002",
+      "priority": "MUST",
+      "statement": "Migrate every direct dependency to the newest maintained upstream release available at execution time, preferring an official next, canary, nightly, dev, beta, rc, or alpha channel over latest stable when such a channel exists and represents newer supported code.",
+      "acceptanceCriteria": [
+        "Codex queries npm dist-tags, publication times, upstream release notes, migration guides, and security advisories at execution time.",
+        "Every direct dependency is pinned to an exact resolved version; no caret, tilde, wildcard, floating tag, or floating Git reference remains.",
+        "If no maintained prerelease exists, use the newest stable release.",
+        "If an unpublished upstream commit is required, pin an exact commit SHA, preserve licence/provenance, and bundle or vendor it so the published npm artefact installs without Git.",
+        "The package lock is regenerated and committed."
+      ],
+      "requiredEvidence": [
+        "conductor/dependencies/frontier-adoption.json",
+        "package.json and lockfile diff",
+        "Dependency provenance and rollback map",
+        "npm ls and pack-install receipts"
+      ]
+    },
+    {
+      "id": "DEP-PUBLIC-PACKAGE-008",
+      "priority": "MUST",
+      "statement": "Remove the public package's file:vendor/substack-api dependency and establish a publishable, reproducible ownership model.",
+      "acceptanceCriteria": [
+        "Use an internal workspace package bundled into the tarball, ordinary internal imports, or a separately versioned package.",
+        "The clean packed artefact installs without repository-relative files or nested source-tree assumptions.",
+        "Vendored source provenance, licence, update process, and divergence are documented."
+      ],
+      "requiredEvidence": [
+        "Clean npm pack install test",
+        "Dependency ownership ADR",
+        "Vendored-source provenance manifest"
+      ]
+    },
+    {
+      "id": "ARCH-PUBLIC-API-004",
+      "priority": "MUST",
+      "statement": "Publish a stable programmatic API with explicit exports while preserving the CLI and MCP interfaces.",
+      "acceptanceCriteria": [
+        "package.json has an exports map and separates executable and library entry points.",
+        "Public API compatibility tests and API-extractor or equivalent reports exist.",
+        "Internal modules are not accidentally exported."
+      ],
+      "requiredEvidence": [
+        "Exports map",
+        "API report",
+        "Consumer fixture"
+      ]
+    }
+  ]
+}

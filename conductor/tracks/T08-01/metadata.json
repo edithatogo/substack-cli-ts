@@ -1,0 +1,18 @@
+{
+  "id": "T08-01",
+  "phaseId": "P08",
+  "phaseTitle": "Assurance harness, context and observability",
+  "title": "Deterministic protocol simulator and failure laboratory",
+  "status": "planned",
+  "contractIds": [
+    "NET-DISCRIMINATED-RESULT-002",
+    "NET-OUTCOME-UNKNOWN-003",
+    "NET-IDEMPOTENCY-004",
+    "RATE-LIMIT-SAFE-006",
+    "TEST-SIMULATOR-001"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

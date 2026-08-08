@@ -1,0 +1,91 @@
+{
+  "trackId": "T09-01",
+  "contractIds": [
+    "GOV-CONTRACT-002",
+    "DEP-RUNTIME-CURRENT-004",
+    "TEST-RISK-WEIGHTED-002",
+    "CI-ONE-COMMAND-006",
+    "CI-CROSS-PLATFORM-007"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-CONTRACT-002",
+      "priority": "MUST",
+      "statement": "Create a canonical machine-readable implementation contract derived from this prompt and make it the binding source of truth for all subsequent work.",
+      "acceptanceCriteria": [
+        "The contract records this prompt's SHA-256, every contract ID, phase, track, task, dependency decision, acceptance criterion, GitHub issue reference, Conductor path, status, evidence, and exception.",
+        "A deterministic validator fails on missing mappings, duplicate IDs, invalid states, orphaned tasks, unapproved scope changes, or completion without evidence.",
+        "Every implementation PR runs the contract validator as a required check."
+      ],
+      "requiredEvidence": [
+        "conductor/contracts/substack-cli-maturity.contract.json",
+        "conductor/traceability.json",
+        "scripts/validate-maturity-contract.mjs",
+        "Generated human-readable traceability report"
+      ]
+    },
+    {
+      "id": "DEP-RUNTIME-CURRENT-004",
+      "priority": "MUST",
+      "statement": "Use the newest supported Node.js Current release and newest compatible npm release as the main development, CI, build, test, and release baseline.",
+      "acceptanceCriteria": [
+        "Pin the exact runtime in packageManager/devEngines and standard toolchain files.",
+        "Remove Node 18 and Node 20 support claims.",
+        "Required CI runs on the current runtime across Linux, macOS, and Windows.",
+        "Use relevant current-runtime experimental capabilities, including the permission model and configuration features, under the normal required test suite."
+      ],
+      "requiredEvidence": [
+        ".node-version, .nvmrc or equivalent",
+        "package.json runtime declarations",
+        "Cross-platform CI matrix",
+        "Runtime feature adoption record"
+      ]
+    },
+    {
+      "id": "TEST-RISK-WEIGHTED-002",
+      "priority": "MUST",
+      "statement": "Replace misleading headline coverage with risk-weighted assurance and remove blanket exclusions from high-risk modules.",
+      "acceptanceCriteria": [
+        "Credential, authorization, policy, planning, mutation, state, media, billing, subscriber, team, and MCP HTTP code has explicit branch and mutation targets.",
+        "Coverage exclusions require contract exceptions.",
+        "Issue #161 is reused and completed."
+      ],
+      "requiredEvidence": [
+        "Risk-to-test matrix",
+        "Coverage configuration",
+        "Mutation reports",
+        "Issue #161 linkage"
+      ]
+    },
+    {
+      "id": "CI-ONE-COMMAND-006",
+      "priority": "MUST",
+      "statement": "Provide one deterministic verification command that runs contracts, generation drift, types, lint, tests, coverage, mutation, fuzz smoke, package checks, MCP conformance, security checks, and receipt generation.",
+      "acceptanceCriteria": [
+        "The command works locally and in CI.",
+        "It emits a machine-readable verification receipt conforming to repository-standards.",
+        "Release consumes the same verified artefacts rather than rebuilding differently."
+      ],
+      "requiredEvidence": [
+        "npm run verify or equivalent",
+        "Verification receipt",
+        "CI invocation"
+      ]
+    },
+    {
+      "id": "CI-CROSS-PLATFORM-007",
+      "priority": "MUST",
+      "statement": "Run blocking checks on Linux, macOS, and Windows using the main Node Current runtime and exact package-manager version.",
+      "acceptanceCriteria": [
+        "Path, permissions, shell, browser-profile, atomic-state, package-install, and completion behaviour are tested across platforms.",
+        "OneDrive/SharePoint scenarios receive dedicated Windows tests.",
+        "No obsolete Node support lane remains."
+      ],
+      "requiredEvidence": [
+        "CI matrix",
+        "Cross-platform receipts",
+        "Windows path/OneDrive tests"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "id": "T00-01",
+  "phaseId": "P00",
+  "phaseTitle": "Programme bootstrap, contract and planning PR",
+  "title": "Repository baseline, current-state audit and standards integration",
+  "status": "planned",
+  "contractIds": [
+    "GOV-PLAN-FIRST-001",
+    "GOV-EXISTING-WORK-004",
+    "GOV-REPOSITORY-STANDARDS-007",
+    "CONTEXT-ENGINEERING-012"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167
+  ],
+  "riskLevel": "high",
+  "issue": null
+}

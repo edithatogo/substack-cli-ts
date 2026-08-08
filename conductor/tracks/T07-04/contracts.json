@@ -1,0 +1,40 @@
+{
+  "trackId": "T07-04",
+  "contractIds": [
+    "MCP-ANNOTATIONS-006",
+    "MCP-PACKAGING-007"
+  ],
+  "mappedContracts": [
+    {
+      "id": "MCP-ANNOTATIONS-006",
+      "priority": "MUST",
+      "statement": "Every MCP tool has accurate readOnly, destructive, idempotent, and open-world annotations, strong descriptions, bounded schemas, and safe structured errors.",
+      "acceptanceCriteria": [
+        "Annotation drift is generated from the capability registry and checked.",
+        "Glama/registry tool introspection confirms metadata.",
+        "No write tool is exposed without the common mutation contract."
+      ],
+      "requiredEvidence": [
+        "MCP surface manifest",
+        "Introspection report",
+        "Annotation tests"
+      ]
+    },
+    {
+      "id": "MCP-PACKAGING-007",
+      "priority": "MUST",
+      "statement": "Produce installable npm, MCPB, Docker/OCI, stdio, and Streamable HTTP distributions from one reproducible release.",
+      "acceptanceCriteria": [
+        "Clean-room installation and Inspector tests pass for every format.",
+        "Registry metadata versions match package and release versions.",
+        "No distribution includes secrets, local state, capture artefacts, or repository-relative dependencies."
+      ],
+      "requiredEvidence": [
+        "npm tarball",
+        "MCPB bundle",
+        "OCI image and SBOM",
+        "Clean-install receipts"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "id": "T06-03",
+  "phaseId": "P06",
+  "phaseTitle": "Content fidelity, publishing workflows and Creator OS maturity",
+  "title": "Evidence-backed publication, notes, community and administration",
+  "status": "planned",
+  "contractIds": [
+    "COR-BOOLEAN-001",
+    "SEC-NO-WRITE-PROBING-008",
+    "MUT-REVISION-006",
+    "SCHEDULE-POLICY-007",
+    "SETTINGS-ALLOWLIST-004",
+    "ARCH-ADAPTERS-003",
+    "FEATURE-FIDELITY-008"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

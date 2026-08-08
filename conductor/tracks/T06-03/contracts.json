@@ -1,0 +1,120 @@
+{
+  "trackId": "T06-03",
+  "contractIds": [
+    "COR-BOOLEAN-001",
+    "SEC-NO-WRITE-PROBING-008",
+    "MUT-REVISION-006",
+    "SCHEDULE-POLICY-007",
+    "SETTINGS-ALLOWLIST-004",
+    "ARCH-ADAPTERS-003",
+    "FEATURE-FIDELITY-008"
+  ],
+  "mappedContracts": [
+    {
+      "id": "COR-BOOLEAN-001",
+      "priority": "MUST",
+      "statement": "Parse frontmatter booleans strictly so false remains false, especially shouldSendEmail.",
+      "acceptanceCriteria": [
+        "shouldSendEmail: false produces boolean false and should_send_email=false.",
+        "Quoted true/false are handled deliberately.",
+        "Invalid boolean-like values block preflight rather than coercing truthy.",
+        "Revision and republish default to no email resend."
+      ],
+      "requiredEvidence": [
+        "Parser tests",
+        "Payload tests",
+        "Revision no-resend tests"
+      ]
+    },
+    {
+      "id": "SEC-NO-WRITE-PROBING-008",
+      "priority": "MUST",
+      "statement": "Prohibit guessed POST, PUT, PATCH, or DELETE endpoint discovery.",
+      "acceptanceCriteria": [
+        "Unknown mutations remain planning-only or manual.",
+        "Every executable mutation references exact first-party capture evidence, method, request schema, response schema, and last verified version.",
+        "Domain, team, refund, moderation, subscriber, publication-setting, revise, and unschedule surfaces are audited."
+      ],
+      "requiredEvidence": [
+        "Endpoint evidence registry",
+        "Zero-write discovery tests",
+        "Unsafe-surface disablement receipt"
+      ]
+    },
+    {
+      "id": "MUT-REVISION-006",
+      "priority": "MUST",
+      "statement": "Unschedule and published revision preserve the canonical URL where required, default to no resend, reconcile before and after, and never use a schedule endpoint as an unschedule guess.",
+      "acceptanceCriteria": [
+        "Exact captured endpoint and payload evidence exists.",
+        "keep-url and no-resend are plan-bound fields.",
+        "Issue #168 implementation is retained only if it satisfies the new contract; otherwise it is reverted or replaced."
+      ],
+      "requiredEvidence": [
+        "Revision/unschedule contract fixtures",
+        "Canary verification",
+        "Issue #168 audit receipt"
+      ]
+    },
+    {
+      "id": "SCHEDULE-POLICY-007",
+      "priority": "MUST",
+      "statement": "Enforce whole-publication schedule collisions, queue caps, maximum horizon, normalized spacing, IANA timezone semantics, DST ambiguity handling, and remote precision tolerances.",
+      "acceptanceCriteria": [
+        "Issue #167 is reused and completed.",
+        "Property tests cover DST gaps/folds, multiple series, queue limits, and remote timestamp truncation.",
+        "All schedule and note paths use the same policy."
+      ],
+      "requiredEvidence": [
+        "Schedule policy engine",
+        "Property tests",
+        "Issue #167 linkage"
+      ]
+    },
+    {
+      "id": "SETTINGS-ALLOWLIST-004",
+      "priority": "MUST",
+      "statement": "Publication settings updates require an approved plan and transmit only a strict allowlisted patch with before-state evidence.",
+      "acceptanceCriteria": [
+        "Default library calls do not mutate.",
+        "Server-managed fields are never echoed back in a merged object.",
+        "Logo/favicon partial failures produce compensation."
+      ],
+      "requiredEvidence": [
+        "Strict patch schema",
+        "Settings drift tests",
+        "Compensation tests"
+      ]
+    },
+    {
+      "id": "ARCH-ADAPTERS-003",
+      "priority": "MUST",
+      "statement": "Separate official Substack API, undocumented internal creator API, browser automation, and simulator adapters with explicit support and stability labels.",
+      "acceptanceCriteria": [
+        "No undifferentiated 'Substack API' abstraction hides provenance.",
+        "Every endpoint records official/internal/browser status, auth, evidence, last verification, and safety state.",
+        "Domain logic is transport-independent."
+      ],
+      "requiredEvidence": [
+        "Adapter interfaces",
+        "Endpoint evidence registry",
+        "Architecture documentation"
+      ]
+    },
+    {
+      "id": "FEATURE-FIDELITY-008",
+      "priority": "MUST",
+      "statement": "Expand content, media, scheduling, notes, comments, analytics, backup, and publication-management features only through evidence-backed contracts.",
+      "acceptanceCriteria": [
+        "Unsupported or probe-only features remain accurately labelled.",
+        "Empty valid collections are returned as successful empty results rather than schema drift.",
+        "Every feature has dry-run, reconciliation, audit, and recovery semantics appropriate to its risk."
+      ],
+      "requiredEvidence": [
+        "Feature matrix",
+        "Capability evidence",
+        "End-to-end scenarios"
+      ]
+    }
+  ]
+}

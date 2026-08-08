@@ -1,0 +1,40 @@
+{
+  "trackId": "T10-03",
+  "contractIds": [
+    "REG-PUBLISH-002",
+    "REG-ECOSYSTEM-003"
+  ],
+  "mappedContracts": [
+    {
+      "id": "REG-PUBLISH-002",
+      "priority": "MUST",
+      "statement": "Publish or submit the mature server to npm, the official MCP Registry, Glama, Smithery, and mcp.so, and verify downstream indexing by PulseMCP and MCP Atlas.",
+      "acceptanceCriteria": [
+        "Use account-gated submissions when credentials and permissions are available.",
+        "Never fabricate a successful listing.",
+        "When an external gate remains, implement every local artefact and script, create a precise owner action with submission data, and keep the track open.",
+        "Interpret the user's 'glamira' reference as Glama unless a distinct service is identified during refreshed research."
+      ],
+      "requiredEvidence": [
+        "Verified listing URLs or external-gate receipts",
+        "Submission commands/scripts",
+        "Registry health check"
+      ]
+    },
+    {
+      "id": "REG-ECOSYSTEM-003",
+      "priority": "SHOULD",
+      "statement": "Submit or verify discovery in other relevant MCP ecosystems, including Cline Marketplace, VS Code MCP Gallery via the official registry, Docker MCP Catalog, awesome-mcp-servers, Cursor Directory, Claude extensions if eligible, and maintained community directories.",
+      "acceptanceCriteria": [
+        "Eligibility and submission requirements are refreshed at execution time.",
+        "Low-quality or abandoned directories are not pursued merely to inflate counts.",
+        "Each listing is monitored for build, security, and metadata drift."
+      ],
+      "requiredEvidence": [
+        "Registry decision matrix",
+        "Submission PRs/listing URLs",
+        "Health-monitoring report"
+      ]
+    }
+  ]
+}

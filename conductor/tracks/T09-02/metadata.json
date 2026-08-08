@@ -1,0 +1,16 @@
+{
+  "id": "T09-02",
+  "phaseId": "P09",
+  "phaseTitle": "CI/CD, security, supply chain and repository governance",
+  "title": "Security and supply-chain engineering",
+  "status": "planned",
+  "contractIds": [
+    "SEC-STRUCTURED-REDACTION-010",
+    "SEC-THREAT-MODEL-011",
+    "SEC-SUPPLY-CHAIN-008"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

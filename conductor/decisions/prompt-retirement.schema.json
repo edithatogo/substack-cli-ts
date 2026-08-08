@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "required": [
+    "status",
+    "blockedBy",
+    "rationale"
+  ],
+  "properties": {
+    "status": {
+      "type": "string"
+    },
+    "blockedBy": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rationale": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "trackId": "T02-02",
+  "contractIds": [
+    "GOV-EXISTING-WORK-004",
+    "DEP-NO-EXPERIMENTAL-LANE-001",
+    "DEP-FRONTIER-MAINLINE-002",
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "DEP-COHERENCE-007",
+    "DEP-RENOVATE-009"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-EXISTING-WORK-004",
+      "priority": "MUST",
+      "statement": "Reconcile all existing issues, pull requests, branches, tracks, decisions, and partially implemented work before creating new work items.",
+      "acceptanceCriteria": [
+        "Open issues #161 through #167 are mapped and reused.",
+        "Closed issue #168 and its implementation are explicitly audited against the new mutation contracts.",
+        "Open PR #176 is assessed and either incorporated, superseded with explanation, or retained with a documented dependency.",
+        "No duplicate issue or track is created for work already represented."
+      ],
+      "requiredEvidence": [
+        "Existing-work reconciliation table",
+        "Issue and PR comments documenting supersession or reuse",
+        "Baseline repository snapshot"
+      ]
+    },
+    {
+      "id": "DEP-NO-EXPERIMENTAL-LANE-001",
+      "priority": "MUST",
+      "statement": "There must be no separate experimental dependency lane, branch, package, or non-blocking workflow. Selected bleeding-edge dependencies and experimental capabilities belong to the main library and normal required CI.",
+      "acceptanceCriteria": [
+        "Remove the experimental-dependency script, workflow matrix, documentation, and package scripts.",
+        "No dependency or feature is tested only in a continue-on-error lane.",
+        "All selected frontier dependencies are exact-pinned in the main package and exercised by required checks."
+      ],
+      "requiredEvidence": [
+        "Deleted experimental-lane artefacts",
+        "Main package dependency manifest",
+        "Blocking CI evidence"
+      ]
+    },
+    {
+      "id": "DEP-FRONTIER-MAINLINE-002",
+      "priority": "MUST",
+      "statement": "Migrate every direct dependency to the newest maintained upstream release available at execution time, preferring an official next, canary, nightly, dev, beta, rc, or alpha channel over latest stable when such a channel exists and represents newer supported code.",
+      "acceptanceCriteria": [
+        "Codex queries npm dist-tags, publication times, upstream release notes, migration guides, and security advisories at execution time.",
+        "Every direct dependency is pinned to an exact resolved version; no caret, tilde, wildcard, floating tag, or floating Git reference remains.",
+        "If no maintained prerelease exists, use the newest stable release.",
+        "If an unpublished upstream commit is required, pin an exact commit SHA, preserve licence/provenance, and bundle or vendor it so the published npm artefact installs without Git.",
+        "The package lock is regenerated and committed."
+      ],
+      "requiredEvidence": [
+        "conductor/dependencies/frontier-adoption.json",
+        "package.json and lockfile diff",
+        "Dependency provenance and rollback map",
+        "npm ls and pack-install receipts"
+      ]
+    },
+    {
+      "id": "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+      "priority": "MUST",
+      "statement": "Inspect every direct dependency and runtime for relevant experimental APIs, flags, transports, extensions, performance controls, and security features; adopt all relevant features in mainline.",
+      "acceptanceCriteria": [
+        "The adoption manifest records package, resolved version, upstream source, experimental feature, relevance assessment, adopted implementation, tests, and rollback.",
+        "A feature may be excluded only if irrelevant, removed upstream, mutually incompatible, or demonstrably unsafe; every exclusion requires an evidence-backed contract exception.",
+        "Capability negotiation or safety policy may control runtime use, but the implementation remains present and tested in mainline."
+      ],
+      "requiredEvidence": [
+        "Frontier feature adoption manifest",
+        "Feature-specific tests",
+        "Exception records for exclusions"
+      ]
+    },
+    {
+      "id": "DEP-COHERENCE-007",
+      "priority": "MUST",
+      "statement": "Keep tightly coupled dependency families on coherent versions and eliminate accidental duplicate majors.",
+      "acceptanceCriteria": [
+        "All Tiptap packages resolve to one coherent frontier version unless an approved ADR documents an unavoidable split.",
+        "Vitest and its coverage provider are aligned.",
+        "MCP v2 packages and extensions are aligned.",
+        "OpenTelemetry packages are aligned.",
+        "npm dedupe and a duplicate-major policy check pass."
+      ],
+      "requiredEvidence": [
+        "Dependency family matrix",
+        "npm ls --all output",
+        "Duplicate-major allowlist with reasons"
+      ]
+    },
+    {
+      "id": "DEP-RENOVATE-009",
+      "priority": "MUST",
+      "statement": "Configure Renovate to track the same prerelease channels used by mainline, pin exact versions and action digests, and open normal blocking PRs rather than experimental-lane updates.",
+      "acceptanceCriteria": [
+        "The inherited edithatogo Renovate preset is used where applicable.",
+        "Prerelease following is enabled for selected packages.",
+        "Automerge is limited to changes that pass the complete required suite and respect risk classification.",
+        "Dependabot is removed only after Renovate is verified healthy."
+      ],
+      "requiredEvidence": [
+        "Renovate configuration",
+        "Dependency Dashboard or successful Renovate PR",
+        "Dependabot transition receipt"
+      ]
+    }
+  ]
+}

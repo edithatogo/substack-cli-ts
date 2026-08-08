@@ -1,0 +1,87 @@
+{
+  "trackId": "T08-01",
+  "contractIds": [
+    "NET-DISCRIMINATED-RESULT-002",
+    "NET-OUTCOME-UNKNOWN-003",
+    "NET-IDEMPOTENCY-004",
+    "RATE-LIMIT-SAFE-006",
+    "TEST-SIMULATOR-001"
+  ],
+  "mappedContracts": [
+    {
+      "id": "NET-DISCRIMINATED-RESULT-002",
+      "priority": "MUST",
+      "statement": "Replace synthetic HTTP status 0 and broad status heuristics with discriminated transport outcomes and operation-specific success contracts.",
+      "acceptanceCriteria": [
+        "Transport results distinguish response, network-error, cancelled, timeout, and outcome-unknown.",
+        "Every operation defines allowed response codes and validates the response schema.",
+        "No network failure or redirect can be reported as success."
+      ],
+      "requiredEvidence": [
+        "Transport result types",
+        "Mutation and domain regression tests",
+        "Schema validation tests"
+      ]
+    },
+    {
+      "id": "NET-OUTCOME-UNKNOWN-003",
+      "priority": "MUST",
+      "statement": "Represent lost responses after a possible mutation as outcome-unknown and reconcile before any replay.",
+      "acceptanceCriteria": [
+        "A connection loss after request transmission never becomes an automatic retry or definitive failure.",
+        "The recovery path reads remote state and resolves success, failure, or continued uncertainty.",
+        "Run logs and exit codes distinguish outcome-unknown."
+      ],
+      "requiredEvidence": [
+        "Lost-response simulator fixtures",
+        "Reconciliation tests",
+        "CLI exit-code contract"
+      ]
+    },
+    {
+      "id": "NET-IDEMPOTENCY-004",
+      "priority": "MUST",
+      "statement": "Retry mutations only when server-side idempotency is verified and actually transmitted, or when reconciliation proves the original mutation did not occur.",
+      "acceptanceCriteria": [
+        "A local string is never treated as remote idempotency.",
+        "POST retries are disabled by default.",
+        "Idempotency keys are bound to an exact canonical plan and sent according to verified endpoint contracts."
+      ],
+      "requiredEvidence": [
+        "Retry policy tests",
+        "Request fixture proving key transmission",
+        "Endpoint evidence record"
+      ]
+    },
+    {
+      "id": "RATE-LIMIT-SAFE-006",
+      "priority": "MUST",
+      "statement": "Rate-limit policy imports may only move toward greater safety by default and cannot self-assert server provenance or confidence.",
+      "acceptanceCriteria": [
+        "Imported receipts cannot shorten intervals or increase mutation retries without independently approved override.",
+        "Source and confidence are system-derived.",
+        "One parser handles all Retry-After forms using an injectable clock and RNG."
+      ],
+      "requiredEvidence": [
+        "Receipt validation tests",
+        "Monotonic safety tests",
+        "Deterministic clock/RNG tests"
+      ]
+    },
+    {
+      "id": "TEST-SIMULATOR-001",
+      "priority": "MUST",
+      "statement": "Build a deterministic Substack protocol simulator with fake clock, deterministic RNG, request ledger, partial failures, lost responses, retries, auth expiry, schema drift, conflicts, rate limits, redirects, and zero-mutation assertions.",
+      "acceptanceCriteria": [
+        "Simulator scenarios cover every read and write capability.",
+        "No CI test requires a live Substack mutation.",
+        "Fixtures are redacted, schema-versioned, and replayable."
+      ],
+      "requiredEvidence": [
+        "Simulator implementation",
+        "Scenario catalogue",
+        "Mutation ledger assertions"
+      ]
+    }
+  ]
+}

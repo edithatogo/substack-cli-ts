@@ -1,0 +1,15 @@
+{
+  "id": "T02-03",
+  "phaseId": "P02",
+  "phaseTitle": "Bleeding-edge mainline runtime and dependency migration",
+  "title": "TypeScript next/native migration and parallel compilation",
+  "status": "planned",
+  "contractIds": [
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "DEP-TYPESCRIPT-NEXT-005"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

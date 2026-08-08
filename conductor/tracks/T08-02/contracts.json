@@ -1,0 +1,122 @@
+{
+  "trackId": "T08-02",
+  "contractIds": [
+    "GOV-CONTRACT-002",
+    "GOV-REPOSITORY-STANDARDS-007",
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "BACKUP-RECOVERY-007",
+    "TEST-RISK-WEIGHTED-002",
+    "TEST-ADVANCED-003",
+    "CI-ONE-COMMAND-006"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-CONTRACT-002",
+      "priority": "MUST",
+      "statement": "Create a canonical machine-readable implementation contract derived from this prompt and make it the binding source of truth for all subsequent work.",
+      "acceptanceCriteria": [
+        "The contract records this prompt's SHA-256, every contract ID, phase, track, task, dependency decision, acceptance criterion, GitHub issue reference, Conductor path, status, evidence, and exception.",
+        "A deterministic validator fails on missing mappings, duplicate IDs, invalid states, orphaned tasks, unapproved scope changes, or completion without evidence.",
+        "Every implementation PR runs the contract validator as a required check."
+      ],
+      "requiredEvidence": [
+        "conductor/contracts/substack-cli-maturity.contract.json",
+        "conductor/traceability.json",
+        "scripts/validate-maturity-contract.mjs",
+        "Generated human-readable traceability report"
+      ]
+    },
+    {
+      "id": "GOV-REPOSITORY-STANDARDS-007",
+      "priority": "MUST",
+      "statement": "Integrate the current edithatogo/repository-standards system and inherit its latest applicable node/software, supply-chain, coverage, release, verification-receipt, and solo-maintainer controls.",
+      "acceptanceCriteria": [
+        "The repository is registered or refreshed in repository-standards with the correct profile and risk posture.",
+        "Centrally managed files are not forked silently; repository-owned deviations are explicit exceptions.",
+        "The one-command verification receipt conforms to the current repository-standards schema.",
+        "The model remains operable by one maintainer with zero mandatory human approvals and strong automated gates."
+      ],
+      "requiredEvidence": [
+        "Repository-standards conformance receipt",
+        "Managed-file manifest comparison",
+        "Documented exceptions"
+      ]
+    },
+    {
+      "id": "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+      "priority": "MUST",
+      "statement": "Inspect every direct dependency and runtime for relevant experimental APIs, flags, transports, extensions, performance controls, and security features; adopt all relevant features in mainline.",
+      "acceptanceCriteria": [
+        "The adoption manifest records package, resolved version, upstream source, experimental feature, relevance assessment, adopted implementation, tests, and rollback.",
+        "A feature may be excluded only if irrelevant, removed upstream, mutually incompatible, or demonstrably unsafe; every exclusion requires an evidence-backed contract exception.",
+        "Capability negotiation or safety policy may control runtime use, but the implementation remains present and tested in mainline."
+      ],
+      "requiredEvidence": [
+        "Frontier feature adoption manifest",
+        "Feature-specific tests",
+        "Exception records for exclusions"
+      ]
+    },
+    {
+      "id": "BACKUP-RECOVERY-007",
+      "priority": "MUST",
+      "statement": "Provide lossless export, import, backup, verification, restore, and rollback for local state and recoverable Substack content.",
+      "acceptanceCriteria": [
+        "Backups are versioned, checksummed, portable, privacy-aware, and restorable in a clean environment.",
+        "Restore validates schema and hash chain before replacing state.",
+        "Disaster-recovery drills are automated."
+      ],
+      "requiredEvidence": [
+        "Backup format and schema",
+        "Clean-room restore test",
+        "Recovery drill receipt"
+      ]
+    },
+    {
+      "id": "TEST-RISK-WEIGHTED-002",
+      "priority": "MUST",
+      "statement": "Replace misleading headline coverage with risk-weighted assurance and remove blanket exclusions from high-risk modules.",
+      "acceptanceCriteria": [
+        "Credential, authorization, policy, planning, mutation, state, media, billing, subscriber, team, and MCP HTTP code has explicit branch and mutation targets.",
+        "Coverage exclusions require contract exceptions.",
+        "Issue #161 is reused and completed."
+      ],
+      "requiredEvidence": [
+        "Risk-to-test matrix",
+        "Coverage configuration",
+        "Mutation reports",
+        "Issue #161 linkage"
+      ]
+    },
+    {
+      "id": "TEST-ADVANCED-003",
+      "priority": "MUST",
+      "statement": "Use property-based, model-based, fuzz, mutation, differential, metamorphic, contract, concurrency, fault-injection, and snapshot testing where warranted.",
+      "acceptanceCriteria": [
+        "Parsers, paths, plans, schedules, redaction, state machines, tasks, and transport recovery receive advanced testing.",
+        "Fuzz failures are minimized and retained as regression fixtures.",
+        "Mutation score thresholds are risk-specific and blocking."
+      ],
+      "requiredEvidence": [
+        "Advanced-test inventory",
+        "Fuzz corpus",
+        "Mutation scorecard"
+      ]
+    },
+    {
+      "id": "CI-ONE-COMMAND-006",
+      "priority": "MUST",
+      "statement": "Provide one deterministic verification command that runs contracts, generation drift, types, lint, tests, coverage, mutation, fuzz smoke, package checks, MCP conformance, security checks, and receipt generation.",
+      "acceptanceCriteria": [
+        "The command works locally and in CI.",
+        "It emits a machine-readable verification receipt conforming to repository-standards.",
+        "Release consumes the same verified artefacts rather than rebuilding differently."
+      ],
+      "requiredEvidence": [
+        "npm run verify or equivalent",
+        "Verification receipt",
+        "CI invocation"
+      ]
+    }
+  ]
+}

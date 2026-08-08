@@ -1,0 +1,41 @@
+{
+  "trackId": "T02-03",
+  "contractIds": [
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "DEP-TYPESCRIPT-NEXT-005"
+  ],
+  "mappedContracts": [
+    {
+      "id": "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+      "priority": "MUST",
+      "statement": "Inspect every direct dependency and runtime for relevant experimental APIs, flags, transports, extensions, performance controls, and security features; adopt all relevant features in mainline.",
+      "acceptanceCriteria": [
+        "The adoption manifest records package, resolved version, upstream source, experimental feature, relevance assessment, adopted implementation, tests, and rollback.",
+        "A feature may be excluded only if irrelevant, removed upstream, mutually incompatible, or demonstrably unsafe; every exclusion requires an evidence-backed contract exception.",
+        "Capability negotiation or safety policy may control runtime use, but the implementation remains present and tested in mainline."
+      ],
+      "requiredEvidence": [
+        "Frontier feature adoption manifest",
+        "Feature-specific tests",
+        "Exception records for exclusions"
+      ]
+    },
+    {
+      "id": "DEP-TYPESCRIPT-NEXT-005",
+      "priority": "MUST",
+      "statement": "Use the newest TypeScript next/nightly compiler as the primary compiler and type checker, including relevant native TypeScript 7 experimental parallelism controls.",
+      "acceptanceCriteria": [
+        "TypeScript next is exact-pinned and is the compiler used by build and required CI.",
+        "Benchmark and configure --checkers and --builders, and retain --singleThreaded as a deterministic diagnostic mode.",
+        "Use the TypeScript 6 compatibility package only where a tool still requires the legacy programmatic API; it must not replace the primary compiler.",
+        "All removed/deprecated compiler options and type errors are resolved rather than suppressed."
+      ],
+      "requiredEvidence": [
+        "Compiler version receipt",
+        "Parallelism benchmark",
+        "tsconfig migration evidence",
+        "TypeScript 6 compatibility inventory, if any"
+      ]
+    }
+  ]
+}

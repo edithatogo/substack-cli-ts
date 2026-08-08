@@ -1,0 +1,74 @@
+{
+  "trackId": "T00-01",
+  "contractIds": [
+    "GOV-PLAN-FIRST-001",
+    "GOV-EXISTING-WORK-004",
+    "GOV-REPOSITORY-STANDARDS-007",
+    "CONTEXT-ENGINEERING-012"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-PLAN-FIRST-001",
+      "priority": "MUST",
+      "statement": "The first Codex execution is planning-only. It may create or update programme-governance artefacts, Conductor context, the canonical contract, GitHub issues/subissues, and the planning PR, but it must not change runtime source, dependencies, lockfiles, release configuration, or live Substack state.",
+      "acceptanceCriteria": [
+        "The planning PR contains no runtime feature implementation or dependency migration.",
+        "Codex stops after the planning PR is pushed and all available checks are green or a pre-existing check failure is precisely evidenced.",
+        "The final planning-stage report explicitly states that implementation has not started."
+      ],
+      "requiredEvidence": [
+        "Planning PR diff classification",
+        "Planning-stage completion receipt",
+        "GitHub Actions check URLs and conclusions"
+      ]
+    },
+    {
+      "id": "GOV-EXISTING-WORK-004",
+      "priority": "MUST",
+      "statement": "Reconcile all existing issues, pull requests, branches, tracks, decisions, and partially implemented work before creating new work items.",
+      "acceptanceCriteria": [
+        "Open issues #161 through #167 are mapped and reused.",
+        "Closed issue #168 and its implementation are explicitly audited against the new mutation contracts.",
+        "Open PR #176 is assessed and either incorporated, superseded with explanation, or retained with a documented dependency.",
+        "No duplicate issue or track is created for work already represented."
+      ],
+      "requiredEvidence": [
+        "Existing-work reconciliation table",
+        "Issue and PR comments documenting supersession or reuse",
+        "Baseline repository snapshot"
+      ]
+    },
+    {
+      "id": "GOV-REPOSITORY-STANDARDS-007",
+      "priority": "MUST",
+      "statement": "Integrate the current edithatogo/repository-standards system and inherit its latest applicable node/software, supply-chain, coverage, release, verification-receipt, and solo-maintainer controls.",
+      "acceptanceCriteria": [
+        "The repository is registered or refreshed in repository-standards with the correct profile and risk posture.",
+        "Centrally managed files are not forked silently; repository-owned deviations are explicit exceptions.",
+        "The one-command verification receipt conforms to the current repository-standards schema.",
+        "The model remains operable by one maintainer with zero mandatory human approvals and strong automated gates."
+      ],
+      "requiredEvidence": [
+        "Repository-standards conformance receipt",
+        "Managed-file manifest comparison",
+        "Documented exceptions"
+      ]
+    },
+    {
+      "id": "CONTEXT-ENGINEERING-012",
+      "priority": "MUST",
+      "statement": "Mature repository context for Codex and other agents using concise canonical AGENTS guidance, ADRs, architecture maps, data classifications, invariants, runbooks, and generated context indexes.",
+      "acceptanceCriteria": [
+        "Context is layered and avoids duplicated, contradictory instructions.",
+        "High-risk invariants are available near relevant code.",
+        "Context drift is checked automatically."
+      ],
+      "requiredEvidence": [
+        "AGENTS.md hierarchy",
+        "Context index",
+        "ADR set",
+        "Drift tests"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "trackId": "T01-01",
+  "contractIds": [
+    "GOV-EXISTING-WORK-004",
+    "SEC-NO-WRITE-PROBING-008",
+    "PLAN-INDEPENDENT-APPROVAL-002",
+    "MUT-REVISION-006"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-EXISTING-WORK-004",
+      "priority": "MUST",
+      "statement": "Reconcile all existing issues, pull requests, branches, tracks, decisions, and partially implemented work before creating new work items.",
+      "acceptanceCriteria": [
+        "Open issues #161 through #167 are mapped and reused.",
+        "Closed issue #168 and its implementation are explicitly audited against the new mutation contracts.",
+        "Open PR #176 is assessed and either incorporated, superseded with explanation, or retained with a documented dependency.",
+        "No duplicate issue or track is created for work already represented."
+      ],
+      "requiredEvidence": [
+        "Existing-work reconciliation table",
+        "Issue and PR comments documenting supersession or reuse",
+        "Baseline repository snapshot"
+      ]
+    },
+    {
+      "id": "SEC-NO-WRITE-PROBING-008",
+      "priority": "MUST",
+      "statement": "Prohibit guessed POST, PUT, PATCH, or DELETE endpoint discovery.",
+      "acceptanceCriteria": [
+        "Unknown mutations remain planning-only or manual.",
+        "Every executable mutation references exact first-party capture evidence, method, request schema, response schema, and last verified version.",
+        "Domain, team, refund, moderation, subscriber, publication-setting, revise, and unschedule surfaces are audited."
+      ],
+      "requiredEvidence": [
+        "Endpoint evidence registry",
+        "Zero-write discovery tests",
+        "Unsafe-surface disablement receipt"
+      ]
+    },
+    {
+      "id": "PLAN-INDEPENDENT-APPROVAL-002",
+      "priority": "MUST",
+      "statement": "Approval must be cryptographically or independently bound to the exact plan and must not be a self-generated unhashed checksum available to the planner.",
+      "acceptanceCriteria": [
+        "Use HMAC with a key unavailable to the planner, a detached signature, or a separately persisted human approval record.",
+        "Approvals expire, are single-use, identify the approver, and reject drift or replay.",
+        "The old draft-mutation approval-token implementation is audited and replaced."
+      ],
+      "requiredEvidence": [
+        "Approval protocol ADR",
+        "Replay/expiry/drift tests",
+        "Audit of issue #168 implementation"
+      ]
+    },
+    {
+      "id": "MUT-REVISION-006",
+      "priority": "MUST",
+      "statement": "Unschedule and published revision preserve the canonical URL where required, default to no resend, reconcile before and after, and never use a schedule endpoint as an unschedule guess.",
+      "acceptanceCriteria": [
+        "Exact captured endpoint and payload evidence exists.",
+        "keep-url and no-resend are plan-bound fields.",
+        "Issue #168 implementation is retained only if it satisfies the new contract; otherwise it is reverted or replaced."
+      ],
+      "requiredEvidence": [
+        "Revision/unschedule contract fixtures",
+        "Canary verification",
+        "Issue #168 audit receipt"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "trackId": "T07-01",
+  "contractIds": [
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "DEP-MCP-V2-006",
+    "MCP-STATELESS-001"
+  ],
+  "mappedContracts": [
+    {
+      "id": "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+      "priority": "MUST",
+      "statement": "Inspect every direct dependency and runtime for relevant experimental APIs, flags, transports, extensions, performance controls, and security features; adopt all relevant features in mainline.",
+      "acceptanceCriteria": [
+        "The adoption manifest records package, resolved version, upstream source, experimental feature, relevance assessment, adopted implementation, tests, and rollback.",
+        "A feature may be excluded only if irrelevant, removed upstream, mutually incompatible, or demonstrably unsafe; every exclusion requires an evidence-backed contract exception.",
+        "Capability negotiation or safety policy may control runtime use, but the implementation remains present and tested in mainline."
+      ],
+      "requiredEvidence": [
+        "Frontier feature adoption manifest",
+        "Feature-specific tests",
+        "Exception records for exclusions"
+      ]
+    },
+    {
+      "id": "DEP-MCP-V2-006",
+      "priority": "MUST",
+      "statement": "Replace @modelcontextprotocol/sdk v1 with the newest v2 split packages and explicitly adopt MCP protocol revision 2026-07-28 in mainline.",
+      "acceptanceCriteria": [
+        "Use the official codemod as a starting point and complete the manual migration.",
+        "Use @modelcontextprotocol/server plus the appropriate Node/Hono middleware packages and Standard Schema validators.",
+        "Remove v1 imports and dead compatibility code except a deliberate dual-era transport adapter.",
+        "Adopt 2026-07-28 stateless requests, header routing, deterministic/cacheable lists, MRTR support, authorization hardening, and extensions."
+      ],
+      "requiredEvidence": [
+        "MCP v2 migration receipt",
+        "Protocol conformance tests",
+        "Official Inspector results",
+        "Client compatibility matrix"
+      ]
+    },
+    {
+      "id": "MCP-STATELESS-001",
+      "priority": "MUST",
+      "statement": "Serve MCP 2026-07-28 explicitly with the stateless core, self-describing requests, header-based routing, deterministic/cacheable catalogues, and per-request capabilities.",
+      "acceptanceCriteria": [
+        "Streamable HTTP uses the official v2 handler and current Node/Hono adapter.",
+        "tools/list, resources/list, and prompts/list have deterministic order and validated cache hints.",
+        "Mcp-Method and Mcp-Name routing is tested."
+      ],
+      "requiredEvidence": [
+        "Protocol fixtures",
+        "Official Inspector report",
+        "HTTP routing tests"
+      ]
+    }
+  ]
+}

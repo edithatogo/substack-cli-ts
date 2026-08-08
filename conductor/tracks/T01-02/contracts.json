@@ -1,0 +1,40 @@
+{
+  "trackId": "T01-02",
+  "contractIds": [
+    "COR-BOOLEAN-001",
+    "NET-DISCRIMINATED-RESULT-002"
+  ],
+  "mappedContracts": [
+    {
+      "id": "COR-BOOLEAN-001",
+      "priority": "MUST",
+      "statement": "Parse frontmatter booleans strictly so false remains false, especially shouldSendEmail.",
+      "acceptanceCriteria": [
+        "shouldSendEmail: false produces boolean false and should_send_email=false.",
+        "Quoted true/false are handled deliberately.",
+        "Invalid boolean-like values block preflight rather than coercing truthy.",
+        "Revision and republish default to no email resend."
+      ],
+      "requiredEvidence": [
+        "Parser tests",
+        "Payload tests",
+        "Revision no-resend tests"
+      ]
+    },
+    {
+      "id": "NET-DISCRIMINATED-RESULT-002",
+      "priority": "MUST",
+      "statement": "Replace synthetic HTTP status 0 and broad status heuristics with discriminated transport outcomes and operation-specific success contracts.",
+      "acceptanceCriteria": [
+        "Transport results distinguish response, network-error, cancelled, timeout, and outcome-unknown.",
+        "Every operation defines allowed response codes and validates the response schema.",
+        "No network failure or redirect can be reported as success."
+      ],
+      "requiredEvidence": [
+        "Transport result types",
+        "Mutation and domain regression tests",
+        "Schema validation tests"
+      ]
+    }
+  ]
+}

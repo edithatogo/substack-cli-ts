@@ -1,0 +1,15 @@
+{
+  "id": "T00-04",
+  "phaseId": "P00",
+  "phaseTitle": "Programme bootstrap, contract and planning PR",
+  "title": "Planning PR, green checks and mandatory stop",
+  "status": "planned",
+  "contractIds": [
+    "GOV-PLAN-FIRST-001",
+    "GOV-APPROVAL-GATE-005"
+  ],
+  "requiredTaskCount": 5,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

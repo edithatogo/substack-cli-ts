@@ -1,0 +1,55 @@
+{
+  "trackId": "T04-02",
+  "contractIds": [
+    "PLAN-FREEZE-003",
+    "MUT-RECONCILE-004",
+    "FEATURE-MULTI-PUBLICATION-007"
+  ],
+  "mappedContracts": [
+    {
+      "id": "PLAN-FREEZE-003",
+      "priority": "MUST",
+      "statement": "A publication catalogue and scheduling-freeze policy must fail closed across every mutation path while allowing read-only inspection and planning.",
+      "acceptanceCriteria": [
+        "All mutation entry points share one policy kernel.",
+        "Autonomous-agent tests prove frozen and unapproved flows make zero transport mutations.",
+        "Issue #164 is reused and completed."
+      ],
+      "requiredEvidence": [
+        "Freeze-policy adapter",
+        "Zero-mutation simulator assertions",
+        "Issue #164 linkage"
+      ]
+    },
+    {
+      "id": "MUT-RECONCILE-004",
+      "priority": "MUST",
+      "statement": "Verify mutation success by reading remote after-state and comparing it to the approved plan.",
+      "acceptanceCriteria": [
+        "A local click, response status, or returned message alone is insufficient.",
+        "Missing, duplicate, drifted, scheduled, published, revised, or unscheduled states are reported deterministically.",
+        "Issue #166 is reused and completed."
+      ],
+      "requiredEvidence": [
+        "Read-only reconciliation command",
+        "Before/after receipts",
+        "Issue #166 linkage"
+      ]
+    },
+    {
+      "id": "FEATURE-MULTI-PUBLICATION-007",
+      "priority": "MUST",
+      "statement": "Mature the product into a safe multi-publication workspace and Creator OS while preserving local-first operation.",
+      "acceptanceCriteria": [
+        "Workspace manifests, publication profiles, catalogues, calendars, campaign plans, analytics snapshots, and audit receipts use stable IDs.",
+        "Cross-publication mutation requires explicit target authority and plan binding.",
+        "Batch operations are selector-bound, resumable, and reconciled."
+      ],
+      "requiredEvidence": [
+        "Workspace schema",
+        "Multi-publication tests",
+        "Creator OS end-to-end simulator scenario"
+      ]
+    }
+  ]
+}

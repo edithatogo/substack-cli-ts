@@ -1,0 +1,14 @@
+{
+  "id": "T06-01",
+  "phaseId": "P06",
+  "phaseTitle": "Content fidelity, publishing workflows and Creator OS maturity",
+  "title": "Markdown AST, strict YAML and ProseMirror schema",
+  "status": "planned",
+  "contractIds": [
+    "PARSER-AST-006"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

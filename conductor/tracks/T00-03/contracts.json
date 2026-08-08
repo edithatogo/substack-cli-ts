@@ -1,0 +1,59 @@
+{
+  "trackId": "T00-03",
+  "contractIds": [
+    "GOV-PLAN-FIRST-001",
+    "GOV-NESTED-ISSUES-003",
+    "GOV-EXISTING-WORK-004"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-PLAN-FIRST-001",
+      "priority": "MUST",
+      "statement": "The first Codex execution is planning-only. It may create or update programme-governance artefacts, Conductor context, the canonical contract, GitHub issues/subissues, and the planning PR, but it must not change runtime source, dependencies, lockfiles, release configuration, or live Substack state.",
+      "acceptanceCriteria": [
+        "The planning PR contains no runtime feature implementation or dependency migration.",
+        "Codex stops after the planning PR is pushed and all available checks are green or a pre-existing check failure is precisely evidenced.",
+        "The final planning-stage report explicitly states that implementation has not started."
+      ],
+      "requiredEvidence": [
+        "Planning PR diff classification",
+        "Planning-stage completion receipt",
+        "GitHub Actions check URLs and conclusions"
+      ]
+    },
+    {
+      "id": "GOV-NESTED-ISSUES-003",
+      "priority": "MUST",
+      "statement": "Represent the programme as a native GitHub issue hierarchy cross-referenced bidirectionally with Conductor.",
+      "acceptanceCriteria": [
+        "One programme issue contains native phase subissues.",
+        "Each phase issue contains native track subissues.",
+        "Every track contains native task subissues for all independently verifiable tasks.",
+        "Existing issues are reused rather than duplicated and are attached to the correct parent hierarchy.",
+        "Every Conductor phase, track, and task includes the corresponding GitHub issue number and URL; every issue includes the Conductor ID and path."
+      ],
+      "requiredEvidence": [
+        "Root programme issue URL",
+        "Issue hierarchy export",
+        "Conductor-to-GitHub traceability map",
+        "GitHub Project view or reproducible project configuration"
+      ]
+    },
+    {
+      "id": "GOV-EXISTING-WORK-004",
+      "priority": "MUST",
+      "statement": "Reconcile all existing issues, pull requests, branches, tracks, decisions, and partially implemented work before creating new work items.",
+      "acceptanceCriteria": [
+        "Open issues #161 through #167 are mapped and reused.",
+        "Closed issue #168 and its implementation are explicitly audited against the new mutation contracts.",
+        "Open PR #176 is assessed and either incorporated, superseded with explanation, or retained with a documented dependency.",
+        "No duplicate issue or track is created for work already represented."
+      ],
+      "requiredEvidence": [
+        "Existing-work reconciliation table",
+        "Issue and PR comments documenting supersession or reuse",
+        "Baseline repository snapshot"
+      ]
+    }
+  ]
+}

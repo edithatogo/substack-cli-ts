@@ -1,0 +1,6 @@
+# Risks
+
+- PARSER-AST-006: Replace regex-first Markdown conversion with a source-position-preserving Markdown AST mapped directly into validated ProseMirror structures.
+- Planning-only scope could drift into implementation tasks.
+- Some legacy issue lineage may not support native subissue links.
+- Registry claims need deferred verification in implementation

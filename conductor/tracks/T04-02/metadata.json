@@ -1,0 +1,19 @@
+{
+  "id": "T04-02",
+  "phaseId": "P04",
+  "phaseTitle": "Common policy, planning, approval and reconciliation kernel",
+  "title": "Catalogue, freeze and read-only reconciliation",
+  "status": "planned",
+  "contractIds": [
+    "PLAN-FREEZE-003",
+    "MUT-RECONCILE-004",
+    "FEATURE-MULTI-PUBLICATION-007"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [
+    164,
+    166
+  ],
+  "riskLevel": "high",
+  "issue": null
+}

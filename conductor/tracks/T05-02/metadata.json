@@ -1,0 +1,17 @@
+{
+  "id": "T05-02",
+  "phaseId": "P05",
+  "phaseTitle": "Transactional state, privacy, media and recovery",
+  "title": "Credential storage, privacy, retention and tamper-evident audit",
+  "status": "planned",
+  "contractIds": [
+    "SEC-WORKSPACE-007",
+    "SEC-SECRET-STORAGE-009",
+    "SEC-STRUCTURED-REDACTION-010",
+    "STATE-AUDIT-002"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

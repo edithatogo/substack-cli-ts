@@ -1,0 +1,56 @@
+{
+  "trackId": "T03-03",
+  "contractIds": [
+    "SEC-ORIGIN-005",
+    "SEC-NO-WRITE-PROBING-008",
+    "ARCH-ADAPTERS-003"
+  ],
+  "mappedContracts": [
+    {
+      "id": "SEC-ORIGIN-005",
+      "priority": "MUST",
+      "statement": "Bind credentials and cookies to verified HTTPS origins, paths, and redirect destinations.",
+      "acceptanceCriteria": [
+        "Cookie headers are computed per request from a scoped cookie jar.",
+        "Substack cookies are never forwarded to arbitrary publication or redirect hosts.",
+        "Redirects are handled manually and re-authorized.",
+        "Custom domains and canonical Substack API origins are modelled separately."
+      ],
+      "requiredEvidence": [
+        "Origin policy tests",
+        "Redirect/SSRF tests",
+        "Cookie-scope tests"
+      ]
+    },
+    {
+      "id": "SEC-NO-WRITE-PROBING-008",
+      "priority": "MUST",
+      "statement": "Prohibit guessed POST, PUT, PATCH, or DELETE endpoint discovery.",
+      "acceptanceCriteria": [
+        "Unknown mutations remain planning-only or manual.",
+        "Every executable mutation references exact first-party capture evidence, method, request schema, response schema, and last verified version.",
+        "Domain, team, refund, moderation, subscriber, publication-setting, revise, and unschedule surfaces are audited."
+      ],
+      "requiredEvidence": [
+        "Endpoint evidence registry",
+        "Zero-write discovery tests",
+        "Unsafe-surface disablement receipt"
+      ]
+    },
+    {
+      "id": "ARCH-ADAPTERS-003",
+      "priority": "MUST",
+      "statement": "Separate official Substack API, undocumented internal creator API, browser automation, and simulator adapters with explicit support and stability labels.",
+      "acceptanceCriteria": [
+        "No undifferentiated 'Substack API' abstraction hides provenance.",
+        "Every endpoint records official/internal/browser status, auth, evidence, last verification, and safety state.",
+        "Domain logic is transport-independent."
+      ],
+      "requiredEvidence": [
+        "Adapter interfaces",
+        "Endpoint evidence registry",
+        "Architecture documentation"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "trackId": "T06-02",
+  "contractIds": [
+    "MEDIA-TRANSACTION-003",
+    "PARSER-AST-006",
+    "FEATURE-FIDELITY-008"
+  ],
+  "mappedContracts": [
+    {
+      "id": "MEDIA-TRANSACTION-003",
+      "priority": "MUST",
+      "statement": "Treat media staging and draft mutation as one recoverable transaction.",
+      "acceptanceCriteria": [
+        "Validate magic bytes, size, dimensions, type, and workspace before upload.",
+        "Deduplicate media by content hash.",
+        "Required media failure blocks the draft unless an explicitly approved degraded plan exists.",
+        "Orphaned uploads and partial failures produce recovery receipts."
+      ],
+      "requiredEvidence": [
+        "Media transaction tests",
+        "Content-hash cache",
+        "Partial-failure receipts"
+      ]
+    },
+    {
+      "id": "PARSER-AST-006",
+      "priority": "MUST",
+      "statement": "Replace regex-first Markdown conversion with a source-position-preserving Markdown AST mapped directly into validated ProseMirror structures.",
+      "acceptanceCriteria": [
+        "Support reference links/images, escaped delimiters, nested syntax, raw HTML policy, frontmatter YAML, and source-located diagnostics.",
+        "Untrusted HTML is explicitly allowlisted/sanitized.",
+        "Round-trip and differential fixtures cover long-form Substack content."
+      ],
+      "requiredEvidence": [
+        "AST pipeline",
+        "Source-location diagnostics",
+        "Golden and differential fixtures"
+      ]
+    },
+    {
+      "id": "FEATURE-FIDELITY-008",
+      "priority": "MUST",
+      "statement": "Expand content, media, scheduling, notes, comments, analytics, backup, and publication-management features only through evidence-backed contracts.",
+      "acceptanceCriteria": [
+        "Unsupported or probe-only features remain accurately labelled.",
+        "Empty valid collections are returned as successful empty results rather than schema drift.",
+        "Every feature has dry-run, reconciliation, audit, and recovery semantics appropriate to its risk."
+      ],
+      "requiredEvidence": [
+        "Feature matrix",
+        "Capability evidence",
+        "End-to-end scenarios"
+      ]
+    }
+  ]
+}

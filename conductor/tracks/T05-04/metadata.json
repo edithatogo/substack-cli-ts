@@ -1,0 +1,17 @@
+{
+  "id": "T05-04",
+  "phaseId": "P05",
+  "phaseTitle": "Transactional state, privacy, media and recovery",
+  "title": "Backup, export/import, rollback and disaster recovery",
+  "status": "planned",
+  "contractIds": [
+    "MUT-COMPENSATION-005",
+    "STATE-SQLITE-001",
+    "MAPPINGS-PORTABLE-005",
+    "BACKUP-RECOVERY-007"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

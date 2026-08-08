@@ -1,0 +1,15 @@
+{
+  "id": "T07-04",
+  "phaseId": "P07",
+  "phaseTitle": "MCP v2, 2026-07-28, extensions and distributable transports",
+  "title": "MCP annotations, MCPB, OCI and client compatibility",
+  "status": "planned",
+  "contractIds": [
+    "MCP-ANNOTATIONS-006",
+    "MCP-PACKAGING-007"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

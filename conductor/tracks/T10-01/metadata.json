@@ -1,0 +1,18 @@
+{
+  "id": "T10-01",
+  "phaseId": "P10",
+  "phaseTitle": "Documentation, registry publication and launch",
+  "title": "Generated documentation, context, architecture and website",
+  "status": "planned",
+  "contractIds": [
+    "GOV-SCOPE-CONTROL-008",
+    "SEC-THREAT-MODEL-011",
+    "UX-CLI-CONTRACT-005",
+    "DOC-GENERATED-TRUTH-011",
+    "CONTEXT-ENGINEERING-012"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

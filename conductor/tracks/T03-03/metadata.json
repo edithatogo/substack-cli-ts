@@ -1,0 +1,16 @@
+{
+  "id": "T03-03",
+  "phaseId": "P03",
+  "phaseTitle": "Contract-first architecture and generated surfaces",
+  "title": "Official/internal/browser/simulator adapter separation",
+  "status": "planned",
+  "contractIds": [
+    "SEC-ORIGIN-005",
+    "SEC-NO-WRITE-PROBING-008",
+    "ARCH-ADAPTERS-003"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

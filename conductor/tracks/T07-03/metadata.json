@@ -1,0 +1,18 @@
+{
+  "id": "T07-03",
+  "phaseId": "P07",
+  "phaseTitle": "MCP v2, 2026-07-28, extensions and distributable transports",
+  "title": "Tasks, MRTR and MCP Apps",
+  "status": "planned",
+  "contractIds": [
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "DEP-MCP-V2-006",
+    "STATE-SQLITE-001",
+    "MCP-TASKS-003",
+    "MCP-APPS-004"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

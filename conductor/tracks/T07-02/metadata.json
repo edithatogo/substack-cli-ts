@@ -1,0 +1,17 @@
+{
+  "id": "T07-02",
+  "phaseId": "P07",
+  "phaseTitle": "MCP v2, 2026-07-28, extensions and distributable transports",
+  "title": "stdio, Streamable HTTP and authorization",
+  "status": "planned",
+  "contractIds": [
+    "DEP-MCP-V2-006",
+    "MCP-STATELESS-001",
+    "MCP-DUAL-TRANSPORT-002",
+    "MCP-AUTH-005"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

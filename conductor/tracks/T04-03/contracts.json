@@ -1,0 +1,23 @@
+{
+  "trackId": "T04-03",
+  "contractIds": [
+    "SCHEDULE-POLICY-007"
+  ],
+  "mappedContracts": [
+    {
+      "id": "SCHEDULE-POLICY-007",
+      "priority": "MUST",
+      "statement": "Enforce whole-publication schedule collisions, queue caps, maximum horizon, normalized spacing, IANA timezone semantics, DST ambiguity handling, and remote precision tolerances.",
+      "acceptanceCriteria": [
+        "Issue #167 is reused and completed.",
+        "Property tests cover DST gaps/folds, multiple series, queue limits, and remote timestamp truncation.",
+        "All schedule and note paths use the same policy."
+      ],
+      "requiredEvidence": [
+        "Schedule policy engine",
+        "Property tests",
+        "Issue #167 linkage"
+      ]
+    }
+  ]
+}

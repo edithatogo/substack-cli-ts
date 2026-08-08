@@ -1,0 +1,19 @@
+{
+  "id": "T02-02",
+  "phaseId": "P02",
+  "phaseTitle": "Bleeding-edge mainline runtime and dependency migration",
+  "title": "Exact frontier dependency migration and feature adoption",
+  "status": "planned",
+  "contractIds": [
+    "GOV-EXISTING-WORK-004",
+    "DEP-NO-EXPERIMENTAL-LANE-001",
+    "DEP-FRONTIER-MAINLINE-002",
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "DEP-COHERENCE-007",
+    "DEP-RENOVATE-009"
+  ],
+  "requiredTaskCount": 5,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

@@ -1,0 +1,127 @@
+{
+  "trackId": "T09-03",
+  "contractIds": [
+    "DEP-FRONTIER-MAINLINE-002",
+    "DEP-COHERENCE-007",
+    "DEP-PUBLIC-PACKAGE-008",
+    "MCP-PACKAGING-007",
+    "CI-ONE-COMMAND-006",
+    "SEC-SUPPLY-CHAIN-008",
+    "RELEASE-REPRODUCIBLE-010"
+  ],
+  "mappedContracts": [
+    {
+      "id": "DEP-FRONTIER-MAINLINE-002",
+      "priority": "MUST",
+      "statement": "Migrate every direct dependency to the newest maintained upstream release available at execution time, preferring an official next, canary, nightly, dev, beta, rc, or alpha channel over latest stable when such a channel exists and represents newer supported code.",
+      "acceptanceCriteria": [
+        "Codex queries npm dist-tags, publication times, upstream release notes, migration guides, and security advisories at execution time.",
+        "Every direct dependency is pinned to an exact resolved version; no caret, tilde, wildcard, floating tag, or floating Git reference remains.",
+        "If no maintained prerelease exists, use the newest stable release.",
+        "If an unpublished upstream commit is required, pin an exact commit SHA, preserve licence/provenance, and bundle or vendor it so the published npm artefact installs without Git.",
+        "The package lock is regenerated and committed."
+      ],
+      "requiredEvidence": [
+        "conductor/dependencies/frontier-adoption.json",
+        "package.json and lockfile diff",
+        "Dependency provenance and rollback map",
+        "npm ls and pack-install receipts"
+      ]
+    },
+    {
+      "id": "DEP-COHERENCE-007",
+      "priority": "MUST",
+      "statement": "Keep tightly coupled dependency families on coherent versions and eliminate accidental duplicate majors.",
+      "acceptanceCriteria": [
+        "All Tiptap packages resolve to one coherent frontier version unless an approved ADR documents an unavoidable split.",
+        "Vitest and its coverage provider are aligned.",
+        "MCP v2 packages and extensions are aligned.",
+        "OpenTelemetry packages are aligned.",
+        "npm dedupe and a duplicate-major policy check pass."
+      ],
+      "requiredEvidence": [
+        "Dependency family matrix",
+        "npm ls --all output",
+        "Duplicate-major allowlist with reasons"
+      ]
+    },
+    {
+      "id": "DEP-PUBLIC-PACKAGE-008",
+      "priority": "MUST",
+      "statement": "Remove the public package's file:vendor/substack-api dependency and establish a publishable, reproducible ownership model.",
+      "acceptanceCriteria": [
+        "Use an internal workspace package bundled into the tarball, ordinary internal imports, or a separately versioned package.",
+        "The clean packed artefact installs without repository-relative files or nested source-tree assumptions.",
+        "Vendored source provenance, licence, update process, and divergence are documented."
+      ],
+      "requiredEvidence": [
+        "Clean npm pack install test",
+        "Dependency ownership ADR",
+        "Vendored-source provenance manifest"
+      ]
+    },
+    {
+      "id": "MCP-PACKAGING-007",
+      "priority": "MUST",
+      "statement": "Produce installable npm, MCPB, Docker/OCI, stdio, and Streamable HTTP distributions from one reproducible release.",
+      "acceptanceCriteria": [
+        "Clean-room installation and Inspector tests pass for every format.",
+        "Registry metadata versions match package and release versions.",
+        "No distribution includes secrets, local state, capture artefacts, or repository-relative dependencies."
+      ],
+      "requiredEvidence": [
+        "npm tarball",
+        "MCPB bundle",
+        "OCI image and SBOM",
+        "Clean-install receipts"
+      ]
+    },
+    {
+      "id": "CI-ONE-COMMAND-006",
+      "priority": "MUST",
+      "statement": "Provide one deterministic verification command that runs contracts, generation drift, types, lint, tests, coverage, mutation, fuzz smoke, package checks, MCP conformance, security checks, and receipt generation.",
+      "acceptanceCriteria": [
+        "The command works locally and in CI.",
+        "It emits a machine-readable verification receipt conforming to repository-standards.",
+        "Release consumes the same verified artefacts rather than rebuilding differently."
+      ],
+      "requiredEvidence": [
+        "npm run verify or equivalent",
+        "Verification receipt",
+        "CI invocation"
+      ]
+    },
+    {
+      "id": "SEC-SUPPLY-CHAIN-008",
+      "priority": "MUST",
+      "statement": "Implement mature supply-chain controls: immutable action SHAs, CodeQL, dependency review, actionlint, zizmor, OpenSSF Scorecard, maintained secret scanning, OSV scanning, licence policy, npm signature audit, SBOMs, provenance, and signed attestations.",
+      "acceptanceCriteria": [
+        "All applicable checks are required and least-privilege.",
+        "The bespoke secret scanner is removed or reduced to synthetic project-specific policy on top of a maintained scanner.",
+        "SPDX and CycloneDX SBOMs preserve unique package identities and dependency relationships."
+      ],
+      "requiredEvidence": [
+        "Security workflows",
+        "SBOM validation",
+        "Scorecard results",
+        "Attestations"
+      ]
+    },
+    {
+      "id": "RELEASE-REPRODUCIBLE-010",
+      "priority": "MUST",
+      "statement": "Use trusted publishing, reproducible artefacts, provenance, clean-room installation, version synchronization, release notes, rollback, and staged release channels.",
+      "acceptanceCriteria": [
+        "Long-lived npm publishing tokens are removed after OIDC trusted publishing is verified.",
+        "The exact tested tarball is published.",
+        "Tags, package metadata, registry metadata, SBOMs, MCPB, OCI image, and GitHub Release use one version."
+      ],
+      "requiredEvidence": [
+        "Release workflow",
+        "Trusted-publishing receipt",
+        "Clean-room install",
+        "Rollback drill"
+      ]
+    }
+  ]
+}

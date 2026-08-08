@@ -1,0 +1,73 @@
+{
+  "trackId": "T07-02",
+  "contractIds": [
+    "DEP-MCP-V2-006",
+    "MCP-STATELESS-001",
+    "MCP-DUAL-TRANSPORT-002",
+    "MCP-AUTH-005"
+  ],
+  "mappedContracts": [
+    {
+      "id": "DEP-MCP-V2-006",
+      "priority": "MUST",
+      "statement": "Replace @modelcontextprotocol/sdk v1 with the newest v2 split packages and explicitly adopt MCP protocol revision 2026-07-28 in mainline.",
+      "acceptanceCriteria": [
+        "Use the official codemod as a starting point and complete the manual migration.",
+        "Use @modelcontextprotocol/server plus the appropriate Node/Hono middleware packages and Standard Schema validators.",
+        "Remove v1 imports and dead compatibility code except a deliberate dual-era transport adapter.",
+        "Adopt 2026-07-28 stateless requests, header routing, deterministic/cacheable lists, MRTR support, authorization hardening, and extensions."
+      ],
+      "requiredEvidence": [
+        "MCP v2 migration receipt",
+        "Protocol conformance tests",
+        "Official Inspector results",
+        "Client compatibility matrix"
+      ]
+    },
+    {
+      "id": "MCP-STATELESS-001",
+      "priority": "MUST",
+      "statement": "Serve MCP 2026-07-28 explicitly with the stateless core, self-describing requests, header-based routing, deterministic/cacheable catalogues, and per-request capabilities.",
+      "acceptanceCriteria": [
+        "Streamable HTTP uses the official v2 handler and current Node/Hono adapter.",
+        "tools/list, resources/list, and prompts/list have deterministic order and validated cache hints.",
+        "Mcp-Method and Mcp-Name routing is tested."
+      ],
+      "requiredEvidence": [
+        "Protocol fixtures",
+        "Official Inspector report",
+        "HTTP routing tests"
+      ]
+    },
+    {
+      "id": "MCP-DUAL-TRANSPORT-002",
+      "priority": "MUST",
+      "statement": "Provide first-class stdio and Streamable HTTP transports from the same capability registry, with deliberate legacy-era compatibility rather than duplicated servers.",
+      "acceptanceCriteria": [
+        "serveStdio or its current official equivalent explicitly supports the selected protocol era.",
+        "The HTTP server is stateless and horizontally safe.",
+        "No legacy HTTP+SSE implementation is newly adopted."
+      ],
+      "requiredEvidence": [
+        "stdio tests",
+        "HTTP tests",
+        "Dual-era compatibility matrix"
+      ]
+    },
+    {
+      "id": "MCP-AUTH-005",
+      "priority": "MUST",
+      "statement": "Implement current MCP authorization hardening for remote distribution, including issuer validation, credential isolation, scope step-up, client metadata documents, TLS, and least privilege.",
+      "acceptanceCriteria": [
+        "Remote mode never shares Substack credentials across users, issuers, or publications.",
+        "Local stdio remains available without unnecessary remote auth complexity.",
+        "Smithery/hosted distribution has a documented credential model and privacy boundary."
+      ],
+      "requiredEvidence": [
+        "Authorization tests",
+        "OAuth/OIDC configuration",
+        "Privacy and deployment documentation"
+      ]
+    }
+  ]
+}

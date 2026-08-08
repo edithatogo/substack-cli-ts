@@ -1,0 +1,72 @@
+{
+  "trackId": "T03-04",
+  "contractIds": [
+    "NET-DISCRIMINATED-RESULT-002",
+    "SEC-SECRET-STORAGE-009",
+    "ARCH-PUBLIC-API-004",
+    "UX-CLI-CONTRACT-005"
+  ],
+  "mappedContracts": [
+    {
+      "id": "NET-DISCRIMINATED-RESULT-002",
+      "priority": "MUST",
+      "statement": "Replace synthetic HTTP status 0 and broad status heuristics with discriminated transport outcomes and operation-specific success contracts.",
+      "acceptanceCriteria": [
+        "Transport results distinguish response, network-error, cancelled, timeout, and outcome-unknown.",
+        "Every operation defines allowed response codes and validates the response schema.",
+        "No network failure or redirect can be reported as success."
+      ],
+      "requiredEvidence": [
+        "Transport result types",
+        "Mutation and domain regression tests",
+        "Schema validation tests"
+      ]
+    },
+    {
+      "id": "SEC-SECRET-STORAGE-009",
+      "priority": "MUST",
+      "statement": "Separate project configuration, user configuration, runtime state, cache, browser profiles, audit logs, and credentials; protect credentials with the platform credential store or an equivalent encrypted design.",
+      "acceptanceCriteria": [
+        "Secrets do not live in repository-local JSON.",
+        "Files containing sensitive state use restrictive permissions and safe platform locations.",
+        "config explain identifies each value's source without revealing it."
+      ],
+      "requiredEvidence": [
+        "Storage layout ADR",
+        "Permission tests",
+        "Credential-store tests",
+        "config explain output"
+      ]
+    },
+    {
+      "id": "ARCH-PUBLIC-API-004",
+      "priority": "MUST",
+      "statement": "Publish a stable programmatic API with explicit exports while preserving the CLI and MCP interfaces.",
+      "acceptanceCriteria": [
+        "package.json has an exports map and separates executable and library entry points.",
+        "Public API compatibility tests and API-extractor or equivalent reports exist.",
+        "Internal modules are not accidentally exported."
+      ],
+      "requiredEvidence": [
+        "Exports map",
+        "API report",
+        "Consumer fixture"
+      ]
+    },
+    {
+      "id": "UX-CLI-CONTRACT-005",
+      "priority": "MUST",
+      "statement": "Provide predictable machine and human CLI modes, contextual completions, stable exit codes, cancellation, timeouts, config explain, and accessible help.",
+      "acceptanceCriteria": [
+        "Commands support JSON/JSONL where appropriate, --quiet, --no-color, --output, and documented exit codes.",
+        "Bash, zsh, fish, and PowerShell completions are contextual and tested.",
+        "All long operations accept AbortSignal/cancellation."
+      ],
+      "requiredEvidence": [
+        "CLI contract tests",
+        "Completion integration tests",
+        "Help snapshots"
+      ]
+    }
+  ]
+}

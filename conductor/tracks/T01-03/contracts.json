@@ -1,0 +1,89 @@
+{
+  "trackId": "T01-03",
+  "contractIds": [
+    "SEC-ORIGIN-005",
+    "SEC-PUBLICATION-AUTHORITY-006",
+    "SEC-WORKSPACE-007",
+    "SEC-STRUCTURED-REDACTION-010",
+    "SEC-THREAT-MODEL-011"
+  ],
+  "mappedContracts": [
+    {
+      "id": "SEC-ORIGIN-005",
+      "priority": "MUST",
+      "statement": "Bind credentials and cookies to verified HTTPS origins, paths, and redirect destinations.",
+      "acceptanceCriteria": [
+        "Cookie headers are computed per request from a scoped cookie jar.",
+        "Substack cookies are never forwarded to arbitrary publication or redirect hosts.",
+        "Redirects are handled manually and re-authorized.",
+        "Custom domains and canonical Substack API origins are modelled separately."
+      ],
+      "requiredEvidence": [
+        "Origin policy tests",
+        "Redirect/SSRF tests",
+        "Cookie-scope tests"
+      ]
+    },
+    {
+      "id": "SEC-PUBLICATION-AUTHORITY-006",
+      "priority": "MUST",
+      "statement": "Distinguish authentication from authorization and require verified publication identity and role for every mutation.",
+      "acceptanceCriteria": [
+        "Authenticated-but-not-authorized is a distinct failure.",
+        "Writes require a typed AuthorizedPublicationSession.",
+        "Publication ID, role, origin, and current authority are checked immediately before mutation."
+      ],
+      "requiredEvidence": [
+        "Authorization types",
+        "Role/identity tests",
+        "Pre-mutation authority receipt"
+      ]
+    },
+    {
+      "id": "SEC-WORKSPACE-007",
+      "priority": "MUST",
+      "statement": "Enforce an explicit workspace boundary for every CLI and MCP filesystem read or write.",
+      "acceptanceCriteria": [
+        "Resolve real paths and reject traversal, absolute-path escape, symlink/junction escape, UNC escape, and case-folding escape.",
+        "Only approved regular files under declared roots are accepted.",
+        "Media and fixture operations enforce size, type, and resource limits."
+      ],
+      "requiredEvidence": [
+        "WorkspaceGuard implementation",
+        "Cross-platform property tests",
+        "MCP roots integration tests"
+      ]
+    },
+    {
+      "id": "SEC-STRUCTURED-REDACTION-010",
+      "priority": "MUST",
+      "statement": "Redact and classify sensitive data structurally before any value reaches console, logs, MCP output, traces, fixtures, errors, or CI artefacts.",
+      "acceptanceCriteria": [
+        "No raw arbitrary error string is persisted.",
+        "Correlation uses one-way fingerprints rather than partial secret disclosure.",
+        "Run-log privacy levels default to minimal.",
+        "Secret-scanner tests use synthetic credentials only."
+      ],
+      "requiredEvidence": [
+        "SafeOperationError schema",
+        "Redaction property tests",
+        "Artefact scanning receipt"
+      ]
+    },
+    {
+      "id": "SEC-THREAT-MODEL-011",
+      "priority": "MUST",
+      "statement": "Maintain an evidence-backed threat model for CLI, browser, internal API, official API, MCP stdio, MCP HTTP, registry distribution, state storage, and supply-chain boundaries.",
+      "acceptanceCriteria": [
+        "Threats include credential exfiltration, SSRF, prompt/argument injection, path traversal, confused deputy, replay, duplicate mutation, supply-chain compromise, PII leakage, and malicious repository content.",
+        "Each threat maps to controls, tests, residual risk, and owner.",
+        "The model is reviewed for each release."
+      ],
+      "requiredEvidence": [
+        "docs/security/threat-model.md",
+        "Threat-to-control traceability",
+        "Release review receipt"
+      ]
+    }
+  ]
+}

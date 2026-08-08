@@ -1,0 +1,55 @@
+{
+  "trackId": "T10-02",
+  "contractIds": [
+    "MCP-AUTH-005",
+    "MCP-PACKAGING-007",
+    "REG-METADATA-001"
+  ],
+  "mappedContracts": [
+    {
+      "id": "MCP-AUTH-005",
+      "priority": "MUST",
+      "statement": "Implement current MCP authorization hardening for remote distribution, including issuer validation, credential isolation, scope step-up, client metadata documents, TLS, and least privilege.",
+      "acceptanceCriteria": [
+        "Remote mode never shares Substack credentials across users, issuers, or publications.",
+        "Local stdio remains available without unnecessary remote auth complexity.",
+        "Smithery/hosted distribution has a documented credential model and privacy boundary."
+      ],
+      "requiredEvidence": [
+        "Authorization tests",
+        "OAuth/OIDC configuration",
+        "Privacy and deployment documentation"
+      ]
+    },
+    {
+      "id": "MCP-PACKAGING-007",
+      "priority": "MUST",
+      "statement": "Produce installable npm, MCPB, Docker/OCI, stdio, and Streamable HTTP distributions from one reproducible release.",
+      "acceptanceCriteria": [
+        "Clean-room installation and Inspector tests pass for every format.",
+        "Registry metadata versions match package and release versions.",
+        "No distribution includes secrets, local state, capture artefacts, or repository-relative dependencies."
+      ],
+      "requiredEvidence": [
+        "npm tarball",
+        "MCPB bundle",
+        "OCI image and SBOM",
+        "Clean-install receipts"
+      ]
+    },
+    {
+      "id": "REG-METADATA-001",
+      "priority": "MUST",
+      "statement": "Create complete, synchronized metadata and build artefacts for the official MCP Registry, Glama, Smithery, mcp.so, and other relevant directories.",
+      "acceptanceCriteria": [
+        "Include server.json, registry metadata, glama.json, Smithery metadata/config or MCPB manifest, well-known metadata where applicable, Docker/OCI labels, llms.txt, licence, privacy, security, installation examples, and tool annotations.",
+        "All metadata is generated or validated against the capability registry and release version."
+      ],
+      "requiredEvidence": [
+        "Registry metadata files",
+        "Validation receipts",
+        "Inspector screenshots or machine reports"
+      ]
+    }
+  ]
+}

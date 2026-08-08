@@ -1,0 +1,55 @@
+{
+  "trackId": "T05-01",
+  "contractIds": [
+    "STATE-SQLITE-001",
+    "STATE-AUDIT-002",
+    "MCP-TASKS-003"
+  ],
+  "mappedContracts": [
+    {
+      "id": "STATE-SQLITE-001",
+      "priority": "MUST",
+      "statement": "Use the current Node built-in SQLite capability where appropriate for transactional state, durable tasks, approvals, event logs, mappings, migrations, and locks.",
+      "acceptanceCriteria": [
+        "WAL, transactions, foreign keys, integrity checks, schema migrations, and crash recovery are tested.",
+        "JSON import/export remains available for portability.",
+        "The storage abstraction can be replaced without changing domain logic."
+      ],
+      "requiredEvidence": [
+        "State-store implementation",
+        "Migration and crash tests",
+        "Export/import fixtures"
+      ]
+    },
+    {
+      "id": "STATE-AUDIT-002",
+      "priority": "MUST",
+      "statement": "Maintain an append-only tamper-evident event ledger with hash chaining, stable identities, and minimal privacy-preserving records.",
+      "acceptanceCriteria": [
+        "Event hashes are verified on load and export.",
+        "Concurrency cannot lose or reorder committed events.",
+        "Audit retention and redaction policies are explicit."
+      ],
+      "requiredEvidence": [
+        "Event schema",
+        "Hash-chain verification tests",
+        "Concurrency tests"
+      ]
+    },
+    {
+      "id": "MCP-TASKS-003",
+      "priority": "MUST",
+      "statement": "Implement the current MCP Tasks extension for durable long-running operations using capability negotiation and the transactional state store.",
+      "acceptanceCriteria": [
+        "Task creation is durable before the handle is returned.",
+        "tasks/get, tasks/update, tasks/cancel, TTL, polling, input responses, cooperative cancellation, and recovery are tested.",
+        "Clients without task capability receive a safe ordinary result or explicit capability error."
+      ],
+      "requiredEvidence": [
+        "Tasks extension tests",
+        "Durability/crash tests",
+        "Compatibility matrix"
+      ]
+    }
+  ]
+}

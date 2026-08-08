@@ -1,0 +1,16 @@
+{
+  "id": "T11-01",
+  "phaseId": "P11",
+  "phaseTitle": "1.0 governance and post-1.0 roadmap",
+  "title": "Release train, scorecards and 1.0 go/no-go",
+  "status": "planned",
+  "contractIds": [
+    "GOV-APPROVAL-GATE-005",
+    "RELEASE-REPRODUCIBLE-010",
+    "MATURITY-ROADMAP-004"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}
