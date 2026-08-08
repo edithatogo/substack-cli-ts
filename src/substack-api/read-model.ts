@@ -349,6 +349,7 @@ async function readPosts(
   const posts: PostSummary[] = [];
   const safeLimit = Math.max(limit, 0);
   let cursor: string | number | undefined;
+  let offset = 0;
   const seenCursors = new Set<string | number | undefined>();
   let safetyCounter = 0;
 
@@ -360,9 +361,12 @@ async function readPosts(
     }
 
     const endpointUrl = new URL("/api/v1/posts", material.publicationUrl);
-    endpointUrl.searchParams.set("limit", String(safeLimit));
+    const pageSize = Math.min(safeLimit, 10);
+    endpointUrl.searchParams.set("limit", String(pageSize));
     if (cursor !== undefined) {
       endpointUrl.searchParams.set("cursor", String(cursor));
+    } else if (offset > 0) {
+      endpointUrl.searchParams.set("offset", String(offset));
     }
 
     const endpoint = endpointUrl.toString();
@@ -403,15 +407,21 @@ async function readPosts(
       });
     }
 
-    if (!payload.hasMore || payload.nextCursor === undefined || remaining() <= 0) {
+    if (remaining() <= 0) {
       break;
     }
 
-    if (seenCursors.has(payload.nextCursor)) {
+    if (payload.nextCursor !== undefined) {
+      if (seenCursors.has(payload.nextCursor)) {
+        break;
+      }
+      seenCursors.add(payload.nextCursor);
+      cursor = payload.nextCursor;
+    } else if (!payload.hasMore && payload.posts.length < pageSize) {
       break;
+    } else {
+      offset += payload.posts.length;
     }
-    seenCursors.add(payload.nextCursor);
-    cursor = payload.nextCursor;
   }
 
   return posts;
@@ -428,6 +438,7 @@ async function readDrafts(
   const items: DraftSummary[] = [];
   const safeLimit = Math.max(limit, 0);
   let cursor: string | number | undefined;
+  let offset = 0;
   const seenCursors = new Set<string | number | undefined>();
   let hasMore = false;
   let safetyCounter = 0;
@@ -440,9 +451,12 @@ async function readDrafts(
     }
 
     const endpointUrl = new URL("/api/v1/drafts", material.publicationUrl);
-    endpointUrl.searchParams.set("limit", String(safeLimit));
+    const pageSize = Math.min(safeLimit, 10);
+    endpointUrl.searchParams.set("limit", String(pageSize));
     if (cursor !== undefined) {
       endpointUrl.searchParams.set("cursor", String(cursor));
+    } else if (offset > 0) {
+      endpointUrl.searchParams.set("offset", String(offset));
     }
 
     const endpoint = endpointUrl.toString();
@@ -491,14 +505,20 @@ async function readDrafts(
       });
     }
 
-    if (!hasMore || nextCursor === undefined || remaining() <= 0) {
+    if (remaining() <= 0) {
       break;
     }
-    if (seenCursors.has(nextCursor)) {
+    if (nextCursor !== undefined) {
+      if (seenCursors.has(nextCursor)) {
+        break;
+      }
+      seenCursors.add(nextCursor);
+      cursor = nextCursor;
+    } else if (!hasMore && parsedDrafts.posts.length < pageSize) {
       break;
+    } else {
+      offset += parsedDrafts.posts.length;
     }
-    seenCursors.add(nextCursor);
-    cursor = nextCursor;
   }
 
   return {
