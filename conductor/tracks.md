@@ -1,7 +1,7 @@
 # Tracks
 
 ## P00 Programme bootstrap, contract and planning PR
-- T00-04
+- [~] T00-04
 
 ## P01 Emergency correctness, authority and mutation safety
 - T01-01
