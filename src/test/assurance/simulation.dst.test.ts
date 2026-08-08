@@ -8,7 +8,10 @@ describe("deterministic simulation testing", () => {
     const second = simulateRetrySchedule(20260808, [503, 429, 200], 4);
     assert.deepEqual(first, second);
     assert.equal(first.status, "succeeded");
-    assert.deepEqual(first.events.map((event) => event.attempt), [1, 2, 3]);
+    assert.deepEqual(
+      first.events.map((event) => event.attempt),
+      [1, 2, 3],
+    );
   });
 
   it("never exceeds the attempt budget", () => {

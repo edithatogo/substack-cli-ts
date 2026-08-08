@@ -11,7 +11,10 @@ describe("built CLI end-to-end", () => {
       encoding: "utf8",
       timeout: 60_000,
     });
-    const parsed = JSON.parse(output) as { document: { type: string }; metadata: { title?: string } };
+    const parsed = JSON.parse(output) as {
+      document: { type: string };
+      metadata: { title?: string };
+    };
     assert.equal(parsed.document.type, "doc");
     assert.equal(parsed.metadata.title, "Example Substack Draft");
   });

@@ -27,7 +27,11 @@ describe("semantic LLM-as-a-judge contract", () => {
 
   it("fails closed on malformed, stale, or internally inconsistent judge output", async () => {
     await assert.rejects(() =>
-      runSemanticJudge({ rubric, candidate: "candidate", invoke: async () => ({ verdict: "pass" }) }),
+      runSemanticJudge({
+        rubric,
+        candidate: "candidate",
+        invoke: async () => ({ verdict: "pass" }),
+      }),
     );
     await assert.rejects(() =>
       runSemanticJudge({

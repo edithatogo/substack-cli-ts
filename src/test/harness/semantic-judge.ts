@@ -40,7 +40,9 @@ export async function runSemanticJudge(options: {
   );
   const parsed = JudgeResponseSchema.parse(raw);
   if (parsed.rubricVersion !== rubric.version) {
-    throw new Error(`Judge rubric mismatch: expected ${rubric.version}, received ${parsed.rubricVersion}.`);
+    throw new Error(
+      `Judge rubric mismatch: expected ${rubric.version}, received ${parsed.rubricVersion}.`,
+    );
   }
 
   for (const criterion of rubric.criteria) {

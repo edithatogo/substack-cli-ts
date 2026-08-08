@@ -5,7 +5,9 @@ import { parseMarkdownString } from "../../parser/markdown.js";
 
 describe("regression assurance", () => {
   it("preserves quoted titles and comma-separated tags", () => {
-    const parsed = parseFrontmatter('---\r\ntitle: "Policy: Then and Now"\r\ntags: policy, evidence\r\n---\r\nBody');
+    const parsed = parseFrontmatter(
+      '---\r\ntitle: "Policy: Then and Now"\r\ntags: policy, evidence\r\n---\r\nBody',
+    );
     assert.equal(parsed.metadata.title, "Policy: Then and Now");
     assert.deepEqual(parsed.metadata.tags, ["policy", "evidence"]);
     assert.equal(parsed.body, "Body");
