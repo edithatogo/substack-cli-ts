@@ -1,0 +1,1 @@
+Planning note: Align the deterministic CDC assertion with the manifest contract currently present on remote master. Hosted npm ci remains authoritative for the isolated worktree dependency graph.
