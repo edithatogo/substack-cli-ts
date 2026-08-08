@@ -7,7 +7,7 @@
 ## P04 Common policy, planning, approval and reconciliation kernel
 ## P05 Transactional state, privacy, media and recovery
 ## P06 Content fidelity, publishing workflows and Creator OS maturity
-- T06-01
+- [~] T06-01
 - T06-02
 - T06-03
 - T06-04
