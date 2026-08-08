@@ -21,7 +21,9 @@ describe("security boundaries", () => {
   });
 
   it("rejects non-origin trusted policy configuration", () => {
-    expect(() => new TrustedOriginPolicy({ publicationOrigin: "http://example.substack.com" })).toThrow();
+    expect(
+      () => new TrustedOriginPolicy({ publicationOrigin: "http://example.substack.com" }),
+    ).toThrow();
     expect(() =>
       new TrustedOriginPolicy({ publicationOrigin: "https://example.substack.com/path" }),
     ).toThrow();
