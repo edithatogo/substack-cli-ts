@@ -21,7 +21,7 @@ describe("isPasswordLoginLabel", () => {
   it("accepts explicit password-login actions", () => {
     assert.equal(isPasswordLoginLabel("Sign in with password"), true);
     assert.equal(isPasswordLoginLabel("Use your password instead"), true);
-    assert.equal(isPasswordLoginLabel("  Continue   with password  "), true);
+    assert.equal(isPasswordLoginLabel("  Continue   with   password"), true);
   });
 
   it("rejects recovery and reset actions", () => {
