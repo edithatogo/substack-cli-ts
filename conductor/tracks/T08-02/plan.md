@@ -1,10 +1,10 @@
 # Plan T08-02
 
 ## Tasks
-- [ ] T08-02-TASK-01 Define the risk-to-assurance matrix.
-- [ ] T08-02-TASK-02 Add property, model, fuzz, mutation, differential, metamorphic, contract and concurrency tests.
-- [ ] T08-02-TASK-03 Remove unjustified coverage exclusions and set risk-specific thresholds.
-- [ ] T08-02-TASK-04 Implement one-command verification and repository-standards receipt.
+- [x] T08-02-TASK-01 Define the risk-to-assurance matrix.
+- [x] T08-02-TASK-02 Add property, model, fuzz, mutation, differential, metamorphic, contract and concurrency tests.
+- [x] T08-02-TASK-03 Remove unjustified coverage exclusions and set risk-specific thresholds.
+- [x] T08-02-TASK-04 Implement one-command verification and repository-standards receipt.
 
 ## Contract IDs
 - GOV-CONTRACT-002
