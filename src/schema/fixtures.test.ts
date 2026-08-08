@@ -92,7 +92,7 @@ describe("schema fixtures tooling", () => {
       const comparison = await compareFixture(markdownFile, fixtureFile);
 
       assert.equal(fixture.summary.valid, true);
-      assert.deepEqual(summary.nodeTypes, ["doc", "heading", "paragraph", "text"]);
+      assert.deepEqual(summary.nodeTypes, ["doc", "paragraph", "text"]);
       assert.equal(comparison.equal, true);
 
       const raw = await readFile(fixtureFile, "utf8");

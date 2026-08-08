@@ -1,5 +1,6 @@
 import { parseMarkdownFile } from "../parser/markdown.js";
-import type { PreparedPost, PublishMode } from "../types.js";
+import type { ParsedPost, PreparedPost, ProseMirrorNode, PublishMode } from "../types.js";
+import { resolvePostTitle } from "./title.js";
 
 export interface PreparePostOptions {
   mode?: PublishMode;
@@ -10,7 +11,7 @@ export async function preparePost(
   filePath: string,
   options: PreparePostOptions = {},
 ): Promise<PreparedPost> {
-  const post = await parseMarkdownFile(filePath);
+  const post = promoteLeadingTitle(await parseMarkdownFile(filePath));
   const mode = options.mode ?? "draft";
   const scheduleAt = options.scheduleAt ?? post.metadata.scheduleAt;
 
@@ -27,4 +28,40 @@ export async function preparePost(
     scheduleAt,
     post,
   };
+}
+
+function promoteLeadingTitle(post: ParsedPost): ParsedPost {
+  const firstBlock = post.document.content?.[0];
+  if (firstBlock?.type !== "heading") return post;
+
+  const title = resolvePostTitle(post);
+  if (collectText(firstBlock).trim() !== title.trim()) return post;
+
+  return {
+    ...post,
+    metadata: post.metadata.title ? post.metadata : { ...post.metadata, title },
+    markdown: stripLeadingMarkdownHeading(post.markdown),
+    html: post.html.replace(/^\s*<h[1-6](?:\s[^>]*)?>[\s\S]*?<\/h[1-6]>\s*/i, ""),
+    document: {
+      ...post.document,
+      content: post.document.content?.slice(1),
+    },
+  };
+}
+
+function collectText(node: ProseMirrorNode): string {
+  return `${node.text ?? ""}${(node.content ?? []).map(collectText).join("")}`;
+}
+
+function stripLeadingMarkdownHeading(markdown: string): string {
+  const withoutAtx = markdown.replace(
+    /^(?:[ \t]*\r?\n)*[ \t]{0,3}#{1,6}[ \t]+[^\r\n]*(?:\r?\n|$)(?:[ \t]*\r?\n)?/,
+    "",
+  );
+  if (withoutAtx !== markdown) return withoutAtx;
+
+  return markdown.replace(
+    /^(?:[ \t]*\r?\n)*[^\r\n]+\r?\n[ \t]{0,3}(?:=+|-+)[ \t]*(?:\r?\n|$)(?:[ \t]*\r?\n)?/,
+    "",
+  );
 }

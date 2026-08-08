@@ -25,6 +25,86 @@ Body.
     }
   });
 
+  it("promotes a leading heading to the post title without duplicating it in the body", async () => {
+    const file = await writeTempMarkdown(`# Heading Title
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.metadata.title, "Heading Title");
+      assert.equal(prepared.post.markdown, "Body.\n");
+      assert.doesNotMatch(prepared.post.html, /<h1>Heading Title<\/h1>/);
+      assert.equal(prepared.post.document.content?.[0]?.type, "paragraph");
+      assert.equal(prepared.post.document.content?.[0]?.content?.[0]?.text, "Body.");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("promotes a leading Setext heading without duplicating it in the body", async () => {
+    const file = await writeTempMarkdown(`Setext Title
+============
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.metadata.title, "Setext Title");
+      assert.equal(prepared.post.markdown, "Body.\n");
+      assert.doesNotMatch(prepared.post.html, /<h1>Setext Title<\/h1>/);
+      assert.equal(prepared.post.document.content?.[0]?.type, "paragraph");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("removes a matching leading heading when frontmatter already supplies the title", async () => {
+    const file = await writeTempMarkdown(`---
+title: Same Title
+subtitle: Separate subtitle
+---
+# Same Title
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.metadata.title, "Same Title");
+      assert.equal(prepared.post.metadata.subtitle, "Separate subtitle");
+      assert.equal(prepared.post.markdown, "Body.\n");
+      assert.equal(prepared.post.document.content?.[0]?.type, "paragraph");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("preserves a leading heading that differs from the frontmatter title", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+---
+# Section Heading
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.metadata.title, "Post Title");
+      assert.match(prepared.post.html, /<h1>Section Heading<\/h1>/);
+      assert.equal(prepared.post.document.content?.[0]?.type, "heading");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
   it("accepts an explicit scheduleAt override", async () => {
     const file = await writeTempMarkdown(`---
 title: Scheduled
