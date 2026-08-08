@@ -85,7 +85,7 @@ describe("Playwright storage-state persistence", () => {
       }
     }
 
-    assert.equal(summary.cookieCount, 1);
+    assert.equal(summary.cookieCount, 2);
     assert.deepEqual(readback, summary);
     assert.equal(createSession.mock.calls[0]?.[0].headless, false);
     assert.equal(waitForTimeout.mock.calls.length, 1);
@@ -127,6 +127,17 @@ describe("Playwright storage-state persistence", () => {
     );
     assert.equal(createSession.mock.calls.length, 0);
   });
+
+  it("summarizes session-only cookies with no persistent expiry", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "substack-storage-state-"));
+    temporaryDirectories.push(directory);
+    const state = authenticatedState();
+    state.cookies = state.cookies.slice(0, 1).map((cookie) => ({ ...cookie, expires: -1 }));
+
+    const summary = await writeSecureStorageState(state, join(directory, "state.json"));
+
+    assert.equal(summary.earliestExpiry, null);
+  });
 });
 
 function authenticatedState() {
@@ -139,6 +150,16 @@ function authenticatedState() {
         path: "/",
         expires: 1_900_000_000,
         httpOnly: true,
+        secure: true,
+        sameSite: "Lax" as const,
+      },
+      {
+        name: "theme",
+        value: "dark",
+        domain: ".substack.com",
+        path: "/",
+        expires: 1_800_000_000,
+        httpOnly: false,
         secure: true,
         sameSite: "Lax" as const,
       },
