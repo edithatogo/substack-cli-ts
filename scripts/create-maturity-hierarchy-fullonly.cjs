@@ -1,6 +1,4 @@
 const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
 const { execSync } = require('child_process');
 
 const prompt = JSON.parse(fs.readFileSync('CODEX_SUBSTACK_CLI_MATURITY_PROMPT.json', 'utf8'));
@@ -11,12 +9,6 @@ const ownerRepo = 'edithatogo/substack-cli-ts';
 const programmeTitle = prompt.conductorAndGitHubRules.githubHierarchy.programmeIssue;
 
 function run(cmd) { return execSync(cmd, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim(); }
-function writeTmp(body) {
-  const tmp = path.join(process.cwd(), `.tmp_issue_${crypto.randomBytes(6).toString('hex')}.md`);
-  fs.writeFileSync(tmp, body, 'utf8');
-  return tmp;
-}
-function rm(file) { try { fs.unlinkSync(file); } catch {} }
 function issueFromCreate(out) {
   const lines = (out || '').trim().split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
   const last = lines.pop();
@@ -33,17 +25,12 @@ for (const i of JSON.parse(issueListOut || '[]')) {
 
 function ensureIssue(title, body, parent) {
   if (existing.has(title)) return existing.get(title);
-  const tmp = writeTmp(body);
-  try {
-    const parentFlag = parent ? ` --parent ${parent}` : '';
-    const out = run(`gh issue create --repo ${ownerRepo} --title ${JSON.stringify(title)} --body-file ${JSON.stringify(tmp)}${parentFlag}`);
-    const created = issueFromCreate(out);
-    created.title = title;
-    existing.set(title, created);
-    return created;
-  } finally {
-    rm(tmp);
-  }
+  const parentFlag = parent ? ` --parent ${parent}` : '';
+  const out = run(`gh issue create --repo ${ownerRepo} --title ${JSON.stringify(title)} --body ${JSON.stringify(body)}${parentFlag}`);
+  const created = issueFromCreate(out);
+  created.title = title;
+  existing.set(title, created);
+  return created;
 }
 
 const roadmap = prompt.roadmap || [];
@@ -89,3 +76,4 @@ fs.writeFileSync(contractPath, `${JSON.stringify(contract, null, 2)}\n`, 'utf8')
 fs.writeFileSync('docs/architecture/issue-hierarchy-receipt.json', JSON.stringify({ ...result, taskCount: Object.keys(result.taskIssues).length, phaseCount: Object.keys(result.phaseIssues).length, trackCount: Object.keys(result.trackIssues).length }, null, 2) + '\n', 'utf8');
 
 console.log(JSON.stringify({ phases: Object.keys(result.phaseIssues).length, tracks: Object.keys(result.trackIssues).length, tasks: Object.keys(result.taskIssues).length, issuesMapped: Object.keys(contract.tasks).length }, null, 2));
+

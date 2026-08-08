@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
-const path = require('path');
 
 const prompt = JSON.parse(fs.readFileSync('CODEX_SUBSTACK_CLI_MATURITY_PROMPT.json', 'utf8'));
 const contractPath = 'conductor/contracts/substack-cli-maturity.contract.json';
@@ -37,16 +36,10 @@ function findIssueByTitle(title) {
 function createIssue({ title, body, parent }) {
   const exists = findIssueByTitle(title);
   if (exists) return { ...exists, title };
-  const tmp = path.join(process.cwd(), `.tmp_issue_create_${Math.random().toString(16).slice(2)}.md`);
-  fs.writeFileSync(tmp, body, 'utf8');
-  try {
-    const parentFlag = parent ? ` --parent ${parent}` : '';
-    const out = run(`gh issue create --repo ${fullRepo} --title ${JSON.stringify(title)} --body-file ${JSON.stringify(tmp)}${parentFlag}`);
-    const parsed = parseIssueUrlFromCreate(out);
-    return { ...parsed, title };
-  } finally {
-    try { fs.unlinkSync(tmp); } catch {}
-  }
+  const parentFlag = parent ? ` --parent ${parent}` : '';
+  const out = run(`gh issue create --repo ${fullRepo} --title ${JSON.stringify(title)} --body ${JSON.stringify(body)}${parentFlag}`);
+  const parsed = parseIssueUrlFromCreate(out);
+  return { ...parsed, title };
 }
 
 function getProject() {
@@ -286,3 +279,4 @@ console.log(JSON.stringify({
   reattachFailed: Object.keys(result.existingReusedFailures).length,
   project: result.projectUrl,
 }, null, 2));
+

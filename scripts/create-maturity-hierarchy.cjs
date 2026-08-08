@@ -1,6 +1,4 @@
 const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
 const { execSync } = require('child_process');
 
 const prompt = JSON.parse(fs.readFileSync('CODEX_SUBSTACK_CLI_MATURITY_PROMPT.json', 'utf8'));
@@ -25,9 +23,6 @@ function parseIssueFromOutput(out) {
   return { url: txt || null, number };
 }
 
-function ensureTmp(file, text) { fs.writeFileSync(file, text, 'utf8'); }
-function cleanup(file) { try { fs.rmSync(file); } catch {} }
-
 function findIssueByTitle(title) {
   const out = run(`gh issue list --repo ${fullRepo} --search ${JSON.stringify(`"${title}" in:title`)} --state all --limit 5 --json number,url,title`);
   const issues = JSON.parse(out || '[]');
@@ -37,18 +32,12 @@ function findIssueByTitle(title) {
 function createIssue({ title, body, parent }) {
   const existing = findIssueByTitle(title);
   if (existing) return existing;
-  const tmp = path.join(process.cwd(), `.tmp_issue_${crypto.randomBytes(8).toString('hex')}.md`);
-  ensureTmp(tmp, body);
-  try {
-    let cmd = `gh issue create --repo ${fullRepo} --title ${JSON.stringify(title)} --body-file ${JSON.stringify(tmp)}`;
-    if (parent) cmd += ` --parent ${parent}`;
-    const out = run(cmd);
-    const parsed = parseIssueFromOutput(out);
-    if (!parsed.url) throw new Error(`cannot parse issue output: ${out}`);
-    return { ...parsed, title };
-  } finally {
-    cleanup(tmp);
-  }
+  let cmd = `gh issue create --repo ${fullRepo} --title ${JSON.stringify(title)} --body ${JSON.stringify(body)}`;
+  if (parent) cmd += ` --parent ${parent}`;
+  const out = run(cmd);
+  const parsed = parseIssueFromOutput(out);
+  if (!parsed.url) throw new Error(`cannot parse issue output: ${out}`);
+  return { ...parsed, title };
 }
 
 function getProjectList() {
