@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "schedule": "0 */6 * * *",
+  "execution": "credentialed-read-only",
+  "pullRequestExecution": "forbidden",
+  "targetHost": "substack.com",
+  "methods": ["GET"],
+  "receipt": "reports/canary/live-api-drift.json",
+  "alerts": ["slack", "discord", "pagerduty"],
+  "secretFields": [
+    "SUBSTACK_TEST_COOKIE",
+    "SLACK_WEBHOOK_URL",
+    "DISCORD_WEBHOOK_URL",
+    "PAGERDUTY_ROUTING_KEY"
+  ]
+}

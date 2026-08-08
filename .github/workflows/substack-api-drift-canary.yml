@@ -1,0 +1,52 @@
+name: Substack Live API Drift Canary
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: substack-live-api-drift-canary
+  cancel-in-progress: false
+
+jobs:
+  canary:
+    name: Read-only production contract probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - name: Verify deterministic canary logic
+        run: npm run test:live-canary:unit
+      - name: Probe live Substack contracts
+        env:
+          SUBSTACK_CANARY_URL: ${{ vars.SUBSTACK_CANARY_URL }}
+          SUBSTACK_CANARY_CONTRACT_JSON: ${{ vars.SUBSTACK_CANARY_CONTRACT_JSON }}
+          SUBSTACK_TEST_COOKIE: ${{ secrets.SUBSTACK_TEST_COOKIE }}
+          SUBSTACK_CANARY_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: npm run test:live-canary
+      - name: Upload redacted canary receipt
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: substack-api-drift-canary-${{ github.run_id }}
+          path: reports/canary/live-api-drift.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Alert maintainers
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PAGERDUTY_ROUTING_KEY: ${{ secrets.PAGERDUTY_ROUTING_KEY }}
+          CANARY_RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CANARY_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: npm run canary:notify

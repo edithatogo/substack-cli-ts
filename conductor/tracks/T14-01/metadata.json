@@ -1,0 +1,11 @@
+{
+  "trackId": "T14-01",
+  "title": "Scheduled live API drift canary and alerting",
+  "type": "feature",
+  "status": "in_progress",
+  "parentIssue": 465,
+  "issue": 466,
+  "project": 38,
+  "createdAt": "2026-08-09T00:30:00+10:00",
+  "updatedAt": "2026-08-09T00:30:00+10:00"
+}
