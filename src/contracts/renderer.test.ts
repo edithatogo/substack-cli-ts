@@ -15,7 +15,7 @@ describe("local API contract renderer", () => {
     const contract = await buildLocalApiContract();
 
     assert.equal(contract.schemaVersion, CONTRACT_SCHEMA_VERSION);
-    assert.equal(contract.package.name, "@edithatogo/substack-cli");
+    assert.equal(contract.package.name, "@edithatogo/substack-publisher");
     assert.equal(contract.contract.id, "substack-cli.local-api");
     assert.match(contract.contract.version, /^0\.2\.0\+contract\.1$/);
     assert.equal(contract.contract.generatedAt, "static");

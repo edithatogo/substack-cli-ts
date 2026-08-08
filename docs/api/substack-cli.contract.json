@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "generatedBy": "substack-cli contract renderer",
   "package": {
-    "name": "@edithatogo/substack-cli",
+    "name": "@edithatogo/substack-publisher",
     "version": "0.2.0",
-    "mcpName": "io.github.edithatogo/substack-cli"
+    "mcpName": "io.github.edithatogo/substack-publisher"
   },
   "contract": {
     "id": "substack-cli.local-api",
