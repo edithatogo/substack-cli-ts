@@ -1,0 +1,16 @@
+{
+  "id": "T02-04",
+  "phaseId": "P02",
+  "phaseTitle": "Bleeding-edge mainline runtime and dependency migration",
+  "title": "Package/workspace ownership, exports and publishability",
+  "status": "planned",
+  "contractIds": [
+    "DEP-FRONTIER-MAINLINE-002",
+    "DEP-PUBLIC-PACKAGE-008",
+    "ARCH-PUBLIC-API-004"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

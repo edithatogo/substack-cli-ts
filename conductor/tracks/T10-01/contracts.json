@@ -1,0 +1,88 @@
+{
+  "trackId": "T10-01",
+  "contractIds": [
+    "GOV-SCOPE-CONTROL-008",
+    "SEC-THREAT-MODEL-011",
+    "UX-CLI-CONTRACT-005",
+    "DOC-GENERATED-TRUTH-011",
+    "CONTEXT-ENGINEERING-012"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-SCOPE-CONTROL-008",
+      "priority": "MUST",
+      "statement": "No requirement may be removed, weakened, deferred, or reinterpreted silently.",
+      "acceptanceCriteria": [
+        "Any exception contains the affected contract IDs, evidence, risk, compensating controls, expiry, owner, and explicit user approval.",
+        "Contract changes produce a new contract version and plan hash.",
+        "Codex chooses a safe best-effort implementation rather than asking avoidable clarification questions."
+      ],
+      "requiredEvidence": [
+        "Exception register",
+        "Contract version history",
+        "ADR or decision record for material changes"
+      ]
+    },
+    {
+      "id": "SEC-THREAT-MODEL-011",
+      "priority": "MUST",
+      "statement": "Maintain an evidence-backed threat model for CLI, browser, internal API, official API, MCP stdio, MCP HTTP, registry distribution, state storage, and supply-chain boundaries.",
+      "acceptanceCriteria": [
+        "Threats include credential exfiltration, SSRF, prompt/argument injection, path traversal, confused deputy, replay, duplicate mutation, supply-chain compromise, PII leakage, and malicious repository content.",
+        "Each threat maps to controls, tests, residual risk, and owner.",
+        "The model is reviewed for each release."
+      ],
+      "requiredEvidence": [
+        "docs/security/threat-model.md",
+        "Threat-to-control traceability",
+        "Release review receipt"
+      ]
+    },
+    {
+      "id": "UX-CLI-CONTRACT-005",
+      "priority": "MUST",
+      "statement": "Provide predictable machine and human CLI modes, contextual completions, stable exit codes, cancellation, timeouts, config explain, and accessible help.",
+      "acceptanceCriteria": [
+        "Commands support JSON/JSONL where appropriate, --quiet, --no-color, --output, and documented exit codes.",
+        "Bash, zsh, fish, and PowerShell completions are contextual and tested.",
+        "All long operations accept AbortSignal/cancellation."
+      ],
+      "requiredEvidence": [
+        "CLI contract tests",
+        "Completion integration tests",
+        "Help snapshots"
+      ]
+    },
+    {
+      "id": "DOC-GENERATED-TRUTH-011",
+      "priority": "MUST",
+      "statement": "Generate README feature tables, command documentation, MCP catalogues, schemas, safety classifications, support matrix, and roadmap status from executable sources of truth.",
+      "acceptanceCriteria": [
+        "Mermaid diagrams render in CI.",
+        "No stale version, capability, quality, or completion claim remains.",
+        "Lifecycle labels distinguish planned, implemented, contract-verified, simulator-verified, canary-verified, production-observed, and deprecated."
+      ],
+      "requiredEvidence": [
+        "Generated docs",
+        "Drift check",
+        "Rendered diagrams"
+      ]
+    },
+    {
+      "id": "CONTEXT-ENGINEERING-012",
+      "priority": "MUST",
+      "statement": "Mature repository context for Codex and other agents using concise canonical AGENTS guidance, ADRs, architecture maps, data classifications, invariants, runbooks, and generated context indexes.",
+      "acceptanceCriteria": [
+        "Context is layered and avoids duplicated, contradictory instructions.",
+        "High-risk invariants are available near relevant code.",
+        "Context drift is checked automatically."
+      ],
+      "requiredEvidence": [
+        "AGENTS.md hierarchy",
+        "Context index",
+        "ADR set",
+        "Drift tests"
+      ]
+    }
+  ]
+}

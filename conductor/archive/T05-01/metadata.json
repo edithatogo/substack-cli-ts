@@ -1,0 +1,16 @@
+{
+  "id": "T05-01",
+  "phaseId": "P05",
+  "phaseTitle": "Transactional state, privacy, media and recovery",
+  "title": "SQLite event store, tasks, locks and migrations",
+  "status": "planned",
+  "contractIds": [
+    "STATE-SQLITE-001",
+    "STATE-AUDIT-002",
+    "MCP-TASKS-003"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

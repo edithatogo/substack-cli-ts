@@ -1,0 +1,41 @@
+{
+  "trackId": "T08-03",
+  "contractIds": [
+    "DEP-TYPESCRIPT-NEXT-005",
+    "PERF-OBSERVABILITY-005"
+  ],
+  "mappedContracts": [
+    {
+      "id": "DEP-TYPESCRIPT-NEXT-005",
+      "priority": "MUST",
+      "statement": "Use the newest TypeScript next/nightly compiler as the primary compiler and type checker, including relevant native TypeScript 7 experimental parallelism controls.",
+      "acceptanceCriteria": [
+        "TypeScript next is exact-pinned and is the compiler used by build and required CI.",
+        "Benchmark and configure --checkers and --builders, and retain --singleThreaded as a deterministic diagnostic mode.",
+        "Use the TypeScript 6 compatibility package only where a tool still requires the legacy programmatic API; it must not replace the primary compiler.",
+        "All removed/deprecated compiler options and type errors are resolved rather than suppressed."
+      ],
+      "requiredEvidence": [
+        "Compiler version receipt",
+        "Parallelism benchmark",
+        "tsconfig migration evidence",
+        "TypeScript 6 compatibility inventory, if any"
+      ]
+    },
+    {
+      "id": "PERF-OBSERVABILITY-005",
+      "priority": "MUST",
+      "statement": "Establish performance budgets and privacy-preserving OpenTelemetry-compatible logs, metrics, and traces for CLI, MCP, simulator, parser, state, and release operations.",
+      "acceptanceCriteria": [
+        "Telemetry export is opt-in and local/no-export by default.",
+        "Benchmarks cover startup, parse, plan, catalogue, simulator, and state operations.",
+        "Regressions beyond approved budgets block merge."
+      ],
+      "requiredEvidence": [
+        "Benchmark baselines",
+        "OTel instrumentation tests",
+        "Performance receipt"
+      ]
+    }
+  ]
+}

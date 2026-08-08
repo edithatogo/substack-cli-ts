@@ -1,0 +1,23 @@
+{
+  "trackId": "T08-04",
+  "contractIds": [
+    "TEST-CANARY-004"
+  ],
+  "mappedContracts": [
+    {
+      "id": "TEST-CANARY-004",
+      "priority": "MUST",
+      "statement": "Provide a manual, disposable-publication canary that creates, reconciles, revises, unschedules, and cleans up uniquely identified test content without affecting production publications.",
+      "acceptanceCriteria": [
+        "The canary is opt-in, account-gated, idempotent by reconciliation, and always attempts cleanup.",
+        "It cannot run on pull_request events.",
+        "It emits a redacted receipt and marks uncertain outcomes."
+      ],
+      "requiredEvidence": [
+        "Canary workflow",
+        "Disposable-publication guard",
+        "Cleanup receipt"
+      ]
+    }
+  ]
+}

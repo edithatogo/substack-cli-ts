@@ -1,0 +1,17 @@
+{
+  "id": "T03-04",
+  "phaseId": "P03",
+  "phaseTitle": "Contract-first architecture and generated surfaces",
+  "title": "Programmatic API, CLI UX and structured errors",
+  "status": "planned",
+  "contractIds": [
+    "NET-DISCRIMINATED-RESULT-002",
+    "SEC-SECRET-STORAGE-009",
+    "ARCH-PUBLIC-API-004",
+    "UX-CLI-CONTRACT-005"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

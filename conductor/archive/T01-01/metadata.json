@@ -1,0 +1,19 @@
+{
+  "id": "T01-01",
+  "phaseId": "P01",
+  "phaseTitle": "Emergency correctness, authority and mutation safety",
+  "title": "Mutation freeze and audit of unsafe live surfaces",
+  "status": "planned",
+  "contractIds": [
+    "GOV-EXISTING-WORK-004",
+    "SEC-NO-WRITE-PROBING-008",
+    "PLAN-INDEPENDENT-APPROVAL-002",
+    "MUT-REVISION-006"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [
+    168
+  ],
+  "riskLevel": "high",
+  "issue": null
+}

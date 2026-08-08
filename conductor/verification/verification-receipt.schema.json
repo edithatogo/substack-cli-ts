@@ -1,0 +1,26 @@
+{
+  "type": "object",
+  "required": [
+    "artifact",
+    "status",
+    "evidence",
+    "timestamp"
+  ],
+  "properties": {
+    "artifact": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "timestamp": {
+      "type": "string"
+    }
+  }
+}

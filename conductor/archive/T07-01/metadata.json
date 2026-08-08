@@ -1,0 +1,16 @@
+{
+  "id": "T07-01",
+  "phaseId": "P07",
+  "phaseTitle": "MCP v2, 2026-07-28, extensions and distributable transports",
+  "title": "MCP v2 split SDK and stateless core",
+  "status": "planned",
+  "contractIds": [
+    "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+    "DEP-MCP-V2-006",
+    "MCP-STATELESS-001"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

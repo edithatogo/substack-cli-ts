@@ -1,0 +1,57 @@
+{
+  "trackId": "T09-04",
+  "contractIds": [
+    "GOV-REPOSITORY-STANDARDS-007",
+    "DEP-RENOVATE-009",
+    "CI-RULESETS-009"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-REPOSITORY-STANDARDS-007",
+      "priority": "MUST",
+      "statement": "Integrate the current edithatogo/repository-standards system and inherit its latest applicable node/software, supply-chain, coverage, release, verification-receipt, and solo-maintainer controls.",
+      "acceptanceCriteria": [
+        "The repository is registered or refreshed in repository-standards with the correct profile and risk posture.",
+        "Centrally managed files are not forked silently; repository-owned deviations are explicit exceptions.",
+        "The one-command verification receipt conforms to the current repository-standards schema.",
+        "The model remains operable by one maintainer with zero mandatory human approvals and strong automated gates."
+      ],
+      "requiredEvidence": [
+        "Repository-standards conformance receipt",
+        "Managed-file manifest comparison",
+        "Documented exceptions"
+      ]
+    },
+    {
+      "id": "DEP-RENOVATE-009",
+      "priority": "MUST",
+      "statement": "Configure Renovate to track the same prerelease channels used by mainline, pin exact versions and action digests, and open normal blocking PRs rather than experimental-lane updates.",
+      "acceptanceCriteria": [
+        "The inherited edithatogo Renovate preset is used where applicable.",
+        "Prerelease following is enabled for selected packages.",
+        "Automerge is limited to changes that pass the complete required suite and respect risk classification.",
+        "Dependabot is removed only after Renovate is verified healthy."
+      ],
+      "requiredEvidence": [
+        "Renovate configuration",
+        "Dependency Dashboard or successful Renovate PR",
+        "Dependabot transition receipt"
+      ]
+    },
+    {
+      "id": "CI-RULESETS-009",
+      "priority": "MUST",
+      "statement": "Protect the default branch with a solo-maintainer-compatible ruleset requiring stable automated checks while blocking deletion and force pushes.",
+      "acceptanceCriteria": [
+        "No mandatory human approval or CODEOWNERS dependency is introduced.",
+        "Required checks are inventoried and stable before activation.",
+        "Issue #162 and parent #163 are reused and completed."
+      ],
+      "requiredEvidence": [
+        "Ruleset export",
+        "Required-check inventory",
+        "Issue #162/#163 linkage"
+      ]
+    }
+  ]
+}

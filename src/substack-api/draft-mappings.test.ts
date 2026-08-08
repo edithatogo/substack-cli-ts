@@ -114,7 +114,8 @@ describe("draft mappings", () => {
         ...exportPayload,
         mappings: exportPayload.mappings.map((mapping, index) => ({
           ...mapping,
-          queueHash: index === exportPayload.mappings.length - 1 ? "0".repeat(64) : mapping.queueHash,
+          queueHash:
+            index === exportPayload.mappings.length - 1 ? "0".repeat(64) : mapping.queueHash,
         })),
       };
 

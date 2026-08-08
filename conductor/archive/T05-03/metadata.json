@@ -1,0 +1,18 @@
+{
+  "id": "T05-03",
+  "phaseId": "P05",
+  "phaseTitle": "Transactional state, privacy, media and recovery",
+  "title": "Transactional media, settings, mappings and rate limits",
+  "status": "planned",
+  "contractIds": [
+    "MUT-COMPENSATION-005",
+    "MEDIA-TRANSACTION-003",
+    "SETTINGS-ALLOWLIST-004",
+    "MAPPINGS-PORTABLE-005",
+    "RATE-LIMIT-SAFE-006"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

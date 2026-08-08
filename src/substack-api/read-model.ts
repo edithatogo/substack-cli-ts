@@ -165,9 +165,18 @@ const DraftPostSchema = z.object({
 
 const DraftListResponseSchema = z.object({
   posts: z.array(DraftPostSchema),
-  hasMore: z.boolean(),
-  nextCursor: z.number().nullable().optional(),
+  hasMore: z.boolean().default(false).optional(),
+  nextCursor: z.union([z.number(), z.string()]).nullable().optional(),
 });
+
+const PostListResponseSchema = z.union([
+  z.array(PostSchema),
+  z.object({
+    posts: z.array(PostSchema),
+    hasMore: z.boolean().default(false).optional(),
+    nextCursor: z.union([z.number(), z.string()]).nullable().optional(),
+  }),
+]);
 
 const HandleOptionsSchema = z.object({
   potentialHandles: z.array(
@@ -336,29 +345,75 @@ async function readPosts(
   endpoints: string[],
   limit: number,
 ): Promise<PostSummary[]> {
-  const endpoint = new URL("/api/v1/posts", material.publicationUrl).toString();
-  endpoints.push(endpoint);
-  const response = await requestJson(fetchImpl, endpoint, headers);
-  if (response.status !== 200) {
-    return [];
+  const seenIds = new Set<number>();
+  const posts: PostSummary[] = [];
+  const safeLimit = Math.max(limit, 0);
+  let cursor: string | number | undefined;
+  const seenCursors = new Set<string | number | undefined>();
+  let safetyCounter = 0;
+
+  const remaining = () => Math.max(safeLimit - posts.length, 0);
+
+  while (remaining() > 0) {
+    if (++safetyCounter > 256) {
+      break;
+    }
+
+    const endpointUrl = new URL("/api/v1/posts", material.publicationUrl);
+    if (cursor !== undefined) {
+      endpointUrl.searchParams.set("cursor", String(cursor));
+    }
+
+    const endpoint = endpointUrl.toString();
+    endpoints.push(endpoint);
+    const response = await requestJson(fetchImpl, endpoint, headers);
+    if (response.status !== 200) {
+      return [];
+    }
+
+    const parsed = PostListResponseSchema.safeParse(response.body);
+    if (!parsed.success) {
+      return [];
+    }
+
+    const payload = normalizePostListResponse(parsed.data);
+    if (payload.posts.length === 0) {
+      break;
+    }
+
+    for (const post of payload.posts) {
+      if (posts.length >= safeLimit) {
+        break;
+      }
+      if (seenIds.has(post.id)) {
+        continue;
+      }
+      seenIds.add(post.id);
+      posts.push({
+        id: post.id,
+        publicationId: post.publication_id,
+        title: post.title,
+        slug: post.slug,
+        postDate: post.post_date,
+        type: post.type,
+        audience: post.audience,
+        canonicalUrl: post.canonical_url,
+        sectionId: post.section_id,
+      });
+    }
+
+    if (!payload.hasMore || payload.nextCursor === undefined || remaining() <= 0) {
+      break;
+    }
+
+    if (seenCursors.has(payload.nextCursor)) {
+      break;
+    }
+    seenCursors.add(payload.nextCursor);
+    cursor = payload.nextCursor;
   }
 
-  const parsed = z.array(PostSchema).safeParse(response.body);
-  if (!parsed.success) {
-    return [];
-  }
-
-  return parsed.data.slice(0, limit).map((post) => ({
-    id: post.id,
-    publicationId: post.publication_id,
-    title: post.title,
-    slug: post.slug,
-    postDate: post.post_date,
-    type: post.type,
-    audience: post.audience,
-    canonicalUrl: post.canonical_url,
-    sectionId: post.section_id,
-  }));
+  return posts;
 }
 
 async function readDrafts(
@@ -368,36 +423,105 @@ async function readDrafts(
   endpoints: string[],
   limit: number,
 ): Promise<{ items: DraftSummary[]; hasMore: boolean } | undefined> {
-  const endpoint = new URL("/api/v1/drafts", material.publicationUrl).toString();
-  endpoints.push(endpoint);
-  const response = await requestJson(fetchImpl, endpoint, headers);
-  if (response.status !== 200) {
-    return undefined;
-  }
+  const seenIds = new Set<number>();
+  const items: DraftSummary[] = [];
+  const safeLimit = Math.max(limit, 0);
+  let cursor: string | number | undefined;
+  const seenCursors = new Set<string | number | undefined>();
+  let hasMore = false;
+  let safetyCounter = 0;
 
-  const parsed = DraftListResponseSchema.safeParse(response.body);
-  if (!parsed.success) {
-    return undefined;
+  const remaining = () => Math.max(safeLimit - items.length, 0);
+
+  while (remaining() > 0) {
+    if (++safetyCounter > 256) {
+      break;
+    }
+
+    const endpointUrl = new URL("/api/v1/drafts", material.publicationUrl);
+    if (cursor !== undefined) {
+      endpointUrl.searchParams.set("cursor", String(cursor));
+    }
+
+    const endpoint = endpointUrl.toString();
+    endpoints.push(endpoint);
+    const response = await requestJson(fetchImpl, endpoint, headers);
+    if (response.status !== 200) {
+      return undefined;
+    }
+
+    const parsed = DraftListResponseSchema.safeParse(response.body);
+    if (!parsed.success) {
+      return undefined;
+    }
+
+    const parsedDrafts = parsed.data;
+    hasMore = parsedDrafts.hasMore ?? false;
+    const nextCursor = parsedDrafts.nextCursor ?? undefined;
+
+    if (parsedDrafts.posts.length === 0) {
+      break;
+    }
+
+    for (const draft of parsedDrafts.posts) {
+      if (items.length >= safeLimit) {
+        break;
+      }
+      if (seenIds.has(draft.id)) {
+        continue;
+      }
+      seenIds.add(draft.id);
+      items.push({
+        id: draft.id,
+        publicationId: draft.publication_id,
+        draftTitle: draft.draft_title ?? null,
+        title: draft.title ?? null,
+        draftUpdatedAt: draft.draft_updated_at ?? null,
+        type: draft.type,
+        audience: draft.audience ?? null,
+        sectionId: draft.section_id ?? null,
+        sectionName: draft.section_name ?? null,
+        sectionSlug: draft.section_slug ?? null,
+        isPublished: draft.is_published,
+        slug: draft.slug ?? null,
+        scheduledAt: draft.scheduled_at ?? draft.scheduledAt ?? draft.draft_scheduled_at ?? null,
+        writeCommentPermissions: draft.write_comment_permissions ?? null,
+      });
+    }
+
+    if (!hasMore || nextCursor === undefined || remaining() <= 0) {
+      break;
+    }
+    if (seenCursors.has(nextCursor)) {
+      break;
+    }
+    seenCursors.add(nextCursor);
+    cursor = nextCursor;
   }
 
   return {
-    items: parsed.data.posts.slice(0, limit).map((draft) => ({
-      id: draft.id,
-      publicationId: draft.publication_id,
-      draftTitle: draft.draft_title ?? null,
-      title: draft.title ?? null,
-      draftUpdatedAt: draft.draft_updated_at ?? null,
-      type: draft.type,
-      audience: draft.audience ?? null,
-      sectionId: draft.section_id ?? null,
-      sectionName: draft.section_name ?? null,
-      sectionSlug: draft.section_slug ?? null,
-      isPublished: draft.is_published,
-      slug: draft.slug ?? null,
-      scheduledAt: draft.scheduled_at ?? draft.scheduledAt ?? draft.draft_scheduled_at ?? null,
-      writeCommentPermissions: draft.write_comment_permissions ?? null,
-    })),
-    hasMore: parsed.data.hasMore,
+    items,
+    hasMore,
+  };
+}
+
+function normalizePostListResponse(response: z.infer<typeof PostListResponseSchema>): {
+  posts: z.infer<typeof PostSchema>[];
+  hasMore: boolean;
+  nextCursor: string | number | undefined;
+} {
+  if (Array.isArray(response)) {
+    return {
+      posts: response,
+      hasMore: false,
+      nextCursor: undefined,
+    };
+  }
+
+  return {
+    posts: response.posts,
+    hasMore: response.hasMore ?? false,
+    nextCursor: response.nextCursor ?? undefined,
   };
 }
 

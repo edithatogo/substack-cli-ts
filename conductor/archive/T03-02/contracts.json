@@ -1,0 +1,72 @@
+{
+  "trackId": "T03-02",
+  "contractIds": [
+    "GOV-CONTRACT-002",
+    "ARCH-CAPABILITY-REGISTRY-002",
+    "MCP-ANNOTATIONS-006",
+    "DOC-GENERATED-TRUTH-011"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-CONTRACT-002",
+      "priority": "MUST",
+      "statement": "Create a canonical machine-readable implementation contract derived from this prompt and make it the binding source of truth for all subsequent work.",
+      "acceptanceCriteria": [
+        "The contract records this prompt's SHA-256, every contract ID, phase, track, task, dependency decision, acceptance criterion, GitHub issue reference, Conductor path, status, evidence, and exception.",
+        "A deterministic validator fails on missing mappings, duplicate IDs, invalid states, orphaned tasks, unapproved scope changes, or completion without evidence.",
+        "Every implementation PR runs the contract validator as a required check."
+      ],
+      "requiredEvidence": [
+        "conductor/contracts/substack-cli-maturity.contract.json",
+        "conductor/traceability.json",
+        "scripts/validate-maturity-contract.mjs",
+        "Generated human-readable traceability report"
+      ]
+    },
+    {
+      "id": "ARCH-CAPABILITY-REGISTRY-002",
+      "priority": "MUST",
+      "statement": "Use one declarative command/capability registry to generate CLI, MCP, schemas, completions, documentation, safety classifications, and coverage metadata.",
+      "acceptanceCriteria": [
+        "Each capability records ID, input/output schemas, transport, stability, evidence, read/write class, destructive/idempotent hints, approval requirement, and fallback.",
+        "Generated artefacts are drift-checked in CI.",
+        "No manual duplicate command catalogue remains."
+      ],
+      "requiredEvidence": [
+        "Capability registry",
+        "Generated artefacts",
+        "Drift check"
+      ]
+    },
+    {
+      "id": "MCP-ANNOTATIONS-006",
+      "priority": "MUST",
+      "statement": "Every MCP tool has accurate readOnly, destructive, idempotent, and open-world annotations, strong descriptions, bounded schemas, and safe structured errors.",
+      "acceptanceCriteria": [
+        "Annotation drift is generated from the capability registry and checked.",
+        "Glama/registry tool introspection confirms metadata.",
+        "No write tool is exposed without the common mutation contract."
+      ],
+      "requiredEvidence": [
+        "MCP surface manifest",
+        "Introspection report",
+        "Annotation tests"
+      ]
+    },
+    {
+      "id": "DOC-GENERATED-TRUTH-011",
+      "priority": "MUST",
+      "statement": "Generate README feature tables, command documentation, MCP catalogues, schemas, safety classifications, support matrix, and roadmap status from executable sources of truth.",
+      "acceptanceCriteria": [
+        "Mermaid diagrams render in CI.",
+        "No stale version, capability, quality, or completion claim remains.",
+        "Lifecycle labels distinguish planned, implemented, contract-verified, simulator-verified, canary-verified, production-observed, and deprecated."
+      ],
+      "requiredEvidence": [
+        "Generated docs",
+        "Drift check",
+        "Rendered diagrams"
+      ]
+    }
+  ]
+}

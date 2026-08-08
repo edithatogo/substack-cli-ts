@@ -1,0 +1,16 @@
+{
+  "id": "T06-02",
+  "phaseId": "P06",
+  "phaseTitle": "Content fidelity, publishing workflows and Creator OS maturity",
+  "title": "Rich content and media fidelity",
+  "status": "planned",
+  "contractIds": [
+    "MEDIA-TRANSACTION-003",
+    "PARSER-AST-006",
+    "FEATURE-FIDELITY-008"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

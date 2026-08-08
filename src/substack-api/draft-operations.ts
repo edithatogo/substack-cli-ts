@@ -250,7 +250,9 @@ export function makeDraftMutationProbeSignalSeed(probes: DraftMutationProbeCandi
     .join("|");
 }
 
-export function buildDraftMutationPlanHash(plan: Omit<DraftMutationExecutionPlan, "approvalToken">): string {
+export function buildDraftMutationPlanHash(
+  plan: Omit<DraftMutationExecutionPlan, "approvalToken">,
+): string {
   return createHash("sha256")
     .update(
       stableCanonicalize({
@@ -282,7 +284,10 @@ export function buildDraftMutationPlanHash(plan: Omit<DraftMutationExecutionPlan
     .digest("hex");
 }
 
-export function isDraftMutationPlanExpired(plan: DraftMutationExecutionPlan, now = new Date()): boolean {
+export function isDraftMutationPlanExpired(
+  plan: DraftMutationExecutionPlan,
+  now = new Date(),
+): boolean {
   return Date.parse(plan.expiresAt) <= now.getTime();
 }
 
@@ -310,7 +315,10 @@ export function normalizeDraftMutationState(
         );
       })
       .map(([key, rawValue]) => {
-        return [key, normalizeDraftMutationStateScalar(rawValue as DraftMutationStateValue)] as const;
+        return [
+          key,
+          normalizeDraftMutationStateScalar(rawValue as DraftMutationStateValue),
+        ] as const;
       }),
   );
 }
@@ -401,9 +409,7 @@ async function readDraftMutationReplayState(
   };
 }
 
-function isDraftMutationActionReplayState(
-  value: unknown,
-): value is DraftMutationActionReplayState {
+function isDraftMutationActionReplayState(value: unknown): value is DraftMutationActionReplayState {
   if (!isRecord(value)) return false;
   if (value.schemaVersion !== DRAFT_MUTATION_ACTION_SCHEMA_VERSION) return false;
   if (!Array.isArray(value.actions)) return false;
@@ -501,7 +507,9 @@ export function buildDraftMutationExecutionPlan(
     return null;
   }
 
-  const template = templatePlan.find((entry) => entry.endpointTemplate === sourceProbe.endpointTemplate);
+  const template = templatePlan.find(
+    (entry) => entry.endpointTemplate === sourceProbe.endpointTemplate,
+  );
   if (!template) {
     return null;
   }

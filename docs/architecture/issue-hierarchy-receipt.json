@@ -1,0 +1,80 @@
+{
+  "planningIssue": 184,
+  "phaseIssueCount": 12,
+  "trackIssueCount": 46,
+  "taskIssueCount": 191,
+  "phaseIssues": {
+    "P00": {
+      "number": 185,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/185",
+      "title": "P00 Programme bootstrap, contract and planning PR",
+      "parentPhaseLink": "already"
+    },
+    "P01": {
+      "number": 227,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/227",
+      "title": "P01 Emergency correctness, authority and mutation safety",
+      "parentPhaseLink": "already"
+    },
+    "P02": {
+      "number": 253,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/253",
+      "title": "P02 Bleeding-edge mainline runtime and dependency migration",
+      "parentPhaseLink": "already"
+    },
+    "P03": {
+      "number": 275,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/275",
+      "title": "P03 Contract-first architecture and generated surfaces",
+      "parentPhaseLink": "already"
+    },
+    "P04": {
+      "number": 296,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/296",
+      "title": "P04 Common policy, planning, approval and reconciliation kernel",
+      "parentPhaseLink": "already"
+    },
+    "P05": {
+      "number": 318,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/318",
+      "title": "P05 Transactional state, privacy, media and recovery",
+      "parentPhaseLink": "already"
+    },
+    "P06": {
+      "number": 339,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/339",
+      "title": "P06 Content fidelity, publishing workflows and Creator OS maturity",
+      "parentPhaseLink": "already"
+    },
+    "P07": {
+      "number": 360,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/360",
+      "title": "P07 MCP v2, 2026-07-28, extensions and distributable transports",
+      "parentPhaseLink": "already"
+    },
+    "P08": {
+      "number": 381,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/381",
+      "title": "P08 Assurance harness, context and observability",
+      "parentPhaseLink": "already"
+    },
+    "P09": {
+      "number": 402,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/402",
+      "title": "P09 CI/CD, security, supply chain and repository governance",
+      "parentPhaseLink": "already"
+    },
+    "P10": {
+      "number": 423,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/423",
+      "title": "P10 Documentation, registry publication and launch",
+      "parentPhaseLink": "already"
+    },
+    "P11": {
+      "number": 446,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/446",
+      "title": "P11 1.0 governance and post-1.0 roadmap",
+      "parentPhaseLink": "already"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "T03-01",
+  "phaseId": "P03",
+  "phaseTitle": "Contract-first architecture and generated surfaces",
+  "title": "Modular architecture and dependency boundaries",
+  "status": "planned",
+  "contractIds": [
+    "ARCH-MODULAR-001"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

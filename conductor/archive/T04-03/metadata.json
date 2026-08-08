@@ -1,0 +1,16 @@
+{
+  "id": "T04-03",
+  "phaseId": "P04",
+  "phaseTitle": "Common policy, planning, approval and reconciliation kernel",
+  "title": "Whole-publication scheduling policy",
+  "status": "planned",
+  "contractIds": [
+    "SCHEDULE-POLICY-007"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [
+    167
+  ],
+  "riskLevel": "high",
+  "issue": null
+}

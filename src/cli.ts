@@ -3252,7 +3252,8 @@ apiDraft
               {
                 status: "failed",
                 operation: "draft.unschedule",
-                message: "Draft mutation approval token has expired. Re-run probe and re-authorize.",
+                message:
+                  "Draft mutation approval token has expired. Re-run probe and re-authorize.",
               },
               null,
               2,
@@ -3774,7 +3775,8 @@ apiDraft
               {
                 status: "failed",
                 operation: "draft.revise",
-                message: "Draft mutation approval token has expired. Re-run probe and re-authorize.",
+                message:
+                  "Draft mutation approval token has expired. Re-run probe and re-authorize.",
               },
               null,
               2,
@@ -7022,7 +7024,9 @@ async function enforceSchedulingFreezePolicy(options: {
   });
 
   if (!decision.allowed) {
-    console.log(JSON.stringify(buildSchedulingFreezeBlockReport(options.operation, decision), null, 2));
+    console.log(
+      JSON.stringify(buildSchedulingFreezeBlockReport(options.operation, decision), null, 2),
+    );
     process.exitCode = 1;
     return false;
   }

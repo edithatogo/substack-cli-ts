@@ -1,0 +1,15 @@
+{
+  "id": "T01-02",
+  "phaseId": "P01",
+  "phaseTitle": "Emergency correctness, authority and mutation safety",
+  "title": "Boolean, transport, retry, error and outcome correctness",
+  "status": "planned",
+  "contractIds": [
+    "COR-BOOLEAN-001",
+    "NET-DISCRIMINATED-RESULT-002"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

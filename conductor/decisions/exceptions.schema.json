@@ -1,0 +1,32 @@
+{
+  "id": "exceptions",
+  "type": "object",
+  "required": [
+    "id",
+    "owner",
+    "rationale",
+    "compensatingControl",
+    "expiry",
+    "approvalReference"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "rationale": {
+      "type": "string"
+    },
+    "compensatingControl": {
+      "type": "string"
+    },
+    "expiry": {
+      "type": "string"
+    },
+    "approvalReference": {
+      "type": "string"
+    }
+  }
+}

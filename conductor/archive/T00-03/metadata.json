@@ -1,0 +1,16 @@
+{
+  "id": "T00-03",
+  "phaseId": "P00",
+  "phaseTitle": "Programme bootstrap, contract and planning PR",
+  "title": "Conductor programme and GitHub native issue hierarchy",
+  "status": "planned",
+  "contractIds": [
+    "GOV-PLAN-FIRST-001",
+    "GOV-NESTED-ISSUES-003",
+    "GOV-EXISTING-WORK-004"
+  ],
+  "requiredTaskCount": 5,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

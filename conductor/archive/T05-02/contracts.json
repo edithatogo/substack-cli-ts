@@ -1,0 +1,73 @@
+{
+  "trackId": "T05-02",
+  "contractIds": [
+    "SEC-WORKSPACE-007",
+    "SEC-SECRET-STORAGE-009",
+    "SEC-STRUCTURED-REDACTION-010",
+    "STATE-AUDIT-002"
+  ],
+  "mappedContracts": [
+    {
+      "id": "SEC-WORKSPACE-007",
+      "priority": "MUST",
+      "statement": "Enforce an explicit workspace boundary for every CLI and MCP filesystem read or write.",
+      "acceptanceCriteria": [
+        "Resolve real paths and reject traversal, absolute-path escape, symlink/junction escape, UNC escape, and case-folding escape.",
+        "Only approved regular files under declared roots are accepted.",
+        "Media and fixture operations enforce size, type, and resource limits."
+      ],
+      "requiredEvidence": [
+        "WorkspaceGuard implementation",
+        "Cross-platform property tests",
+        "MCP roots integration tests"
+      ]
+    },
+    {
+      "id": "SEC-SECRET-STORAGE-009",
+      "priority": "MUST",
+      "statement": "Separate project configuration, user configuration, runtime state, cache, browser profiles, audit logs, and credentials; protect credentials with the platform credential store or an equivalent encrypted design.",
+      "acceptanceCriteria": [
+        "Secrets do not live in repository-local JSON.",
+        "Files containing sensitive state use restrictive permissions and safe platform locations.",
+        "config explain identifies each value's source without revealing it."
+      ],
+      "requiredEvidence": [
+        "Storage layout ADR",
+        "Permission tests",
+        "Credential-store tests",
+        "config explain output"
+      ]
+    },
+    {
+      "id": "SEC-STRUCTURED-REDACTION-010",
+      "priority": "MUST",
+      "statement": "Redact and classify sensitive data structurally before any value reaches console, logs, MCP output, traces, fixtures, errors, or CI artefacts.",
+      "acceptanceCriteria": [
+        "No raw arbitrary error string is persisted.",
+        "Correlation uses one-way fingerprints rather than partial secret disclosure.",
+        "Run-log privacy levels default to minimal.",
+        "Secret-scanner tests use synthetic credentials only."
+      ],
+      "requiredEvidence": [
+        "SafeOperationError schema",
+        "Redaction property tests",
+        "Artefact scanning receipt"
+      ]
+    },
+    {
+      "id": "STATE-AUDIT-002",
+      "priority": "MUST",
+      "statement": "Maintain an append-only tamper-evident event ledger with hash chaining, stable identities, and minimal privacy-preserving records.",
+      "acceptanceCriteria": [
+        "Event hashes are verified on load and export.",
+        "Concurrency cannot lose or reorder committed events.",
+        "Audit retention and redaction policies are explicit."
+      ],
+      "requiredEvidence": [
+        "Event schema",
+        "Hash-chain verification tests",
+        "Concurrency tests"
+      ]
+    }
+  ]
+}

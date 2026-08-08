@@ -1,0 +1,14 @@
+{
+  "id": "T11-03",
+  "phaseId": "P11",
+  "phaseTitle": "1.0 governance and post-1.0 roadmap",
+  "title": "Prompt retirement and canonical-system handover",
+  "status": "planned",
+  "contractIds": [
+    "GOV-PROMPT-RETIREMENT-006"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

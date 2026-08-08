@@ -47,7 +47,9 @@ function responseWithText(status: number, body: string): ReturnType<FetchLike> {
 
 function draftProbeReport(operation: "unschedule" | "revise", draftId = "123") {
   const endpointTemplate =
-    operation === "unschedule" ? "/api/v1/drafts/{draftId}/unpublish" : "/api/v1/posts/{draftId}/revise";
+    operation === "unschedule"
+      ? "/api/v1/drafts/{draftId}/unpublish"
+      : "/api/v1/posts/{draftId}/revise";
 
   return {
     status: "probed" as const,
@@ -288,10 +290,23 @@ describe("draft mutation execution planning", () => {
     });
 
     assert.ok(plan);
-    const expectedToken = buildDraftMutationApprovalToken(plan.planHash, plan.actor, plan.expiresAt);
+    const expectedToken = buildDraftMutationApprovalToken(
+      plan.planHash,
+      plan.actor,
+      plan.expiresAt,
+    );
     assert.equal(plan?.approvalToken, expectedToken);
     assert.equal(plan?.planHash, buildDraftMutationPlanHash(plan));
-    assert.equal(plan?.actionId, buildDraftMutationActionId("https://rareinsights.substack.com/blog", "revise@example.com", "revise", "999", 101));
+    assert.equal(
+      plan?.actionId,
+      buildDraftMutationActionId(
+        "https://rareinsights.substack.com/blog",
+        "revise@example.com",
+        "revise",
+        "999",
+        101,
+      ),
+    );
   });
 
   it("rejects malformed probe evidence when building execution plans", () => {

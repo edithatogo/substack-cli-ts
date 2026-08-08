@@ -1,0 +1,15 @@
+{
+  "id": "T10-03",
+  "phaseId": "P10",
+  "phaseTitle": "Documentation, registry publication and launch",
+  "title": "Registry submissions",
+  "status": "planned",
+  "contractIds": [
+    "REG-PUBLISH-002",
+    "REG-ECOSYSTEM-003"
+  ],
+  "requiredTaskCount": 5,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

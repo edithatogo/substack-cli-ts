@@ -1,0 +1,18 @@
+{
+  "id": "T01-03",
+  "phaseId": "P01",
+  "phaseTitle": "Emergency correctness, authority and mutation safety",
+  "title": "Origin, authorization, filesystem, credential and redaction boundaries",
+  "status": "planned",
+  "contractIds": [
+    "SEC-ORIGIN-005",
+    "SEC-PUBLICATION-AUTHORITY-006",
+    "SEC-WORKSPACE-007",
+    "SEC-STRUCTURED-REDACTION-010",
+    "SEC-THREAT-MODEL-011"
+  ],
+  "requiredTaskCount": 6,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

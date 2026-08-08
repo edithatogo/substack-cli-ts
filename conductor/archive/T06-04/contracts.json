@@ -1,0 +1,39 @@
+{
+  "trackId": "T06-04",
+  "contractIds": [
+    "FEATURE-MULTI-PUBLICATION-007",
+    "FEATURE-FIDELITY-008"
+  ],
+  "mappedContracts": [
+    {
+      "id": "FEATURE-MULTI-PUBLICATION-007",
+      "priority": "MUST",
+      "statement": "Mature the product into a safe multi-publication workspace and Creator OS while preserving local-first operation.",
+      "acceptanceCriteria": [
+        "Workspace manifests, publication profiles, catalogues, calendars, campaign plans, analytics snapshots, and audit receipts use stable IDs.",
+        "Cross-publication mutation requires explicit target authority and plan binding.",
+        "Batch operations are selector-bound, resumable, and reconciled."
+      ],
+      "requiredEvidence": [
+        "Workspace schema",
+        "Multi-publication tests",
+        "Creator OS end-to-end simulator scenario"
+      ]
+    },
+    {
+      "id": "FEATURE-FIDELITY-008",
+      "priority": "MUST",
+      "statement": "Expand content, media, scheduling, notes, comments, analytics, backup, and publication-management features only through evidence-backed contracts.",
+      "acceptanceCriteria": [
+        "Unsupported or probe-only features remain accurately labelled.",
+        "Empty valid collections are returned as successful empty results rather than schema drift.",
+        "Every feature has dry-run, reconciliation, audit, and recovery semantics appropriate to its risk."
+      ],
+      "requiredEvidence": [
+        "Feature matrix",
+        "Capability evidence",
+        "End-to-end scenarios"
+      ]
+    }
+  ]
+}

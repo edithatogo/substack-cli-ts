@@ -1,0 +1,16 @@
+{
+  "id": "T00-02",
+  "phaseId": "P00",
+  "phaseTitle": "Programme bootstrap, contract and planning PR",
+  "title": "Canonical contract and traceability system",
+  "status": "planned",
+  "contractIds": [
+    "GOV-PLAN-FIRST-001",
+    "GOV-CONTRACT-002",
+    "GOV-SCOPE-CONTROL-008"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

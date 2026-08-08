@@ -1,0 +1,19 @@
+{
+  "id": "T04-01",
+  "phaseId": "P04",
+  "phaseTitle": "Common policy, planning, approval and reconciliation kernel",
+  "title": "Canonical plans, independent approval, replay protection and authority",
+  "status": "planned",
+  "contractIds": [
+    "NET-IDEMPOTENCY-004",
+    "SEC-PUBLICATION-AUTHORITY-006",
+    "PLAN-CANONICAL-001",
+    "PLAN-INDEPENDENT-APPROVAL-002"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [
+    165
+  ],
+  "riskLevel": "high",
+  "issue": null
+}

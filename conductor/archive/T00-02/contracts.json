@@ -1,0 +1,56 @@
+{
+  "trackId": "T00-02",
+  "contractIds": [
+    "GOV-PLAN-FIRST-001",
+    "GOV-CONTRACT-002",
+    "GOV-SCOPE-CONTROL-008"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-PLAN-FIRST-001",
+      "priority": "MUST",
+      "statement": "The first Codex execution is planning-only. It may create or update programme-governance artefacts, Conductor context, the canonical contract, GitHub issues/subissues, and the planning PR, but it must not change runtime source, dependencies, lockfiles, release configuration, or live Substack state.",
+      "acceptanceCriteria": [
+        "The planning PR contains no runtime feature implementation or dependency migration.",
+        "Codex stops after the planning PR is pushed and all available checks are green or a pre-existing check failure is precisely evidenced.",
+        "The final planning-stage report explicitly states that implementation has not started."
+      ],
+      "requiredEvidence": [
+        "Planning PR diff classification",
+        "Planning-stage completion receipt",
+        "GitHub Actions check URLs and conclusions"
+      ]
+    },
+    {
+      "id": "GOV-CONTRACT-002",
+      "priority": "MUST",
+      "statement": "Create a canonical machine-readable implementation contract derived from this prompt and make it the binding source of truth for all subsequent work.",
+      "acceptanceCriteria": [
+        "The contract records this prompt's SHA-256, every contract ID, phase, track, task, dependency decision, acceptance criterion, GitHub issue reference, Conductor path, status, evidence, and exception.",
+        "A deterministic validator fails on missing mappings, duplicate IDs, invalid states, orphaned tasks, unapproved scope changes, or completion without evidence.",
+        "Every implementation PR runs the contract validator as a required check."
+      ],
+      "requiredEvidence": [
+        "conductor/contracts/substack-cli-maturity.contract.json",
+        "conductor/traceability.json",
+        "scripts/validate-maturity-contract.mjs",
+        "Generated human-readable traceability report"
+      ]
+    },
+    {
+      "id": "GOV-SCOPE-CONTROL-008",
+      "priority": "MUST",
+      "statement": "No requirement may be removed, weakened, deferred, or reinterpreted silently.",
+      "acceptanceCriteria": [
+        "Any exception contains the affected contract IDs, evidence, risk, compensating controls, expiry, owner, and explicit user approval.",
+        "Contract changes produce a new contract version and plan hash.",
+        "Codex chooses a safe best-effort implementation rather than asking avoidable clarification questions."
+      ],
+      "requiredEvidence": [
+        "Exception register",
+        "Contract version history",
+        "ADR or decision record for material changes"
+      ]
+    }
+  ]
+}

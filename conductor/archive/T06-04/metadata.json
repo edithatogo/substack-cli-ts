@@ -1,0 +1,15 @@
+{
+  "id": "T06-04",
+  "phaseId": "P06",
+  "phaseTitle": "Content fidelity, publishing workflows and Creator OS maturity",
+  "title": "Multi-publication workspace and Creator OS",
+  "status": "planned",
+  "contractIds": [
+    "FEATURE-MULTI-PUBLICATION-007",
+    "FEATURE-FIDELITY-008"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

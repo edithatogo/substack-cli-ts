@@ -1,0 +1,71 @@
+{
+  "trackId": "T04-01",
+  "contractIds": [
+    "NET-IDEMPOTENCY-004",
+    "SEC-PUBLICATION-AUTHORITY-006",
+    "PLAN-CANONICAL-001",
+    "PLAN-INDEPENDENT-APPROVAL-002"
+  ],
+  "mappedContracts": [
+    {
+      "id": "NET-IDEMPOTENCY-004",
+      "priority": "MUST",
+      "statement": "Retry mutations only when server-side idempotency is verified and actually transmitted, or when reconciliation proves the original mutation did not occur.",
+      "acceptanceCriteria": [
+        "A local string is never treated as remote idempotency.",
+        "POST retries are disabled by default.",
+        "Idempotency keys are bound to an exact canonical plan and sent according to verified endpoint contracts."
+      ],
+      "requiredEvidence": [
+        "Retry policy tests",
+        "Request fixture proving key transmission",
+        "Endpoint evidence record"
+      ]
+    },
+    {
+      "id": "SEC-PUBLICATION-AUTHORITY-006",
+      "priority": "MUST",
+      "statement": "Distinguish authentication from authorization and require verified publication identity and role for every mutation.",
+      "acceptanceCriteria": [
+        "Authenticated-but-not-authorized is a distinct failure.",
+        "Writes require a typed AuthorizedPublicationSession.",
+        "Publication ID, role, origin, and current authority are checked immediately before mutation."
+      ],
+      "requiredEvidence": [
+        "Authorization types",
+        "Role/identity tests",
+        "Pre-mutation authority receipt"
+      ]
+    },
+    {
+      "id": "PLAN-CANONICAL-001",
+      "priority": "MUST",
+      "statement": "Every significant mutation must be represented by a canonical immutable machine-readable plan before execution.",
+      "acceptanceCriteria": [
+        "Plans include stable action IDs, actor, publication ID, origin, content hash, request schema version, before-state expectations, expiry, risk class, reversibility, and exact intended effects.",
+        "Execution consumes the stored plan rather than reconstructing actions from free-form CLI arguments.",
+        "Canonical serialization and plan hashing are deterministic."
+      ],
+      "requiredEvidence": [
+        "Plan schema",
+        "Golden plan fixtures",
+        "Canonicalization tests"
+      ]
+    },
+    {
+      "id": "PLAN-INDEPENDENT-APPROVAL-002",
+      "priority": "MUST",
+      "statement": "Approval must be cryptographically or independently bound to the exact plan and must not be a self-generated unhashed checksum available to the planner.",
+      "acceptanceCriteria": [
+        "Use HMAC with a key unavailable to the planner, a detached signature, or a separately persisted human approval record.",
+        "Approvals expire, are single-use, identify the approver, and reject drift or replay.",
+        "The old draft-mutation approval-token implementation is audited and replaced."
+      ],
+      "requiredEvidence": [
+        "Approval protocol ADR",
+        "Replay/expiry/drift tests",
+        "Audit of issue #168 implementation"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "promptId": "substack-cli-frontier-mainline-maturity-to-1.0",
+  "promptSha256": "00e612b8d2b089af8b543dd27a1d4f26d143d5f61ec7ac5ebea9ee9d73b2b573",
+  "planSha256": "f549b29a92f6549798d24d977f79face381dbc23d4e20c0c6b243bc36c46c344",
+  "generatedOn": "2026-08-08T01:47:58.014Z",
+  "phaseCount": 12,
+  "trackCount": 46,
+  "taskCount": 191,
+  "contractCount": 73,
+  "generatedBy": "PLAN_ONLY"
+}

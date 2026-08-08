@@ -1,0 +1,15 @@
+{
+  "id": "T10-04",
+  "phaseId": "P10",
+  "phaseTitle": "Documentation, registry publication and launch",
+  "title": "Launch, health monitoring and registry drift",
+  "status": "planned",
+  "contractIds": [
+    "REG-PUBLISH-002",
+    "REG-ECOSYSTEM-003"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

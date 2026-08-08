@@ -1,0 +1,19 @@
+{
+  "id": "T04-04",
+  "phaseId": "P04",
+  "phaseTitle": "Common policy, planning, approval and reconciliation kernel",
+  "title": "Mutation execution, outcome uncertainty, revision and compensation",
+  "status": "planned",
+  "contractIds": [
+    "NET-OUTCOME-UNKNOWN-003",
+    "MUT-RECONCILE-004",
+    "MUT-COMPENSATION-005",
+    "MUT-REVISION-006"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [
+    168
+  ],
+  "riskLevel": "high",
+  "issue": null
+}

@@ -1,0 +1,71 @@
+{
+  "trackId": "T05-04",
+  "contractIds": [
+    "MUT-COMPENSATION-005",
+    "STATE-SQLITE-001",
+    "MAPPINGS-PORTABLE-005",
+    "BACKUP-RECOVERY-007"
+  ],
+  "mappedContracts": [
+    {
+      "id": "MUT-COMPENSATION-005",
+      "priority": "MUST",
+      "statement": "Every reversible or partially reversible mutation produces a compensating plan and recovery instructions.",
+      "acceptanceCriteria": [
+        "Partial media upload, settings update, schedule, unschedule, revision, team, subscriber, and billing operations identify available compensation.",
+        "Irreversible operations are explicitly labelled and require stronger approval.",
+        "Recovery is deterministic and auditable."
+      ],
+      "requiredEvidence": [
+        "Compensating plan schema",
+        "Partial-failure simulator fixtures",
+        "Recovery runbooks"
+      ]
+    },
+    {
+      "id": "STATE-SQLITE-001",
+      "priority": "MUST",
+      "statement": "Use the current Node built-in SQLite capability where appropriate for transactional state, durable tasks, approvals, event logs, mappings, migrations, and locks.",
+      "acceptanceCriteria": [
+        "WAL, transactions, foreign keys, integrity checks, schema migrations, and crash recovery are tested.",
+        "JSON import/export remains available for portability.",
+        "The storage abstraction can be replaced without changing domain logic."
+      ],
+      "requiredEvidence": [
+        "State-store implementation",
+        "Migration and crash tests",
+        "Export/import fixtures"
+      ]
+    },
+    {
+      "id": "MAPPINGS-PORTABLE-005",
+      "priority": "MUST",
+      "statement": "Use server publication IDs, stable content IDs, repository-relative paths, preserved import provenance, and efficient event hashing.",
+      "acceptanceCriteria": [
+        "Absolute local paths are not exported by default.",
+        "Imports preserve immutable event IDs, timestamps, and sequences.",
+        "Cross-platform relocation and case-folding tests pass."
+      ],
+      "requiredEvidence": [
+        "Mapping schema v2",
+        "Migration fixtures",
+        "Windows/macOS/Linux tests"
+      ]
+    },
+    {
+      "id": "BACKUP-RECOVERY-007",
+      "priority": "MUST",
+      "statement": "Provide lossless export, import, backup, verification, restore, and rollback for local state and recoverable Substack content.",
+      "acceptanceCriteria": [
+        "Backups are versioned, checksummed, portable, privacy-aware, and restorable in a clean environment.",
+        "Restore validates schema and hash chain before replacing state.",
+        "Disaster-recovery drills are automated."
+      ],
+      "requiredEvidence": [
+        "Backup format and schema",
+        "Clean-room restore test",
+        "Recovery drill receipt"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "trackId": "T09-02",
+  "contractIds": [
+    "SEC-STRUCTURED-REDACTION-010",
+    "SEC-THREAT-MODEL-011",
+    "SEC-SUPPLY-CHAIN-008"
+  ],
+  "mappedContracts": [
+    {
+      "id": "SEC-STRUCTURED-REDACTION-010",
+      "priority": "MUST",
+      "statement": "Redact and classify sensitive data structurally before any value reaches console, logs, MCP output, traces, fixtures, errors, or CI artefacts.",
+      "acceptanceCriteria": [
+        "No raw arbitrary error string is persisted.",
+        "Correlation uses one-way fingerprints rather than partial secret disclosure.",
+        "Run-log privacy levels default to minimal.",
+        "Secret-scanner tests use synthetic credentials only."
+      ],
+      "requiredEvidence": [
+        "SafeOperationError schema",
+        "Redaction property tests",
+        "Artefact scanning receipt"
+      ]
+    },
+    {
+      "id": "SEC-THREAT-MODEL-011",
+      "priority": "MUST",
+      "statement": "Maintain an evidence-backed threat model for CLI, browser, internal API, official API, MCP stdio, MCP HTTP, registry distribution, state storage, and supply-chain boundaries.",
+      "acceptanceCriteria": [
+        "Threats include credential exfiltration, SSRF, prompt/argument injection, path traversal, confused deputy, replay, duplicate mutation, supply-chain compromise, PII leakage, and malicious repository content.",
+        "Each threat maps to controls, tests, residual risk, and owner.",
+        "The model is reviewed for each release."
+      ],
+      "requiredEvidence": [
+        "docs/security/threat-model.md",
+        "Threat-to-control traceability",
+        "Release review receipt"
+      ]
+    },
+    {
+      "id": "SEC-SUPPLY-CHAIN-008",
+      "priority": "MUST",
+      "statement": "Implement mature supply-chain controls: immutable action SHAs, CodeQL, dependency review, actionlint, zizmor, OpenSSF Scorecard, maintained secret scanning, OSV scanning, licence policy, npm signature audit, SBOMs, provenance, and signed attestations.",
+      "acceptanceCriteria": [
+        "All applicable checks are required and least-privilege.",
+        "The bespoke secret scanner is removed or reduced to synthetic project-specific policy on top of a maintained scanner.",
+        "SPDX and CycloneDX SBOMs preserve unique package identities and dependency relationships."
+      ],
+      "requiredEvidence": [
+        "Security workflows",
+        "SBOM validation",
+        "Scorecard results",
+        "Attestations"
+      ]
+    }
+  ]
+}

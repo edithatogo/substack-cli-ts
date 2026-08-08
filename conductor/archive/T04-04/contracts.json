@@ -1,0 +1,71 @@
+{
+  "trackId": "T04-04",
+  "contractIds": [
+    "NET-OUTCOME-UNKNOWN-003",
+    "MUT-RECONCILE-004",
+    "MUT-COMPENSATION-005",
+    "MUT-REVISION-006"
+  ],
+  "mappedContracts": [
+    {
+      "id": "NET-OUTCOME-UNKNOWN-003",
+      "priority": "MUST",
+      "statement": "Represent lost responses after a possible mutation as outcome-unknown and reconcile before any replay.",
+      "acceptanceCriteria": [
+        "A connection loss after request transmission never becomes an automatic retry or definitive failure.",
+        "The recovery path reads remote state and resolves success, failure, or continued uncertainty.",
+        "Run logs and exit codes distinguish outcome-unknown."
+      ],
+      "requiredEvidence": [
+        "Lost-response simulator fixtures",
+        "Reconciliation tests",
+        "CLI exit-code contract"
+      ]
+    },
+    {
+      "id": "MUT-RECONCILE-004",
+      "priority": "MUST",
+      "statement": "Verify mutation success by reading remote after-state and comparing it to the approved plan.",
+      "acceptanceCriteria": [
+        "A local click, response status, or returned message alone is insufficient.",
+        "Missing, duplicate, drifted, scheduled, published, revised, or unscheduled states are reported deterministically.",
+        "Issue #166 is reused and completed."
+      ],
+      "requiredEvidence": [
+        "Read-only reconciliation command",
+        "Before/after receipts",
+        "Issue #166 linkage"
+      ]
+    },
+    {
+      "id": "MUT-COMPENSATION-005",
+      "priority": "MUST",
+      "statement": "Every reversible or partially reversible mutation produces a compensating plan and recovery instructions.",
+      "acceptanceCriteria": [
+        "Partial media upload, settings update, schedule, unschedule, revision, team, subscriber, and billing operations identify available compensation.",
+        "Irreversible operations are explicitly labelled and require stronger approval.",
+        "Recovery is deterministic and auditable."
+      ],
+      "requiredEvidence": [
+        "Compensating plan schema",
+        "Partial-failure simulator fixtures",
+        "Recovery runbooks"
+      ]
+    },
+    {
+      "id": "MUT-REVISION-006",
+      "priority": "MUST",
+      "statement": "Unschedule and published revision preserve the canonical URL where required, default to no resend, reconcile before and after, and never use a schedule endpoint as an unschedule guess.",
+      "acceptanceCriteria": [
+        "Exact captured endpoint and payload evidence exists.",
+        "keep-url and no-resend are plan-bound fields.",
+        "Issue #168 implementation is retained only if it satisfies the new contract; otherwise it is reverted or replaced."
+      ],
+      "requiredEvidence": [
+        "Revision/unschedule contract fixtures",
+        "Canary verification",
+        "Issue #168 audit receipt"
+      ]
+    }
+  ]
+}

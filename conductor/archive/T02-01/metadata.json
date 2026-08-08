@@ -1,0 +1,15 @@
+{
+  "id": "T02-01",
+  "phaseId": "P02",
+  "phaseTitle": "Bleeding-edge mainline runtime and dependency migration",
+  "title": "Node Current, npm Current and removal of experimental lanes",
+  "status": "planned",
+  "contractIds": [
+    "DEP-NO-EXPERIMENTAL-LANE-001",
+    "DEP-RUNTIME-CURRENT-004"
+  ],
+  "requiredTaskCount": 4,
+  "existingIssues": [],
+  "riskLevel": "high",
+  "issue": null
+}

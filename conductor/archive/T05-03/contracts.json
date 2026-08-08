@@ -1,0 +1,88 @@
+{
+  "trackId": "T05-03",
+  "contractIds": [
+    "MUT-COMPENSATION-005",
+    "MEDIA-TRANSACTION-003",
+    "SETTINGS-ALLOWLIST-004",
+    "MAPPINGS-PORTABLE-005",
+    "RATE-LIMIT-SAFE-006"
+  ],
+  "mappedContracts": [
+    {
+      "id": "MUT-COMPENSATION-005",
+      "priority": "MUST",
+      "statement": "Every reversible or partially reversible mutation produces a compensating plan and recovery instructions.",
+      "acceptanceCriteria": [
+        "Partial media upload, settings update, schedule, unschedule, revision, team, subscriber, and billing operations identify available compensation.",
+        "Irreversible operations are explicitly labelled and require stronger approval.",
+        "Recovery is deterministic and auditable."
+      ],
+      "requiredEvidence": [
+        "Compensating plan schema",
+        "Partial-failure simulator fixtures",
+        "Recovery runbooks"
+      ]
+    },
+    {
+      "id": "MEDIA-TRANSACTION-003",
+      "priority": "MUST",
+      "statement": "Treat media staging and draft mutation as one recoverable transaction.",
+      "acceptanceCriteria": [
+        "Validate magic bytes, size, dimensions, type, and workspace before upload.",
+        "Deduplicate media by content hash.",
+        "Required media failure blocks the draft unless an explicitly approved degraded plan exists.",
+        "Orphaned uploads and partial failures produce recovery receipts."
+      ],
+      "requiredEvidence": [
+        "Media transaction tests",
+        "Content-hash cache",
+        "Partial-failure receipts"
+      ]
+    },
+    {
+      "id": "SETTINGS-ALLOWLIST-004",
+      "priority": "MUST",
+      "statement": "Publication settings updates require an approved plan and transmit only a strict allowlisted patch with before-state evidence.",
+      "acceptanceCriteria": [
+        "Default library calls do not mutate.",
+        "Server-managed fields are never echoed back in a merged object.",
+        "Logo/favicon partial failures produce compensation."
+      ],
+      "requiredEvidence": [
+        "Strict patch schema",
+        "Settings drift tests",
+        "Compensation tests"
+      ]
+    },
+    {
+      "id": "MAPPINGS-PORTABLE-005",
+      "priority": "MUST",
+      "statement": "Use server publication IDs, stable content IDs, repository-relative paths, preserved import provenance, and efficient event hashing.",
+      "acceptanceCriteria": [
+        "Absolute local paths are not exported by default.",
+        "Imports preserve immutable event IDs, timestamps, and sequences.",
+        "Cross-platform relocation and case-folding tests pass."
+      ],
+      "requiredEvidence": [
+        "Mapping schema v2",
+        "Migration fixtures",
+        "Windows/macOS/Linux tests"
+      ]
+    },
+    {
+      "id": "RATE-LIMIT-SAFE-006",
+      "priority": "MUST",
+      "statement": "Rate-limit policy imports may only move toward greater safety by default and cannot self-assert server provenance or confidence.",
+      "acceptanceCriteria": [
+        "Imported receipts cannot shorten intervals or increase mutation retries without independently approved override.",
+        "Source and confidence are system-derived.",
+        "One parser handles all Retry-After forms using an injectable clock and RNG."
+      ],
+      "requiredEvidence": [
+        "Receipt validation tests",
+        "Monotonic safety tests",
+        "Deterministic clock/RNG tests"
+      ]
+    }
+  ]
+}

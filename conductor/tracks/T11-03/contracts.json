@@ -1,0 +1,23 @@
+{
+  "trackId": "T11-03",
+  "contractIds": [
+    "GOV-PROMPT-RETIREMENT-006"
+  ],
+  "mappedContracts": [
+    {
+      "id": "GOV-PROMPT-RETIREMENT-006",
+      "priority": "MUST",
+      "statement": "Retire this prompt only after all of its content has been migrated into the canonical contract, Conductor, and GitHub issue systems with complete traceability.",
+      "acceptanceCriteria": [
+        "A prompt-retirement check proves every prompt contract, phase, track, task, dependency rule, registry target, and roadmap item has an equivalent canonical record.",
+        "Deletion occurs in a dedicated final governance commit or PR and not in the initial planning PR.",
+        "The deletion receipt records the original prompt hash and replacement artefacts."
+      ],
+      "requiredEvidence": [
+        "Prompt-retirement receipt",
+        "Zero-unmapped-requirements report",
+        "Dedicated deletion commit"
+      ]
+    }
+  ]
+}

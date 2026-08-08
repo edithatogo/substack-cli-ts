@@ -1,0 +1,4597 @@
+{
+  "generatedOn": "2026-08-08T01:47:58.014Z",
+  "promptId": "substack-cli-frontier-mainline-maturity-to-1.0",
+  "promptSha256": "00e612b8d2b089af8b543dd27a1d4f26d143d5f61ec7ac5ebea9ee9d73b2b573",
+  "planSha256": "f549b29a92f6549798d24d977f79face381dbc23d4e20c0c6b243bc36c46c344",
+  "repository": "edithatogo/substack-cli-ts",
+  "promptFile": "CODEX_SUBSTACK_CLI_MATURITY_PROMPT.json",
+  "phaseCount": 12,
+  "trackCount": 46,
+  "taskCount": 191,
+  "contractCount": 73,
+  "phases": {
+    "P00": {
+      "phaseId": "P00",
+      "title": "Programme bootstrap, contract and planning PR",
+      "releaseTarget": "planning gate",
+      "tracks": [
+        "T00-01",
+        "T00-02",
+        "T00-03",
+        "T00-04"
+      ]
+    },
+    "P01": {
+      "phaseId": "P01",
+      "title": "Emergency correctness, authority and mutation safety",
+      "releaseTarget": "0.3.0-safety",
+      "tracks": [
+        "T01-01",
+        "T01-02",
+        "T01-03"
+      ]
+    },
+    "P02": {
+      "phaseId": "P02",
+      "title": "Bleeding-edge mainline runtime and dependency migration",
+      "releaseTarget": "0.4.0-frontier-runtime",
+      "tracks": [
+        "T02-01",
+        "T02-02",
+        "T02-03",
+        "T02-04"
+      ]
+    },
+    "P03": {
+      "phaseId": "P03",
+      "title": "Contract-first architecture and generated surfaces",
+      "releaseTarget": "0.5.0-architecture",
+      "tracks": [
+        "T03-01",
+        "T03-02",
+        "T03-03",
+        "T03-04"
+      ]
+    },
+    "P04": {
+      "phaseId": "P04",
+      "title": "Common policy, planning, approval and reconciliation kernel",
+      "releaseTarget": "0.6.0-safe-mutations",
+      "tracks": [
+        "T04-01",
+        "T04-02",
+        "T04-03",
+        "T04-04"
+      ]
+    },
+    "P05": {
+      "phaseId": "P05",
+      "title": "Transactional state, privacy, media and recovery",
+      "releaseTarget": "0.7.0-state-and-recovery",
+      "tracks": [
+        "T05-01",
+        "T05-02",
+        "T05-03",
+        "T05-04"
+      ]
+    },
+    "P06": {
+      "phaseId": "P06",
+      "title": "Content fidelity, publishing workflows and Creator OS maturity",
+      "releaseTarget": "0.8.0-content-and-creator-os",
+      "tracks": [
+        "T06-01",
+        "T06-02",
+        "T06-03",
+        "T06-04"
+      ]
+    },
+    "P07": {
+      "phaseId": "P07",
+      "title": "MCP v2, 2026-07-28, extensions and distributable transports",
+      "releaseTarget": "0.9.0-mcp-v2",
+      "tracks": [
+        "T07-01",
+        "T07-02",
+        "T07-03",
+        "T07-04"
+      ]
+    },
+    "P08": {
+      "phaseId": "P08",
+      "title": "Assurance harness, context and observability",
+      "releaseTarget": "0.9.0-assurance",
+      "tracks": [
+        "T08-01",
+        "T08-02",
+        "T08-03",
+        "T08-04"
+      ]
+    },
+    "P09": {
+      "phaseId": "P09",
+      "title": "CI/CD, security, supply chain and repository governance",
+      "releaseTarget": "1.0.0-rc",
+      "tracks": [
+        "T09-01",
+        "T09-02",
+        "T09-03",
+        "T09-04"
+      ]
+    },
+    "P10": {
+      "phaseId": "P10",
+      "title": "Documentation, registry publication and launch",
+      "releaseTarget": "1.0.0",
+      "tracks": [
+        "T10-01",
+        "T10-02",
+        "T10-03",
+        "T10-04"
+      ]
+    },
+    "P11": {
+      "phaseId": "P11",
+      "title": "1.0 governance and post-1.0 roadmap",
+      "releaseTarget": "1.0 and beyond",
+      "tracks": [
+        "T11-01",
+        "T11-02",
+        "T11-03"
+      ]
+    }
+  },
+  "tracks": {
+    "T00-01": {
+      "id": "T00-01",
+      "phaseId": "P00",
+      "title": "Repository baseline, current-state audit and standards integration",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167
+      ],
+      "issue": null
+    },
+    "T00-02": {
+      "id": "T00-02",
+      "phaseId": "P00",
+      "title": "Canonical contract and traceability system",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T00-03": {
+      "id": "T00-03",
+      "phaseId": "P00",
+      "title": "Conductor programme and GitHub native issue hierarchy",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "requiredTaskCount": 5,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T00-04": {
+      "id": "T00-04",
+      "phaseId": "P00",
+      "title": "Planning PR, green checks and mandatory stop",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "requiredTaskCount": 5,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T01-01": {
+      "id": "T01-01",
+      "phaseId": "P01",
+      "title": "Mutation freeze and audit of unsafe live surfaces",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        168
+      ],
+      "issue": null
+    },
+    "T01-02": {
+      "id": "T01-02",
+      "phaseId": "P01",
+      "title": "Boolean, transport, retry, error and outcome correctness",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T01-03": {
+      "id": "T01-03",
+      "phaseId": "P01",
+      "title": "Origin, authorization, filesystem, credential and redaction boundaries",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "requiredTaskCount": 6,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T02-01": {
+      "id": "T02-01",
+      "phaseId": "P02",
+      "title": "Node Current, npm Current and removal of experimental lanes",
+      "status": "planned",
+      "contractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T02-02": {
+      "id": "T02-02",
+      "phaseId": "P02",
+      "title": "Exact frontier dependency migration and feature adoption",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "requiredTaskCount": 5,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T02-03": {
+      "id": "T02-03",
+      "phaseId": "P02",
+      "title": "TypeScript next/native migration and parallel compilation",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T02-04": {
+      "id": "T02-04",
+      "phaseId": "P02",
+      "title": "Package/workspace ownership, exports and publishability",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T03-01": {
+      "id": "T03-01",
+      "phaseId": "P03",
+      "title": "Modular architecture and dependency boundaries",
+      "status": "planned",
+      "contractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T03-02": {
+      "id": "T03-02",
+      "phaseId": "P03",
+      "title": "Canonical capability registry and code generation",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T03-03": {
+      "id": "T03-03",
+      "phaseId": "P03",
+      "title": "Official/internal/browser/simulator adapter separation",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T03-04": {
+      "id": "T03-04",
+      "phaseId": "P03",
+      "title": "Programmatic API, CLI UX and structured errors",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T04-01": {
+      "id": "T04-01",
+      "phaseId": "P04",
+      "title": "Canonical plans, independent approval, replay protection and authority",
+      "status": "planned",
+      "contractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        165
+      ],
+      "issue": null
+    },
+    "T04-02": {
+      "id": "T04-02",
+      "phaseId": "P04",
+      "title": "Catalogue, freeze and read-only reconciliation",
+      "status": "planned",
+      "contractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        164,
+        166
+      ],
+      "issue": null
+    },
+    "T04-03": {
+      "id": "T04-03",
+      "phaseId": "P04",
+      "title": "Whole-publication scheduling policy",
+      "status": "planned",
+      "contractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        167
+      ],
+      "issue": null
+    },
+    "T04-04": {
+      "id": "T04-04",
+      "phaseId": "P04",
+      "title": "Mutation execution, outcome uncertainty, revision and compensation",
+      "status": "planned",
+      "contractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        168
+      ],
+      "issue": null
+    },
+    "T05-01": {
+      "id": "T05-01",
+      "phaseId": "P05",
+      "title": "SQLite event store, tasks, locks and migrations",
+      "status": "planned",
+      "contractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T05-02": {
+      "id": "T05-02",
+      "phaseId": "P05",
+      "title": "Credential storage, privacy, retention and tamper-evident audit",
+      "status": "planned",
+      "contractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T05-03": {
+      "id": "T05-03",
+      "phaseId": "P05",
+      "title": "Transactional media, settings, mappings and rate limits",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T05-04": {
+      "id": "T05-04",
+      "phaseId": "P05",
+      "title": "Backup, export/import, rollback and disaster recovery",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T06-01": {
+      "id": "T06-01",
+      "phaseId": "P06",
+      "title": "Markdown AST, strict YAML and ProseMirror schema",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T06-02": {
+      "id": "T06-02",
+      "phaseId": "P06",
+      "title": "Rich content and media fidelity",
+      "status": "planned",
+      "contractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T06-03": {
+      "id": "T06-03",
+      "phaseId": "P06",
+      "title": "Evidence-backed publication, notes, community and administration",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T06-04": {
+      "id": "T06-04",
+      "phaseId": "P06",
+      "title": "Multi-publication workspace and Creator OS",
+      "status": "planned",
+      "contractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T07-01": {
+      "id": "T07-01",
+      "phaseId": "P07",
+      "title": "MCP v2 split SDK and stateless core",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T07-02": {
+      "id": "T07-02",
+      "phaseId": "P07",
+      "title": "stdio, Streamable HTTP and authorization",
+      "status": "planned",
+      "contractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T07-03": {
+      "id": "T07-03",
+      "phaseId": "P07",
+      "title": "Tasks, MRTR and MCP Apps",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T07-04": {
+      "id": "T07-04",
+      "phaseId": "P07",
+      "title": "MCP annotations, MCPB, OCI and client compatibility",
+      "status": "planned",
+      "contractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T08-01": {
+      "id": "T08-01",
+      "phaseId": "P08",
+      "title": "Deterministic protocol simulator and failure laboratory",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T08-02": {
+      "id": "T08-02",
+      "phaseId": "P08",
+      "title": "Risk-weighted quality harness and verification receipt",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        161
+      ],
+      "issue": null
+    },
+    "T08-03": {
+      "id": "T08-03",
+      "phaseId": "P08",
+      "title": "Performance budgets and privacy-preserving observability",
+      "status": "planned",
+      "contractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T08-04": {
+      "id": "T08-04",
+      "phaseId": "P08",
+      "title": "Disposable-publication canary and compatibility matrix",
+      "status": "planned",
+      "contractIds": [
+        "TEST-CANARY-004"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T09-01": {
+      "id": "T09-01",
+      "phaseId": "P09",
+      "title": "Required cross-platform CI and contract gates",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T09-02": {
+      "id": "T09-02",
+      "phaseId": "P09",
+      "title": "Security and supply-chain engineering",
+      "status": "planned",
+      "contractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T09-03": {
+      "id": "T09-03",
+      "phaseId": "P09",
+      "title": "Reproducible release, trusted publishing and rollback",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T09-04": {
+      "id": "T09-04",
+      "phaseId": "P09",
+      "title": "Rulesets, Renovate, templates and solo-maintainer governance",
+      "status": "planned",
+      "contractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [
+        162,
+        163
+      ],
+      "issue": null
+    },
+    "T10-01": {
+      "id": "T10-01",
+      "phaseId": "P10",
+      "title": "Generated documentation, context, architecture and website",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T10-02": {
+      "id": "T10-02",
+      "phaseId": "P10",
+      "title": "Registry metadata and distribution artefacts",
+      "status": "planned",
+      "contractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "requiredTaskCount": 5,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T10-03": {
+      "id": "T10-03",
+      "phaseId": "P10",
+      "title": "Registry submissions",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "requiredTaskCount": 5,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T10-04": {
+      "id": "T10-04",
+      "phaseId": "P10",
+      "title": "Launch, health monitoring and registry drift",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T11-01": {
+      "id": "T11-01",
+      "phaseId": "P11",
+      "title": "Release train, scorecards and 1.0 go/no-go",
+      "status": "planned",
+      "contractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T11-02": {
+      "id": "T11-02",
+      "phaseId": "P11",
+      "title": "Post-1.0 product and engineering roadmap",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    },
+    "T11-03": {
+      "id": "T11-03",
+      "phaseId": "P11",
+      "title": "Prompt retirement and canonical-system handover",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "requiredTaskCount": 4,
+      "existingIssues": [],
+      "issue": null
+    }
+  },
+  "tasks": {
+    "T00-01-TASK-01": {
+      "id": "T00-01-TASK-01",
+      "title": "Record default-branch SHA, dirty state, tags, releases, open issues/PRs/branches, current Conductor state, package graph, lockfile hash, workflows, protections, registries, and baseline checks.",
+      "trackId": "T00-01",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "planning gate"
+    },
+    "T00-01-TASK-02": {
+      "id": "T00-01-TASK-02",
+      "title": "Audit the latest edithatogo/repository-standards profile and managed files for this repository.",
+      "trackId": "T00-01",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "planning gate"
+    },
+    "T00-01-TASK-03": {
+      "id": "T00-01-TASK-03",
+      "title": "Inventory every existing feature, safety class, endpoint evidence level, and stale documentation claim.",
+      "trackId": "T00-01",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "planning gate"
+    },
+    "T00-01-TASK-04": {
+      "id": "T00-01-TASK-04",
+      "title": "Produce a risk-ranked gap report and initial maturity scorecard.",
+      "trackId": "T00-01",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-EXISTING-WORK-004",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "planning gate"
+    },
+    "T00-02-TASK-01": {
+      "id": "T00-02-TASK-01",
+      "title": "Compute and record this prompt's SHA-256.",
+      "trackId": "T00-02",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "release": "planning gate"
+    },
+    "T00-02-TASK-02": {
+      "id": "T00-02-TASK-02",
+      "title": "Create the canonical maturity contract and embedded status/evidence schema.",
+      "trackId": "T00-02",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "release": "planning gate"
+    },
+    "T00-02-TASK-03": {
+      "id": "T00-02-TASK-03",
+      "title": "Create a deterministic validator and zero-gap traceability report.",
+      "trackId": "T00-02",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "release": "planning gate"
+    },
+    "T00-02-TASK-04": {
+      "id": "T00-02-TASK-04",
+      "title": "Create exception, decision, verification-receipt, and prompt-retirement schemas.",
+      "trackId": "T00-02",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-CONTRACT-002",
+        "GOV-SCOPE-CONTROL-008"
+      ],
+      "release": "planning gate"
+    },
+    "T00-03-TASK-01": {
+      "id": "T00-03-TASK-01",
+      "title": "Install or update the current Conductor plugin/extension and run brownfield setup without overwriting valid context.",
+      "trackId": "T00-03",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "release": "planning gate"
+    },
+    "T00-03-TASK-02": {
+      "id": "T00-03-TASK-02",
+      "title": "Refresh conductor/product.md, product-guidelines.md, tech-stack.md, workflow.md, code style guides, and tracks.md.",
+      "trackId": "T00-03",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "release": "planning gate"
+    },
+    "T00-03-TASK-03": {
+      "id": "T00-03-TASK-03",
+      "title": "Create one Conductor track directory per track in this prompt with spec.md, plan.md, metadata.json, contracts, dependencies, risks, and verification.",
+      "trackId": "T00-03",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "release": "planning gate"
+    },
+    "T00-03-TASK-04": {
+      "id": "T00-03-TASK-04",
+      "title": "Create the programme issue, phase subissues, track subissues, and task subissues; reuse existing issues.",
+      "trackId": "T00-03",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "release": "planning gate"
+    },
+    "T00-03-TASK-05": {
+      "id": "T00-03-TASK-05",
+      "title": "Create or update a GitHub Project with Phase, Track, Contract IDs, Priority, Risk, Status, Evidence, Release, and Blocker fields.",
+      "trackId": "T00-03",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-NESTED-ISSUES-003",
+        "GOV-EXISTING-WORK-004"
+      ],
+      "release": "planning gate"
+    },
+    "T00-04-TASK-01": {
+      "id": "T00-04-TASK-01",
+      "title": "Create a dedicated planning branch and commit only planning/governance artefacts.",
+      "trackId": "T00-04",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "release": "planning gate"
+    },
+    "T00-04-TASK-02": {
+      "id": "T00-04-TASK-02",
+      "title": "Open the planning PR with contract coverage and issue hierarchy counts.",
+      "trackId": "T00-04",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "release": "planning gate"
+    },
+    "T00-04-TASK-03": {
+      "id": "T00-04-TASK-03",
+      "title": "Watch GitHub Actions to completion and fix planning artefact failures only.",
+      "trackId": "T00-04",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "release": "planning gate"
+    },
+    "T00-04-TASK-04": {
+      "id": "T00-04-TASK-04",
+      "title": "Emit the canonical plan hash, PR URL, check results, zero-gap report, and explicit implementation-not-started statement.",
+      "trackId": "T00-04",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "release": "planning gate"
+    },
+    "T00-04-TASK-05": {
+      "id": "T00-04-TASK-05",
+      "title": "Stop and await the exact approval phrase defined by this prompt.",
+      "trackId": "T00-04",
+      "phaseId": "P00",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PLAN-FIRST-001",
+        "GOV-APPROVAL-GATE-005"
+      ],
+      "release": "planning gate"
+    },
+    "T01-01-TASK-01": {
+      "id": "T01-01-TASK-01",
+      "title": "Audit merged revise/unschedule code and all guessed write probes.",
+      "trackId": "T01-01",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-01-TASK-02": {
+      "id": "T01-01-TASK-02",
+      "title": "Disable, revert, or reclassify unsafe writes until exact evidence and common mutation contracts exist.",
+      "trackId": "T01-01",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-01-TASK-03": {
+      "id": "T01-01-TASK-03",
+      "title": "Audit domain, team, refund, moderation, subscriber, publication-setting, note, publish, revise, and unschedule mutations.",
+      "trackId": "T01-01",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-01-TASK-04": {
+      "id": "T01-01-TASK-04",
+      "title": "Create first-party capture requirements and endpoint evidence records.",
+      "trackId": "T01-01",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "SEC-NO-WRITE-PROBING-008",
+        "PLAN-INDEPENDENT-APPROVAL-002",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-02-TASK-01": {
+      "id": "T01-02-TASK-01",
+      "title": "Fix strict YAML/boolean parsing and no-resend defaults.",
+      "trackId": "T01-02",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-02-TASK-02": {
+      "id": "T01-02-TASK-02",
+      "title": "Introduce discriminated transport results and operation-specific success schemas.",
+      "trackId": "T01-02",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-02-TASK-03": {
+      "id": "T01-02-TASK-03",
+      "title": "Implement outcome-unknown and reconciliation-before-replay.",
+      "trackId": "T01-02",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-02-TASK-04": {
+      "id": "T01-02-TASK-04",
+      "title": "Unify Retry-After, clock, RNG, cancellation, timeout, and structured error handling.",
+      "trackId": "T01-02",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "NET-DISCRIMINATED-RESULT-002"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-03-TASK-01": {
+      "id": "T01-03-TASK-01",
+      "title": "Implement per-origin cookie scoping, redirect policy, trusted origins, and SSRF protections.",
+      "trackId": "T01-03",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-03-TASK-02": {
+      "id": "T01-03-TASK-02",
+      "title": "Introduce AuthorizedPublicationSession with publication ID and role.",
+      "trackId": "T01-03",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-03-TASK-03": {
+      "id": "T01-03-TASK-03",
+      "title": "Implement WorkspaceGuard across CLI/MCP/media/fixtures.",
+      "trackId": "T01-03",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-03-TASK-04": {
+      "id": "T01-03-TASK-04",
+      "title": "Separate and protect credential/config/state/cache locations.",
+      "trackId": "T01-03",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-03-TASK-05": {
+      "id": "T01-03-TASK-05",
+      "title": "Centralize structured redaction and minimal audit logging.",
+      "trackId": "T01-03",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T01-03-TASK-06": {
+      "id": "T01-03-TASK-06",
+      "title": "Create/update the threat model.",
+      "trackId": "T01-03",
+      "phaseId": "P01",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "SEC-WORKSPACE-007",
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011"
+      ],
+      "release": "0.3.0-safety"
+    },
+    "T02-01-TASK-01": {
+      "id": "T02-01-TASK-01",
+      "title": "Resolve and pin the newest supported Node Current and compatible npm.",
+      "trackId": "T02-01",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-01-TASK-02": {
+      "id": "T02-01-TASK-02",
+      "title": "Adopt relevant Node experimental/current features in the main required runtime.",
+      "trackId": "T02-01",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-01-TASK-03": {
+      "id": "T02-01-TASK-03",
+      "title": "Remove legacy Node support and all experimental-lane scripts/workflows/docs.",
+      "trackId": "T02-01",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-01-TASK-04": {
+      "id": "T02-01-TASK-04",
+      "title": "Update local toolchain files and cross-platform CI.",
+      "trackId": "T02-01",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-RUNTIME-CURRENT-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-02-TASK-01": {
+      "id": "T02-02-TASK-01",
+      "title": "Query dist-tags and upstream release notes for every direct dependency.",
+      "trackId": "T02-02",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-02-TASK-02": {
+      "id": "T02-02-TASK-02",
+      "title": "Select and exact-pin the newest maintained prerelease channel where available.",
+      "trackId": "T02-02",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-02-TASK-03": {
+      "id": "T02-02-TASK-03",
+      "title": "Create the frontier adoption/provenance/rollback manifest.",
+      "trackId": "T02-02",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-02-TASK-04": {
+      "id": "T02-02-TASK-04",
+      "title": "Align dependency families, dedupe, fix vulnerabilities and licences.",
+      "trackId": "T02-02",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-02-TASK-05": {
+      "id": "T02-02-TASK-05",
+      "title": "Configure Renovate for prerelease mainline updates and supersede stale dependency PRs.",
+      "trackId": "T02-02",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-EXISTING-WORK-004",
+        "DEP-NO-EXPERIMENTAL-LANE-001",
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-COHERENCE-007",
+        "DEP-RENOVATE-009"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-03-TASK-01": {
+      "id": "T02-03-TASK-01",
+      "title": "Make TypeScript next the primary compiler.",
+      "trackId": "T02-03",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-03-TASK-02": {
+      "id": "T02-03-TASK-02",
+      "title": "Resolve TS7 incompatibilities and legacy options.",
+      "trackId": "T02-03",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-03-TASK-03": {
+      "id": "T02-03-TASK-03",
+      "title": "Benchmark and configure checkers/builders.",
+      "trackId": "T02-03",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-03-TASK-04": {
+      "id": "T02-03-TASK-04",
+      "title": "Use TS6 compatibility only for tools that demonstrably need the legacy API.",
+      "trackId": "T02-03",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-TYPESCRIPT-NEXT-005"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-04-TASK-01": {
+      "id": "T02-04-TASK-01",
+      "title": "Remove the public file: vendored dependency.",
+      "trackId": "T02-04",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-04-TASK-02": {
+      "id": "T02-04-TASK-02",
+      "title": "Introduce internal workspaces or ordinary internal modules with explicit exports.",
+      "trackId": "T02-04",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-04-TASK-03": {
+      "id": "T02-04-TASK-03",
+      "title": "Lazy-load optional browser/AI stacks and measure startup.",
+      "trackId": "T02-04",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T02-04-TASK-04": {
+      "id": "T02-04-TASK-04",
+      "title": "Verify clean npm tarball installation and public API consumption.",
+      "trackId": "T02-04",
+      "phaseId": "P02",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-PUBLIC-PACKAGE-008",
+        "ARCH-PUBLIC-API-004"
+      ],
+      "release": "0.4.0-frontier-runtime"
+    },
+    "T03-01-TASK-01": {
+      "id": "T03-01-TASK-01",
+      "title": "Split CLI registration from application use cases and domain logic.",
+      "trackId": "T03-01",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-01-TASK-02": {
+      "id": "T03-01-TASK-02",
+      "title": "Create ports/adapters boundaries for transport, state, clock, RNG, filesystem, credentials, logging, and policy.",
+      "trackId": "T03-01",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-01-TASK-03": {
+      "id": "T03-01-TASK-03",
+      "title": "Enforce dependency direction and cyclic-dependency checks.",
+      "trackId": "T03-01",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-01-TASK-04": {
+      "id": "T03-01-TASK-04",
+      "title": "Profile startup and lazy loading.",
+      "trackId": "T03-01",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "ARCH-MODULAR-001"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-02-TASK-01": {
+      "id": "T03-02-TASK-01",
+      "title": "Define command/capability specifications with Standard Schema.",
+      "trackId": "T03-02",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-02-TASK-02": {
+      "id": "T03-02-TASK-02",
+      "title": "Generate CLI, MCP tools, schemas, docs, completions, safety annotations, and coverage metadata.",
+      "trackId": "T03-02",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-02-TASK-03": {
+      "id": "T03-02-TASK-03",
+      "title": "Add deterministic ordering and drift checks.",
+      "trackId": "T03-02",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-02-TASK-04": {
+      "id": "T03-02-TASK-04",
+      "title": "Generate traceability from capability IDs to contracts and tests.",
+      "trackId": "T03-02",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "ARCH-CAPABILITY-REGISTRY-002",
+        "MCP-ANNOTATIONS-006",
+        "DOC-GENERATED-TRUTH-011"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-03-TASK-01": {
+      "id": "T03-03-TASK-01",
+      "title": "Create explicit official API, internal API, browser, and simulator adapters.",
+      "trackId": "T03-03",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-03-TASK-02": {
+      "id": "T03-03-TASK-02",
+      "title": "Build endpoint evidence and support-status registries.",
+      "trackId": "T03-03",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-03-TASK-03": {
+      "id": "T03-03-TASK-03",
+      "title": "Remove write probing and implicit transport coupling.",
+      "trackId": "T03-03",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-03-TASK-04": {
+      "id": "T03-03-TASK-04",
+      "title": "Document compliance and independent-project boundaries.",
+      "trackId": "T03-03",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-ORIGIN-005",
+        "SEC-NO-WRITE-PROBING-008",
+        "ARCH-ADAPTERS-003"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-04-TASK-01": {
+      "id": "T03-04-TASK-01",
+      "title": "Create explicit package exports and compatibility reports.",
+      "trackId": "T03-04",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-04-TASK-02": {
+      "id": "T03-04-TASK-02",
+      "title": "Implement stable JSON/JSONL outputs, exit codes, config explain, cancellation, timeouts, and help.",
+      "trackId": "T03-04",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-04-TASK-03": {
+      "id": "T03-04-TASK-03",
+      "title": "Generate and test contextual completions for bash, zsh, fish, and PowerShell.",
+      "trackId": "T03-04",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T03-04-TASK-04": {
+      "id": "T03-04-TASK-04",
+      "title": "Standardize safe structured errors across CLI, MCP, logs, and API.",
+      "trackId": "T03-04",
+      "phaseId": "P03",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "SEC-SECRET-STORAGE-009",
+        "ARCH-PUBLIC-API-004",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "0.5.0-architecture"
+    },
+    "T04-01-TASK-01": {
+      "id": "T04-01-TASK-01",
+      "title": "Implement canonical plan schemas and serialization.",
+      "trackId": "T04-01",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-01-TASK-02": {
+      "id": "T04-01-TASK-02",
+      "title": "Implement independent signed/HMAC/persisted approval with expiry and single use.",
+      "trackId": "T04-01",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-01-TASK-03": {
+      "id": "T04-01-TASK-03",
+      "title": "Bind plan to authority, before-state, content, endpoint contract, and risk.",
+      "trackId": "T04-01",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-01-TASK-04": {
+      "id": "T04-01-TASK-04",
+      "title": "Prove replay, drift, wrong-publication, expired, and unauthorized rejection.",
+      "trackId": "T04-01",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-IDEMPOTENCY-004",
+        "SEC-PUBLICATION-AUTHORITY-006",
+        "PLAN-CANONICAL-001",
+        "PLAN-INDEPENDENT-APPROVAL-002"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-02-TASK-01": {
+      "id": "T04-02-TASK-01",
+      "title": "Define external catalogue and publication identity schemas.",
+      "trackId": "T04-02",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-02-TASK-02": {
+      "id": "T04-02-TASK-02",
+      "title": "Implement fail-closed freeze policy.",
+      "trackId": "T04-02",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-02-TASK-03": {
+      "id": "T04-02-TASK-03",
+      "title": "Implement local-to-remote reconciliation with stable JSON output.",
+      "trackId": "T04-02",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-02-TASK-04": {
+      "id": "T04-02-TASK-04",
+      "title": "Prove frozen/unapproved flows perform zero writes.",
+      "trackId": "T04-02",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PLAN-FREEZE-003",
+        "MUT-RECONCILE-004",
+        "FEATURE-MULTI-PUBLICATION-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-03-TASK-01": {
+      "id": "T04-03-TASK-01",
+      "title": "Implement calendar, queue, horizon, spacing and collision policy.",
+      "trackId": "T04-03",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-03-TASK-02": {
+      "id": "T04-03-TASK-02",
+      "title": "Use strict IANA timezones and DST semantics.",
+      "trackId": "T04-03",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-03-TASK-03": {
+      "id": "T04-03-TASK-03",
+      "title": "Unify post and note scheduling.",
+      "trackId": "T04-03",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-03-TASK-04": {
+      "id": "T04-03-TASK-04",
+      "title": "Add property/model tests and remote-precision reconciliation.",
+      "trackId": "T04-03",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SCHEDULE-POLICY-007"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-04-TASK-01": {
+      "id": "T04-04-TASK-01",
+      "title": "Implement the guarded executor consuming approved plans.",
+      "trackId": "T04-04",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-04-TASK-02": {
+      "id": "T04-04-TASK-02",
+      "title": "Implement outcome-unknown recovery and after-state reconciliation.",
+      "trackId": "T04-04",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-04-TASK-03": {
+      "id": "T04-04-TASK-03",
+      "title": "Implement compensating plans and irreversible-operation classification.",
+      "trackId": "T04-04",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T04-04-TASK-04": {
+      "id": "T04-04-TASK-04",
+      "title": "Rebuild revise/unschedule with exact capture evidence, URL preservation, and no resend.",
+      "trackId": "T04-04",
+      "phaseId": "P04",
+      "status": "planned",
+      "contractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-OUTCOME-UNKNOWN-003",
+        "MUT-RECONCILE-004",
+        "MUT-COMPENSATION-005",
+        "MUT-REVISION-006"
+      ],
+      "release": "0.6.0-safe-mutations"
+    },
+    "T05-01-TASK-01": {
+      "id": "T05-01-TASK-01",
+      "title": "Implement the Node SQLite-backed state port with WAL and migrations.",
+      "trackId": "T05-01",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-01-TASK-02": {
+      "id": "T05-01-TASK-02",
+      "title": "Persist plans, approvals, tasks, mappings, events, cooldowns, and receipts transactionally.",
+      "trackId": "T05-01",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-01-TASK-03": {
+      "id": "T05-01-TASK-03",
+      "title": "Add concurrency, corruption, crash and migration tests.",
+      "trackId": "T05-01",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-01-TASK-04": {
+      "id": "T05-01-TASK-04",
+      "title": "Keep portable JSON export/import.",
+      "trackId": "T05-01",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "STATE-SQLITE-001",
+        "STATE-AUDIT-002",
+        "MCP-TASKS-003"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-02-TASK-01": {
+      "id": "T05-02-TASK-01",
+      "title": "Integrate platform credential storage or an equivalent encrypted design.",
+      "trackId": "T05-02",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-02-TASK-02": {
+      "id": "T05-02-TASK-02",
+      "title": "Implement privacy classes and retention policies.",
+      "trackId": "T05-02",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-02-TASK-03": {
+      "id": "T05-02-TASK-03",
+      "title": "Implement a hash-chained minimal event ledger.",
+      "trackId": "T05-02",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-02-TASK-04": {
+      "id": "T05-02-TASK-04",
+      "title": "Verify file permissions and redaction across platforms.",
+      "trackId": "T05-02",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-WORKSPACE-007",
+        "SEC-SECRET-STORAGE-009",
+        "SEC-STRUCTURED-REDACTION-010",
+        "STATE-AUDIT-002"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-03-TASK-01": {
+      "id": "T05-03-TASK-01",
+      "title": "Implement content-hash media staging and recovery.",
+      "trackId": "T05-03",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-03-TASK-02": {
+      "id": "T05-03-TASK-02",
+      "title": "Implement allowlisted settings patches and compensation.",
+      "trackId": "T05-03",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-03-TASK-03": {
+      "id": "T05-03-TASK-03",
+      "title": "Migrate mappings to stable content/publication IDs.",
+      "trackId": "T05-03",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-03-TASK-04": {
+      "id": "T05-03-TASK-04",
+      "title": "Make rate-limit receipts monotonic and provenance-bound.",
+      "trackId": "T05-03",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "MEDIA-TRANSACTION-003",
+        "SETTINGS-ALLOWLIST-004",
+        "MAPPINGS-PORTABLE-005",
+        "RATE-LIMIT-SAFE-006"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-04-TASK-01": {
+      "id": "T05-04-TASK-01",
+      "title": "Create lossless portable backup formats and schemas.",
+      "trackId": "T05-04",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-04-TASK-02": {
+      "id": "T05-04-TASK-02",
+      "title": "Implement clean-room restore and integrity verification.",
+      "trackId": "T05-04",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-04-TASK-03": {
+      "id": "T05-04-TASK-03",
+      "title": "Implement draft/content recovery and compensating rollback plans.",
+      "trackId": "T05-04",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T05-04-TASK-04": {
+      "id": "T05-04-TASK-04",
+      "title": "Automate disaster-recovery drills.",
+      "trackId": "T05-04",
+      "phaseId": "P05",
+      "status": "planned",
+      "contractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MUT-COMPENSATION-005",
+        "STATE-SQLITE-001",
+        "MAPPINGS-PORTABLE-005",
+        "BACKUP-RECOVERY-007"
+      ],
+      "release": "0.7.0-state-and-recovery"
+    },
+    "T06-01-TASK-01": {
+      "id": "T06-01-TASK-01",
+      "title": "Adopt the newest relevant unified/remark/micromark or equivalent frontier stack.",
+      "trackId": "T06-01",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PARSER-AST-006"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-01-TASK-02": {
+      "id": "T06-01-TASK-02",
+      "title": "Map source-positioned AST directly to validated ProseMirror.",
+      "trackId": "T06-01",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PARSER-AST-006"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-01-TASK-03": {
+      "id": "T06-01-TASK-03",
+      "title": "Implement strict YAML frontmatter and diagnostics.",
+      "trackId": "T06-01",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PARSER-AST-006"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-01-TASK-04": {
+      "id": "T06-01-TASK-04",
+      "title": "Add golden, round-trip, differential and fuzz fixtures.",
+      "trackId": "T06-01",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PARSER-AST-006"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-02-TASK-01": {
+      "id": "T06-02-TASK-01",
+      "title": "Mature captions, alt text, embeds, tables, paywall, subscribe, code, callouts, galleries, audio/video and unsupported-feature reporting.",
+      "trackId": "T06-02",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-02-TASK-02": {
+      "id": "T06-02-TASK-02",
+      "title": "Sanitize untrusted HTML and external URLs.",
+      "trackId": "T06-02",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-02-TASK-03": {
+      "id": "T06-02-TASK-03",
+      "title": "Implement deterministic media planning and upload receipts.",
+      "trackId": "T06-02",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-02-TASK-04": {
+      "id": "T06-02-TASK-04",
+      "title": "Test real long-form article corpora without secrets.",
+      "trackId": "T06-02",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MEDIA-TRANSACTION-003",
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-03-TASK-01": {
+      "id": "T06-03-TASK-01",
+      "title": "Mature draft/create/update/publish/schedule/revise/unschedule semantics.",
+      "trackId": "T06-03",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-03-TASK-02": {
+      "id": "T06-03-TASK-02",
+      "title": "Mature notes, comments, community, settings, domain, team, subscriber, billing and analytics surfaces only where exact evidence exists.",
+      "trackId": "T06-03",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-03-TASK-03": {
+      "id": "T06-03-TASK-03",
+      "title": "Return successful empty lists correctly.",
+      "trackId": "T06-03",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-03-TASK-04": {
+      "id": "T06-03-TASK-04",
+      "title": "Separate official, internal and browser support status.",
+      "trackId": "T06-03",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "COR-BOOLEAN-001",
+        "SEC-NO-WRITE-PROBING-008",
+        "MUT-REVISION-006",
+        "SCHEDULE-POLICY-007",
+        "SETTINGS-ALLOWLIST-004",
+        "ARCH-ADAPTERS-003",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-04-TASK-01": {
+      "id": "T06-04-TASK-01",
+      "title": "Implement stable workspace/publication/content/campaign IDs.",
+      "trackId": "T06-04",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-04-TASK-02": {
+      "id": "T06-04-TASK-02",
+      "title": "Implement catalogues, calendars, campaigns, analytics snapshots, warehouse exports, attribution and backup.",
+      "trackId": "T06-04",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-04-TASK-03": {
+      "id": "T06-04-TASK-03",
+      "title": "Make batch operations selector-bound, resumable and reconciled.",
+      "trackId": "T06-04",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T06-04-TASK-04": {
+      "id": "T06-04-TASK-04",
+      "title": "Add multi-publication simulator scenarios.",
+      "trackId": "T06-04",
+      "phaseId": "P06",
+      "status": "planned",
+      "contractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "FEATURE-MULTI-PUBLICATION-007",
+        "FEATURE-FIDELITY-008"
+      ],
+      "release": "0.8.0-content-and-creator-os"
+    },
+    "T07-01-TASK-01": {
+      "id": "T07-01-TASK-01",
+      "title": "Run the current official v1-to-v2 codemod and finish migration.",
+      "trackId": "T07-01",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-01-TASK-02": {
+      "id": "T07-01-TASK-02",
+      "title": "Adopt 2026-07-28 explicitly.",
+      "trackId": "T07-01",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-01-TASK-03": {
+      "id": "T07-01-TASK-03",
+      "title": "Implement deterministic/cacheable catalogue results, request metadata and header routing.",
+      "trackId": "T07-01",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-01-TASK-04": {
+      "id": "T07-01-TASK-04",
+      "title": "Remove deprecated new-use roots/sampling/logging patterns.",
+      "trackId": "T07-01",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-02-TASK-01": {
+      "id": "T07-02-TASK-01",
+      "title": "Serve stdio and stateless Streamable HTTP from one registry.",
+      "trackId": "T07-02",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-02-TASK-02": {
+      "id": "T07-02-TASK-02",
+      "title": "Implement current Node/Hono middleware and host-header protection.",
+      "trackId": "T07-02",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-02-TASK-03": {
+      "id": "T07-02-TASK-03",
+      "title": "Implement issuer validation, credential isolation, scope step-up, CIMD and TLS.",
+      "trackId": "T07-02",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-02-TASK-04": {
+      "id": "T07-02-TASK-04",
+      "title": "Maintain deliberate legacy-era compatibility where clients require it.",
+      "trackId": "T07-02",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-MCP-V2-006",
+        "MCP-STATELESS-001",
+        "MCP-DUAL-TRANSPORT-002",
+        "MCP-AUTH-005"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-03-TASK-01": {
+      "id": "T07-03-TASK-01",
+      "title": "Implement durable Tasks extension lifecycle.",
+      "trackId": "T07-03",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-03-TASK-02": {
+      "id": "T07-03-TASK-02",
+      "title": "Implement MRTR/input-required flows where appropriate.",
+      "trackId": "T07-03",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-03-TASK-03": {
+      "id": "T07-03-TASK-03",
+      "title": "Implement MCP Apps review interfaces.",
+      "trackId": "T07-03",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-03-TASK-04": {
+      "id": "T07-03-TASK-04",
+      "title": "Test capability negotiation, cancellation and clients without extension support.",
+      "trackId": "T07-03",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "DEP-MCP-V2-006",
+        "STATE-SQLITE-001",
+        "MCP-TASKS-003",
+        "MCP-APPS-004"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-04-TASK-01": {
+      "id": "T07-04-TASK-01",
+      "title": "Generate accurate annotations and high-quality descriptions.",
+      "trackId": "T07-04",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-04-TASK-02": {
+      "id": "T07-04-TASK-02",
+      "title": "Build MCPB, npm and OCI distributions.",
+      "trackId": "T07-04",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-04-TASK-03": {
+      "id": "T07-04-TASK-03",
+      "title": "Test with official Inspector and a current client matrix.",
+      "trackId": "T07-04",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T07-04-TASK-04": {
+      "id": "T07-04-TASK-04",
+      "title": "Generate registry metadata from the same capability source.",
+      "trackId": "T07-04",
+      "phaseId": "P07",
+      "status": "planned",
+      "contractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-ANNOTATIONS-006",
+        "MCP-PACKAGING-007"
+      ],
+      "release": "0.9.0-mcp-v2"
+    },
+    "T08-01-TASK-01": {
+      "id": "T08-01-TASK-01",
+      "title": "Build the fixture server, fake clock/RNG and request ledger.",
+      "trackId": "T08-01",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-01-TASK-02": {
+      "id": "T08-01-TASK-02",
+      "title": "Cover auth, rate limit, conflicts, partial failures, schema drift, redirects, lost responses and duplicate prevention.",
+      "trackId": "T08-01",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-01-TASK-03": {
+      "id": "T08-01-TASK-03",
+      "title": "Record zero-mutation assertions for every blocked flow.",
+      "trackId": "T08-01",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-01-TASK-04": {
+      "id": "T08-01-TASK-04",
+      "title": "Create sanitized capture-to-fixture tooling.",
+      "trackId": "T08-01",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "NET-DISCRIMINATED-RESULT-002",
+        "NET-OUTCOME-UNKNOWN-003",
+        "NET-IDEMPOTENCY-004",
+        "RATE-LIMIT-SAFE-006",
+        "TEST-SIMULATOR-001"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-02-TASK-01": {
+      "id": "T08-02-TASK-01",
+      "title": "Define the risk-to-assurance matrix.",
+      "trackId": "T08-02",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-02-TASK-02": {
+      "id": "T08-02-TASK-02",
+      "title": "Add property, model, fuzz, mutation, differential, metamorphic, contract and concurrency tests.",
+      "trackId": "T08-02",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-02-TASK-03": {
+      "id": "T08-02-TASK-03",
+      "title": "Remove unjustified coverage exclusions and set risk-specific thresholds.",
+      "trackId": "T08-02",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-02-TASK-04": {
+      "id": "T08-02-TASK-04",
+      "title": "Implement one-command verification and repository-standards receipt.",
+      "trackId": "T08-02",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
+        "BACKUP-RECOVERY-007",
+        "TEST-RISK-WEIGHTED-002",
+        "TEST-ADVANCED-003",
+        "CI-ONE-COMMAND-006"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-03-TASK-01": {
+      "id": "T08-03-TASK-01",
+      "title": "Instrument structured logs, metrics and traces with no-export default.",
+      "trackId": "T08-03",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-03-TASK-02": {
+      "id": "T08-03-TASK-02",
+      "title": "Benchmark TypeScript parallelism, startup, parser, state, plan, simulator and MCP catalogue.",
+      "trackId": "T08-03",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-03-TASK-03": {
+      "id": "T08-03-TASK-03",
+      "title": "Set blocking performance budgets and trend reports.",
+      "trackId": "T08-03",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-03-TASK-04": {
+      "id": "T08-03-TASK-04",
+      "title": "Profile CPU, heap and package size.",
+      "trackId": "T08-03",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-TYPESCRIPT-NEXT-005",
+        "PERF-OBSERVABILITY-005"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-04-TASK-01": {
+      "id": "T08-04-TASK-01",
+      "title": "Create guarded canary workflows and cleanup.",
+      "trackId": "T08-04",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "TEST-CANARY-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "TEST-CANARY-004"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-04-TASK-02": {
+      "id": "T08-04-TASK-02",
+      "title": "Test current Node, clients, operating systems and distribution formats.",
+      "trackId": "T08-04",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "TEST-CANARY-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "TEST-CANARY-004"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-04-TASK-03": {
+      "id": "T08-04-TASK-03",
+      "title": "Record canary, production-observed and client-support maturity separately.",
+      "trackId": "T08-04",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "TEST-CANARY-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "TEST-CANARY-004"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T08-04-TASK-04": {
+      "id": "T08-04-TASK-04",
+      "title": "Never run canaries on ordinary PR events.",
+      "trackId": "T08-04",
+      "phaseId": "P08",
+      "status": "planned",
+      "contractIds": [
+        "TEST-CANARY-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "TEST-CANARY-004"
+      ],
+      "release": "0.9.0-assurance"
+    },
+    "T09-01-TASK-01": {
+      "id": "T09-01-TASK-01",
+      "title": "Create Linux/macOS/Windows required matrices on Node Current.",
+      "trackId": "T09-01",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-01-TASK-02": {
+      "id": "T09-01-TASK-02",
+      "title": "Run generation, contracts, types, tests, coverage, mutation, package install and MCP conformance.",
+      "trackId": "T09-01",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-01-TASK-03": {
+      "id": "T09-01-TASK-03",
+      "title": "Use concurrency, least privilege, bounded timeouts and artefact retention.",
+      "trackId": "T09-01",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-01-TASK-04": {
+      "id": "T09-01-TASK-04",
+      "title": "Keep expensive checks bounded but blocking where risk requires.",
+      "trackId": "T09-01",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-CONTRACT-002",
+        "DEP-RUNTIME-CURRENT-004",
+        "TEST-RISK-WEIGHTED-002",
+        "CI-ONE-COMMAND-006",
+        "CI-CROSS-PLATFORM-007"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-02-TASK-01": {
+      "id": "T09-02-TASK-01",
+      "title": "Pin action SHAs and add actionlint/zizmor.",
+      "trackId": "T09-02",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-02-TASK-02": {
+      "id": "T09-02-TASK-02",
+      "title": "Add CodeQL, dependency review, Scorecard, secret and OSV scanning.",
+      "trackId": "T09-02",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-02-TASK-03": {
+      "id": "T09-02-TASK-03",
+      "title": "Generate/validate SPDX and CycloneDX SBOMs, licences and attestations.",
+      "trackId": "T09-02",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-02-TASK-04": {
+      "id": "T09-02-TASK-04",
+      "title": "Implement private vulnerability reporting and update SECURITY.md.",
+      "trackId": "T09-02",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "SEC-STRUCTURED-REDACTION-010",
+        "SEC-THREAT-MODEL-011",
+        "SEC-SUPPLY-CHAIN-008"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-03-TASK-01": {
+      "id": "T09-03-TASK-01",
+      "title": "Use npm OIDC trusted publishing and remove long-lived token dependence.",
+      "trackId": "T09-03",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-03-TASK-02": {
+      "id": "T09-03-TASK-02",
+      "title": "Build once, test exact artefacts, sign/attest and publish.",
+      "trackId": "T09-03",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-03-TASK-03": {
+      "id": "T09-03-TASK-03",
+      "title": "Synchronize all versions and generate release notes.",
+      "trackId": "T09-03",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-03-TASK-04": {
+      "id": "T09-03-TASK-04",
+      "title": "Test rollback and clean-room installation.",
+      "trackId": "T09-03",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "DEP-FRONTIER-MAINLINE-002",
+        "DEP-COHERENCE-007",
+        "DEP-PUBLIC-PACKAGE-008",
+        "MCP-PACKAGING-007",
+        "CI-ONE-COMMAND-006",
+        "SEC-SUPPLY-CHAIN-008",
+        "RELEASE-REPRODUCIBLE-010"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-04-TASK-01": {
+      "id": "T09-04-TASK-01",
+      "title": "Activate a default-branch ruleset without mandatory human review.",
+      "trackId": "T09-04",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-04-TASK-02": {
+      "id": "T09-04-TASK-02",
+      "title": "Verify Renovate and complete the Dependabot transition.",
+      "trackId": "T09-04",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-04-TASK-03": {
+      "id": "T09-04-TASK-03",
+      "title": "Add issue/PR/security templates and contribution context.",
+      "trackId": "T09-04",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T09-04-TASK-04": {
+      "id": "T09-04-TASK-04",
+      "title": "Export governance configuration and drift receipts.",
+      "trackId": "T09-04",
+      "phaseId": "P09",
+      "status": "planned",
+      "contractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-REPOSITORY-STANDARDS-007",
+        "DEP-RENOVATE-009",
+        "CI-RULESETS-009"
+      ],
+      "release": "1.0.0-rc"
+    },
+    "T10-01-TASK-01": {
+      "id": "T10-01-TASK-01",
+      "title": "Generate README, API/CLI/MCP references, feature/support matrices and diagrams.",
+      "trackId": "T10-01",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-01-TASK-02": {
+      "id": "T10-01-TASK-02",
+      "title": "Refresh AGENTS, ADRs, threat model, runbooks, privacy, compliance and deprecation policy.",
+      "trackId": "T10-01",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-01-TASK-03": {
+      "id": "T10-01-TASK-03",
+      "title": "Build and validate a documentation site and llms.txt.",
+      "trackId": "T10-01",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-01-TASK-04": {
+      "id": "T10-01-TASK-04",
+      "title": "Remove stale or inflated completion claims.",
+      "trackId": "T10-01",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "SEC-THREAT-MODEL-011",
+        "UX-CLI-CONTRACT-005",
+        "DOC-GENERATED-TRUTH-011",
+        "CONTEXT-ENGINEERING-012"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-02-TASK-01": {
+      "id": "T10-02-TASK-01",
+      "title": "Generate official server.json and well-known metadata.",
+      "trackId": "T10-02",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-02-TASK-02": {
+      "id": "T10-02-TASK-02",
+      "title": "Create glama.json and Glama build/inspection configuration.",
+      "trackId": "T10-02",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-02-TASK-03": {
+      "id": "T10-02-TASK-03",
+      "title": "Create Smithery URL/MCPB metadata and bundle.",
+      "trackId": "T10-02",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-02-TASK-04": {
+      "id": "T10-02-TASK-04",
+      "title": "Create mcp.so, Docker/OCI, npm and marketplace metadata.",
+      "trackId": "T10-02",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-02-TASK-05": {
+      "id": "T10-02-TASK-05",
+      "title": "Validate all metadata and package versions.",
+      "trackId": "T10-02",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "MCP-AUTH-005",
+        "MCP-PACKAGING-007",
+        "REG-METADATA-001"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-03-TASK-01": {
+      "id": "T10-03-TASK-01",
+      "title": "Publish npm package and official MCP Registry entry.",
+      "trackId": "T10-03",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-03-TASK-02": {
+      "id": "T10-03-TASK-02",
+      "title": "Submit and verify Glama, Smithery and mcp.so.",
+      "trackId": "T10-03",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-03-TASK-03": {
+      "id": "T10-03-TASK-03",
+      "title": "Submit where eligible to Cline, Docker MCP Catalog, awesome-mcp-servers, Cursor and Claude extension ecosystems.",
+      "trackId": "T10-03",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-03-TASK-04": {
+      "id": "T10-03-TASK-04",
+      "title": "Verify PulseMCP, MCP Atlas and VS Code Gallery ingestion.",
+      "trackId": "T10-03",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-03-TASK-05": {
+      "id": "T10-03-TASK-05",
+      "title": "Record external account gates honestly.",
+      "trackId": "T10-03",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-04-TASK-01": {
+      "id": "T10-04-TASK-01",
+      "title": "Create release announcement, migration guide and examples.",
+      "trackId": "T10-04",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-04-TASK-02": {
+      "id": "T10-04-TASK-02",
+      "title": "Monitor registry build, Inspector, metadata, security and health status.",
+      "trackId": "T10-04",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-04-TASK-03": {
+      "id": "T10-04-TASK-03",
+      "title": "Automate periodic listing/version drift checks.",
+      "trackId": "T10-04",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T10-04-TASK-04": {
+      "id": "T10-04-TASK-04",
+      "title": "Create incident, rollback and deprecation runbooks.",
+      "trackId": "T10-04",
+      "phaseId": "P10",
+      "status": "planned",
+      "contractIds": [
+        "REG-PUBLISH-002",
+        "REG-ECOSYSTEM-003"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "REG-PUBLISH-002"
+      ],
+      "release": "1.0.0"
+    },
+    "T11-01-TASK-01": {
+      "id": "T11-01-TASK-01",
+      "title": "Define and enforce release gates for 0.3 through 1.0.",
+      "trackId": "T11-01",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-01-TASK-02": {
+      "id": "T11-01-TASK-02",
+      "title": "Produce contract, security, quality, performance, compatibility and registry scorecards.",
+      "trackId": "T11-01",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-01-TASK-03": {
+      "id": "T11-01-TASK-03",
+      "title": "Require all MUST contracts satisfied or explicitly approved, expiring exceptions.",
+      "trackId": "T11-01",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-01-TASK-04": {
+      "id": "T11-01-TASK-04",
+      "title": "Tag and publish 1.0 only after final red-team review.",
+      "trackId": "T11-01",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-APPROVAL-GATE-005",
+        "RELEASE-REPRODUCIBLE-010",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-02-TASK-01": {
+      "id": "T11-02-TASK-01",
+      "title": "Plan official API evolution and reduced dependence on undocumented endpoints.",
+      "trackId": "T11-02",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-02-TASK-02": {
+      "id": "T11-02-TASK-02",
+      "title": "Plan plugin/adapter SDK, hosted gateway, team/agency workflows and ecosystem integrations.",
+      "trackId": "T11-02",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-02-TASK-03": {
+      "id": "T11-02-TASK-03",
+      "title": "Plan maintenance, support, deprecation, compatibility and vulnerability-response cycles.",
+      "trackId": "T11-02",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-02-TASK-04": {
+      "id": "T11-02-TASK-04",
+      "title": "Keep roadmap issues and Conductor tracks ready but clearly separate from 1.0 blockers.",
+      "trackId": "T11-02",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-SCOPE-CONTROL-008",
+        "MATURITY-ROADMAP-004"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-03-TASK-01": {
+      "id": "T11-03-TASK-01",
+      "title": "Run the zero-unmapped prompt-retirement check.",
+      "trackId": "T11-03",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-03-TASK-02": {
+      "id": "T11-03-TASK-02",
+      "title": "Verify all issues, tracks, contracts, roadmap and registry targets remain represented.",
+      "trackId": "T11-03",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-03-TASK-03": {
+      "id": "T11-03-TASK-03",
+      "title": "Delete this prompt in a dedicated commit.",
+      "trackId": "T11-03",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "release": "1.0 and beyond"
+    },
+    "T11-03-TASK-04": {
+      "id": "T11-03-TASK-04",
+      "title": "Emit the final handover and deletion receipt.",
+      "trackId": "T11-03",
+      "phaseId": "P11",
+      "status": "planned",
+      "contractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "GOV-PROMPT-RETIREMENT-006"
+      ],
+      "release": "1.0 and beyond"
+    }
+  },
+  "contractMap": {},
+  "issueRelations": {
+    "programme": null,
+    "phases": {},
+    "tracks": {},
+    "tasks": {}
+  }
+}

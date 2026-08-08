@@ -1,0 +1,23 @@
+{
+  "trackId": "T03-01",
+  "contractIds": [
+    "ARCH-MODULAR-001"
+  ],
+  "mappedContracts": [
+    {
+      "id": "ARCH-MODULAR-001",
+      "priority": "MUST",
+      "statement": "Refactor the monolithic CLI into a contract-first modular architecture with domain, application, adapters, and interfaces.",
+      "acceptanceCriteria": [
+        "CLI registration, validation, orchestration, business logic, transports, persistence, and output formatting are separable and testable.",
+        "Simple commands do not eagerly load browser/AI dependencies.",
+        "Dependency direction is enforced automatically."
+      ],
+      "requiredEvidence": [
+        "Architecture diagram",
+        "Dependency-boundary check",
+        "Startup profile"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "trackId": "T06-01",
+  "contractIds": [
+    "PARSER-AST-006"
+  ],
+  "mappedContracts": [
+    {
+      "id": "PARSER-AST-006",
+      "priority": "MUST",
+      "statement": "Replace regex-first Markdown conversion with a source-position-preserving Markdown AST mapped directly into validated ProseMirror structures.",
+      "acceptanceCriteria": [
+        "Support reference links/images, escaped delimiters, nested syntax, raw HTML policy, frontmatter YAML, and source-located diagnostics.",
+        "Untrusted HTML is explicitly allowlisted/sanitized.",
+        "Round-trip and differential fixtures cover long-form Substack content."
+      ],
+      "requiredEvidence": [
+        "AST pipeline",
+        "Source-location diagnostics",
+        "Golden and differential fixtures"
+      ]
+    }
+  ]
+}
