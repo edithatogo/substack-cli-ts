@@ -1,10 +1,10 @@
 # Plan T06-02
 
 ## Tasks
-- [ ] T06-02-TASK-01 Mature captions, alt text, embeds, tables, paywall, subscribe, code, callouts, galleries, audio/video and unsupported-feature reporting.
-- [ ] T06-02-TASK-02 Sanitize untrusted HTML and external URLs.
-- [ ] T06-02-TASK-03 Implement deterministic media planning and upload receipts.
-- [ ] T06-02-TASK-04 Test real long-form article corpora without secrets.
+- [x] T06-02-TASK-01 Mature captions, alt text, embeds, tables, paywall, subscribe, code, callouts, galleries, audio/video and unsupported-feature reporting.
+- [x] T06-02-TASK-02 Sanitize untrusted HTML and external URLs.
+- [x] T06-02-TASK-03 Implement deterministic media planning and upload receipts.
+- [x] T06-02-TASK-04 Test real long-form article corpora without secrets.
 
 ## Contract IDs
 - MEDIA-TRANSACTION-003
