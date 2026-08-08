@@ -119,6 +119,202 @@ describe("readApiInventory", () => {
     assert.equal(inventory.draftHasMore, false);
   });
 
+  it("fetches paginated posts and drafts across cursor pages", async () => {
+    const inventory = await readApiInventory(
+      material(),
+      fakeFetch(
+        new Map<string, unknown>([
+          [
+            "https://substack.com/api/v1/handle/options",
+            {
+              potentialHandles: [{ handle: "rareinsights", type: "existing" }],
+            },
+          ],
+          [
+            "https://substack.com/api/v1/user/rareinsights/public_profile",
+            {
+              id: 123,
+              name: "Example User",
+              handle: "rareinsights",
+              publicationUsers: [
+                {
+                  role: "admin",
+                  is_primary: true,
+                  publication: {
+                    id: 456,
+                    name: "Rare Insights",
+                    subdomain: "rareinsights",
+                    custom_domain: null,
+                  },
+                },
+              ],
+            },
+          ],
+          [
+            "https://rareinsights.substack.com/api/v1/publication",
+            {
+              id: 456,
+              name: "Rare Insights",
+              subdomain: "rareinsights",
+              custom_domain: null,
+              hero_text: "Evidence-based writing",
+              author_id: 123,
+              payments_state: "disabled",
+            },
+          ],
+          [
+            "https://rareinsights.substack.com/api/v1/publication/sections",
+            [
+              {
+                id: 1,
+                publication_id: 456,
+                name: "Main",
+                slug: "main",
+                description: null,
+                is_podcast: false,
+              },
+            ],
+          ],
+          [
+            "https://rareinsights.substack.com/api/v1/posts",
+            {
+              posts: [
+                {
+                  id: 1,
+                  publication_id: 456,
+                  title: "First",
+                  slug: "first",
+                  post_date: "2026-01-01T00:00:00.000Z",
+                  type: "newsletter",
+                  audience: "everyone",
+                  canonical_url: "https://rareinsights.substack.com/p/first",
+                  section_id: 1,
+                },
+                {
+                  id: 2,
+                  publication_id: 456,
+                  title: "Second",
+                  slug: "second",
+                  post_date: "2026-01-02T00:00:00.000Z",
+                  type: "newsletter",
+                  audience: "everyone",
+                  canonical_url: "https://rareinsights.substack.com/p/second",
+                  section_id: 1,
+                },
+              ],
+              hasMore: true,
+              nextCursor: 3,
+            },
+          ],
+          [
+            "https://rareinsights.substack.com/api/v1/posts?cursor=3",
+            {
+              posts: [
+                {
+                  id: 3,
+                  publication_id: 456,
+                  title: "Third",
+                  slug: "third",
+                  post_date: "2026-01-03T00:00:00.000Z",
+                  type: "newsletter",
+                  audience: "everyone",
+                  canonical_url: "https://rareinsights.substack.com/p/third",
+                  section_id: 1,
+                },
+                {
+                  id: 4,
+                  publication_id: 456,
+                  title: "Fourth",
+                  slug: "fourth",
+                  post_date: "2026-01-04T00:00:00.000Z",
+                  type: "newsletter",
+                  audience: "everyone",
+                  canonical_url: "https://rareinsights.substack.com/p/fourth",
+                  section_id: 1,
+                },
+              ],
+              hasMore: false,
+              nextCursor: null,
+            },
+          ],
+          [
+            "https://rareinsights.substack.com/api/v1/drafts",
+            {
+              posts: [
+                {
+                  id: 21,
+                  publication_id: 456,
+                  type: "newsletter",
+                  post_date: null,
+                  email_sent_at: null,
+                  is_published: false,
+                  title: null,
+                  draft_title: "Draft One",
+                  draft_updated_at: "2026-02-01T00:00:00.000Z",
+                  audience: "everyone",
+                  slug: null,
+                  scheduled_at: "2026-05-01T09:00:00.000Z",
+                  should_send_email: null,
+                  write_comment_permissions: "only_paid",
+                  section_id: null,
+                  section_name: null,
+                  section_slug: null,
+                },
+              ],
+              hasMore: true,
+              nextCursor: "c2",
+            },
+          ],
+          [
+            "https://rareinsights.substack.com/api/v1/drafts?cursor=c2",
+            {
+              posts: [
+                {
+                  id: 22,
+                  publication_id: 456,
+                  type: "newsletter",
+                  post_date: null,
+                  email_sent_at: null,
+                  is_published: false,
+                  title: null,
+                  draft_title: "Draft Two",
+                  draft_updated_at: "2026-02-02T00:00:00.000Z",
+                  audience: "everyone",
+                  slug: null,
+                  scheduled_at: "2026-05-02T09:00:00.000Z",
+                  should_send_email: null,
+                  write_comment_permissions: "only_paid",
+                  section_id: null,
+                  section_name: null,
+                  section_slug: null,
+                },
+              ],
+              hasMore: false,
+              nextCursor: null,
+            },
+          ],
+        ]),
+      ),
+      {
+        postLimit: 4,
+        draftLimit: 2,
+      },
+    );
+
+    assert.equal(inventory.status, "ok");
+    assert.equal(inventory.posts?.length, 4);
+    assert.deepEqual(
+      inventory.posts?.map((post) => post.id),
+      [1, 2, 3, 4],
+    );
+    assert.equal(inventory.drafts?.length, 2);
+    assert.deepEqual(
+      inventory.drafts?.map((draft) => draft.id),
+      [21, 22],
+    );
+    assert.equal(inventory.draftHasMore, false);
+  });
+
   it("classifies read failures", async () => {
     const inventory = await readApiInventory(material(), () =>
       Promise.resolve(response(403, { error: "forbidden" })),
