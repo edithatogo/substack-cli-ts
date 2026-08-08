@@ -6,7 +6,7 @@
 ## P03 Contract-first architecture and generated surfaces
 ## P04 Common policy, planning, approval and reconciliation kernel
 ## P05 Transactional state, privacy, media and recovery
-- T05-01
+- [~] T05-01
 - T05-02
 - T05-03
 - T05-04
