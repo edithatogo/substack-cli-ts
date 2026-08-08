@@ -1,10 +1,10 @@
 # Plan T05-04
 
 ## Tasks
-- [ ] T05-04-TASK-01 Create lossless portable backup formats and schemas.
-- [ ] T05-04-TASK-02 Implement clean-room restore and integrity verification.
-- [ ] T05-04-TASK-03 Implement draft/content recovery and compensating rollback plans.
-- [ ] T05-04-TASK-04 Automate disaster-recovery drills.
+- [x] T05-04-TASK-01 Create lossless portable backup formats and schemas.
+- [x] T05-04-TASK-02 Implement clean-room restore and integrity verification.
+- [x] T05-04-TASK-03 Implement draft/content recovery and compensating rollback plans.
+- [x] T05-04-TASK-04 Automate disaster-recovery drills.
 
 ## Contract IDs
 - MUT-COMPENSATION-005
