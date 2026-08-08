@@ -8,7 +8,7 @@
 ## P05 Transactional state, privacy, media and recovery
 ## P06 Content fidelity, publishing workflows and Creator OS maturity
 ## P07 MCP v2, 2026-07-28, extensions and distributable transports
-- T07-02
+- [~] T07-02
 - T07-03
 - T07-04
 
