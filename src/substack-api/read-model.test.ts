@@ -62,7 +62,7 @@ describe("readApiInventory", () => {
             ],
           ],
           [
-            "https://rareinsights.substack.com/api/v1/posts",
+            "https://rareinsights.substack.com/api/v1/posts?limit=10",
             [
               {
                 id: 10,
@@ -78,7 +78,7 @@ describe("readApiInventory", () => {
             ],
           ],
           [
-            "https://rareinsights.substack.com/api/v1/drafts",
+            "https://rareinsights.substack.com/api/v1/drafts?limit=10",
             {
               posts: [
                 {
@@ -176,7 +176,7 @@ describe("readApiInventory", () => {
             ],
           ],
           [
-            "https://rareinsights.substack.com/api/v1/posts",
+            "https://rareinsights.substack.com/api/v1/posts?limit=4",
             {
               posts: [
                 {
@@ -207,7 +207,7 @@ describe("readApiInventory", () => {
             },
           ],
           [
-            "https://rareinsights.substack.com/api/v1/posts?cursor=3",
+            "https://rareinsights.substack.com/api/v1/posts?limit=4&cursor=3",
             {
               posts: [
                 {
@@ -238,7 +238,7 @@ describe("readApiInventory", () => {
             },
           ],
           [
-            "https://rareinsights.substack.com/api/v1/drafts",
+            "https://rareinsights.substack.com/api/v1/drafts?limit=2",
             {
               posts: [
                 {
@@ -266,7 +266,7 @@ describe("readApiInventory", () => {
             },
           ],
           [
-            "https://rareinsights.substack.com/api/v1/drafts?cursor=c2",
+            "https://rareinsights.substack.com/api/v1/drafts?limit=2&cursor=c2",
             {
               posts: [
                 {

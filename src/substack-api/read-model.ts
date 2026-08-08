@@ -360,6 +360,7 @@ async function readPosts(
     }
 
     const endpointUrl = new URL("/api/v1/posts", material.publicationUrl);
+    endpointUrl.searchParams.set("limit", String(safeLimit));
     if (cursor !== undefined) {
       endpointUrl.searchParams.set("cursor", String(cursor));
     }
@@ -439,6 +440,7 @@ async function readDrafts(
     }
 
     const endpointUrl = new URL("/api/v1/drafts", material.publicationUrl);
+    endpointUrl.searchParams.set("limit", String(safeLimit));
     if (cursor !== undefined) {
       endpointUrl.searchParams.set("cursor", String(cursor));
     }
