@@ -1,10 +1,10 @@
 # Plan T04-01
 
 ## Tasks
-- [ ] T04-01-TASK-01 Implement canonical plan schemas and serialization.
-- [ ] T04-01-TASK-02 Implement independent signed/HMAC/persisted approval with expiry and single use.
-- [ ] T04-01-TASK-03 Bind plan to authority, before-state, content, endpoint contract, and risk.
-- [ ] T04-01-TASK-04 Prove replay, drift, wrong-publication, expired, and unauthorized rejection.
+- [x] T04-01-TASK-01 Implement canonical plan schemas and serialization.
+- [x] T04-01-TASK-02 Implement independent signed/HMAC/persisted approval with expiry and single use.
+- [x] T04-01-TASK-03 Bind plan to authority, before-state, content, endpoint contract, and risk.
+- [x] T04-01-TASK-04 Prove replay, drift, wrong-publication, expired, and unauthorized rejection.
 
 ## Contract IDs
 - NET-IDEMPOTENCY-004
