@@ -63,93 +63,93 @@
     {
       "name": "Analyze (actions)",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234911375/job/93045518782"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235341611/job/93046650027"
     },
     {
       "name": "Analyze (javascript-typescript)",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234911375/job/93045518807"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235341611/job/93046650006"
     },
     {
       "name": "CodeQL",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/runs/93045577591"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/runs/93046715699"
     },
     {
       "name": "Dependency Declaration Strictness",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523425"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653642"
     },
     {
       "name": "Index Signature Strictness",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523461"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653609"
     },
     {
       "name": "Node Compatibility (20)",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523449"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653648"
     },
     {
       "name": "Node Compatibility (22)",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523426"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653669"
     },
     {
       "name": "Node Compatibility (24)",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523437"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653665"
     },
     {
       "name": "Required Audit And Secret Scan",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523432"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653656"
     },
     {
       "name": "SBOM Evidence",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523434"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653661"
     },
     {
       "name": "Quality",
       "conclusion": "FAILURE",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913928/job/93045523500",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343201/job/93046653369",
       "note": "pre-existing formatting/quality baseline failure not introduced by planning artifacts"
     },
     {
       "name": "auto-merge",
       "conclusion": "SKIPPED",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234914032/job/93045524285"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343200/job/93046653741"
     },
     {
       "name": "E2E",
       "conclusion": "SKIPPED",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913928/job/93045523928"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343201/job/93046653692"
     },
     {
       "name": "Mutation",
       "conclusion": "SKIPPED",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913928/job/93045562331"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343201/job/93046702989"
     },
     {
       "name": "Smoke",
       "conclusion": "SKIPPED",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913928/job/93045562203"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343201/job/93046703069"
     },
     {
       "name": "Experimental Dependency Lane",
       "conclusion": "SKIPPED",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523906"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653988"
     },
     {
       "name": "Frontier Drift Monitor",
       "conclusion": "SKIPPED",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523908"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653872"
     },
     {
       "name": "Strictest TypeScript",
       "conclusion": "SUCCESS",
-      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234913927/job/93045523393"
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31235343243/job/93046653649"
     }
   ],
   "unmapped_requirements": [],
