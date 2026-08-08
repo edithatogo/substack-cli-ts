@@ -1,0 +1,158 @@
+{
+  "generatedOn": "2026-08-08T02:24:34.1204332Z",
+  "planning_pr_url": "https://github.com/edithatogo/substack-cli-ts/pull/462",
+  "planning_branch": "codex/substack-cli-frontier-maturity-plan",
+  "planning_commit_sha": "091927f",
+  "plan_sha256": "f549b29a92f6549798d24d977f79face381dbc23d4e20c0c6b243bc36c46c344",
+  "contract_count": 73,
+  "phase_count": 12,
+  "track_count": 46,
+  "task_issue_count": 191,
+  "programme_issue_url": "https://github.com/edithatogo/substack-cli-ts/issues/184",
+  "github_project_url_or_gate": "https://github.com/users/edithatogo/projects/38",
+  "existing_issue_dispositions": [
+    {
+      "issue": 161,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/161",
+      "disposition": "mapped for contract/quality baseline reuse in conductor tracks and left open pending audited closure"
+    },
+    {
+      "issue": 162,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/162",
+      "disposition": "mapped for branch rules and security baseline in conductor tracks and left open pending governance decisions"
+    },
+    {
+      "issue": 163,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/163",
+      "disposition": "mapped as parent/closure context for 162 and left open pending implementation alignment"
+    },
+    {
+      "issue": 164,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/164",
+      "disposition": "mapped for schedule-freeze policy reuse and reused in planning tracks"
+    },
+    {
+      "issue": 165,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/165",
+      "disposition": "mapped for canonical planning reuse"
+    },
+    {
+      "issue": 166,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/166",
+      "disposition": "mapped for scheduling and planning-reuse checks"
+    },
+    {
+      "issue": 167,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/167",
+      "disposition": "mapped for catalogue/freeze work and reused"
+    },
+    {
+      "issue": 168,
+      "url": "https://github.com/edithatogo/substack-cli-ts/issues/168",
+      "disposition": "closed and retained only with explicit migration audit against mutation contracts (tracked in planning artifacts)"
+    }
+  ],
+  "existing_pr_dispositions": [
+    {
+      "pr": 176,
+      "url": "https://github.com/edithatogo/substack-cli-ts/pull/176",
+      "disposition": "open Dependabot dependency-update PR; assessed for replacement rather than implementation start"
+    }
+  ],
+  "actions_checks": [
+    {
+      "name": "Analyze (actions)",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234451819/job/93044324121"
+    },
+    {
+      "name": "Analyze (javascript-typescript)",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234451819/job/93044324150"
+    },
+    {
+      "name": "CodeQL",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/runs/93044378524"
+    },
+    {
+      "name": "Dependency Declaration Strictness",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326789"
+    },
+    {
+      "name": "Index Signature Strictness",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326793"
+    },
+    {
+      "name": "Node Compatibility (20)",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326820"
+    },
+    {
+      "name": "Node Compatibility (22)",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326781"
+    },
+    {
+      "name": "Node Compatibility (24)",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326792"
+    },
+    {
+      "name": "Required Audit And Secret Scan",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326759"
+    },
+    {
+      "name": "SBOM Evidence",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326750"
+    },
+    {
+      "name": "Quality",
+      "conclusion": "FAILURE",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453344/job/93044326664",
+      "note": "pre-existing formatting/quality baseline failure not introduced by planning artifacts"
+    },
+    {
+      "name": "auto-merge",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453357/job/93044339037"
+    },
+    {
+      "name": "E2E",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453344/job/93044327139"
+    },
+    {
+      "name": "Mutation",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453344/job/93044372984"
+    },
+    {
+      "name": "Smoke",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453344/job/93044373000"
+    },
+    {
+      "name": "Experimental Dependency Lane",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044327221"
+    },
+    {
+      "name": "Frontier Drift Monitor",
+      "conclusion": "SKIPPED",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044327196"
+    },
+    {
+      "name": "Strictest TypeScript",
+      "conclusion": "SUCCESS",
+      "detailsUrl": "https://github.com/edithatogo/substack-cli-ts/actions/runs/31234453329/job/93044326776"
+    }
+  ],
+  "unmapped_requirements": [],
+  "implementation_started_false": true,
+  "approval_phrase": "APPROVE SUBSTACK CLI MATURITY PLAN f549b29a92f6549798d24d977f79face381dbc23d4e20c0c6b243bc36c46c344"
+}

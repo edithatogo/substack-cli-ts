@@ -8613,12 +8613,12 @@
     },
     "github": {
       "hierarchyCreated": true,
-      "projectCreated": false,
+      "projectCreated": true,
       "checks": []
     },
     "planningReceipt": {
-      "written": false,
-      "path": null
+      "written": true,
+      "path": "docs/architecture/planning-receipt.json"
     }
   },
   "exceptions": [],
