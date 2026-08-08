@@ -6,7 +6,6 @@
 ## P03 Contract-first architecture and generated surfaces
 ## P04 Common policy, planning, approval and reconciliation kernel
 ## P05 Transactional state, privacy, media and recovery
-- [x] T05-03
 - T05-04
 
 ## P06 Content fidelity, publishing workflows and Creator OS maturity
