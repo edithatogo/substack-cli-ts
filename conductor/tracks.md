@@ -5,7 +5,6 @@
 ## P02 Bleeding-edge mainline runtime and dependency migration
 ## P03 Contract-first architecture and generated surfaces
 ## P04 Common policy, planning, approval and reconciliation kernel
-- [x] T04-01
 - T04-02
 - T04-03
 - T04-04
