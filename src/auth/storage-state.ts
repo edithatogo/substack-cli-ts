@@ -2,7 +2,11 @@ import { chmod, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises"
 import { dirname } from "node:path";
 import type { BrowserContext } from "playwright-core";
 import { detectUpstreamChallenge } from "../browser/resilience.js";
-import { createLocalBrowserSession } from "../browser/local-browser.js";
+import {
+  createLocalBrowserSession,
+  type LocalBrowserOptions,
+  type LocalBrowserSession,
+} from "../browser/local-browser.js";
 import { browserStorageStateFilePath } from "../config/paths.js";
 
 type PlaywrightStorageState = Awaited<ReturnType<BrowserContext["storageState"]>>;
@@ -64,13 +68,17 @@ export async function refreshLocalStorageState(options: {
   publicationUrl: string;
   headless?: boolean | undefined;
   waitSeconds?: number | undefined;
+  outputPath?: string | undefined;
+  createSession?: ((options: LocalBrowserOptions) => Promise<LocalBrowserSession>) | undefined;
 }): Promise<StorageStateSummary> {
   const waitSeconds = options.waitSeconds ?? 0;
   if (!Number.isInteger(waitSeconds) || waitSeconds < 0 || waitSeconds > 300) {
     throw new Error("waitSeconds must be an integer from 0 to 300.");
   }
 
-  const session = await createLocalBrowserSession({ headless: options.headless ?? false });
+  const session = await (options.createSession ?? createLocalBrowserSession)({
+    headless: options.headless ?? false,
+  });
   try {
     await session.page.goto(options.publicationUrl, {
       waitUntil: "domcontentloaded",
@@ -89,7 +97,7 @@ export async function refreshLocalStorageState(options: {
       throw new Error(`${challenge.message} ${mode}`);
     }
 
-    return captureAuthenticatedStorageState(session.context);
+    return captureAuthenticatedStorageState(session.context, options.outputPath);
   } finally {
     await session.close();
   }

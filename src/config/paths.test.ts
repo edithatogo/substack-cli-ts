@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { join } from "node:path";
 import { describe, it } from "vitest";
 import {
   analyticsSnapshotsDir,
+  browserStorageStateFilePath,
   cacheDir,
   configFilePath,
   draftCaptureDir,
@@ -26,6 +28,10 @@ describe("paths", () => {
       assert.equal(cacheDir().endsWith("stagehand-cache"), true);
       assert.equal(localBrowserProfileDir().endsWith("chrome-profile"), true);
       assert.equal(analyticsSnapshotsDir().endsWith("analytics-snapshots"), true);
+      assert.equal(
+        browserStorageStateFilePath().endsWith(join("auth", "storage-state.json")),
+        true,
+      );
     } finally {
       restoreEnv("SUBSTACK_CLI_STATE_DIR", previous);
     }
