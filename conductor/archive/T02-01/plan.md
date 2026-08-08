@@ -14,3 +14,7 @@
 
 ## Risk controls
 - Preserve native hierarchy and evidence-first progress.
+
+## Phase: Review Fixes
+- [x] Task: Add evidence receipt for runtime and experimental-lane claims
+- [ ] Task: Remove experimental dependency lanes and raise the supported runtime floor

@@ -19,3 +19,7 @@
 
 ## Risk controls
 - Preserve native hierarchy and evidence-first progress.
+
+## Phase: Review Fixes
+- [x] Task: Add local dependency provenance receipt
+- [ ] Task: Complete upstream dist-tag, release-note, vulnerability, licence, and Renovate evidence
