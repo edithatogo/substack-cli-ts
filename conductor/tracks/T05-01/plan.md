@@ -1,10 +1,10 @@
 # Plan T05-01
 
 ## Tasks
-- [ ] T05-01-TASK-01 Implement the Node SQLite-backed state port with WAL and migrations.
-- [ ] T05-01-TASK-02 Persist plans, approvals, tasks, mappings, events, cooldowns, and receipts transactionally.
-- [ ] T05-01-TASK-03 Add concurrency, corruption, crash and migration tests.
-- [ ] T05-01-TASK-04 Keep portable JSON export/import.
+- [x] T05-01-TASK-01 Implement the Node SQLite-backed state port with WAL and migrations.
+- [x] T05-01-TASK-02 Persist plans, approvals, tasks, mappings, events, cooldowns, and receipts transactionally.
+- [x] T05-01-TASK-03 Add concurrency, corruption, crash and migration tests.
+- [x] T05-01-TASK-04 Keep portable JSON export/import.
 
 ## Contract IDs
 - STATE-SQLITE-001
