@@ -16,6 +16,7 @@ describe("schedule reconciliation", () => {
             title: "First post",
             scheduled_at: "2026-07-01T09:00:00Z",
             draft_id: 123,
+            status: "scheduled",
             source_file: "posts/first.md",
           },
         ],
@@ -27,6 +28,7 @@ describe("schedule reconciliation", () => {
 
     assert.equal(fromObject[0]?.title, "First post");
     assert.equal(fromObject[0]?.draftId, "123");
+    assert.equal(fromObject[0]?.status, "scheduled");
     assert.equal(fromObject[0]?.sourceFile, "posts/first.md");
     assert.equal(fromArray[0]?.title, "Second post");
   });
@@ -36,7 +38,7 @@ describe("schedule reconciliation", () => {
     assert.throws(() => parseScheduleFileContent(JSON.stringify({ posts: [] })), /items array/);
     assert.throws(
       () => parseScheduleFileContent(JSON.stringify([{ scheduledAt: "2026-07-01T09:00:00Z" }])),
-      /needs title or draftId/,
+      /needs title, draftId, or postId/,
     );
     assert.throws(() => parseScheduleFileContent(JSON.stringify(["post"])), /must be an object/);
     assert.throws(
@@ -46,6 +48,13 @@ describe("schedule reconciliation", () => {
     assert.throws(
       () => parseScheduleFileContent(JSON.stringify([{ title: "Post", scheduledAt: "soon" }])),
       /invalid scheduledAt/,
+    );
+    assert.throws(
+      () =>
+        parseScheduleFileContent(
+          JSON.stringify([{ title: "Post", scheduledAt: "2026-07-01T09:00:00Z", status: "unknown" }]),
+        ),
+      /unsupported status/,
     );
     assert.throws(() => parseScheduleReconcileKeys(" , "), /At least one reconcile key/);
     assert.throws(() => parseScheduleReconcileKeys("title,slug"), /Unsupported reconcile key/);
@@ -76,6 +85,8 @@ describe("schedule reconciliation", () => {
     assert.equal(report.expectedCount, 1);
     assert.equal(report.matchedCount, 1);
     assert.equal(report.matches[0]?.actual.postId, "10");
+    assert.equal(report.matchedScheduled, 1);
+    assert.equal(report.queueStateSummary.scheduled, 1);
   });
 
   it("reports missing rows and timestamp mismatches", () => {
@@ -100,6 +111,7 @@ describe("schedule reconciliation", () => {
     assert.equal(report.matchedCount, 0);
     assert.equal(report.timestampMismatches.length, 1);
     assert.equal(report.missing.length, 1);
+    assert.equal(report.unexpected.length, 1);
   });
 
   it("reports duplicate title/time collisions", () => {
@@ -120,17 +132,19 @@ describe("schedule reconciliation", () => {
     assert.equal(report.status, "mismatch");
     assert.equal(report.duplicateCollisions.length, 2);
     assert.equal(report.duplicateCollisions[0]?.reason, "multiple-matches");
+    assert.equal(report.unexpected.length, 2);
   });
 
   it("can reconcile by draft id and time", () => {
     const report = reconcileSchedule(
       [{ draftId: "123", scheduledAt: "2026-07-01T09:00:00Z" }],
-      [{ draftId: "123", scheduledAt: "2026-07-01T09:00:00Z", source: "draft" }],
+      [{ draftId: "123", scheduledAt: "2026-07-01T09:00:00Z", source: "draft", status: "draft" }],
       { by: parseScheduleReconcileKeys("draft-id,time") },
     );
 
     assert.equal(report.status, "ok");
     assert.equal(report.matches[0]?.actual.draftId, "123");
+    assert.equal(report.matchedDraft, 1);
   });
 
   it("does not match missing or different requested identity keys", () => {
@@ -167,9 +181,11 @@ describe("schedule reconciliation", () => {
       { by: [] },
     );
 
-    assert.equal(timeOnly.status, "ok");
+    assert.equal(timeOnly.status, "mismatch");
     assert.equal(timeOnly.matches[0]?.actual.scheduledAt, "2026-07-01T09:00:00Z");
+    assert.equal(timeOnly.unexpected.length, 2);
     assert.equal(noKeys.status, "ok");
+    assert.equal(noKeys.unexpected.length, 0);
   });
 
   it("reports draft-id queue duplicate collisions without scheduled timestamps", () => {
@@ -191,5 +207,71 @@ describe("schedule reconciliation", () => {
       ),
       true,
     );
+    assert.equal(report.unexpected.length, 3);
+    assert.equal(report.queueStateSummary.other, 3);
+  });
+
+  it("supports postId and status mismatches", () => {
+    const report = reconcileSchedule(
+      [
+        {
+          postId: "10",
+          status: "published",
+          scheduledAt: "2026-07-01T09:00:00Z",
+        },
+      ],
+      [
+        {
+          title: "Different title",
+          postId: "10",
+          scheduledAt: "2026-07-01T09:00:00Z",
+          status: "scheduled",
+          source: "post",
+        },
+      ],
+      { by: ["draft-id", "time"] },
+    );
+
+    assert.equal(report.status, "mismatch");
+    assert.equal(report.statusMismatches.length, 1);
+    assert.equal(report.statusMismatches[0]?.expectedStatus, "published");
+    assert.equal(report.statusMismatches[0]?.actualStatus, "scheduled");
+    assert.equal(report.matches.length, 1);
+    assert.equal(report.matchedScheduled, 1);
+  });
+
+  it("classifies queue status summary and unexpected entries", () => {
+    const queue = [
+      {
+        title: "Scheduled",
+        status: "scheduled",
+        source: "post",
+        scheduledAt: "2026-07-01T09:00:00Z",
+      },
+      {
+        title: "Published",
+        status: "published",
+        source: "post",
+        scheduledAt: "2026-07-01T09:00:00Z",
+      },
+      { title: "Draft", status: "draft", source: "draft", scheduledAt: "2026-07-02T09:00:00Z" },
+      { title: "Broadcast", status: "sent", source: "broadcast", scheduledAt: "2026-07-03T09:00:00Z" },
+    ];
+    const report = reconcileSchedule(
+      [{ title: "Scheduled", scheduledAt: "2026-07-01T09:00:00Z" }],
+      queue,
+      { by: ["title", "time"] },
+    );
+
+    assert.equal(report.matchedScheduled, 1);
+    assert.equal(report.matchedPublished, 0);
+    assert.equal(report.matchedDraft, 0);
+    assert.equal(report.matchedOther, 0);
+    assert.equal(report.unexpected.length, 3);
+    assert.equal(report.queueStateSummary.scheduled, 1);
+    assert.equal(report.queueStateSummary.published, 2);
+    assert.equal(report.queueStateSummary.draft, 1);
+    assert.equal(report.queueStateSummary.other, 0);
+    assert.equal(report.status, "mismatch");
   });
 });

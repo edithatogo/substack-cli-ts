@@ -1,10 +1,14 @@
 export type ScheduleReconcileKey = "title" | "time" | "draft-id";
 
+type ReconciledQueueStatus = "scheduled" | "published" | "draft" | "other";
+
 export interface ExpectedScheduleItem {
   title?: string | undefined;
   draftId?: string | undefined;
+  postId?: string | undefined;
   sourceFile?: string | undefined;
   scheduledAt: string;
+  status?: "scheduled" | "published" | "draft" | undefined;
 }
 
 export interface ScheduledQueueItem {
@@ -37,6 +41,13 @@ export interface ScheduleDuplicateCollision {
   reason: "multiple-matches" | "duplicate-queue-key";
 }
 
+export interface ScheduleStatusMismatch {
+  expected: ExpectedScheduleItem;
+  actual: ScheduledQueueItem;
+  expectedStatus: "scheduled" | "published" | "draft";
+  actualStatus: ReconciledQueueStatus;
+}
+
 export interface ScheduleReconcileReport {
   status: "ok" | "mismatch";
   by: ScheduleReconcileKey[];
@@ -47,7 +58,14 @@ export interface ScheduleReconcileReport {
   matches: ScheduleMatch[];
   timestampMismatches: ScheduleTimestampMismatch[];
   duplicateCollisions: ScheduleDuplicateCollision[];
+  statusMismatches: ScheduleStatusMismatch[];
+  unexpected: ScheduledQueueItem[];
   queueCount: number;
+  queueStateSummary: Record<ReconciledQueueStatus, number>;
+  matchedScheduled: number;
+  matchedPublished: number;
+  matchedDraft: number;
+  matchedOther: number;
   message: string;
 }
 
@@ -108,6 +126,21 @@ export function reconcileSchedule(
   const missing: ExpectedScheduleItem[] = [];
   const timestampMismatches: ScheduleTimestampMismatch[] = [];
   const duplicateCollisions: ScheduleDuplicateCollision[] = [];
+  const statusMismatches: ScheduleStatusMismatch[] = [];
+  const queueStateSummary: Record<ReconciledQueueStatus, number> = {
+    scheduled: 0,
+    published: 0,
+    draft: 0,
+    other: 0,
+  };
+  let matchedScheduled = 0;
+  let matchedPublished = 0;
+  let matchedDraft = 0;
+  let matchedOther = 0;
+
+  for (const item of queue) {
+    queueStateSummary[normalizeQueueStatus(item.status)] += 1;
+  }
 
   for (const expectedItem of expected) {
     const identityCandidates = queue
@@ -125,8 +158,24 @@ export function reconcileSchedule(
     if (matchingCandidates.length === 1) {
       const candidate = matchingCandidates[0];
       if (!candidate) continue;
+      const actual = candidate.actual;
       usedQueueIndexes.add(candidate.index);
-      matches.push({ expected: expectedItem, actual: candidate.actual });
+      const match: ScheduleMatch = { expected: expectedItem, actual };
+      const actualStatus = normalizeQueueStatus(actual.status);
+      matches.push(match);
+      if (actualStatus === "scheduled") matchedScheduled += 1;
+      else if (actualStatus === "published") matchedPublished += 1;
+      else if (actualStatus === "draft") matchedDraft += 1;
+      else matchedOther += 1;
+
+      if (expectedItem.status && expectedItem.status !== actualStatus) {
+        statusMismatches.push({
+          expected: expectedItem,
+          actual,
+          expectedStatus: expectedItem.status,
+          actualStatus,
+        });
+      }
       continue;
     }
 
@@ -151,9 +200,14 @@ export function reconcileSchedule(
   }
 
   duplicateCollisions.push(...findDuplicateQueueKeys(queue, by));
+  const unexpected = queue.filter((_, index) => !usedQueueIndexes.has(index));
 
   const status =
-    missing.length === 0 && timestampMismatches.length === 0 && duplicateCollisions.length === 0
+    missing.length === 0 &&
+      timestampMismatches.length === 0 &&
+      duplicateCollisions.length === 0 &&
+      statusMismatches.length === 0 &&
+      unexpected.length === 0
       ? "ok"
       : "mismatch";
 
@@ -167,11 +221,18 @@ export function reconcileSchedule(
     matches,
     timestampMismatches,
     duplicateCollisions,
+    statusMismatches,
+    unexpected,
     queueCount: queue.length,
+    queueStateSummary,
+    matchedScheduled,
+    matchedPublished,
+    matchedDraft,
+    matchedOther,
     message:
       status === "ok"
         ? `Matched ${matches.length}/${expected.length} expected scheduled items.`
-        : `Matched ${matches.length}/${expected.length}; ${missing.length} missing, ${timestampMismatches.length} timestamp mismatches, ${duplicateCollisions.length} duplicate collisions.`,
+        : `Matched ${matches.length}/${expected.length}; ${missing.length} missing, ${timestampMismatches.length} timestamp mismatches, ${statusMismatches.length} status mismatches, ${duplicateCollisions.length} duplicate collisions, ${unexpected.length} unexpected queue items.`,
   };
 }
 
@@ -193,14 +254,16 @@ function parseExpectedScheduleItem(
   }
 
   const draftId = stringField(item, "draftId", "draft_id");
+  const postId = stringField(item, "postId", "post_id", "id");
   const title = stringField(item, "title", "subject");
   const sourceFile = stringField(item, "sourceFile", "source_file", "file");
+  const status = parseExpectedStatus(item, index, sourceName);
 
-  if (!title && !draftId) {
-    throw new Error(`${sourceName} item ${index + 1} needs title or draftId for reconciliation.`);
+  if (!title && !draftId && !postId) {
+    throw new Error(`${sourceName} item ${index + 1} needs title, draftId, or postId for reconciliation.`);
   }
 
-  return { title, draftId, sourceFile, scheduledAt };
+  return { title, draftId, postId, sourceFile, scheduledAt, status };
 }
 
 function identityMatches(
@@ -218,12 +281,16 @@ function identityMatches(
   }
 
   if (by.includes("draft-id")) {
-    if (
-      !expected.draftId ||
-      (expected.draftId !== actual.draftId && expected.draftId !== actual.postId)
-    ) {
+    const expectedIds = [expected.draftId, expected.postId].filter((value): value is string => typeof value === "string");
+    const actualIds = [actual.draftId, actual.postId].filter((value): value is string => typeof value === "string");
+
+    if (expectedIds.length === 0 || actualIds.length === 0) {
       return false;
     }
+
+    const expectedIdSet = new Set(expectedIds);
+    const hasMatch = actualIds.some((id) => expectedIdSet.has(id));
+    if (!hasMatch) return false;
   }
 
   return true;
@@ -286,6 +353,34 @@ function queueKey(item: ScheduledQueueItem, by: ScheduleReconcileKey[]): string 
     parts.push(`time:${new Date(timestamp).toISOString()}`);
   }
   return parts.length > 0 ? parts.join("|") : null;
+}
+
+function normalizeQueueStatus(status: string | undefined): ReconciledQueueStatus {
+  if (!status) return "other";
+
+  const normalized = status.trim().toLowerCase();
+  if (["scheduled", "queue", "queued"].includes(normalized)) return "scheduled";
+  if (["published", "publish", "live", "sent"].includes(normalized)) return "published";
+  if (normalized.includes("draft")) return "draft";
+  return "other";
+}
+
+function parseExpectedStatus(item: Record<string, unknown>, index: number, sourceName: string) {
+  const raw = stringField(item, "status", "expectedStatus", "state");
+  if (raw === undefined) return undefined;
+  const normalized = normalizeExpectedStatus(raw);
+  if (normalized === undefined) {
+    throw new Error(`${sourceName} item ${index + 1} has unsupported status "${raw}".`);
+  }
+  return normalized;
+}
+
+function normalizeExpectedStatus(raw: string): "scheduled" | "published" | "draft" | undefined {
+  const normalized = raw.trim().toLowerCase();
+  if (["scheduled", "schedule", "queued", "queue"].includes(normalized)) return "scheduled";
+  if (["published", "publish", "published_at", "live"].includes(normalized)) return "published";
+  if (["draft", "unscheduled", "drafted"].includes(normalized)) return "draft";
+  return undefined;
 }
 
 function normalizeTitle(value: string | undefined): string {
