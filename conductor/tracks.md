@@ -37,3 +37,6 @@
 
 ## P15 Upstream browser and authentication resilience
 - [ ] **Track: Playwright authentication fallback and storage-state refresh** ([#469](https://github.com/edithatogo/substack-cli-ts/issues/469)) *Link: [T15-01](./tracks/T15-01/index.md)*
+
+## P16 Comprehensive MCP type safety and validation guardrails
+- [ ] **Track: Canonical Zod MCP inputs and generated schemas** ([#474](https://github.com/edithatogo/substack-cli-ts/issues/474)) *Link: [T16-01](./tracks/T16-01/index.md)*

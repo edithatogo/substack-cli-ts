@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { buildMcpToolDescriptors, buildMcpToolGroups, registerMcpTools } from "./catalog.js";
+import {
+  buildMcpToolDescriptors,
+  buildMcpToolGroups,
+  buildMcpToolInputJsonSchemas,
+  MCP_TOOL_INPUT_SCHEMAS,
+  registerMcpTools,
+} from "./catalog.js";
 
 describe("McpToolDescriptors", () => {
   it("returns all 29 tool descriptors", () => {
@@ -161,6 +167,60 @@ describe("registerMcpTools", () => {
     assert.equal(safeSurfaces.structuredContent.count, 8);
     assert.equal(safeSurface.structuredContent.status, "ready");
     assert.equal(safeSurface.structuredContent.surface.status, "unsupported");
+  });
+
+  it("registers every tool with its canonical Zod object schema", () => {
+    const registered = new Map<string, unknown>();
+    const mockServer = {
+      registerTool: (name: string, config: { inputSchema?: unknown }) => {
+        registered.set(name, config.inputSchema);
+      },
+    };
+
+    registerMcpTools(mockServer as Parameters<typeof registerMcpTools>[0]);
+
+    assert.equal(registered.size, 29);
+    assert.deepEqual([...registered.keys()].sort(), Object.keys(MCP_TOOL_INPUT_SCHEMAS).sort());
+    for (const [name, schema] of Object.entries(MCP_TOOL_INPUT_SCHEMAS)) {
+      assert.equal(registered.get(name), schema);
+    }
+  });
+
+  it("coerces bounded numeric-string pagination and applies defaults", () => {
+    assert.deepEqual(MCP_TOOL_INPUT_SCHEMAS["api.inventory"].parse({ postLimit: "5" }), {
+      postLimit: 5,
+    });
+    assert.deepEqual(MCP_TOOL_INPUT_SCHEMAS["api.notes.list"].parse({}), { limit: 10 });
+    assert.throws(() => MCP_TOOL_INPUT_SCHEMAS["api.notes.list"].parse({ limit: "" }));
+    assert.throws(() => MCP_TOOL_INPUT_SCHEMAS["api.notes.list"].parse({ limit: "5.5" }));
+    assert.throws(() => MCP_TOOL_INPUT_SCHEMAS["api.notes.list"].parse({ limit: "101" }));
+  });
+
+  it("rejects missing required fields and unknown fields", () => {
+    assert.throws(() => MCP_TOOL_INPUT_SCHEMAS["schema.validate"].parse({}));
+    assert.throws(() =>
+      MCP_TOOL_INPUT_SCHEMAS["schema.validate"].parse({ file: "fixture.json", surprise: true }),
+    );
+    assert.throws(() => MCP_TOOL_INPUT_SCHEMAS["api.auth.status"].parse({ token: "secret" }));
+  });
+
+  it("generates strict described JSON Schemas from the canonical Zod inputs", () => {
+    const schemas = buildMcpToolInputJsonSchemas();
+    assert.deepEqual(Object.keys(schemas).sort(), Object.keys(MCP_TOOL_INPUT_SCHEMAS).sort());
+
+    for (const schema of Object.values(schemas)) {
+      assert.equal(schema.type, "object");
+      assert.equal(schema.additionalProperties, false);
+    }
+
+    const inventory = schemas["api.inventory"] as {
+      properties: { postLimit: Record<string, unknown> };
+    };
+    assert.equal(inventory.properties.postLimit.type, "integer");
+    assert.equal(inventory.properties.postLimit.minimum, 1);
+    assert.equal(inventory.properties.postLimit.maximum, 100);
+    assert.equal(inventory.properties.postLimit.default, 10);
+    assert.match(String(inventory.properties.postLimit.description), /1 through 100/);
   });
 
   it("rejects invalid coverage gap filters", async () => {

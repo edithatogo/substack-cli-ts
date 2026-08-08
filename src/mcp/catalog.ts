@@ -66,66 +66,112 @@ type JsonToolResult = {
   structuredContent: Record<string, unknown>;
 };
 
-const ReadInventoryArgs = {
-  postLimit: z.number().int().positive().max(100).optional(),
-};
+function normalizePaginationLimit(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  const trimmed = value.trim();
+  return /^\d+$/.test(trimmed) ? Number(trimmed) : value;
+}
 
-const NotesListArgs = {
-  limit: z.number().int().positive().max(100).optional(),
-};
+const PaginationLimit = z
+  .preprocess(normalizePaginationLimit, z.number().int().min(1).max(100).default(10))
+  .describe("Maximum number of results to return, from 1 through 100; defaults to 10.");
 
-const FileArg = {
-  file: z.string().min(1),
-};
+const EmptyArgs = z.strictObject({});
+const ReadInventoryArgs = z.strictObject({
+  postLimit: PaginationLimit,
+});
+const NotesListArgs = z.strictObject({
+  limit: PaginationLimit,
+});
+const FileArg = z.strictObject({
+  file: z.string().min(1).describe("Path to the local input file."),
+});
+const CompareFileArgs = z.strictObject({
+  expectedFile: z.string().min(1).describe("Path to the expected local artifact."),
+  actualFile: z.string().min(1).describe("Path to the actual local artifact."),
+});
+const FixtureArgs = z.strictObject({
+  file: z.string().min(1).describe("Path to the source capture artifact."),
+  out: z.string().min(1).describe("Path where the redacted fixture will be written."),
+});
+const CampaignPlanArgs = z.strictObject({
+  file: z.string().min(1).describe("Path to the campaign Markdown file."),
+  publishAt: z.string().optional().describe("Optional publication timestamp."),
+  noteAt: z.array(z.string()).optional().describe("Optional note schedule timestamps."),
+  channels: z.string().optional().describe("Optional comma-separated distribution channels."),
+  runLogDir: z.string().optional().describe("Optional local run-log directory."),
+});
+const PlanFileArg = z.strictObject({
+  planFile: z.string().min(1).describe("Path to the campaign plan artifact."),
+});
+const SnapshotsDirArg = z.strictObject({
+  snapshotsDir: z.string().min(1).describe("Directory containing analytics snapshots."),
+});
+const RunLogDirArg = z.strictObject({
+  runLogDir: z.string().min(1).describe("Directory containing campaign run logs."),
+});
+const OptionalMatrixArg = z.strictObject({
+  matrixFile: z.string().min(1).optional().describe("Optional coverage matrix file path."),
+});
+const CoverageGapsArgs = z.strictObject({
+  matrixFile: z.string().min(1).optional().describe("Optional coverage matrix file path."),
+  status: z.string().min(1).optional().describe("Optional coverage status filter."),
+  domain: z.string().min(1).optional().describe("Optional capability domain filter."),
+});
+const CoverageInspectArgs = z.strictObject({
+  capabilityId: z.string().min(1).describe("Capability identifier to inspect."),
+  matrixFile: z.string().min(1).optional().describe("Optional coverage matrix file path."),
+});
+const SafeSurfaceInspectArgs = z.strictObject({
+  id: z.string().min(1).describe("Safe-surface identifier to inspect."),
+});
+const DraftMatrixArgs = z.strictObject({
+  files: z
+    .array(z.string().min(1))
+    .min(1)
+    .describe("One or more local draft capture artifact paths."),
+});
 
-const CompareFileArgs = {
-  expectedFile: z.string().min(1),
-  actualFile: z.string().min(1),
-};
+export const MCP_TOOL_INPUT_SCHEMAS = {
+  "api.inventory": ReadInventoryArgs,
+  "api.auth.status": EmptyArgs,
+  "api.notes.list": NotesListArgs,
+  "api.recommendations.list": EmptyArgs,
+  "schema.validate": FileArg,
+  "api.media": FileArg,
+  "trace.review": FileArg,
+  "trace.compare": CompareFileArgs,
+  policy: EmptyArgs,
+  "coverage.validate": OptionalMatrixArg,
+  "coverage.gaps": CoverageGapsArgs,
+  "coverage.inspect": CoverageInspectArgs,
+  "coverage.safe_surfaces": EmptyArgs,
+  "coverage.safe_surface": SafeSurfaceInspectArgs,
+  "launch.check": EmptyArgs,
+  doctor: EmptyArgs,
+  "api.draft.contract": FileArg,
+  "api.draft.contract.matrix": DraftMatrixArgs,
+  "api.draft.contract.matrix.compare": CompareFileArgs,
+  "api.draft.duplicates": FileArg,
+  "api.draft.section": FileArg,
+  "api.draft.inspect": FileArg,
+  "api.draft.review": FileArg,
+  "api.draft.compare": CompareFileArgs,
+  "api.draft.fixture": FixtureArgs,
+  "campaign.plan": CampaignPlanArgs,
+  "campaign.validate": PlanFileArg,
+  "analytics.trend": SnapshotsDirArg,
+  "campaign.report": RunLogDirArg,
+} as const;
 
-const FixtureArgs = {
-  file: z.string().min(1),
-  out: z.string().min(1),
-};
-
-const CampaignPlanArgs = {
-  file: z.string().min(1),
-  publishAt: z.string().optional(),
-  noteAt: z.array(z.string()).optional(),
-  channels: z.string().optional(),
-  runLogDir: z.string().optional(),
-};
-
-const PlanFileArg = {
-  planFile: z.string().min(1),
-};
-
-const SnapshotsDirArg = {
-  snapshotsDir: z.string().min(1),
-};
-
-const RunLogDirArg = {
-  runLogDir: z.string().min(1),
-};
-
-const OptionalMatrixArg = {
-  matrixFile: z.string().min(1).optional(),
-};
-
-const CoverageGapsArgs = {
-  matrixFile: z.string().min(1).optional(),
-  status: z.string().min(1).optional(),
-  domain: z.string().min(1).optional(),
-};
-
-const CoverageInspectArgs = {
-  capabilityId: z.string().min(1),
-  matrixFile: z.string().min(1).optional(),
-};
-
-const SafeSurfaceInspectArgs = {
-  id: z.string().min(1),
-};
+export function buildMcpToolInputJsonSchemas(): Record<string, Record<string, unknown>> {
+  return Object.fromEntries(
+    Object.entries(MCP_TOOL_INPUT_SCHEMAS).map(([name, schema]) => [
+      name,
+      z.toJSONSchema(schema, { io: "input" }) as Record<string, unknown>,
+    ]),
+  );
+}
 
 function parseCoverageStatus(value: string): CoverageStatus {
   if (COVERAGE_STATUSES.includes(value as CoverageStatus)) return value as CoverageStatus;
@@ -179,6 +225,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         "api.auth.status",
         {
           description: "Summarize the current local auth material without revealing cookie values.",
+          inputSchema: EmptyArgs,
           annotations: {
             title: "API Auth Status",
             readOnlyHint: true,
@@ -242,6 +289,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         "api.recommendations.list",
         {
           description: "Probe recommended and recommending publications.",
+          inputSchema: EmptyArgs,
           annotations: {
             title: "Recommendations List",
             readOnlyHint: true,
@@ -385,6 +433,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         "policy",
         {
           description: "Review distribution and dependency hygiene for the repository.",
+          inputSchema: EmptyArgs,
           annotations: {
             title: "Distribution Policy",
             readOnlyHint: true,
@@ -500,6 +549,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         {
           description:
             "List safe-boundary frontier surfaces and their planning/probe/manual constraints.",
+          inputSchema: EmptyArgs,
           annotations: {
             title: "Coverage Safe Surfaces",
             readOnlyHint: true,
@@ -552,6 +602,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         {
           description:
             "Review launch/admin checklist readiness without performing external actions.",
+          inputSchema: EmptyArgs,
           annotations: {
             title: "Launch Check",
             readOnlyHint: true,
@@ -582,6 +633,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         "doctor",
         {
           description: "Check local configuration, transport readiness, and ignored runtime files.",
+          inputSchema: EmptyArgs,
           annotations: {
             title: "Doctor Diagnostics",
             readOnlyHint: true,
@@ -634,9 +686,7 @@ const MCP_TOOL_DESCRIPTORS: McpToolDescriptor[] = [
         "api.draft.contract.matrix",
         {
           description: "Merge multiple draft capture artifacts into one inferred contract matrix.",
-          inputSchema: {
-            files: z.array(z.string().min(1)).min(1),
-          },
+          inputSchema: DraftMatrixArgs,
           annotations: {
             title: "Draft Contract Matrix",
             readOnlyHint: true,
