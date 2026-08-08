@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
-import { isAuthenticationFailureUrl } from "./local-login.js";
+import { isAuthenticationFailureUrl, isPasswordLoginLabel } from "./local-login.js";
 
 describe("isAuthenticationFailureUrl", () => {
   it("detects sign-in and recovery URLs after auto-login submission", () => {
@@ -14,5 +14,19 @@ describe("isAuthenticationFailureUrl", () => {
 
   it("treats malformed URLs as not conclusive", () => {
     assert.equal(isAuthenticationFailureUrl("not a url"), false);
+  });
+});
+
+describe("isPasswordLoginLabel", () => {
+  it("accepts explicit password-login actions", () => {
+    assert.equal(isPasswordLoginLabel("Sign in with password"), true);
+    assert.equal(isPasswordLoginLabel("Use your password instead"), true);
+    assert.equal(isPasswordLoginLabel("  Continue   with   password"), true);
+  });
+
+  it("rejects recovery and reset actions", () => {
+    assert.equal(isPasswordLoginLabel("Forgot password?"), false);
+    assert.equal(isPasswordLoginLabel("Reset password"), false);
+    assert.equal(isPasswordLoginLabel("Recover account using password"), false);
   });
 });
