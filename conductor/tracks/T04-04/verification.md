@@ -1,5 +1,5 @@
 # Verification
 
-- [ ] Contract generated and validated
-- [ ] Traceability map generated
-- [ ] All phase/track/task artefacts in Conductor
+- [x] Contract generated and validated
+- [x] Traceability map generated
+- [x] All phase/track/task artefacts in Conductor
