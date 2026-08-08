@@ -1,0 +1,1 @@
+T15-01 blocker note: Addressed Codecov patch failure with dependency-injected browser refresh tests covering success, challenge modes, cleanup, invalid bounds, secure readback, and default state path. Full local coverage passed at 98.24% lines and 94.91% branches across 905 tests; typecheck and Biome CI passed.
