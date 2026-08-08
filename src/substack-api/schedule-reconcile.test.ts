@@ -52,7 +52,9 @@ describe("schedule reconciliation", () => {
     assert.throws(
       () =>
         parseScheduleFileContent(
-          JSON.stringify([{ title: "Post", scheduledAt: "2026-07-01T09:00:00Z", status: "unknown" }]),
+          JSON.stringify([
+            { title: "Post", scheduledAt: "2026-07-01T09:00:00Z", status: "unknown" },
+          ]),
         ),
       /unsupported status/,
     );
@@ -255,7 +257,12 @@ describe("schedule reconciliation", () => {
         scheduledAt: "2026-07-01T09:00:00Z",
       },
       { title: "Draft", status: "draft", source: "draft", scheduledAt: "2026-07-02T09:00:00Z" },
-      { title: "Broadcast", status: "sent", source: "broadcast", scheduledAt: "2026-07-03T09:00:00Z" },
+      {
+        title: "Broadcast",
+        status: "sent",
+        source: "broadcast",
+        scheduledAt: "2026-07-03T09:00:00Z",
+      },
     ];
     const report = reconcileSchedule(
       [{ title: "Scheduled", scheduledAt: "2026-07-01T09:00:00Z" }],

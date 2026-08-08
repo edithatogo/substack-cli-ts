@@ -204,10 +204,10 @@ export function reconcileSchedule(
 
   const status =
     missing.length === 0 &&
-      timestampMismatches.length === 0 &&
-      duplicateCollisions.length === 0 &&
-      statusMismatches.length === 0 &&
-      unexpected.length === 0
+    timestampMismatches.length === 0 &&
+    duplicateCollisions.length === 0 &&
+    statusMismatches.length === 0 &&
+    unexpected.length === 0
       ? "ok"
       : "mismatch";
 
@@ -260,7 +260,9 @@ function parseExpectedScheduleItem(
   const status = parseExpectedStatus(item, index, sourceName);
 
   if (!title && !draftId && !postId) {
-    throw new Error(`${sourceName} item ${index + 1} needs title, draftId, or postId for reconciliation.`);
+    throw new Error(
+      `${sourceName} item ${index + 1} needs title, draftId, or postId for reconciliation.`,
+    );
   }
 
   return { title, draftId, postId, sourceFile, scheduledAt, status };
@@ -281,8 +283,12 @@ function identityMatches(
   }
 
   if (by.includes("draft-id")) {
-    const expectedIds = [expected.draftId, expected.postId].filter((value): value is string => typeof value === "string");
-    const actualIds = [actual.draftId, actual.postId].filter((value): value is string => typeof value === "string");
+    const expectedIds = [expected.draftId, expected.postId].filter(
+      (value): value is string => typeof value === "string",
+    );
+    const actualIds = [actual.draftId, actual.postId].filter(
+      (value): value is string => typeof value === "string",
+    );
 
     if (expectedIds.length === 0 || actualIds.length === 0) {
       return false;

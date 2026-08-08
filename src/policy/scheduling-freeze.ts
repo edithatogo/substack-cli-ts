@@ -5,7 +5,7 @@ const PolicyEnvelopeSchema = z
   .object({
     schemaVersion: z.number().int().positive().default(1).optional(),
     status: z
-      .enum(["active", "inactive", "blocked", "lifted", "open", "frozen", "fail-closed"]) 
+      .enum(["active", "inactive", "blocked", "lifted", "open", "frozen", "fail-closed"])
       .optional(),
     active: z.boolean().optional(),
     reason: z.string().optional(),
@@ -51,13 +51,15 @@ export interface SchedulingFreezeDecision {
   policy?: SchedulingFreezePolicy;
   reason: string;
   status: "active" | "inactive" | "invalid";
-  catalogueSummary?: {
-    loaded: boolean;
-    reason: string;
-    draftCount?: number | undefined;
-    postCount?: number | undefined;
-    totalItems?: number | undefined;
-  } | undefined;
+  catalogueSummary?:
+    | {
+        loaded: boolean;
+        reason: string;
+        draftCount?: number | undefined;
+        postCount?: number | undefined;
+        totalItems?: number | undefined;
+      }
+    | undefined;
 }
 
 export async function evaluateSchedulingFreezePolicy(params: {
@@ -215,7 +217,9 @@ function isPolicyActive(policy: SchedulingFreezePolicy, now: Date): boolean {
   return active;
 }
 
-function normalizeStatusActive(status: FreezePolicyStatus | undefined): "active" | "inactive" | "unspecified" {
+function normalizeStatusActive(
+  status: FreezePolicyStatus | undefined,
+): "active" | "inactive" | "unspecified" {
   if (status === undefined) return "unspecified";
   switch (status) {
     case "active":
@@ -245,13 +249,16 @@ async function readTextFile(path: string): Promise<string | undefined> {
   }
 }
 
-function validateExternalCatalogue(cataloguePath: string | undefined): Promise<{
-  loaded: boolean;
-  reason: string;
-  draftCount?: number | undefined;
-  postCount?: number | undefined;
-  totalItems?: number | undefined;
-} | undefined> {
+function validateExternalCatalogue(cataloguePath: string | undefined): Promise<
+  | {
+      loaded: boolean;
+      reason: string;
+      draftCount?: number | undefined;
+      postCount?: number | undefined;
+      totalItems?: number | undefined;
+    }
+  | undefined
+> {
   if (!cataloguePath) return Promise.resolve(undefined);
 
   return readTextFile(cataloguePath).then((content) => {
