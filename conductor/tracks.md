@@ -4,8 +4,6 @@
 ## P01 Emergency correctness, authority and mutation safety
 ## P02 Bleeding-edge mainline runtime and dependency migration
 ## P03 Contract-first architecture and generated surfaces
-- [x] T03-04
-
 ## P04 Common policy, planning, approval and reconciliation kernel
 - T04-01
 - T04-02
