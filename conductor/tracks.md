@@ -4,7 +4,6 @@
 ## P01 Emergency correctness, authority and mutation safety
 ## P02 Bleeding-edge mainline runtime and dependency migration
 ## P03 Contract-first architecture and generated surfaces
-- [x] T03-02
 - T03-03
 - T03-04
 
