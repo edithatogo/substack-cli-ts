@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "requiredCiCommand": "npm run test:assurance",
+  "modalities": [
+    { "id": "unit", "name": "Unit testing", "script": "test:unit", "tier": "fast", "deterministic": true, "applicability": "required", "evidence": ["vitest.unit.config.ts", "src/parser/frontmatter.test.ts"] },
+    { "id": "regression", "name": "Regression testing", "script": "test:regression", "tier": "fast", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/regression.test.ts"] },
+    { "id": "integration", "name": "Integration testing", "script": "test:integration", "tier": "fast", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/integration.test.ts"] },
+    { "id": "end-to-end", "name": "End-to-end testing", "script": "test:e2e", "tier": "deep", "deterministic": true, "applicability": "required-built-cli; live-browser-canary", "evidence": ["vitest.e2e.config.ts", "src/test/e2e/cli.e2e.ts", "src/test/e2e/substack-publish.e2e.ts"] },
+    { "id": "smoke", "name": "Smoke testing", "script": "test:smoke", "tier": "fast", "deterministic": true, "applicability": "required", "evidence": ["src/test/smoke.test.ts"] },
+    { "id": "edge", "name": "Edge testing", "script": "test:edge", "tier": "fast", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/edge.test.ts"] },
+    { "id": "mutation", "name": "Mutation testing", "script": "test:mutation", "tier": "deep", "deterministic": true, "applicability": "required", "evidence": ["stryker.config.json"] },
+    { "id": "property-based", "name": "Property-based testing", "script": "test:property", "tier": "fast", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/property.test.ts"] },
+    { "id": "deterministic-simulation", "name": "Deterministic Simulation (DST) testing", "script": "test:dst", "tier": "deep", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/simulation.dst.test.ts", "src/test/harness/deterministic-simulator.ts"] },
+    { "id": "consumer-driven-contract", "name": "Contract Testing (CDC)", "script": "test:cdc", "tier": "deep", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/contract.cdc.test.ts"] },
+    { "id": "metamorphic", "name": "Metamorphic testing", "script": "test:metamorphic", "tier": "deep", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/metamorphic.test.ts"] },
+    { "id": "autonomous-agentic", "name": "Autonomous Agentic testing", "script": "test:agentic", "tier": "deep", "deterministic": true, "applicability": "required-synthetic", "evidence": ["src/test/assurance/agentic.test.ts", "src/test/harness/agent-runner.ts"] },
+    { "id": "semantic-llm-judge", "name": "Semantic LLM-as-a-Judge testing", "script": "test:semantic-judge", "tier": "deep", "deterministic": true, "applicability": "required-recorded-adapter; live-model-canary", "evidence": ["src/test/assurance/semantic-judge.test.ts", "src/test/harness/semantic-judge.ts"] },
+    { "id": "network-replay-vcr", "name": "Network Interaction Replay (VCR) testing", "script": "test:vcr", "tier": "deep", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/network.vcr.test.ts", "src/substack-api/fixture-transport.ts"] },
+    { "id": "tui-cli-integration", "name": "TUI / CLI Integration testing", "script": "test:cli-integration", "tier": "fast", "deterministic": true, "applicability": "CLI-required; TUI-not-applicable-no-TUI", "evidence": ["src/test/assurance/cli.integration.test.ts"] },
+    { "id": "zod-schema-fuzz", "name": "Schema Fuzzing (Zod-based)", "script": "test:schema-fuzz", "tier": "deep", "deterministic": true, "applicability": "required", "evidence": ["src/test/assurance/schema-zod.fuzz.test.ts", "src/contracts/schemas.ts"] }
+  ]
+}

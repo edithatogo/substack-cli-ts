@@ -29,3 +29,5 @@
 - T11-02
 - T11-03
 
+## P13 Comprehensive deterministic assurance
+- [ ] **Track: Comprehensive deterministic test taxonomy and assurance harness** *Link: [T13-01](./tracks/T13-01/index.md)*
