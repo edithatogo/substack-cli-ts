@@ -1,10 +1,10 @@
 # Plan T04-03
 
 ## Tasks
-- [ ] T04-03-TASK-01 Implement calendar, queue, horizon, spacing and collision policy.
-- [ ] T04-03-TASK-02 Use strict IANA timezones and DST semantics.
-- [ ] T04-03-TASK-03 Unify post and note scheduling.
-- [ ] T04-03-TASK-04 Add property/model tests and remote-precision reconciliation.
+- [x] T04-03-TASK-01 Implement calendar, queue, horizon, spacing and collision policy.
+- [x] T04-03-TASK-02 Use strict IANA timezones and DST semantics.
+- [x] T04-03-TASK-03 Unify post and note scheduling.
+- [x] T04-03-TASK-04 Add property/model tests and remote-precision reconciliation.
 
 ## Contract IDs
 - SCHEDULE-POLICY-007
