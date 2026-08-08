@@ -238,20 +238,15 @@ async function attemptPasswordLogin(
 }
 
 async function choosePasswordLogin(page: Page): Promise<boolean> {
+  const passwordLoginLabel =
+    /^(?:sign in|log in|continue) with password$|^use (?:a |your )?password(?: instead)?$|^enter (?:a |your )?password$/i;
   const clicked = await clickFirst(
     page,
     [
-      page.locator("[role='button']").filter({ hasText: /password/i }),
-      page.locator("[role='link']").filter({ hasText: /password/i }),
-      page.locator("button").filter({ hasText: /password/i }),
-      page.locator("a").filter({ hasText: /password/i }),
-      page.getByRole("button", { name: /password/i }),
-      page.getByRole("link", { name: /password/i }),
-      page.getByText(/use .*password/i),
-      page.getByText(/sign in .*password/i),
-      page.getByText(/log in .*password/i),
-      page.getByText(/enter .*password/i),
-      page.locator("text=/password/i"),
+      page.getByRole("button", { name: passwordLoginLabel }),
+      page.getByRole("link", { name: passwordLoginLabel }),
+      page.locator("button").filter({ hasText: passwordLoginLabel }),
+      page.locator("a").filter({ hasText: passwordLoginLabel }),
     ],
     15000,
   );
@@ -261,28 +256,28 @@ async function choosePasswordLogin(page: Page): Promise<boolean> {
     return true;
   }
 
-  return page.evaluate(() => {
-    const candidates = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        "button, a, [role='button'], [role='link'], div, span",
-      ),
-    );
-    const target = candidates.find((node) => {
-      const text = (node.innerText || node.textContent || "").trim();
-      if (!/password/i.test(text)) return false;
-      const style = window.getComputedStyle(node);
-      const rect = node.getBoundingClientRect();
-      return (
-        style.visibility !== "hidden" &&
-        style.display !== "none" &&
-        rect.width > 0 &&
-        rect.height > 0
-      );
-    });
-    if (!target) return false;
-    target.click();
+  const candidates = page.locator("button, a, [role='button'], [role='link']");
+  const count = await candidates.count();
+
+  for (let index = 0; index < count; index += 1) {
+    const candidate = candidates.nth(index);
+    const text = (await candidate.textContent().catch(() => null)) ?? "";
+    if (!isPasswordLoginLabel(text)) continue;
+    if (!(await candidate.isVisible().catch(() => false))) continue;
+    await candidate.click();
     return true;
-  });
+  }
+
+  return false;
+}
+
+export function isPasswordLoginLabel(text: string): boolean {
+  const normalized = text.replace(/\s+/g, " ").trim().toLowerCase();
+  if (!normalized.includes("password")) return false;
+  if (/\b(?:forgot|reset|recover|change|new)\b/.test(normalized)) return false;
+  return /^(?:sign in|log in|continue) with password$|^use (?:a |your )?password(?: instead)?$|^enter (?:a |your )?password$/.test(
+    normalized,
+  );
 }
 
 async function firstVisible(
