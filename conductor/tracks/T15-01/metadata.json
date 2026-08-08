@@ -1,0 +1,11 @@
+{
+  "trackId": "T15-01",
+  "title": "Playwright authentication fallback and storage-state refresh",
+  "type": "feature",
+  "status": "in_progress",
+  "parentIssue": 468,
+  "issue": 469,
+  "project": 38,
+  "createdAt": "2026-08-09T01:15:00+10:00",
+  "updatedAt": "2026-08-09T01:15:00+10:00"
+}

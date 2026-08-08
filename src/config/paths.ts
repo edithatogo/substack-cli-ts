@@ -35,6 +35,10 @@ export function localBrowserProfileDir(): string {
   return join(stateDir(), "chrome-profile");
 }
 
+export function browserStorageStateFilePath(): string {
+  return join(stateDir(), "auth", "storage-state.json");
+}
+
 export function draftMutationActionsFilePath(): string {
   return join(stateDir(), "draft-mutation-actions.json");
 }

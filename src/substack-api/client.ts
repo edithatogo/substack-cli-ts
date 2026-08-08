@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { detectUpstreamChallenge, type UpstreamChallenge } from "../browser/resilience.js";
 import type { ApiAuthMaterial } from "./auth.js";
 import type { RateLimiter } from "./rate-limit.js";
 import {
@@ -21,6 +22,15 @@ export interface ApiFailure {
   status: Exclude<ApiReadStatus, "ok">;
   endpoint: string;
   message: string;
+}
+
+export type BrowserFallbackState = "not-needed" | "required" | "used";
+
+export interface JsonReadResponse {
+  status: number;
+  body: unknown;
+  challenge?: UpstreamChallenge | undefined;
+  browserFallback?: BrowserFallbackState | undefined;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,7 +126,7 @@ export async function requestJson(
   fetchImpl: FetchLike,
   url: string,
   headers: Record<string, string>,
-): Promise<{ status: number; body: unknown }> {
+): Promise<JsonReadResponse> {
   try {
     const response = await withRateLimit(
       fetchImpl,
@@ -126,6 +136,12 @@ export async function requestJson(
       async (result) => result,
     );
     const text = await response.text();
+    const challenge = detectUpstreamChallenge({
+      status: response.status,
+      bodyText: text,
+      headers: response.headers,
+    });
+    if (challenge) return { status: response.status, body: null, challenge };
 
     try {
       return { status: response.status, body: JSON.parse(text) as unknown };
@@ -135,6 +151,25 @@ export async function requestJson(
   } catch {
     return { status: 0, body: null };
   }
+}
+
+export async function requestJsonWithBrowserFallback(
+  fetchImpl: FetchLike,
+  url: string,
+  headers: Record<string, string>,
+  options: { refreshHeaders?: (() => Promise<Record<string, string>>) | undefined } = {},
+): Promise<JsonReadResponse> {
+  const first = await requestJson(fetchImpl, url, headers);
+  if (first.status !== 403 && !first.challenge) {
+    return { ...first, browserFallback: "not-needed" };
+  }
+  if (!options.refreshHeaders) {
+    return { ...first, browserFallback: "required" };
+  }
+
+  const refreshedHeaders = await options.refreshHeaders();
+  const second = await requestJson(fetchImpl, url, refreshedHeaders);
+  return { ...second, browserFallback: "used" };
 }
 
 export function classifyFailure(status: number, endpoint: string): ApiFailure {

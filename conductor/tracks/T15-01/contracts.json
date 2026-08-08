@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "challengeSignals": ["http-403", "cloudflare-markers", "cloudflare-server-header"],
+  "defaultBrowserAction": "guidance-only",
+  "automaticRetry": {
+    "methods": ["GET"],
+    "maximumAttempts": 1,
+    "requiresExplicitProvider": true
+  },
+  "storageState": ".substack-cli/auth/storage-state.json",
+  "stateContainsSecrets": true,
+  "gitTracked": false,
+  "writeFallback": "forbidden"
+}

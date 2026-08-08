@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import { materialFromCookieHeader } from "./auth.js";
-import { apiHeaders, classifyFailure, requestJson } from "./client.js";
+import {
+  apiHeaders,
+  classifyFailure,
+  requestJson,
+  requestJsonWithBrowserFallback,
+} from "./client.js";
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -85,6 +90,45 @@ describe("substack-api client helpers", () => {
     );
     assert.equal(result.status, 500);
     assert.equal(result.body, null);
+  });
+
+  it("requires browser fallback for challenges and retries a read once when provided", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 403,
+        headers: new Headers({ server: "cloudflare" }),
+        text: async () => "<title>Just a moment...</title>",
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        headers: new Headers({ "content-type": "application/json" }),
+        text: async () => JSON.stringify({ ok: true }),
+      });
+    const refreshHeaders = vi.fn(async () => ({ cookie: "substack.sid=refreshed" }));
+
+    const result = await requestJsonWithBrowserFallback(
+      fetchImpl,
+      "https://substack.com/api/v1/test",
+      { cookie: "substack.sid=stale" },
+      { refreshHeaders },
+    );
+
+    assert.equal(result.status, 200);
+    assert.equal(result.browserFallback, "used");
+    assert.deepEqual(result.body, { ok: true });
+    assert.equal(refreshHeaders.mock.calls.length, 1);
+    assert.equal(fetchImpl.mock.calls.length, 2);
+  });
+
+  it("does not invoke a browser implicitly when no fallback provider is supplied", async () => {
+    const result = await requestJsonWithBrowserFallback(
+      fakeFetch(403, "forbidden"),
+      "https://substack.com/api/v1/test",
+      {},
+    );
+    assert.equal(result.browserFallback, "required");
+    assert.equal(result.status, 403);
   });
 
   it("handles non-JSON parse failure in requestJson gracefully", async () => {

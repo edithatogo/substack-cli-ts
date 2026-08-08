@@ -5,6 +5,7 @@ import { dirname, isAbsolute, join, resolve } from "node:path";
 import { Command } from "commander";
 import { PACKAGE_VERSION } from "./version.js";
 import { runLocalLogin } from "./auth/local-login.js";
+import { refreshLocalStorageState } from "./auth/storage-state.js";
 import {
   clearSession,
   createStoredSession,
@@ -6857,6 +6858,26 @@ auth
       }
     },
   );
+
+auth
+  .command("refresh-state")
+  .description("Refresh ignored Playwright storage state from the authenticated local profile.")
+  .option("--headless", "Use headless mode with an already-authenticated profile", false)
+  .option(
+    "--wait-seconds <seconds>",
+    "Allow time to complete a visible challenge before capturing state",
+    parseInteger,
+    60,
+  )
+  .action(async (options: { headless: boolean; waitSeconds: number }) => {
+    const effective = await loadEffectiveConfig();
+    const result = await refreshLocalStorageState({
+      publicationUrl: requirePublicationUrl(effective),
+      headless: options.headless,
+      waitSeconds: options.waitSeconds,
+    });
+    console.log(JSON.stringify(result, null, 2));
+  });
 
 auth
   .command("logout")
