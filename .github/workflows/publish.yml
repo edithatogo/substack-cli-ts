@@ -5,54 +5,115 @@ on:
     tags:
       - "v*"
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
-  contents: write
-  id-token: write # Required for npm provenance
-  packages: write
+  contents: read
 
 jobs:
-  publish:
-    name: Publish to npm
+  build:
+    name: Build and verify release artifact
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
+    timeout-minutes: 45
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 24
+          package-manager-cache: false
+      - name: Verify trusted-publishing npm support
+        run: |
+          minimum=11.5.1
+          current=$(npm --version)
+          test "$(printf '%s\n' "$minimum" "$current" | sort -V | head -n1)" = "$minimum"
+      - name: Install exact dependency graph
+        run: npm ci --ignore-scripts
+      - name: Validate release version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: npm run version:release -- "$RELEASE_TAG"
+      - name: Run release verification
+        run: npm run quality
+      - name: Generate SBOM evidence
+        run: npm run sbom
+      - name: Build exact release artifact
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: npm run release:prepare
+      - name: Upload exact release evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: release-candidate
+          path: |
+            reports/release/
+            reports/sbom/
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Attest and publish exact artifact
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
-
-      - name: Install
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Test
-        run: npm run test:coverage
-
-      - name: Quality Gate
-        run: npm run quality
-
-      - name: Publish to npm
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Create GitHub Release
+      - name: Verify trusted-publishing npm support
+        run: |
+          minimum=11.5.1
+          current=$(npm --version)
+          test "$(printf '%s\n' "$minimum" "$current" | sort -V | head -n1)" = "$minimum"
+      - name: Download verified release candidate
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-candidate
+          path: reports
+      - name: Verify exact artifact checksum
+        working-directory: reports/release
+        run: sha256sum --check SHA256SUMS
+      - name: Attest build provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: reports/release/*.tgz
+      - name: Attest SPDX SBOM
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: reports/release/*.tgz
+          sbom-path: reports/sbom/package.spdx.json
+      - name: Publish exact tarball with npm trusted publishing
+        run: |
+          mapfile -t tarballs < <(find reports/release -maxdepth 1 -type f -name '*.tgz')
+          test "${#tarballs[@]}" -eq 1
+          npm publish "${tarballs[0]}" --access public
+      - name: Create GitHub release from exact evidence
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REF_NAME: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          VERSION="${GITHUB_REF#refs/tags/v}"
-          gh release create "${REF_NAME}" \
-            --title "v${VERSION}" \
+          gh release create "$RELEASE_TAG" \
+            reports/release/*.tgz \
+            reports/release/SHA256SUMS \
+            reports/release/verification-receipt.json \
+            reports/sbom/package.spdx.json \
+            reports/sbom/package.cdx.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$RELEASE_TAG" \
             --generate-notes \
             --verify-tag
