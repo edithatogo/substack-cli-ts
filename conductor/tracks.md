@@ -9,7 +9,7 @@
 ## P06 Content fidelity, publishing workflows and Creator OS maturity
 ## P07 MCP v2, 2026-07-28, extensions and distributable transports
 ## P08 Assurance harness, context and observability
-- [~] **Track: Performance budgets and privacy-preserving observability** ([#392](https://github.com/edithatogo/substack-cli-ts/issues/392)) ([T08-03](./tracks/T08-03/plan.md))
+- [x] **Track: Performance budgets and privacy-preserving observability** ([#392](https://github.com/edithatogo/substack-cli-ts/issues/392)) ([T08-03](./tracks/T08-03/plan.md))
 - [x] **Track: Disposable-publication canary and compatibility matrix** ([#397](https://github.com/edithatogo/substack-cli-ts/issues/397)) *Archived: [T08-04](./archive/T08-04/index.md)*
 
 ## P09 CI/CD, security, supply chain and repository governance
