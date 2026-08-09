@@ -1,0 +1,292 @@
+{
+  "generated_at": "2026-08-09T09:53:46Z",
+  "repository": {
+    "id": 1227269613,
+    "node_id": "R_kgDOSSal7Q",
+    "name": "substack-cli-ts",
+    "full_name": "edithatogo/substack-cli-ts",
+    "private": false,
+    "owner": {
+      "login": "edithatogo",
+      "id": 15080672,
+      "node_id": "MDQ6VXNlcjE1MDgwNjcy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15080672?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/edithatogo",
+      "html_url": "https://github.com/edithatogo",
+      "followers_url": "https://api.github.com/users/edithatogo/followers",
+      "following_url": "https://api.github.com/users/edithatogo/following{/other_user}",
+      "gists_url": "https://api.github.com/users/edithatogo/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/edithatogo/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/edithatogo/subscriptions",
+      "organizations_url": "https://api.github.com/users/edithatogo/orgs",
+      "repos_url": "https://api.github.com/users/edithatogo/repos",
+      "events_url": "https://api.github.com/users/edithatogo/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/edithatogo/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "html_url": "https://github.com/edithatogo/substack-cli-ts",
+    "description": "TypeScript CLI for publishing local Markdown to Substack via browser automation and internal API",
+    "fork": false,
+    "url": "https://api.github.com/repos/edithatogo/substack-cli-ts",
+    "forks_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/forks",
+    "keys_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/keys{/key_id}",
+    "collaborators_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/collaborators{/collaborator}",
+    "teams_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/teams",
+    "hooks_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/hooks",
+    "issue_events_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/issues/events{/number}",
+    "events_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/events",
+    "assignees_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/assignees{/user}",
+    "branches_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/branches{/branch}",
+    "tags_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/tags",
+    "blobs_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/git/blobs{/sha}",
+    "git_tags_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/git/tags{/sha}",
+    "git_refs_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/git/refs{/sha}",
+    "trees_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/git/trees{/sha}",
+    "statuses_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/statuses/{sha}",
+    "languages_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/languages",
+    "stargazers_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/stargazers",
+    "contributors_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/contributors",
+    "subscribers_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/subscribers",
+    "subscription_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/subscription",
+    "commits_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/commits{/sha}",
+    "git_commits_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/git/commits{/sha}",
+    "comments_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/comments{/number}",
+    "issue_comment_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/issues/comments{/number}",
+    "contents_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/contents/{+path}",
+    "compare_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/compare/{base}...{head}",
+    "merges_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/merges",
+    "archive_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/{archive_format}{/ref}",
+    "downloads_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/downloads",
+    "issues_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/issues{/number}",
+    "pulls_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/pulls{/number}",
+    "milestones_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/milestones{/number}",
+    "notifications_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/notifications{?since,all,participating}",
+    "labels_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/labels{/name}",
+    "releases_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/releases{/id}",
+    "deployments_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/deployments",
+    "created_at": "2026-05-02T12:56:36Z",
+    "updated_at": "2026-08-09T09:23:16Z",
+    "pushed_at": "2026-08-09T09:22:52Z",
+    "git_url": "git://github.com/edithatogo/substack-cli-ts.git",
+    "ssh_url": "git@github.com:edithatogo/substack-cli-ts.git",
+    "clone_url": "https://github.com/edithatogo/substack-cli-ts.git",
+    "svn_url": "https://github.com/edithatogo/substack-cli-ts",
+    "homepage": null,
+    "size": 2798,
+    "stargazers_count": 2,
+    "watchers_count": 2,
+    "language": "TypeScript",
+    "has_issues": true,
+    "has_projects": true,
+    "has_downloads": false,
+    "has_wiki": false,
+    "has_pages": true,
+    "has_discussions": false,
+    "forks_count": 0,
+    "mirror_url": null,
+    "archived": false,
+    "disabled": false,
+    "open_issues_count": 121,
+    "license": {
+      "key": "apache-2.0",
+      "name": "Apache License 2.0",
+      "spdx_id": "Apache-2.0",
+      "url": "https://api.github.com/licenses/apache-2.0",
+      "node_id": "MDc6TGljZW5zZTI="
+    },
+    "allow_forking": true,
+    "is_template": false,
+    "web_commit_signoff_required": true,
+    "has_pull_requests": true,
+    "pull_request_creation_policy": "all",
+    "topics": [
+      "software",
+      "solo-maintainer"
+    ],
+    "visibility": "public",
+    "forks": 0,
+    "open_issues": 121,
+    "watchers": 2,
+    "default_branch": "master",
+    "permissions": {
+      "admin": true,
+      "maintain": true,
+      "push": true,
+      "triage": true,
+      "pull": true
+    },
+    "temp_clone_token": "",
+    "allow_squash_merge": true,
+    "allow_merge_commit": false,
+    "allow_rebase_merge": false,
+    "allow_auto_merge": true,
+    "delete_branch_on_merge": true,
+    "allow_update_branch": true,
+    "use_squash_pr_title_as_default": true,
+    "squash_merge_commit_message": "PR_BODY",
+    "squash_merge_commit_title": "PR_TITLE",
+    "merge_commit_message": "PR_TITLE",
+    "merge_commit_title": "MERGE_MESSAGE",
+    "security_and_analysis": {
+      "secret_scanning": {
+        "status": "enabled"
+      },
+      "secret_scanning_push_protection": {
+        "status": "enabled"
+      },
+      "dependabot_security_updates": {
+        "status": "enabled"
+      },
+      "secret_scanning_non_provider_patterns": {
+        "status": "disabled"
+      },
+      "secret_scanning_validity_checks": {
+        "status": "disabled"
+      }
+    },
+    "network_count": 0,
+    "subscribers_count": 0
+  },
+  "branch_protection": {
+    "url": "https://api.github.com/repos/edithatogo/substack-cli-ts/branches/master/protection",
+    "required_status_checks": {
+      "url": "https://api.github.com/repos/edithatogo/substack-cli-ts/branches/master/protection/required_status_checks",
+      "strict": true,
+      "contexts": [
+        "Analyze (actions)",
+        "Analyze (javascript-typescript)",
+        "Dependency Declaration Strictness",
+        "Index Signature Strictness",
+        "Node Compatibility (20)",
+        "Node Compatibility (22)",
+        "Node Compatibility (24)",
+        "Quality",
+        "Required Audit And Secret Scan",
+        "SBOM Evidence",
+        "Strictest TypeScript",
+        "Smoke",
+        "Deterministic Assurance Taxonomy",
+        "Mutation"
+      ],
+      "contexts_url": "https://api.github.com/repos/edithatogo/substack-cli-ts/branches/master/protection/required_status_checks/contexts",
+      "checks": [
+        {
+          "context": "Analyze (actions)",
+          "app_id": 15368
+        },
+        {
+          "context": "Analyze (javascript-typescript)",
+          "app_id": 15368
+        },
+        {
+          "context": "Dependency Declaration Strictness",
+          "app_id": 15368
+        },
+        {
+          "context": "Index Signature Strictness",
+          "app_id": 15368
+        },
+        {
+          "context": "Node Compatibility (20)",
+          "app_id": 15368
+        },
+        {
+          "context": "Node Compatibility (22)",
+          "app_id": 15368
+        },
+        {
+          "context": "Node Compatibility (24)",
+          "app_id": 15368
+        },
+        {
+          "context": "Quality",
+          "app_id": 15368
+        },
+        {
+          "context": "Required Audit And Secret Scan",
+          "app_id": 15368
+        },
+        {
+          "context": "SBOM Evidence",
+          "app_id": 15368
+        },
+        {
+          "context": "Strictest TypeScript",
+          "app_id": 15368
+        },
+        {
+          "context": "Smoke",
+          "app_id": 15368
+        },
+        {
+          "context": "Deterministic Assurance Taxonomy",
+          "app_id": 15368
+        },
+        {
+          "context": "Mutation",
+          "app_id": 15368
+        }
+      ]
+    },
+    "required_pull_request_reviews": {
+      "url": "https://api.github.com/repos/edithatogo/substack-cli-ts/branches/master/protection/required_pull_request_reviews",
+      "dismiss_stale_reviews": false,
+      "require_code_owner_reviews": false,
+      "require_last_push_approval": false,
+      "required_approving_review_count": 0
+    },
+    "required_signatures": {
+      "url": "https://api.github.com/repos/edithatogo/substack-cli-ts/branches/master/protection/required_signatures",
+      "enabled": false
+    },
+    "enforce_admins": {
+      "url": "https://api.github.com/repos/edithatogo/substack-cli-ts/branches/master/protection/enforce_admins",
+      "enabled": true
+    },
+    "required_linear_history": {
+      "enabled": true
+    },
+    "allow_force_pushes": {
+      "enabled": false
+    },
+    "allow_deletions": {
+      "enabled": false
+    },
+    "block_creations": {
+      "enabled": false
+    },
+    "required_conversation_resolution": {
+      "enabled": true
+    },
+    "lock_branch": {
+      "enabled": false
+    },
+    "allow_fork_syncing": {
+      "enabled": false
+    }
+  },
+  "rulesets": [
+    {
+      "id": 20603600,
+      "name": "Solo maintainer default branch",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "edithatogo/substack-cli-ts",
+      "enforcement": "active",
+      "node_id": "RRS_lACqUmVwb3NpdG9yec5JJqXtzgE6YtA",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/edithatogo/substack-cli-ts/rulesets/20603600"
+        },
+        "html": {
+          "href": "https://github.com/edithatogo/substack-cli-ts/rules/20603600"
+        }
+      },
+      "created_at": "2026-08-09T19:53:48.958+10:00",
+      "updated_at": "2026-08-09T19:53:49.001+10:00"
+    }
+  ]
+}
