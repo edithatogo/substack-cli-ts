@@ -1,0 +1,1 @@
+Task: T09-03-TASK-02 (#415)`nValidation: clean-room tarball install; executable --version smoke; checksum; SPDX/CycloneDX validation; strict zizmor`nRationale: Build once, consume the same tarball in the privileged job, attest provenance/SBOM, and remove repository-relative runtime dependencies.
