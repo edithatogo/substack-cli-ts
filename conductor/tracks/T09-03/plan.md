@@ -17,5 +17,10 @@
 
 ## Existing issues
 
+## Review fixes
+
+- [x] Require the release tag SHA to be contained in remote `master` and fail closed unless npm returns E404 for the candidate version.
+- [x] Record the unpublished-package bootstrap as an owner-gated external verification dependency.
+
 ## Risk controls
 - Preserve native hierarchy and evidence-first progress.

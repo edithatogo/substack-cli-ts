@@ -23,6 +23,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -40,6 +41,19 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: npm run version:release -- "$RELEASE_TAG"
+      - name: Require merged release commit and unused npm version
+        run: |
+          git fetch --no-tags origin master
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/master
+          package_spec=$(node -p 'const p=require("./package.json"); `${p.name}@${p.version}`')
+          if output=$(npm view "$package_spec" version 2>&1); then
+            echo "Release version already exists: $output" >&2
+            exit 1
+          fi
+          if ! grep -q 'E404' <<< "$output"; then
+            echo "$output" >&2
+            exit 1
+          fi
       - name: Run release verification
         run: npm run quality
       - name: Generate SBOM evidence

@@ -15,6 +15,8 @@ test("publish workflow builds once and attests the downloaded tarball", async ()
   assert.match(workflow, /actions\/attest@[0-9a-f]{40}/);
   assert.match(workflow, /subject-path: reports\/release\/\*\.tgz/);
   assert.equal((workflow.match(/npm run release:prepare/g) ?? []).length, 1);
+  assert.match(workflow, /git merge-base --is-ancestor "\$GITHUB_SHA" origin\/master/);
+  assert.match(workflow, /grep -q 'E404'/);
 });
 
 test("public package has no repository-relative dependency", async () => {
