@@ -1,0 +1,1 @@
+T17-01 task receipt: added read-only GraphQL hierarchy validation, PR/master/daily/manual workflow coverage, native Project automation policy, and regeneration-safe issue relation preservation. Local contract, hierarchy, JSON, YAML, and diff checks passed.
