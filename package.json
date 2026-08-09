@@ -138,6 +138,8 @@
     "zod": "^4.4.3"
   },
   "overrides": {
+    "@babel/core": "7.29.6",
+    "js-yaml@<5": "3.15.1",
     "@tiptap/core": "3.27.1",
     "@tiptap/extension-blockquote": "3.24.0",
     "@tiptap/extension-bold": "3.24.0",
