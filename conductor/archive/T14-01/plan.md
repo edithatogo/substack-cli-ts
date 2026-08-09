@@ -17,6 +17,6 @@
 
 - [x] Task: Add the pinned six-hour GitHub Actions workflow with manual dispatch, concurrency, timeout, evidence, and failure alerting.
 - [x] Task: Register P14/T14-01 in Conductor, GitHub issues, and Project #38.
-- [ ] Task: Push a small PR, watch every Action, inspect all comments, fix actionable blockers, and merge only when green.
-- [ ] Task: Confirm remote `master`, close issues, archive the completed track, and remove the disposable worktree and branches.
-- [ ] Task: Phase verification and checkpoint per `conductor/workflow.md`.
+- [x] Task: Push a small PR, watch every Action, inspect all comments, fix actionable blockers, and merge only when green.
+- [x] Task: Confirm remote `master`, close issues, archive the completed track, and remove the disposable worktree and branches.
+- [x] Task: Phase verification and checkpoint per `conductor/workflow.md`.

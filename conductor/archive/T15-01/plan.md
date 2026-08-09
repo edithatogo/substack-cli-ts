@@ -16,7 +16,7 @@
 ## Phase 3: Hosted closeout
 
 - [x] Task: Register P15/T15-01 in Conductor, nested GitHub issues, and Project #38.
-- [ ] Task: Validate, commit with task note, push the small PR, and inspect every Action/comment.
-- [ ] Task: Fix actionable blockers and merge only when required checks are green.
-- [ ] Task: Confirm remote master, close/archive receipts, and remove disposable branches/worktrees.
-- [ ] Task: Phase verification and checkpoint per `conductor/workflow.md`.
+- [x] Task: Validate, commit with task note, push the small PR, and inspect every Action/comment.
+- [x] Task: Fix actionable blockers and merge only when required checks are green.
+- [x] Task: Confirm remote master, close/archive receipts, and remove disposable branches/worktrees.
+- [x] Task: Phase verification and checkpoint per `conductor/workflow.md`.

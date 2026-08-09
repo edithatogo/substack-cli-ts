@@ -10,3 +10,4 @@
 - Final Codecov closure: covered the default production factory, expiry sorting, and session-only expiry branch; V8 reports no gaps in `storage-state.ts`.
 - External runtime evidence remains credential-gated: a real tester profile and any manual challenge completion are not fabricated or committed.
 - Validation, PR, hosted checks/comments, merge, archive, and cleanup receipts remain pending.
+- Closeout verified on 2026-08-09: PR #470 merged as `d51a86098ead7558eb2c647d2b06e76c67207775` with all available non-conditional checks green and no actionable feedback. Issue #469 is closed and the implementation track is archived. Parent #468 remains open only for real-profile authentication evidence.
