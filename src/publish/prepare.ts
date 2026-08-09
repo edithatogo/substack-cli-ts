@@ -11,9 +11,7 @@ export async function preparePost(
   filePath: string,
   options: PreparePostOptions = {},
 ): Promise<PreparedPost> {
-  const post = normalizeLeadingMetadata(
-    promoteLeadingTitle(await parseMarkdownFile(filePath)),
-  );
+  const post = normalizeLeadingMetadata(promoteLeadingTitle(await parseMarkdownFile(filePath)));
   const mode = options.mode ?? "draft";
   const scheduleAt = options.scheduleAt ?? post.metadata.scheduleAt;
 
@@ -35,11 +33,7 @@ export async function preparePost(
 function normalizeLeadingMetadata(post: ParsedPost): ParsedPost {
   const [episodeBlock, subtitleBlock] = post.document.content ?? [];
   const subtitle = post.metadata.subtitle?.trim();
-  if (
-    episodeBlock?.type !== "paragraph" ||
-    subtitleBlock?.type !== "paragraph" ||
-    !subtitle
-  ) {
+  if (episodeBlock?.type !== "paragraph" || subtitleBlock?.type !== "paragraph" || !subtitle) {
     return post;
   }
 

@@ -125,10 +125,7 @@ Story prose.
       assert.equal(prepared.post.markdown, "Story prose.\n");
       assert.doesNotMatch(prepared.post.html, /Season 1|Subtitle:/);
       assert.equal(prepared.post.document.content?.length, 1);
-      assert.equal(
-        prepared.post.document.content?.[0]?.content?.[0]?.text,
-        "Story prose.",
-      );
+      assert.equal(prepared.post.document.content?.[0]?.content?.[0]?.text, "Story prose.");
     } finally {
       await cleanup(file);
     }
