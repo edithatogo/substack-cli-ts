@@ -18,29 +18,9 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Approve and Enable Auto-Merge
+      - name: Enable Auto-Merge After Required Checks
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          # Approve the PR
-          gh pr review "$PR_URL" --approve
-
-          # Wait for required CI checks (ignore SKIPPED/NEUTRAL; fail only on hard failures)
-          for i in $(seq 1 60); do
-            CI_STATE=$(gh pr view "$PR_URL" --json statusCheckRollup --jq '.statusCheckRollup | map(.conclusion // .status // "UNKNOWN") | join(",")')
-            if echo "$CI_STATE" | grep -Eq "FAILURE|CANCELLED|TIMED_OUT|ACTION_REQUIRED|STALE"; then
-              echo "CI checks did not succeed; not enabling auto-merge"
-              echo "CI_STATE=$CI_STATE"
-              exit 1
-            fi
-            if [ -n "$CI_STATE" ] && ! echo "$CI_STATE" | grep -Eq "PENDING|QUEUED|IN_PROGRESS|REQUESTED|WAITING|UNKNOWN"; then
-              echo "All CI checks completed"
-              break
-            fi
-            echo "Waiting for CI checks... ($i/60)"
-            sleep 10
-          done
-
-          # Enable auto-merge for Renovate dependency PRs
           gh pr merge "$PR_URL" --auto --squash
