@@ -1,0 +1,1 @@
+Task: T09-03-TASK-03 (#416)`nValidation: npm run version:release -- v0.2.0; contracts check; maturity contract validation`nRationale: Fail release preparation unless tag, package, registry metadata, and generated contract versions agree.
