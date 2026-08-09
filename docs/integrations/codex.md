@@ -2,12 +2,12 @@
 
 Codex can connect to MCP servers from CLI or IDE configuration. Use the same published-package launch command used by the other local stdio clients.
 
-Canonical launch command: `npx -y @edithatogo/substack-cli mcp serve`
+Canonical launch command: `npx -y @edithatogo/substack-publisher mcp serve`
 
 ## CLI setup
 
 ```bash
-codex mcp add substack-cli -- npx -y @edithatogo/substack-cli mcp serve
+codex mcp add substack-cli -- npx -y @edithatogo/substack-publisher mcp serve
 codex mcp list
 ```
 
@@ -16,7 +16,7 @@ codex mcp list
 ```toml
 [mcp_servers.substack-cli]
 command = "npx"
-args = ["-y", "@edithatogo/substack-cli", "mcp", "serve"]
+args = ["-y", "@edithatogo/substack-publisher", "mcp", "serve"]
 
 [mcp_servers.substack-cli.env]
 SUBSTACK_PUBLICATION_URL = "https://your-publication.substack.com"

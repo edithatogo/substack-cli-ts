@@ -2,7 +2,7 @@
 
 VS Code and GitHub Copilot can launch local MCP servers from workspace or user configuration. Use the published package command so the configuration does not depend on a checkout path.
 
-Canonical launch command: `npx -y @edithatogo/substack-cli mcp serve`
+Canonical launch command: `npx -y @edithatogo/substack-publisher mcp serve`
 
 ## Workspace config
 
@@ -14,7 +14,7 @@ This repository includes `.vscode/mcp.json` as a workspace example. Use the same
     "substack-cli": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
       }

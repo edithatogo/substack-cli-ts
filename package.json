@@ -64,6 +64,8 @@
     "test:e2e": "npm run build && vitest run --config vitest.e2e.config.ts",
     "test:live-canary": "node scripts/substack-live-canary.mjs",
     "test:live-canary:unit": "node --test scripts/substack-live-canary.test.mjs scripts/notify-canary-failure.test.mjs",
+    "test:disposable-canary": "node scripts/disposable-publication-canary.mjs",
+    "test:disposable-canary:unit": "node --test scripts/disposable-publication-canary.test.mjs",
     "canary:notify": "node scripts/notify-canary-failure.mjs",
     "auth:refresh-state": "npm run build && node dist/cli.js auth refresh-state",
     "test:smoke": "npm run build && vitest run src/test/smoke.test.ts",

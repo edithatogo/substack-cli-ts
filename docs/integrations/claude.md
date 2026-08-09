@@ -2,7 +2,7 @@
 
 Claude Desktop and Claude Code can launch the Substack CLI MCP server as a local stdio server.
 
-Canonical launch command: `npx -y @edithatogo/substack-cli mcp serve`
+Canonical launch command: `npx -y @edithatogo/substack-publisher mcp serve`
 
 ## Claude Desktop config
 
@@ -13,7 +13,7 @@ Add this server to the Claude Desktop MCP configuration:
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
       }

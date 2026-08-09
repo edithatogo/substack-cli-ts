@@ -3,7 +3,7 @@
     "substack-cli": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
       }

@@ -2,7 +2,7 @@
 
 Gemini CLI supports MCP servers through its settings file. Use the package launch command so the integration works without a local repository checkout.
 
-Canonical launch command: `npx -y @edithatogo/substack-cli mcp serve`
+Canonical launch command: `npx -y @edithatogo/substack-publisher mcp serve`
 
 ## Settings example
 
@@ -13,7 +13,7 @@ This repository includes `.gemini/settings.json` as a project-level example. Add
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
       }

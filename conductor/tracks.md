@@ -10,7 +10,7 @@
 ## P07 MCP v2, 2026-07-28, extensions and distributable transports
 ## P08 Assurance harness, context and observability
 - T08-03
-- T08-04
+- [x] **Track: Disposable-publication canary and compatibility matrix** ([#397](https://github.com/edithatogo/substack-cli-ts/issues/397)) ([T08-04](./tracks/T08-04/plan.md))
 
 ## P09 CI/CD, security, supply chain and repository governance
 - T09-01
