@@ -1,0 +1,45 @@
+name: Bug report
+description: Report reproducible incorrect behavior without including secrets or private content.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include session cookies, credentials, publication drafts, browser state, or private traces.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Package version or commit SHA.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options: [CLI, Library, MCP server, Browser automation, Publishing API, Documentation or packaging]
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide redacted commands, input, expected behavior, and actual behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Node version, installation method, and relevant non-secret configuration.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed credentials, cookies, private content, and identifying traces.
+          required: true
+        - label: This is not a privately reportable security vulnerability.
+          required: true
