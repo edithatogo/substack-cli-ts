@@ -1,0 +1,1 @@
+T09-02 hosted remediation: added the OSV reusable workflows required actions:read caller permission after GitHub startup_failure; YAML and diff validation passed.
