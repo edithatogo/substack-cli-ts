@@ -110,7 +110,7 @@ function packageNameFromLockPath(path) {
 }
 
 function packagePurl(name, version) {
-  return `pkg:npm/${encodeURIComponent(name).replace("%40", "@").replace("%2F", "/")}@${version}`;
+  return `pkg:npm/${encodeURIComponent(name).replaceAll("%40", "@").replaceAll("%2F", "/")}@${version}`;
 }
 
 function deterministicUuid(value) {
