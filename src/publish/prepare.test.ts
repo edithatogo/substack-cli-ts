@@ -157,6 +157,52 @@ Story prose.
     }
   });
 
+  it("preserves an episode label when subtitle metadata is absent", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+---
+# Post Title
+
+*Season 1, Episode 5*
+
+Story prose.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.match(prepared.post.markdown, /Season 1, Episode 5/);
+      assert.equal(prepared.post.document.content?.length, 2);
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("preserves matching subtitle text when the preceding paragraph is not an episode label", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+subtitle: Exact subtitle.
+---
+# Post Title
+
+Introduction.
+
+**Subtitle:** Exact subtitle.
+
+Story prose.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.match(prepared.post.markdown, /Introduction/);
+      assert.match(prepared.post.markdown, /Subtitle:/);
+      assert.equal(prepared.post.document.content?.length, 3);
+    } finally {
+      await cleanup(file);
+    }
+  });
+
   it("accepts an explicit scheduleAt override", async () => {
     const file = await writeTempMarkdown(`---
 title: Scheduled
