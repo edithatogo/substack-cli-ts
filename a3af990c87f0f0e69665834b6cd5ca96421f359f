@@ -1,0 +1,1 @@
+Dependency task: rebase PR #176 onto remote master after T09-04 auto-merge policy correction. Scope remains package-lock.json only; git diff --check passed.
