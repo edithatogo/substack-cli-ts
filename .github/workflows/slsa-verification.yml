@@ -1,0 +1,48 @@
+name: SLSA Verification
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to verify
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify published artifact attestation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Resolve release tag
+        id: release
+        env:
+          DISPATCH_TAG: ${{ inputs.tag }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          tag="${RELEASE_TAG:-$DISPATCH_TAG}"
+          test -n "$tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - name: Download published tarball and checksum
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          mkdir release
+          gh release download "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --dir release \
+            --pattern '*.tgz' \
+            --pattern 'SHA256SUMS'
+      - name: Verify checksum and GitHub attestation
+        run: |
+          cd release
+          sha256sum --check SHA256SUMS
+          mapfile -t tarballs < <(find . -maxdepth 1 -type f -name '*.tgz')
+          test "${#tarballs[@]}" -eq 1
+          gh attestation verify "${tarballs[0]}" --repo "$GITHUB_REPOSITORY"

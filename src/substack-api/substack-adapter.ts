@@ -1,4 +1,4 @@
-import { SubstackClient } from "substack-api";
+import { SubstackClient } from "../../vendor/substack-api/dist/index.js";
 import type { ApiAuthMaterial } from "./auth.js";
 
 export function createSubstackClient(material: ApiAuthMaterial): SubstackClient {
