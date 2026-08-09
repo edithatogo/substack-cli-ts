@@ -1,0 +1,4 @@
+Track: T08-04
+Task: archive
+Receipt: PR #511 merged as baf51a7772eafa9b9fffa642e15df89eb18b8fe7; eight merge-SHA workflows passed; no actionable review comments remain.
+Owner gate: live disposable publication run remains tracked on #397 and is not claimed.
