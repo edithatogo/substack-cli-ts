@@ -1,0 +1,4 @@
+Track: T08-04
+Task: T08-04-TASK-04
+Validation: 4 lifecycle/workflow tests, lint, typecheck, smoke, contracts, GitHub programme, client integrations, npm pack dry run, and Prettier passed.
+Evidence: workflow parser proves workflow_dispatch is the only trigger; preflight failures emit redacted uncertain receipts.
