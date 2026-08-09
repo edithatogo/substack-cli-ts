@@ -1,0 +1,4 @@
+Track: T08-04
+Task: T08-04-TASK-03
+Validation: compatibility maturity evidence parsed as JSON.
+Evidence boundary: repository canary, production-observed, and client-support maturity remain separate; live and production claims are not inferred.
