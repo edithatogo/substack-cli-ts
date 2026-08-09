@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "budgetsMs": {
+    "typescript.checkers": 60000,
+    "typescript.builders": 60000,
+    "typescript.singleThreaded": 60000,
+    "cli.startup": 3000,
+    "parser.inspect": 5000,
+    "state.configShow": 3000,
+    "plan.campaign": 5000,
+    "simulator.retrySchedule": 1000,
+    "mcp.catalogue": 1000
+  },
+  "budgetsBytes": {
+    "package.tarball": 500000,
+    "profile.cpu": 50000000,
+    "profile.heap": 50000000
+  }
+}

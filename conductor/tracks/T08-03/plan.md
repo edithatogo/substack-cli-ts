@@ -3,8 +3,8 @@
 ## Tasks
 - [x] T08-03-TASK-01 Instrument structured logs, metrics and traces with no-export default.
 - [x] T08-03-TASK-02 Benchmark TypeScript parallelism, startup, parser, state, plan, simulator and MCP catalogue.
-- [~] T08-03-TASK-03 Set blocking performance budgets and trend reports.
-- [ ] T08-03-TASK-04 Profile CPU, heap and package size.
+- [x] T08-03-TASK-03 Set blocking performance budgets and trend reports.
+- [~] T08-03-TASK-04 Profile CPU, heap and package size.
 
 ## Contract IDs
 - DEP-TYPESCRIPT-NEXT-005
