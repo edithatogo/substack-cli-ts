@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "categories": {
+    "canary": {
+      "maturity": "repository-verified",
+      "evidence": ["manual-only workflow", "guard tests", "redacted cleanup receipt"],
+      "liveEvidence": "owner-gated"
+    },
+    "productionObserved": {
+      "maturity": "not-claimed",
+      "evidence": [],
+      "reason": "No production publication is used by the disposable canary."
+    },
+    "clientSupport": {
+      "maturity": "ci-verified",
+      "evidence": ["client integration validator", "CLI smoke test", "npm package dry run"]
+    }
+  },
+  "matrix": {
+    "node": [20, 22, 24, 26],
+    "operatingSystems": ["ubuntu-latest", "windows-latest", "macos-latest"],
+    "distributionFormats": ["npm-tarball", "cli", "mcp-configuration"],
+    "notYetEvidenced": ["live registry installation", "production publication writes"]
+  }
+}
