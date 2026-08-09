@@ -1,0 +1,1 @@
+Task T09-04 planning-artifact correction: preserved Markdown line structure in the branch-protection receipt. Validation: at least 30 logical lines and git diff --check.
