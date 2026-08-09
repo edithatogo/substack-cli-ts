@@ -16,6 +16,10 @@ function stable(value) {
 
 const promptPath = path.join(process.cwd(), 'CODEX_SUBSTACK_CLI_MATURITY_PROMPT.json');
 const prompt = JSON.parse(fs.readFileSync(promptPath, 'utf8'));
+const contractPath = path.join(process.cwd(), 'conductor', 'contracts', 'substack-cli-maturity.contract.json');
+const traceabilityPath = path.join(process.cwd(), 'conductor', 'traceability.json');
+const previousContract = fs.existsSync(contractPath) ? JSON.parse(fs.readFileSync(contractPath, 'utf8')) : null;
+const previousTraceability = fs.existsSync(traceabilityPath) ? JSON.parse(fs.readFileSync(traceabilityPath, 'utf8')) : null;
 
 const baseCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
 const generatedOn = new Date().toISOString();
@@ -66,7 +70,7 @@ for (const t of flattenedTracks) {
       phaseId: t.phaseId,
       status: 'planned',
       contractIds,
-      issue: null,
+      issue: previousContract?.issueMap?.taskIssues?.[taskId] ?? null,
       mustContractIds: mustIds,
       release: t.releaseTarget,
     });
@@ -88,7 +92,7 @@ const trackRecords = flattenedTracks.map((t) => ({
   contractIds: contractByTrack.get(t.id) || [],
   requiredTaskCount: t.requiredTasks.length,
   existingIssues: t.existingIssues,
-  issue: null,
+  issue: previousContract?.issueMap?.trackIssues?.[t.id] ?? null,
 }));
 
 const contract = {
@@ -116,13 +120,13 @@ const contract = {
   phases: phaseRecords,
   tracks: trackRecords,
   tasks: taskRecords,
-  issueMap: {
+  issueMap: previousContract?.issueMap ?? {
     planningIssue: null,
     phaseIssues: {},
     trackIssues: {},
     taskIssues: {},
   },
-  evidence: {
+  evidence: previousContract?.evidence ?? {
     generatedOn,
     conductor: {
       refreshed: false,
@@ -222,7 +226,7 @@ for (const t of flattenedTracks) {
     requiredTaskCount: t.requiredTasks.length,
     existingIssues: t.existingIssues,
     riskLevel: mustContracts.length ? 'high' : 'medium',
-    issue: null,
+    issue: previousContract?.issueMap?.trackIssues?.[t.id] ?? null,
   };
 
   const contractsMap = {
@@ -334,11 +338,11 @@ const traceability = {
   tracks: Object.fromEntries(trackRecords.map((t) => [t.id, { ...t }])),
   tasks: Object.fromEntries(taskRecords.map((t) => [t.id, { ...t }])),
   contractMap: Object.fromEntries(contract.records || []),
-  issueRelations: {
-    programme: null,
-    phases: {},
-    tracks: {},
-    tasks: {},
+  issueRelations: previousTraceability?.issueRelations ?? {
+    programme: contract.issueMap.planningIssue?.number ?? null,
+    phases: Object.fromEntries(Object.entries(contract.issueMap.phaseIssues || {}).map(([id, issue]) => [id, issue.number])),
+    tracks: Object.fromEntries(Object.entries(contract.issueMap.trackIssues || {}).map(([id, issue]) => [id, issue.number])),
+    tasks: Object.fromEntries(Object.entries(contract.issueMap.taskIssues || {}).map(([id, issue]) => [id, issue.number])),
   },
 };
 
