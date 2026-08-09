@@ -1,0 +1,38 @@
+{
+  "track": "T08-04",
+  "status": "archived",
+  "implementationPr": 511,
+  "mergeCommit": "baf51a7772eafa9b9fffa642e15df89eb18b8fe7",
+  "mergedTo": "master",
+  "localVerification": {
+    "testsPassed": 917,
+    "productionVulnerabilities": 0,
+    "disposableCanaryTestsPassed": 4,
+    "liveCanaryTestsPassed": 5,
+    "smokeTestsPassed": 6
+  },
+  "hostedVerification": {
+    "result": "passed",
+    "workflows": [
+      "CI",
+      "Compatibility Matrix",
+      "Deploy GitHub Pages",
+      "GitHub Programme Drift",
+      "Hardening",
+      "Push on master",
+      "Release Drafter",
+      "Security"
+    ]
+  },
+  "review": {
+    "inlineComments": 0,
+    "unresolvedThreads": 0,
+    "actionableCommentsRemaining": 0
+  },
+  "ownerGatedEvidence": [
+    "Configure the disposable-substack-canary protected environment.",
+    "Supply a dedicated non-production publication, tester cookie, and reviewed lifecycle contract.",
+    "Run the manual workflow and retain a redacted cleanup receipt."
+  ],
+  "productionWriteCompatibilityClaimed": false
+}

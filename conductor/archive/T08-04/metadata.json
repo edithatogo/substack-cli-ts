@@ -3,7 +3,7 @@
   "phaseId": "P08",
   "phaseTitle": "Assurance harness, context and observability",
   "title": "Disposable-publication canary and compatibility matrix",
-  "status": "completed",
+  "status": "archived",
   "contractIds": [
     "TEST-CANARY-004"
   ],
