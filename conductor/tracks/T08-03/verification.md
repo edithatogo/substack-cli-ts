@@ -9,3 +9,4 @@
 - [x] Hosted npm installation can accept the required TypeScript nightly while strict lint and typecheck remain blocking
 - [x] Tiptap HTML runtime dependency is explicit across the supported Node matrix
 - [x] Telemetry branch and patch coverage is complete
+- [x] Mutation testing uses Stryker's restoring in-place mode without its TypeScript 6-only config preprocessor
