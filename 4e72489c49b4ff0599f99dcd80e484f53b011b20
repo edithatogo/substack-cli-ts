@@ -1,0 +1,1 @@
+T09-04-TASK-02 increment: adopted github>edithatogo/renovate-config, exact-version and action-digest updates, selected prerelease channels, risk-gated majors, OSV and vulnerability inputs. Validation: Renovate 44.16.1 config validator. Dependabot retirement remains gated on post-merge Renovate evidence.
