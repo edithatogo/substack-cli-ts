@@ -30,13 +30,13 @@
 - T11-03
 
 ## P13 Comprehensive deterministic assurance
-- [ ] **Track: Comprehensive deterministic test taxonomy and assurance harness** *Link: [T13-01](./tracks/T13-01/index.md)*
+- [x] **Track: Comprehensive deterministic test taxonomy and assurance harness** *Archived: [T13-01](./archive/T13-01/index.md)*
 
 ## P14 Substack API drift early warning
-- [x] **Track: Scheduled live API drift canary and alerting** ([#466](https://github.com/edithatogo/substack-cli-ts/issues/466)) *Link: [T14-01](./tracks/T14-01/index.md)*
+- [x] **Track: Scheduled live API drift canary and alerting** ([#466](https://github.com/edithatogo/substack-cli-ts/issues/466)) *Archived: [T14-01](./archive/T14-01/index.md)*
 
 ## P15 Upstream browser and authentication resilience
-- [ ] **Track: Playwright authentication fallback and storage-state refresh** ([#469](https://github.com/edithatogo/substack-cli-ts/issues/469)) *Link: [T15-01](./tracks/T15-01/index.md)*
+- [x] **Track: Playwright authentication fallback and storage-state refresh** ([#469](https://github.com/edithatogo/substack-cli-ts/issues/469)) *Archived: [T15-01](./archive/T15-01/index.md)*
 
 ## P16 Comprehensive MCP type safety and validation guardrails
-- [ ] **Track: Canonical Zod MCP inputs and generated schemas** ([#474](https://github.com/edithatogo/substack-cli-ts/issues/474)) *Link: [T16-01](./tracks/T16-01/index.md)*
+- [x] **Track: Canonical Zod MCP inputs and generated schemas** ([#474](https://github.com/edithatogo/substack-cli-ts/issues/474)) *Archived: [T16-01](./archive/T16-01/index.md)*

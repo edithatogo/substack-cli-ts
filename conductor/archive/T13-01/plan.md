@@ -24,8 +24,8 @@
 ## Phase 4: Strict integration and evidence
 
 - [x] Task: Add independent package scripts, one-command assurance coverage, and blocking hosted CI execution for deterministic suites.
-- [ ] Task: Keep each track/phase PR bounded, inspect its complete diff and hosted feedback, and merge it before accumulating unrelated work.
-- [ ] Task: Self-address every repository-owned blocker immediately and record only genuine external gates with owner actions.
-- [ ] Task: Run targeted suites, full verification, mutation, fuzz, and inspect hosted Actions/comments.
-- [ ] Task: Record receipts, review the track, merge only when green, archive, and safely clean merged refs/worktrees.
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md).
+- [x] Task: Keep each track/phase PR bounded, inspect its complete diff and hosted feedback, and merge it before accumulating unrelated work.
+- [x] Task: Self-address every repository-owned blocker immediately and record only genuine external gates with owner actions.
+- [x] Task: Run targeted suites, full verification, mutation, fuzz, and inspect hosted Actions/comments.
+- [x] Task: Record receipts, review the track, merge only when green, archive, and safely clean merged refs/worktrees.
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md).
