@@ -1,0 +1,4 @@
+Track: T08-04
+Task: T08-04-TASK-02 blocker fix
+Validation: client integration validator and Prettier passed.
+Fix: all Claude, Codex, Copilot, Gemini, VS Code, workspace, and documentation launch surfaces now use @edithatogo/substack-publisher.
