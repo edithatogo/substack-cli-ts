@@ -77,7 +77,6 @@ function findNonRegistryDependencies(packageJson: z.infer<typeof PackageJsonSche
     ...Object.entries(packageJson.optionalDependencies),
     ...Object.entries(packageJson.devDependencies),
   ]
-    .filter(([, spec]) => !isBundledVendoredDependency(spec, packageJson.files))
     .filter(
       ([, spec]) =>
         spec.startsWith("file:") ||
@@ -88,26 +87,6 @@ function findNonRegistryDependencies(packageJson: z.infer<typeof PackageJsonSche
         spec.startsWith("https:"),
     )
     .map(([name]) => name);
-}
-
-function isBundledVendoredDependency(spec: string, files: string[]): boolean {
-  if (!spec.startsWith("file:")) {
-    return false;
-  }
-
-  const filePath = spec.slice("file:".length).replaceAll("\\", "/").replace(/^\.\//, "");
-  if (!filePath.startsWith("vendor/")) {
-    return false;
-  }
-
-  return files.some((entry) => {
-    const normalized = entry.replaceAll("\\", "/").replace(/^\.\//, "").replace(/\/$/, "");
-    return (
-      filePath === normalized ||
-      filePath.startsWith(`${normalized}/`) ||
-      normalized === `${filePath}/package.json`
-    );
-  });
 }
 
 async function exists(path: string): Promise<boolean> {

@@ -126,14 +126,15 @@ export async function buildReleaseScorecard(
     await fileItem("strictest-tsconfig", "tsconfig.strictest.json", baseDir),
     await fileItem("hardening-workflow", ".github/workflows/hardening.yml", baseDir),
     await fileItem("publish-workflow", ".github/workflows/publish.yml", baseDir),
-    await fileTextItem(
+    await filePatternItem(
       "publish-provenance",
       ".github/workflows/publish.yml",
-      "npm publish --provenance --access public",
+      /npm publish .+ --access public/,
       baseDir,
       {
-        ready: "Publish workflow uses npm provenance.",
-        blocked: "Publish workflow must run npm publish --provenance --access public.",
+        ready: "Publish workflow publishes an explicit artifact with npm trusted publishing.",
+        blocked:
+          "Publish workflow must publish the verified tarball through npm trusted publishing.",
       },
     ),
     await filePatternItem(
@@ -233,16 +234,6 @@ async function fileItem(id: string, path: string, baseDir: string): Promise<Rele
     evidence: [path],
     nextAction: exists ? undefined : `Generate or document ${path}.`,
   };
-}
-
-async function fileTextItem(
-  id: string,
-  path: string,
-  expectedText: string,
-  baseDir: string,
-  messages: { ready: string; blocked: string },
-): Promise<ReleaseScorecardItem> {
-  return fileContentItem(id, path, baseDir, messages, (content) => content.includes(expectedText));
 }
 
 async function filePatternItem(

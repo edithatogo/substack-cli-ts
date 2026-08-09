@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": ["src/mcp/server.ts", "src/benchmark/**/*.ts"],
   "project": ["src/**/*.ts"],
-  "ignoreDependencies": ["prettier"],
+  "ignoreDependencies": ["prettier", "axios", "axios-rate-limit", "fp-ts", "io-ts"],
   "ignoreIssues": {
     "src/**/*.ts": ["exports", "types"]
   },

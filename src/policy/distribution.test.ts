@@ -96,7 +96,7 @@ describe("evaluateDistributionPolicy", () => {
     }
   });
 
-  it("allows vendored file dependencies that are included in package files", async () => {
+  it("rejects vendored file dependencies even when package files include them", async () => {
     const temp = await mkdtemp(join(tmpdir(), "substack-cli-policy-"));
 
     try {
@@ -127,8 +127,8 @@ describe("evaluateDistributionPolicy", () => {
 
       const report = await evaluateDistributionPolicy(temp);
 
-      assert.equal(report.status, "ok");
-      assert.deepEqual(report.nonRegistryDependencies, []);
+      assert.equal(report.status, "warn");
+      assert.deepEqual(report.nonRegistryDependencies, ["substack-api"]);
     } finally {
       await rm(temp, { recursive: true, force: true });
     }

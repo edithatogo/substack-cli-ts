@@ -42,7 +42,6 @@
     "docs/examples/mcp-integration.md",
     "extensions/",
     "vendor/substack-api/dist/",
-    "vendor/substack-api/src/",
     "vendor/substack-api/package.json",
     "vendor/substack-api/README.md",
     "vendor/substack-api/LICENSE",
@@ -50,7 +49,8 @@
     "scripts/install-completions.ps1"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "build": "tsc -p tsconfig.json --incremental",
@@ -115,7 +115,10 @@
     "frontier:drift": "npm run build && node scripts/frontier-coverage-drift.mjs",
     "experimental:deps": "node scripts/experimental-dependency-lane.mjs",
     "version:check": "node scripts/version-check.mjs check",
-    "version:sync": "node scripts/version-check.mjs sync"
+    "version:sync": "node scripts/version-check.mjs sync",
+    "version:release": "node scripts/version-check.mjs release",
+    "release:prepare": "node scripts/release-artifact.mjs prepare",
+    "release:rollback:dry-run": "node scripts/release-rollback.mjs"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.6.0",
@@ -128,13 +131,16 @@
     "@tiptap/html": "3.27.1",
     "@tiptap/starter-kit": "3.27.1",
     "chrome-launcher": "^1.2.1",
+    "axios": "1.19.0",
+    "axios-rate-limit": "1.9.0",
     "commander": "^15.0.0",
     "dotenv": "^17.0.0",
+    "fp-ts": "2.16.11",
+    "io-ts": "2.2.22",
     "js-yaml": "^5.2.3",
     "marked": "^18.0.5",
     "pino": "^10.0.0",
     "playwright-core": "^1.61.1",
-    "substack-api": "file:vendor/substack-api",
     "zod": "^4.4.3"
   },
   "overrides": {
