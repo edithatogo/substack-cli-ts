@@ -1,0 +1,4 @@
+Track: T09-03
+Task: archive
+Receipt: PR #509 merged as 60abf8a1ccaaaad28d2b2036f24846a8624b4ff5; seven post-merge workflows passed; no actionable review comments remain.
+External gates: npm package bootstrap, trusted-publisher configuration, and first release tag remain owner-controlled.
