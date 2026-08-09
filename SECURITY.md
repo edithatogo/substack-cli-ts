@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in `substack-cli`, please report it privately by emailing edithatogo@users.noreply.github.com.
+Use GitHub's **Report a vulnerability** control on the repository Security tab. Private vulnerability reporting is enabled and is the preferred channel. If GitHub private reporting is unavailable, email edithatogo@users.noreply.github.com.
 
 **Do not open a public GitHub issue for security vulnerabilities.**
 
@@ -31,6 +31,6 @@ The repository includes `scripts/secret-scan.mjs` for automated secret scanning.
 
 ## Disclosure Policy
 
-- Vulnerabilities are fixed in a private fork and released as a patch version.
+- Vulnerabilities are coordinated through a private GitHub security advisory and released as a patch version.
 - After the fix is released, a security advisory may be published describing the issue and the fix.
 - We aim to release fixes within 14 days of confirmation for moderate-severity issues, and sooner for high-severity issues.

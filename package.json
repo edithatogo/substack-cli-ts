@@ -95,7 +95,9 @@
     "contracts:check": "npm run build && node scripts/contracts.mjs check",
     "quality": "npm run test:taxonomy && npm run ci && npm run knip && npm run typecheck && npm run build && npm run test:coverage && npm run test:assurance && npm run test:mutation && npm run scan:secrets && npm run audit:prod",
     "audit:prod": "npm audit --omit=dev",
-    "sbom": "node scripts/package-sbom.mjs",
+    "audit:signatures": "npm audit signatures",
+    "licenses:check": "node scripts/validate-licenses.mjs",
+    "sbom": "node scripts/package-sbom.mjs && node scripts/validate-sbom.mjs",
     "knip": "knip",
     "completions": "node dist/cli.js completion bash > scripts/completions.bash && node dist/cli.js completion zsh > scripts/completions.zsh && node dist/cli.js completion powershell > scripts/completions.ps1",
     "bench": "node --experimental-vm-modules node_modules/.bin/vitest run src/benchmark",
@@ -136,6 +138,8 @@
     "zod": "^4.4.3"
   },
   "overrides": {
+    "@babel/core": "7.29.6",
+    "js-yaml@<5": "3.15.1",
     "@tiptap/core": "3.27.1",
     "@tiptap/extension-blockquote": "3.24.0",
     "@tiptap/extension-bold": "3.24.0",
