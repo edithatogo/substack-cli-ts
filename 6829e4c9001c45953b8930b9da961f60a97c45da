@@ -1,0 +1,1 @@
+T09-04 increment: removes impossible GitHub Actions self-approval while retaining hard-failure polling and CI-gated squash auto-merge; YAML/JSON and policy invariants validated.
