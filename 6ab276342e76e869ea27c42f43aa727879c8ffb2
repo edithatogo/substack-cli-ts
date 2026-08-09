@@ -1,0 +1,3 @@
+Task: T09-02 hosted security remediation
+Validation: Prettier workflow check; zizmor v1.26.1 full workflow audit (no findings); git diff --check
+Rationale: Disable checkout credential persistence, prevent privileged publish cache restoration, scope Pages write permissions to deployment, and move ref context through env.
