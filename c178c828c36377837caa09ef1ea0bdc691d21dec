@@ -1,0 +1,1 @@
+T09-02 hosted remediation: fixed both CodeQL incomplete-encoding findings by replacing all encoded npm scope/path separators; SBOM and Biome validation passed.
