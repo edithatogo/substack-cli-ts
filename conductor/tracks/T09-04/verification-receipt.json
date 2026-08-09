@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "repository": "edithatogo/substack-cli-ts",
+  "revision": "3e3b94f9adde6e584ca3e0903467d7fb25f2a242",
+  "generated_at": "2026-08-09T10:03:32Z",
+  "seed": null,
+  "result": "partial",
+  "checks": [
+    {
+      "name": "governance-json",
+      "result": "pass",
+      "evidence": "Renovate, ruleset, settings, and managed-file JSON parsed successfully."
+    },
+    {
+      "name": "issue-template-yaml",
+      "result": "pass",
+      "evidence": "All issue form and config YAML parsed with Ruby YAML."
+    },
+    {
+      "name": "default-branch-ruleset",
+      "result": "pass",
+      "evidence": "Ruleset 20603600 active with 14 strict checks, zero approvals, squash-only PRs, linear history, conversation resolution, deletion and non-fast-forward protection."
+    },
+    {
+      "name": "renovate-config",
+      "result": "pass",
+      "evidence": "Renovate 44.16.1 config validator passed; optional RE2 unavailable and validator used RegExp fallback."
+    },
+    {
+      "name": "dependabot-transition",
+      "result": "skip",
+      "reason": "Renovate default-branch configuration is not merged and no Dependency Dashboard or Renovate PR exists yet; Dependabot remains enabled until post-merge activation evidence."
+    },
+    {
+      "name": "diff-integrity",
+      "result": "pass",
+      "evidence": "git diff --check passed."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".github/renovate.json",
+      "sha256": "69a4650a888c80c8ef525be636837b09293681b92cadf5fd3b2044478251d69c"
+    },
+    {
+      "path": "conductor/tracks/T09-04/ruleset-export.json",
+      "sha256": "2d76679f2dfa65e177596dc184e02689a53267ff19c34a9737537561164fb935"
+    },
+    {
+      "path": "conductor/tracks/T09-04/governance-settings-export.json",
+      "sha256": "c28c3ec255a85ce13a52dd7b016188310bc93f71d5b95ee7bb26d0614f25fa32"
+    },
+    {
+      "path": "docs/governance/managed-files.json",
+      "sha256": "a5dde87f7b59d886c61f424e001cbbb48d1c0f53b114e7c9bb601edad16d4a2c"
+    }
+  ]
+}

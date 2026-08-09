@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/edithatogo/substack-cli-ts/security/advisories/new
+    about: Report vulnerabilities privately. Never include exploit details or credentials in a public issue.
+  - name: Support and usage questions
+    url: https://github.com/edithatogo/substack-cli-ts/discussions
+    about: Ask redacted usage questions and discuss integrations.

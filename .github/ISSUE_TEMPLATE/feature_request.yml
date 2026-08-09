@@ -1,0 +1,31 @@
+name: Feature request
+description: Propose a bounded product or engineering change.
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the user-owned publishing problem without prescribing a solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: State the observable behavior and acceptance evidence.
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Highest relevant risk
+      options: [Local read-only, Local mutation, Browser or authentication, Live publication write, Security or privacy, Release or registry]
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and compatibility
+      description: Note alternatives, migration implications, and affected CLI/library/MCP surfaces.
