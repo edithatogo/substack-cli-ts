@@ -47,7 +47,8 @@ describe("planPublishWrite", () => {
     );
 
     assert.equal(plan.operation, "schedule");
-    assert.ok(plan.endpoint.includes("/api/v1/drafts/123/schedule"));
+    assert.ok(plan.endpoint.includes("/api/v1/drafts/123/scheduled_release"));
+    assert.ok(!plan.endpoint.endsWith("/schedule"));
     assert.equal(plan.scheduleAt, "2026-06-01T09:00:00Z");
   });
 

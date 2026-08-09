@@ -30,7 +30,9 @@ export interface PublishWriteResult {
 
 const PREPUBLISH_PATH = "/api/v1/drafts/{id}/prepublish";
 const PUBLISH_PATH = "/api/v1/drafts/{id}/publish";
-const SCHEDULE_PATH = "/api/v1/drafts/{id}/schedule";
+// Observed from the authenticated publisher UI on 2026-08-10. The older
+// `/schedule` route returns HTTP 404 before mutation.
+const SCHEDULE_PATH = "/api/v1/drafts/{id}/scheduled_release";
 
 export function planPublishWrite(
   draftId: string,
