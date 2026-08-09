@@ -1,10 +1,10 @@
 # Plan T09-04
 
 ## Tasks
-- [ ] T09-04-TASK-01 Activate a default-branch ruleset without mandatory human review.
-- [ ] T09-04-TASK-02 Verify Renovate and complete the Dependabot transition.
-- [ ] T09-04-TASK-03 Add issue/PR/security templates and contribution context.
-- [ ] T09-04-TASK-04 Export governance configuration and drift receipts.
+- [x] T09-04-TASK-01 Activate a default-branch ruleset without mandatory human review.
+- [~] T09-04-TASK-02 Verify Renovate and complete the Dependabot transition.
+- [x] T09-04-TASK-03 Add issue/PR/security templates and contribution context.
+- [x] T09-04-TASK-04 Export governance configuration and drift receipts.
 
 ## Contract IDs
 - GOV-REPOSITORY-STANDARDS-007

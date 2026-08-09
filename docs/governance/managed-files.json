@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "source": "edithatogo/repository-standards:managed-files/manifest.json",
+  "profile": "node",
+  "files": [
+    {"path": "AGENTS.md", "status": "local-extension", "reason": "Repository-specific architecture, validation, and secret-handling instructions extend the solo-maintainer defaults."},
+    {"path": "SECURITY.md", "status": "local-extension", "reason": "Repository-specific credential and browser-session risks extend the central private-reporting policy."},
+    {"path": "CONTRIBUTING.md", "status": "local-extension", "reason": "Project commands, Conductor traceability, and live-write gates extend the central contribution policy."},
+    {"path": ".github/renovate.json", "status": "preset-reference", "source": "github>edithatogo/renovate-config"},
+    {"path": ".github/workflows/scorecard.yml", "status": "owned-by-T09-02", "reason": "Supply-chain workflow implementation remains in the security track."},
+    {"path": "security-insights.yml", "status": "owned-by-T09-02", "reason": "Security metadata implementation remains in the security track."},
+    {"path": ".github/workflows/slsa-verification.yml", "status": "owned-by-T09-03", "reason": "Artifact provenance is implemented with the reproducible release track."},
+    {"path": ".github/workflows/ci.yml", "status": "repository-owned-exception", "reason": "The contract-specific deterministic assurance and mutation pipeline is reviewed for central drift rather than overwritten."}
+  ]
+}
