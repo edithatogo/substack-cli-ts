@@ -14,6 +14,31 @@ permissions:
   contents: read
 
 jobs:
+  performance:
+    name: Performance budgets and profiles
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - run: npm run bench:test
+      - run: npm run profile
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: performance-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            reports/performance/receipt.json
+            reports/profiling/
+          if-no-files-found: error
+          retention-days: 30
+
   quality:
     name: Quality
     runs-on: ubuntu-latest

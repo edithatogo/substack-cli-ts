@@ -19,6 +19,7 @@
     "!src/test/**"
   ],
   "coverageAnalysis": "perTest",
+  "inPlace": true,
   "thresholds": {
     "high": 80,
     "low": 60,

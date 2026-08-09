@@ -3,13 +3,13 @@
   "phaseId": "P08",
   "phaseTitle": "Assurance harness, context and observability",
   "title": "Performance budgets and privacy-preserving observability",
-  "status": "planned",
+  "status": "completed",
   "contractIds": [
     "DEP-TYPESCRIPT-NEXT-005",
     "PERF-OBSERVABILITY-005"
   ],
   "requiredTaskCount": 4,
-  "existingIssues": [],
+  "existingIssues": [392, 393, 394, 395, 396],
   "riskLevel": "high",
-  "issue": null
+  "issue": 392
 }
