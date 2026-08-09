@@ -18,15 +18,12 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Approve and Enable Auto-Merge
+      - name: Enable Auto-Merge After Required Checks
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          # Approve the PR
-          gh pr review "$PR_URL" --approve
-
-          # Wait for required CI checks (ignore SKIPPED/NEUTRAL; fail only on hard failures)
+          # Wait for required CI checks; no human or synthetic approval is required.
           for i in $(seq 1 60); do
             CI_STATE=$(gh pr view "$PR_URL" --json statusCheckRollup --jq '.statusCheckRollup | map(.conclusion // .status // "UNKNOWN") | join(",")')
             if echo "$CI_STATE" | grep -Eq "FAILURE|CANCELLED|TIMED_OUT|ACTION_REQUIRED|STALE"; then
