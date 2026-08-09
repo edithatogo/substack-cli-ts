@@ -105,6 +105,61 @@ Body.
     }
   });
 
+  it("removes an exact leading episode label and metadata subtitle", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+subtitle: Exact subtitle.
+---
+# Post Title
+
+*Season 1, Episode 5*
+
+**Subtitle:** Exact subtitle.
+
+Story prose.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.markdown, "Story prose.\n");
+      assert.doesNotMatch(prepared.post.html, /Season 1|Subtitle:/);
+      assert.equal(prepared.post.document.content?.length, 1);
+      assert.equal(
+        prepared.post.document.content?.[0]?.content?.[0]?.text,
+        "Story prose.",
+      );
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("preserves an ambiguous leading metadata block when the subtitle differs", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+subtitle: Metadata subtitle.
+---
+# Post Title
+
+*Season 1, Episode 5*
+
+**Subtitle:** Deliberately different body text.
+
+Story prose.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.match(prepared.post.markdown, /Season 1, Episode 5/);
+      assert.match(prepared.post.markdown, /Deliberately different body text/);
+      assert.equal(prepared.post.document.content?.[0]?.type, "paragraph");
+      assert.equal(prepared.post.document.content?.length, 3);
+    } finally {
+      await cleanup(file);
+    }
+  });
+
   it("accepts an explicit scheduleAt override", async () => {
     const file = await writeTempMarkdown(`---
 title: Scheduled

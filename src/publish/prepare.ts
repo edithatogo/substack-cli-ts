@@ -11,7 +11,9 @@ export async function preparePost(
   filePath: string,
   options: PreparePostOptions = {},
 ): Promise<PreparedPost> {
-  const post = promoteLeadingTitle(await parseMarkdownFile(filePath));
+  const post = normalizeLeadingMetadata(
+    promoteLeadingTitle(await parseMarkdownFile(filePath)),
+  );
   const mode = options.mode ?? "draft";
   const scheduleAt = options.scheduleAt ?? post.metadata.scheduleAt;
 
@@ -27,6 +29,36 @@ export async function preparePost(
     mode,
     scheduleAt,
     post,
+  };
+}
+
+function normalizeLeadingMetadata(post: ParsedPost): ParsedPost {
+  const [episodeBlock, subtitleBlock] = post.document.content ?? [];
+  const subtitle = post.metadata.subtitle?.trim();
+  if (
+    episodeBlock?.type !== "paragraph" ||
+    subtitleBlock?.type !== "paragraph" ||
+    !subtitle
+  ) {
+    return post;
+  }
+
+  const episodeText = normalizeText(collectText(episodeBlock));
+  const subtitleText = normalizeText(collectText(subtitleBlock));
+  if (!/^Season \d+,\s*Episode \d+$/i.test(episodeText)) return post;
+  if (subtitleText !== normalizeText(`Subtitle: ${subtitle}`)) return post;
+
+  return {
+    ...post,
+    markdown: stripLeadingMarkdownMetadata(post.markdown),
+    html: post.html.replace(
+      /^\s*<p(?:\s[^>]*)?>[\s\S]*?<\/p>\s*<p(?:\s[^>]*)?>[\s\S]*?<\/p>\s*/i,
+      "",
+    ),
+    document: {
+      ...post.document,
+      content: post.document.content?.slice(2),
+    },
   };
 }
 
@@ -51,6 +83,17 @@ function promoteLeadingTitle(post: ParsedPost): ParsedPost {
 
 function collectText(node: ProseMirrorNode): string {
   return `${node.text ?? ""}${(node.content ?? []).map(collectText).join("")}`;
+}
+
+function normalizeText(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function stripLeadingMarkdownMetadata(markdown: string): string {
+  return markdown.replace(
+    /^(?:[ \t]*\r?\n)*[ \t]*(?:\*|_)?Season[ \t]+\d+,[ \t]*Episode[ \t]+\d+(?:\*|_)?[ \t]*(?:\r?\n|$)(?:[ \t]*\r?\n)*[ \t]*(?:\*\*|__)?Subtitle:(?:\*\*|__)?[ \t]*[^\r\n]*(?:\r?\n|$)(?:[ \t]*\r?\n)*/i,
+    "",
+  );
 }
 
 function stripLeadingMarkdownHeading(markdown: string): string {
