@@ -1,0 +1,1 @@
+T08-03 review fix: use Stryker's documented restoring in-place mode to bypass its TypeScript 6-only sandbox config rewriter. Full 857-mutant run passed locally at 69.54%, above the blocking 60% threshold.
