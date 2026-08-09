@@ -2,10 +2,13 @@
   "trackId": "T17-01",
   "title": "Reconcile Conductor issues and GitHub Project automation",
   "type": "chore",
-  "status": "in_progress",
+  "status": "archived",
   "parentIssue": 497,
   "issue": 498,
   "project": 38,
   "createdAt": "2026-08-09T00:00:00+10:00",
-  "updatedAt": "2026-08-09T00:00:00+10:00"
+  "updatedAt": "2026-08-09T21:15:38+10:00",
+  "archivedAt": "2026-08-09T21:15:38+10:00",
+  "implementationPullRequest": 503,
+  "mergeCommit": "6f99ab009a0ca67816f652cb4db2f3b288357127"
 }

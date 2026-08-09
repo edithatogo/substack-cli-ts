@@ -10,5 +10,11 @@
   "missingProjectIssues": [],
   "duplicatePolicy": "detached and closed as not planned; history retained",
   "nativeProjectWorkflow": "Auto-add sub-issues to project",
-  "ciScope": "read-only issue hierarchy"
+  "ciScope": "read-only issue hierarchy",
+  "implementationPullRequest": 503,
+  "mergeCommit": "6f99ab009a0ca67816f652cb4db2f3b288357127",
+  "requiredChecks": "passed",
+  "mutationDuration": "21m31s",
+  "actionableComments": 0,
+  "reviewFindings": 0
 }

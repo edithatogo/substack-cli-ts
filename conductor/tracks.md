@@ -42,4 +42,4 @@
 - [x] **Track: Canonical Zod MCP inputs and generated schemas** ([#474](https://github.com/edithatogo/substack-cli-ts/issues/474)) *Archived: [T16-01](./archive/T16-01/index.md)*
 
 ## P17 GitHub programme reconciliation and drift prevention
-- [~] **Track: Reconcile Conductor issues and GitHub Project automation** ([#498](https://github.com/edithatogo/substack-cli-ts/issues/498)) *Active: [T17-01](./tracks/T17-01/index.md)*
+- [x] **Track: Reconcile Conductor issues and GitHub Project automation** ([#498](https://github.com/edithatogo/substack-cli-ts/issues/498)) *Archived: [T17-01](./archive/T17-01/index.md)*

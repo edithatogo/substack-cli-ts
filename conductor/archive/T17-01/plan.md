@@ -25,7 +25,7 @@
 
 ## Phase 4: Review, merge, and cleanup
 
-- [ ] Task: Commit each bounded task with a Git note and push a focused PR.
-- [ ] Task: Run Conductor review, inspect all Actions and comments, and fix actionable blockers.
-- [ ] Task: Merge only when required checks pass, archive T17-01, close its issues, and clean the disposable branch/worktree.
-- [ ] Task: Phase verification and checkpoint per `conductor/workflow.md`.
+- [x] Task: Commit each bounded task with a Git note and push focused PR #503.
+- [x] Task: Run Conductor review, inspect all Actions and comments, and resolve actionable blockers; no findings remained.
+- [x] Task: Merge after all required checks passed as `6f99ab009a0ca67816f652cb4db2f3b288357127`, then archive and clean disposable state.
+- [x] Task: Phase verification and checkpoint per `conductor/workflow.md`.
