@@ -1,0 +1,1 @@
+T09-04-TASK-04: exported governance settings, mapped repository-standards managed files and exceptions, fixed ledger corruption, and emitted a schema-v1 partial verification receipt. Validation: JSON/YAML parsing, Renovate validator, live ruleset inspection, git diff --check.
