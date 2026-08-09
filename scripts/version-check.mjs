@@ -76,8 +76,8 @@ const STATIC_VERSION_FILES = [
 
 const mode = process.argv[2] ?? "check";
 
-if (mode !== "check" && mode !== "sync") {
-  console.error(`Unsupported mode: ${mode}. Use "check" or "sync".`);
+if (mode !== "check" && mode !== "sync" && mode !== "release") {
+  console.error(`Unsupported mode: ${mode}. Use "check", "sync", or "release".`);
   process.exit(2);
 }
 
@@ -116,11 +116,19 @@ for (const file of STATIC_VERSION_FILES) {
   }
 }
 
-if (mode === "check" && drifted) {
+if ((mode === "check" || mode === "release") && drifted) {
   console.error("\nVersion drift detected. Run `npm run version:sync` to align, then regenerate contracts with `npm run contracts:generate`.");
   process.exit(1);
 }
 
-if (mode === "check") {
+if (mode === "release") {
+  const releaseTag = process.argv[3] ?? process.env.RELEASE_TAG;
+  const expectedTag = `v${packageVersion}`;
+  if (releaseTag !== expectedTag) {
+    console.error(`Release tag mismatch: expected ${expectedTag}, found ${releaseTag ?? "<missing>"}.`);
+    process.exit(1);
+  }
+  console.log(`Release version OK: ${releaseTag} matches package and static metadata.`);
+} else if (mode === "check") {
   console.log(`Version OK: ${packageVersion} (all static files aligned).`);
 }
