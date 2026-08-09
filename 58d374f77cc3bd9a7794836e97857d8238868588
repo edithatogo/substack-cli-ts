@@ -1,0 +1,1 @@
+T09-02 tasks 03-04 partial receipt: dual SPDX/CycloneDX validation passed for 950 records; production audit/licence/secret checks passed; 836 npm signatures verified and 165 attestations observed; private reporting is enabled. Runtime redaction and signed release attestations remain explicit dependencies.
