@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "trackId": "T17-01",
+  "status": "passed",
+  "capturedAt": "2026-08-09T00:00:00+10:00",
+  "programmeIssue": 184,
+  "project": 38,
+  "canonicalIssueCount": 276,
+  "projectItemCount": 303,
+  "missingProjectIssues": [],
+  "duplicatePolicy": "detached and closed as not planned; history retained",
+  "nativeProjectWorkflow": "Auto-add sub-issues to project",
+  "ciScope": "read-only issue hierarchy"
+}

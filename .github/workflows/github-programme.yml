@@ -1,0 +1,37 @@
+name: GitHub Programme Drift
+
+on:
+  pull_request:
+    paths:
+      - "conductor/**"
+      - "scripts/github-programme.mjs"
+      - ".github/workflows/github-programme.yml"
+  push:
+    branches: [master]
+    paths:
+      - "conductor/**"
+      - "scripts/github-programme.mjs"
+      - ".github/workflows/github-programme.yml"
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  hierarchy:
+    name: Conductor issue hierarchy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run governance:github-programme
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

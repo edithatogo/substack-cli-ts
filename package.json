@@ -109,6 +109,7 @@
     "registry:publisher": "node scripts/mcp-publisher-helper.mjs",
     "registry:publisher:dry-run": "node scripts/mcp-publisher-helper.mjs dry-run",
     "integrations:validate": "node scripts/validate-client-integrations.mjs",
+    "governance:github-programme": "node scripts/github-programme.mjs check",
     "frontier:drift": "npm run build && node scripts/frontier-coverage-drift.mjs",
     "experimental:deps": "node scripts/experimental-dependency-lane.mjs",
     "version:check": "node scripts/version-check.mjs check",
