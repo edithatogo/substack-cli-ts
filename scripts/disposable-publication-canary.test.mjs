@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { describe, it } from "node:test";
+import { CORE_SCHEMA, load } from "js-yaml";
 import { parseLifecycleContract, runDisposableCanary, validateGuard } from "./disposable-publication-canary.mjs";
 
 const env = {
@@ -22,6 +24,13 @@ const env = {
 };
 
 describe("disposable publication canary", () => {
+  it("is exposed only through manual workflow dispatch", async () => {
+    const workflow = load(await readFile(".github/workflows/disposable-publication-canary.yml", "utf8"), {
+      schema: CORE_SCHEMA,
+    });
+    assert.deepEqual(Object.keys(workflow.on), ["workflow_dispatch"]);
+  });
+
   it("rejects PR events, production targets and unsafe endpoint contracts", () => {
     assert.throws(() => validateGuard({ ...env, GITHUB_EVENT_NAME: "pull_request" }), /workflow_dispatch/);
     assert.throws(

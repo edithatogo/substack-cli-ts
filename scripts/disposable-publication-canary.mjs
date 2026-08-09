@@ -153,11 +153,34 @@ export async function runDisposableCanary({ env, fetchFn = fetch, now = () => ne
   return receipt;
 }
 
-async function main() {
-  const receipt = await runDisposableCanary({ env: process.env });
+async function writeReceipt(receipt) {
   const output = resolve("reports/canary/disposable-publication.json");
   await mkdir(dirname(output), { recursive: true });
   await writeFile(output, `${JSON.stringify(receipt, null, 2)}\n`, "utf8");
+}
+
+async function main() {
+  let receipt;
+  try {
+    receipt = await runDisposableCanary({ env: process.env });
+  } catch (error) {
+    receipt = {
+      schemaVersion: 1,
+      runId: process.env.SUBSTACK_CANARY_RUN_ID ?? "unavailable",
+      mode: "disposable-publication-write",
+      generatedAt: new Date().toISOString(),
+      status: "uncertain",
+      cleanup: "not-attempted",
+      steps: [
+        {
+          name: "preflight",
+          status: "uncertain",
+          error: error instanceof Error ? error.message : "Unknown preflight failure",
+        },
+      ],
+    };
+  }
+  await writeReceipt(receipt);
   console.log(JSON.stringify(receipt, null, 2));
   if (receipt.status !== "passed" || receipt.cleanup !== "passed") process.exitCode = 1;
 }
