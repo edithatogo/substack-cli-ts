@@ -1,0 +1,4 @@
+Review: T09-03 conductor-review
+Finding: release tags were not constrained to remote master and unpublished npm versions
+Fix: require GITHUB_SHA ancestry in origin/master, fail closed on npm lookup errors, and document the owner-gated first-package bootstrap
+Validation: 917 tests; typecheck; Biome; release policy tests; zizmor no findings; diff check
