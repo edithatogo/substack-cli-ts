@@ -1,0 +1,1 @@
+Task T09-04: configured and recorded strict GitHub master protection with 14 required checks, admin enforcement, zero approvals, linear history, conversation resolution, and destructive-operation prevention. Validation: GitHub protection API receipt and git diff --check.
