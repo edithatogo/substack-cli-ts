@@ -1,0 +1,4 @@
+Track: T08-04
+Task: T08-04-TASK-01
+Validation: 3 disposable lifecycle tests passed; Prettier check passed.
+Evidence: manual guard, dedicated-origin denylist, unique marker, create/reconcile/revise/unschedule lifecycle, cleanup in finally, redacted uncertain receipt.
