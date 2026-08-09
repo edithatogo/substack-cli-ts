@@ -1,0 +1,4 @@
+Hosted remediation: PR #509 Workflow Policy
+Finding: actionlint/shellcheck SC2016 on JavaScript template literal inside shell quotes
+Fix: use non-interpolated JavaScript string concatenation
+Validation: Prettier; release policy tests; zizmor; diff check
