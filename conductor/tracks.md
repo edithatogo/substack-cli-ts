@@ -15,7 +15,7 @@
 ## P09 CI/CD, security, supply chain and repository governance
 - T09-01
 - T09-02
-- T09-03
+- [x] **Track: Reproducible release, trusted publishing and rollback** ([#413](https://github.com/edithatogo/substack-cli-ts/issues/413)) *Archived: [T09-03](./archive/T09-03/index.md)*
 - T09-04
 
 ## P10 Documentation, registry publication and launch

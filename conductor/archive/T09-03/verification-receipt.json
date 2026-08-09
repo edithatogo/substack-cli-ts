@@ -1,0 +1,30 @@
+{
+  "track": "T09-03",
+  "status": "archived",
+  "implementation_pr": 509,
+  "merge_commit": "60abf8a1ccaaaad28d2b2036f24846a8624b4ff5",
+  "merged_to": "master",
+  "hosted_verification": {
+    "result": "passed",
+    "workflows": [
+      "CI",
+      "Deploy GitHub Pages",
+      "GitHub Programme Drift",
+      "Hardening",
+      "Push on master",
+      "Release Drafter",
+      "Security"
+    ]
+  },
+  "review": {
+    "inline_comments": 0,
+    "unresolved_threads": 0,
+    "actionable_comments_remaining": 0
+  },
+  "external_owner_gates": [
+    "Claim or bootstrap the npm package with the current interactive npm flow.",
+    "Configure npm trusted publishing for .github/workflows/publish.yml.",
+    "Create the first release tag only after the publisher relationship exists."
+  ],
+  "long_lived_publish_token_introduced": false
+}
