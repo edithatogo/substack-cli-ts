@@ -23,6 +23,14 @@ describe("privacy-preserving telemetry", () => {
     if (previous) process.env.SUBSTACK_TELEMETRY_EXPORT = previous;
   });
 
+  it("reports explicit host-provider opt in", () => {
+    const previous = process.env.SUBSTACK_TELEMETRY_EXPORT;
+    process.env.SUBSTACK_TELEMETRY_EXPORT = "host-provider";
+    assert.equal(telemetryStatus().exportMode, "host-provider");
+    if (previous === undefined) delete process.env.SUBSTACK_TELEMETRY_EXPORT;
+    else process.env.SUBSTACK_TELEMETRY_EXPORT = previous;
+  });
+
   it("drops secrets, paths, content and unknown attributes", () => {
     assert.deepEqual(
       safeTelemetryAttributes({
@@ -31,6 +39,7 @@ describe("privacy-preserving telemetry", () => {
         cookie: "secret",
         file: "private.md",
         body: "private content",
+        component: { unsafe: true },
       }),
       { operation: "parse", mode: "inspect" },
     );
@@ -43,5 +52,9 @@ describe("privacy-preserving telemetry", () => {
       /expected/,
     );
     await assert.rejects(() => observeOperation("cli", "INVALID", () => undefined), /invalid/);
+    await assert.rejects(
+      () => observeOperation("unknown" as "cli", "valid", () => undefined),
+      /Unsupported telemetry scope/,
+    );
   });
 });
