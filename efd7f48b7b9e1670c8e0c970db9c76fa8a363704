@@ -1,0 +1,1 @@
+Task: T09-03-TASK-01 (#414)`nValidation: release policy tests; version guard; npm audit; strict workflow audit`nRationale: Publish through GitHub OIDC without NPM_TOKEN and document owner-gated npm configuration.
