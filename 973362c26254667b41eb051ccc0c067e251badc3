@@ -1,0 +1,1 @@
+T09-04-TASK-01: activated and exported the solo-maintainer default-branch ruleset with 14 strict checks, zero approvals, squash-only PRs, linear history, conversation resolution, and deletion/non-fast-forward protection. Validation: live GitHub API inspection.
