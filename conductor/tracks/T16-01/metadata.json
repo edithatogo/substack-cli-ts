@@ -1,0 +1,11 @@
+{
+  "trackId": "T16-01",
+  "title": "Canonical Zod MCP inputs and generated schemas",
+  "type": "feature",
+  "status": "in_progress",
+  "parentIssue": 473,
+  "issue": 474,
+  "project": 38,
+  "createdAt": "2026-08-09T10:00:00+10:00",
+  "updatedAt": "2026-08-09T10:00:00+10:00"
+}
