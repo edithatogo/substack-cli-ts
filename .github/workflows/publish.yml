@@ -45,7 +45,7 @@ jobs:
         run: |
           git fetch --no-tags origin master
           git merge-base --is-ancestor "$GITHUB_SHA" origin/master
-          package_spec=$(node -p 'const p=require("./package.json"); `${p.name}@${p.version}`')
+          package_spec=$(node -p 'const p=require("./package.json"); p.name + "@" + p.version')
           if output=$(npm view "$package_spec" version 2>&1); then
             echo "Release version already exists: $output" >&2
             exit 1
