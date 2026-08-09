@@ -8,7 +8,7 @@
       "command": "npx",
       "args": [
         "-y",
-        "@edithatogo/substack-cli",
+        "@edithatogo/substack-publisher",
         "mcp",
         "serve"
       ],

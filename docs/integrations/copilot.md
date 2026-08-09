@@ -2,7 +2,7 @@
 
 GitHub Copilot uses MCP through supported editor surfaces such as VS Code. For this project, the Copilot path is the VS Code MCP configuration path, not a separate runtime.
 
-Canonical launch command: `npx -y @edithatogo/substack-cli mcp serve`
+Canonical launch command: `npx -y @edithatogo/substack-publisher mcp serve`
 
 ## VS Code workspace config
 
@@ -14,7 +14,7 @@ This repository includes `.vscode/mcp.json` as the Copilot-through-VS-Code examp
     "substack-cli": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
       }
