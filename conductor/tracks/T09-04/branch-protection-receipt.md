@@ -1,0 +1,31 @@
+# Master Branch Protection Receipt
+
+- Configured: 2026-08-09T08:59:10Z
+- Repository: `edithatogo/substack-cli-ts`
+- Branch: `master`
+- Trigger: dependency PR #176 merged at `2026-08-09T08:36:40Z`, before its Mutation check completed at `2026-08-09T08:54:44Z`.
+- Enforcement: administrators included; strict up-to-date status checks required.
+- Required approvals: `0` (solo-maintainer policy).
+- History and discussion: linear history and conversation resolution required.
+- Destructive branch operations: force pushes and deletions disabled.
+
+## Required status checks
+
+- Analyze (actions)
+- Analyze (javascript-typescript)
+- Dependency Declaration Strictness
+- Index Signature Strictness
+- Node Compatibility (20)
+- Node Compatibility (22)
+- Node Compatibility (24)
+- Quality
+- Required Audit And Secret Scan
+- SBOM Evidence
+- Strictest TypeScript
+- Smoke
+- Deterministic Assurance Taxonomy
+- Mutation
+
+## Validation
+
+The GitHub branch-protection API returned `strict: true`, `enforce_admins: true`, `required_approving_review_count: 0`, linear-history and conversation-resolution enforcement enabled, and force-push/deletion permissions disabled.
