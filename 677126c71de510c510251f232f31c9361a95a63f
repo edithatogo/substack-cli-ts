@@ -1,1 +1,1 @@
-Reconciles and archives T13-01 through T16-01 against merged PRs #464, #467, #470, and #475; verifies hosted checks/comments and preserves P14/P15 external activation gates.
+Moves completed T13-01 through T16-01 into the canonical Conductor archive; closeout metadata and receipts follow in commit 8571f3725db8d0f89147961eab28bde44b7631e5.
