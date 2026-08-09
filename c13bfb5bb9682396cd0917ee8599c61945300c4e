@@ -1,0 +1,3 @@
+Track: T08-04
+Task: T08-04-TASK-02
+Validation: workflow YAML passed Prettier; hosted matrix will verify Node 20/22/24/26, Ubuntu/Windows/macOS, CLI smoke, client integrations, and npm tarball dry run.
