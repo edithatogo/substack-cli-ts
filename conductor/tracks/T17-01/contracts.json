@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "trackId": "T17-01",
+  "contractIds": ["GOV-NESTED-ISSUES-003", "GOV-EXISTING-WORK-004"],
+  "programmeIssue": 184,
+  "project": 38,
+  "mutationPolicy": "manual-reconciliation-only",
+  "ciPolicy": "read-only"
+}

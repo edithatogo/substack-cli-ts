@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "repository": "edithatogo/substack-cli-ts",
+  "programmeIssue": 184,
+  "supplementalPhases": {
+    "P13": {
+      "number": 483,
+      "title": "P13 Comprehensive deterministic assurance",
+      "tracks": {
+        "T13-01": {
+          "number": 484,
+          "title": "T13-01 Comprehensive deterministic test taxonomy and assurance harness",
+          "phases": {
+            "Phase 1": {
+              "number": 485,
+              "title": "T13-01 Phase 1: Assurance contract and taxonomy"
+            },
+            "Phase 2": {
+              "number": 486,
+              "title": "T13-01 Phase 2: Harness implementation"
+            },
+            "Phase 3": {
+              "number": 487,
+              "title": "T13-01 Phase 3: Hosted closeout"
+            }
+          }
+        }
+      }
+    },
+    "P14": {
+      "number": 465,
+      "title": "P14 Substack API drift early warning",
+      "tracks": {
+        "T14-01": {
+          "number": 466,
+          "title": "T14-01 Implement Substack live API drift canary",
+          "phases": {
+            "Phase 1": {
+              "number": 488,
+              "title": "T14-01 Phase 1: Canary contract and tests"
+            },
+            "Phase 2": {
+              "number": 489,
+              "title": "T14-01 Phase 2: Scheduled canary implementation"
+            },
+            "Phase 3": {
+              "number": 490,
+              "title": "T14-01 Phase 3: Hosted closeout"
+            }
+          }
+        }
+      }
+    },
+    "P15": {
+      "number": 468,
+      "title": "P15 Upstream browser and authentication resilience",
+      "tracks": {
+        "T15-01": {
+          "number": 469,
+          "title": "T15-01 Add Playwright authentication fallback and storage-state refresh",
+          "phases": {
+            "Phase 1": {
+              "number": 491,
+              "title": "T15-01 Phase 1: Browser resilience contract"
+            },
+            "Phase 2": {
+              "number": 492,
+              "title": "T15-01 Phase 2: Playwright fallback implementation"
+            },
+            "Phase 3": {
+              "number": 493,
+              "title": "T15-01 Phase 3: Hosted closeout"
+            }
+          }
+        }
+      }
+    },
+    "P16": {
+      "number": 473,
+      "title": "P16 Comprehensive MCP type safety and validation guardrails",
+      "tracks": {
+        "T16-01": {
+          "number": 474,
+          "title": "T16-01 Add canonical Zod MCP inputs and generated schemas",
+          "phases": {
+            "Phase 1": {
+              "number": 494,
+              "title": "T16-01 Phase 1: Zod contract and tests"
+            },
+            "Phase 2": {
+              "number": 495,
+              "title": "T16-01 Phase 2: MCP schema implementation"
+            },
+            "Phase 3": {
+              "number": 496,
+              "title": "T16-01 Phase 3: Hosted closeout"
+            }
+          }
+        }
+      }
+    },
+    "P17": {
+      "number": 497,
+      "title": "P17 GitHub programme reconciliation and drift prevention",
+      "tracks": {
+        "T17-01": {
+          "number": 498,
+          "title": "T17-01 Reconcile Conductor issues and GitHub Project automation",
+          "phases": {
+            "Phase 1": {
+              "number": 499,
+              "title": "T17-01 Phase 1: Contract and inventory"
+            },
+            "Phase 2": {
+              "number": 500,
+              "title": "T17-01 Phase 2: Deterministic reconciliation tooling"
+            },
+            "Phase 3": {
+              "number": 501,
+              "title": "T17-01 Phase 3: Hosted hierarchy and Project reconciliation"
+            },
+            "Phase 4": {
+              "number": 502,
+              "title": "T17-01 Phase 4: Review, merge, and cleanup"
+            }
+          }
+        }
+      }
+    }
+  },
+  "project": {
+    "owner": "edithatogo",
+    "number": 38,
+    "id": "PVT_kwHOAOYc4M4BfukQ",
+    "title": "Substack CLI frontier-mainline maturity programme to 1.0",
+    "itemCountAtReceipt": 303,
+    "fields": [
+      "Title",
+      "Assignees",
+      "Status",
+      "Labels",
+      "Linked pull requests",
+      "Milestone",
+      "Repository",
+      "Reviewers",
+      "Parent issue",
+      "Sub-issues progress",
+      "Created",
+      "Updated",
+      "Closed",
+      "Phase",
+      "Track",
+      "Task",
+      "Contract IDs",
+      "Priority",
+      "Risk",
+      "Evidence",
+      "Release",
+      "Blocker",
+      "External gate"
+    ],
+    "enabledWorkflows": [
+      {
+        "number": 1,
+        "name": "Item closed"
+      },
+      {
+        "number": 2,
+        "name": "Pull request merged"
+      },
+      {
+        "number": 3,
+        "name": "Auto-close issue"
+      },
+      {
+        "number": 4,
+        "name": "Auto-add sub-issues to project"
+      },
+      {
+        "number": 5,
+        "name": "Pull request linked to issue"
+      },
+      {
+        "number": 6,
+        "name": "Item added to project"
+      }
+    ]
+  },
+  "receipt": {
+    "capturedAt": "2026-08-09T00:00:00+10:00",
+    "capturedBy": "gh project view, field-list, GraphQL ProjectV2 workflows and native issue hierarchy",
+    "policy": "docs/governance/project-policy.md"
+  }
+}
