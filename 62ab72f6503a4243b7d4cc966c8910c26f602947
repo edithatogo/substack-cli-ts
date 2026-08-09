@@ -1,0 +1,1 @@
+T09-02 hosted remediation: removed conflicting advanced CodeQL workflow after GitHub confirmed default setup is enabled and rejects duplicate SARIF analysis; retained default CodeQL as sole owner.
