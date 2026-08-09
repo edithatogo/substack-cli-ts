@@ -1,0 +1,1 @@
+T08-03 review fix: permit the contract-required TypeScript 7 nightly despite typescript-eslint's stale peer range; npm ci, Biome CI, and nightly typecheck passed locally.
