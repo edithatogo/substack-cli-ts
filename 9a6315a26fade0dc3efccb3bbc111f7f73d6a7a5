@@ -1,0 +1,1 @@
+T08-03 review fix: pin happy-dom 20.11.2 for Tiptap HTML on Node 24/26 and complete telemetry branch coverage. Full coverage (921 tests), assurance, and performance profile passed locally.
