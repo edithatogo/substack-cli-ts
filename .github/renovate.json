@@ -1,84 +1,49 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    ":separateMajorMinor",
-    ":combinePatchMinorUpdates",
-    ":enableVulnerabilityAlerts",
-    ":semanticCommits",
-    "helpers:disableTypesNodeMajor",
-    "npm:unpublishSafe",
-    "group:monorepos",
-    "group:recommended"
+    "github>edithatogo/renovate-config",
+    "helpers:pinGitHubActionDigests",
+    ":semanticCommits"
   ],
   "labels": ["dependencies", "renovate"],
-  "schedule": ["before 9am on Monday"],
-  "timezone": "UTC",
-  "rangeStrategy": "bump",
   "dependencyDashboard": true,
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true,
-    "schedule": ["before 9am on Monday"]
-  },
+  "dependencyDashboardLabels": ["dependencies", "renovate"],
+  "rangeStrategy": "pin",
+  "ignorePaths": ["vendor/**"],
+  "rebaseWhen": "behind-base-branch",
+  "prCreation": "immediate",
+  "prConcurrentLimit": 5,
+  "platformAutomerge": true,
   "packageRules": [
     {
-      "description": "Group all devDependencies updates",
-      "matchDepTypes": ["devDependencies"],
-      "groupName": "devDependencies",
-      "automerge": true
-    },
-    {
-      "description": "Group runtime dependencies",
-      "matchDepTypes": ["dependencies"],
-      "groupName": "runtime dependencies"
-    },
-    {
-      "description": "Group Tiptap ecosystem updates",
-      "matchPackagePrefixes": ["@tiptap/"],
-      "groupName": "Tiptap",
-      "automerge": true
-    },
-    {
-      "description": "Group browser automation stack",
+      "description": "Follow selected mainline prerelease channels",
       "matchPackageNames": [
-        "playwright-core",
         "@browserbasehq/stagehand",
-        "camoufox-js"
+        "@vitest/coverage-v8",
+        "playwright-core",
+        "prettier",
+        "typescript",
+        "vitest",
+        "zod"
       ],
-      "groupName": "browser automation stack",
-      "separateMajorMinor": true
+      "ignoreUnstable": false
     },
     {
-      "description": "Group GitHub Actions updates",
-      "matchDepTypes": ["action"],
-      "groupName": "GitHub Actions",
-      "automerge": true
-    },
-    {
-      "description": "Pin critical tooling majors for manual review",
-      "matchPackageNames": ["node", "typescript"],
-      "enabled": false
-    },
-    {
-      "description": "Ignore vendored substack-api package",
-      "matchPackageNames": ["substack-api"],
-      "enabled": false
-    },
-    {
-      "description": "Major updates need manual review",
+      "description": "Keep major updates independently reviewable",
       "matchUpdateTypes": ["major"],
       "automerge": false,
+      "dependencyDashboardApproval": true,
       "labels": ["dependencies", "renovate", "breaking"]
+    },
+    {
+      "description": "Ignore the vendored local package",
+      "matchPackageNames": ["substack-api"],
+      "enabled": false
     }
   ],
   "vulnerabilityAlerts": {
-    "labels": ["security", "renovate"],
-    "automerge": true
+    "enabled": true,
+    "labels": ["security", "renovate"]
   },
-  "ignorePaths": ["vendor/**"],
-  "rebaseWhen": "conflicted",
-  "prCreation": "immediate",
-  "prConcurrentLimit": 10,
-  "platformAutomerge": true
+  "osvVulnerabilityAlerts": true
 }
