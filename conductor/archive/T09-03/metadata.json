@@ -3,7 +3,7 @@
   "phaseId": "P09",
   "phaseTitle": "CI/CD, security, supply chain and repository governance",
   "title": "Reproducible release, trusted publishing and rollback",
-  "status": "completed",
+  "status": "archived",
   "contractIds": [
     "DEP-FRONTIER-MAINLINE-002",
     "DEP-COHERENCE-007",
@@ -14,7 +14,13 @@
     "RELEASE-REPRODUCIBLE-010"
   ],
   "requiredTaskCount": 4,
-  "existingIssues": [413, 414, 415, 416, 417],
+  "existingIssues": [
+    413,
+    414,
+    415,
+    416,
+    417
+  ],
   "riskLevel": "high",
   "issue": 413
 }
