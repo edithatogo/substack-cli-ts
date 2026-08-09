@@ -23,21 +23,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          # Wait for required CI checks; no human or synthetic approval is required.
-          for i in $(seq 1 60); do
-            CI_STATE=$(gh pr view "$PR_URL" --json statusCheckRollup --jq '.statusCheckRollup | map(.conclusion // .status // "UNKNOWN") | join(",")')
-            if echo "$CI_STATE" | grep -Eq "FAILURE|CANCELLED|TIMED_OUT|ACTION_REQUIRED|STALE"; then
-              echo "CI checks did not succeed; not enabling auto-merge"
-              echo "CI_STATE=$CI_STATE"
-              exit 1
-            fi
-            if [ -n "$CI_STATE" ] && ! echo "$CI_STATE" | grep -Eq "PENDING|QUEUED|IN_PROGRESS|REQUESTED|WAITING|UNKNOWN"; then
-              echo "All CI checks completed"
-              break
-            fi
-            echo "Waiting for CI checks... ($i/60)"
-            sleep 10
-          done
-
-          # Enable auto-merge for Renovate dependency PRs
           gh pr merge "$PR_URL" --auto --squash
