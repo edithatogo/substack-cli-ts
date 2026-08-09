@@ -1,0 +1,3 @@
+Task: T09-02 post-merge security gate remediation
+Validation: npm ci; npm audit (0 vulnerabilities); npm audit signatures (836 signatures, 171 attestations); npm run ci; npm run typecheck; npm test (917 passed); Prettier; zizmor; git diff --check
+Rationale: Grant scoped SARIF upload permission and force patched vulnerable transitive development dependencies.
