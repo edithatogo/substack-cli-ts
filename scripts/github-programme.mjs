@@ -40,9 +40,18 @@ for (const supplemental of state.supplemental) {
   if (supplemental.verificationIssue) issueEntries.push({ id: `${supplemental.track}-VERIFY-01`, issue: supplemental.verificationIssue, state: "OPEN", status: "Todo", kind: "task", evidence: `${supplemental.track}: verification pending` });
 }
 
-const issueResults = await Promise.all(issueEntries.map((entry) => api(`/repos/${state.repository}/issues/${entry.issue}`)));
+const repositoryIssues = [];
+let issueCursor = null;
+do {
+  const data = await graphql(`query($owner:String!,$repository:String!,$cursor:String){repository(owner:$owner,name:$repository){issues(first:100,after:$cursor){nodes{number state}pageInfo{hasNextPage endCursor}}}}`, { owner: state.repository.split("/")[0], repository: state.repository.split("/")[1], cursor: issueCursor });
+  const page = data.repository.issues;
+  repositoryIssues.push(...page.nodes);
+  issueCursor = page.pageInfo.hasNextPage ? page.pageInfo.endCursor : null;
+} while (issueCursor);
+const issueByNumber = new Map(repositoryIssues.map((issue) => [issue.number, issue]));
 for (let index = 0; index < issueEntries.length; index += 1) {
-  const expected = issueEntries[index]; const actual = issueResults[index];
+  const expected = issueEntries[index]; const actual = issueByNumber.get(expected.issue);
+  if (!actual) { errors.push(`${expected.id} issue #${expected.issue} was not returned`); continue; }
   if (actual.state.toUpperCase() !== expected.state) errors.push(`${expected.id} issue #${expected.issue}: expected ${expected.state}, got ${actual.state.toUpperCase()}`);
   if (!registry.includes(expected.id) && expected.kind !== "task") errors.push(`${expected.id} missing from conductor/tracks.md`);
 }
