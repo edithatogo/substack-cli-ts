@@ -10,4 +10,5 @@
 - [x] Structural redaction regression coverage passes without retaining secret fragments.
 - [x] Trusted-publishing provenance and SPDX attestation workflows are enforced.
 - [x] Local suite passes: 117 files, 925 tests; strict types, Biome, secrets, audit, signatures, licences and dual SBOM validation pass.
-- [ ] PR checks, comments, and post-merge workflows pending.
+- [x] PR #529 checks passed after Codecov remediation; comments and review threads had no actionable findings.
+- [x] Post-merge workflows passed for `3dc606ea48d01d8cefc4288ff089e7f219a5ba8c`.

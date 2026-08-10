@@ -15,7 +15,7 @@
 
 ## P09 CI/CD, security, supply chain and repository governance
 - [x] **Track: Required cross-platform CI and contract gates** ([#522](https://github.com/edithatogo/substack-cli-ts/issues/522)) *Archived: [T09-01](./archive/T09-01/index.md)*
-- [x] **Track: Security and supply-chain engineering** ([#408](https://github.com/edithatogo/substack-cli-ts/issues/408)) ([T09-02](./tracks/T09-02/index.md))
+- [x] **Track: Security and supply-chain engineering** ([#408](https://github.com/edithatogo/substack-cli-ts/issues/408)) *Archived: [T09-02](./archive/T09-02/index.md)*
 - [x] **Track: Reproducible release, trusted publishing and rollback** ([#413](https://github.com/edithatogo/substack-cli-ts/issues/413)) *Archived: [T09-03](./archive/T09-03/index.md)*
 - T09-04
 
