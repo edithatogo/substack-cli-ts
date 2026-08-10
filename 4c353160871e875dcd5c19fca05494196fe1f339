@@ -1,0 +1,1 @@
+T18-01 Codecov follow-up: pass the already-narrowed leading block into normalization, removing the unreachable partial branch reported on PR #542.
