@@ -246,6 +246,11 @@ audience: everyone
 section: original-essays
 comments: enabled
 ---
+
+Start the article body here. Do not repeat the front-matter title or subtitle as
+the first heading or paragraph; those values are written to Substack's dedicated
+header fields. The CLI defensively removes exact leading repetitions, but users
+and authoring agents should emit each title and subtitle only once.
 ```
 
 Media examples:

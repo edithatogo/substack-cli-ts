@@ -85,6 +85,129 @@ Body.
     }
   });
 
+  it("removes matching leading title and subtitle blocks", async () => {
+    const file = await writeTempMarkdown(`---
+title: Same Title
+subtitle: Separate subtitle
+---
+# Same Title
+
+Separate subtitle
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.markdown, "Body.\n");
+      assert.doesNotMatch(prepared.post.html, /Same Title|Separate subtitle/);
+      assert.equal(prepared.post.document.content?.length, 1);
+      assert.equal(prepared.post.document.content?.[0]?.content?.[0]?.text, "Body.");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("removes a formatted subtitle that exactly matches its rendered metadata", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+subtitle: Formatted subtitle
+---
+**Formatted subtitle**
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.markdown, "Body.\n");
+      assert.equal(prepared.post.document.content?.[0]?.content?.[0]?.text, "Body.");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("removes a formatted paragraph title when explicit title metadata matches", async () => {
+    const file = await writeTempMarkdown(`---
+title: Formatted title
+subtitle: Header subtitle
+---
+**Formatted title**
+
+Header subtitle
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.markdown, "Body.\n");
+      assert.equal(prepared.post.document.content?.[0]?.content?.[0]?.text, "Body.");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("does not promote a leading paragraph to a missing title", async () => {
+    const file = await writeTempMarkdown(`Opening paragraph
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.metadata.title, undefined);
+      assert.match(prepared.post.markdown, /^Opening paragraph/);
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("preserves leading body text that differs from the subtitle", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+subtitle: Header subtitle
+---
+Editorial standfirst
+
+Body.
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.match(prepared.post.markdown, /^Editorial standfirst/);
+      assert.equal(prepared.post.document.content?.[0]?.content?.[0]?.text, "Editorial standfirst");
+    } finally {
+      await cleanup(file);
+    }
+  });
+
+  it("preserves a non-matching leading heading and matching text later in the body", async () => {
+    const file = await writeTempMarkdown(`---
+title: Post Title
+subtitle: Header subtitle
+---
+# Section heading
+
+Header subtitle
+`);
+
+    try {
+      const prepared = await preparePost(file);
+
+      assert.equal(prepared.post.document.content?.[0]?.type, "heading");
+      assert.match(prepared.post.markdown, /^# Section heading/);
+      assert.match(prepared.post.markdown, /Header subtitle/);
+    } finally {
+      await cleanup(file);
+    }
+  });
+
   it("preserves a leading heading that differs from the frontmatter title", async () => {
     const file = await writeTempMarkdown(`---
 title: Post Title

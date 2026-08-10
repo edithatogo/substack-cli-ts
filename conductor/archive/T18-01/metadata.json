@@ -1,0 +1,12 @@
+{
+  "trackId": "T18-01",
+  "title": "Metadata/body de-duplication correctness",
+  "type": "bug",
+  "status": "archived",
+  "parentIssue": 538,
+  "issue": 537,
+  "project": 38,
+  "createdAt": "2026-08-10T23:30:00+10:00",
+  "updatedAt": "2026-08-10T23:55:00+10:00",
+  "archivedAt": "2026-08-10T23:55:00+10:00"
+}
