@@ -1,0 +1,9 @@
+{
+  "trackId": "T15-01",
+  "title": "Playwright authentication fallback and storage-state refresh",
+  "status": "verification_incomplete",
+  "phase": "P15",
+  "issue": 469,
+  "verificationIssue": 533,
+  "historicalArchive": "conductor/archive/T15-01"
+}

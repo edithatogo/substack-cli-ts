@@ -133,7 +133,7 @@
     "number": 38,
     "id": "PVT_kwHOAOYc4M4BfukQ",
     "title": "Substack CLI frontier-mainline maturity programme to 1.0",
-    "itemCountAtReceipt": 303,
+    "itemCountAtReceipt": 316,
     "fields": [
       "Title",
       "Assignees",
@@ -187,8 +187,10 @@
     ]
   },
   "receipt": {
-    "capturedAt": "2026-08-09T00:00:00+10:00",
+    "capturedAt": "2026-08-10T20:46:13+10:00",
     "capturedBy": "gh project view, field-list, GraphQL ProjectV2 workflows and native issue hierarchy",
-    "policy": "docs/governance/project-policy.md"
-  }
+    "policy": "docs/governance/project-policy.md",
+    "reconciliation": "conductor/verification/programme-state-reconciliation-2026-08-10.md"
+  },
+  "stateContract": "conductor/programme-state.json"
 }

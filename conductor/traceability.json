@@ -19,7 +19,8 @@
         "T00-02",
         "T00-03",
         "T00-04"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P01": {
       "phaseId": "P01",
@@ -29,7 +30,8 @@
         "T01-01",
         "T01-02",
         "T01-03"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P02": {
       "phaseId": "P02",
@@ -40,7 +42,8 @@
         "T02-02",
         "T02-03",
         "T02-04"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P03": {
       "phaseId": "P03",
@@ -51,7 +54,8 @@
         "T03-02",
         "T03-03",
         "T03-04"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P04": {
       "phaseId": "P04",
@@ -62,7 +66,8 @@
         "T04-02",
         "T04-03",
         "T04-04"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P05": {
       "phaseId": "P05",
@@ -73,7 +78,8 @@
         "T05-02",
         "T05-03",
         "T05-04"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P06": {
       "phaseId": "P06",
@@ -84,7 +90,8 @@
         "T06-02",
         "T06-03",
         "T06-04"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P07": {
       "phaseId": "P07",
@@ -95,7 +102,8 @@
         "T07-02",
         "T07-03",
         "T07-04"
-      ]
+      ],
+      "status": "contract_verified"
     },
     "P08": {
       "phaseId": "P08",
@@ -106,7 +114,8 @@
         "T08-02",
         "T08-03",
         "T08-04"
-      ]
+      ],
+      "status": "planned"
     },
     "P09": {
       "phaseId": "P09",
@@ -117,7 +126,8 @@
         "T09-02",
         "T09-03",
         "T09-04"
-      ]
+      ],
+      "status": "planned"
     },
     "P10": {
       "phaseId": "P10",
@@ -128,7 +138,8 @@
         "T10-02",
         "T10-03",
         "T10-04"
-      ]
+      ],
+      "status": "planned"
     },
     "P11": {
       "phaseId": "P11",
@@ -138,7 +149,8 @@
         "T11-01",
         "T11-02",
         "T11-03"
-      ]
+      ],
+      "status": "planned"
     }
   },
   "tracks": {
@@ -146,7 +158,7 @@
       "id": "T00-01",
       "phaseId": "P00",
       "title": "Repository baseline, current-state audit and standards integration",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-EXISTING-WORK-004",
@@ -169,7 +181,7 @@
       "id": "T00-02",
       "phaseId": "P00",
       "title": "Canonical contract and traceability system",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-CONTRACT-002",
@@ -183,7 +195,7 @@
       "id": "T00-03",
       "phaseId": "P00",
       "title": "Conductor programme and GitHub native issue hierarchy",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-NESTED-ISSUES-003",
@@ -197,7 +209,7 @@
       "id": "T00-04",
       "phaseId": "P00",
       "title": "Planning PR, green checks and mandatory stop",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-APPROVAL-GATE-005"
@@ -210,7 +222,7 @@
       "id": "T01-01",
       "phaseId": "P01",
       "title": "Mutation freeze and audit of unsafe live surfaces",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "SEC-NO-WRITE-PROBING-008",
@@ -227,7 +239,7 @@
       "id": "T01-02",
       "phaseId": "P01",
       "title": "Boolean, transport, retry, error and outcome correctness",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "NET-DISCRIMINATED-RESULT-002"
@@ -240,7 +252,7 @@
       "id": "T01-03",
       "phaseId": "P01",
       "title": "Origin, authorization, filesystem, credential and redaction boundaries",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -256,7 +268,7 @@
       "id": "T02-01",
       "phaseId": "P02",
       "title": "Node Current, npm Current and removal of experimental lanes",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-NO-EXPERIMENTAL-LANE-001",
         "DEP-RUNTIME-CURRENT-004"
@@ -269,7 +281,7 @@
       "id": "T02-02",
       "phaseId": "P02",
       "title": "Exact frontier dependency migration and feature adoption",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "DEP-NO-EXPERIMENTAL-LANE-001",
@@ -286,7 +298,7 @@
       "id": "T02-03",
       "phaseId": "P02",
       "title": "TypeScript next/native migration and parallel compilation",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-TYPESCRIPT-NEXT-005"
@@ -299,7 +311,7 @@
       "id": "T02-04",
       "phaseId": "P02",
       "title": "Package/workspace ownership, exports and publishability",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-PUBLIC-PACKAGE-008",
@@ -313,7 +325,7 @@
       "id": "T03-01",
       "phaseId": "P03",
       "title": "Modular architecture and dependency boundaries",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "ARCH-MODULAR-001"
       ],
@@ -325,7 +337,7 @@
       "id": "T03-02",
       "phaseId": "P03",
       "title": "Canonical capability registry and code generation",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "ARCH-CAPABILITY-REGISTRY-002",
@@ -340,7 +352,7 @@
       "id": "T03-03",
       "phaseId": "P03",
       "title": "Official/internal/browser/simulator adapter separation",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-NO-WRITE-PROBING-008",
@@ -354,7 +366,7 @@
       "id": "T03-04",
       "phaseId": "P03",
       "title": "Programmatic API, CLI UX and structured errors",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "SEC-SECRET-STORAGE-009",
@@ -369,7 +381,7 @@
       "id": "T04-01",
       "phaseId": "P04",
       "title": "Canonical plans, independent approval, replay protection and authority",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-IDEMPOTENCY-004",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -386,7 +398,7 @@
       "id": "T04-02",
       "phaseId": "P04",
       "title": "Catalogue, freeze and read-only reconciliation",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PLAN-FREEZE-003",
         "MUT-RECONCILE-004",
@@ -403,7 +415,7 @@
       "id": "T04-03",
       "phaseId": "P04",
       "title": "Whole-publication scheduling policy",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SCHEDULE-POLICY-007"
       ],
@@ -417,7 +429,7 @@
       "id": "T04-04",
       "phaseId": "P04",
       "title": "Mutation execution, outcome uncertainty, revision and compensation",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-OUTCOME-UNKNOWN-003",
         "MUT-RECONCILE-004",
@@ -434,7 +446,7 @@
       "id": "T05-01",
       "phaseId": "P05",
       "title": "SQLite event store, tasks, locks and migrations",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "STATE-SQLITE-001",
         "STATE-AUDIT-002",
@@ -448,7 +460,7 @@
       "id": "T05-02",
       "phaseId": "P05",
       "title": "Credential storage, privacy, retention and tamper-evident audit",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-WORKSPACE-007",
         "SEC-SECRET-STORAGE-009",
@@ -463,7 +475,7 @@
       "id": "T05-03",
       "phaseId": "P05",
       "title": "Transactional media, settings, mappings and rate limits",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "MEDIA-TRANSACTION-003",
@@ -479,7 +491,7 @@
       "id": "T05-04",
       "phaseId": "P05",
       "title": "Backup, export/import, rollback and disaster recovery",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "STATE-SQLITE-001",
@@ -494,7 +506,7 @@
       "id": "T06-01",
       "phaseId": "P06",
       "title": "Markdown AST, strict YAML and ProseMirror schema",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006"
       ],
@@ -506,7 +518,7 @@
       "id": "T06-02",
       "phaseId": "P06",
       "title": "Rich content and media fidelity",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MEDIA-TRANSACTION-003",
         "PARSER-AST-006",
@@ -520,7 +532,7 @@
       "id": "T06-03",
       "phaseId": "P06",
       "title": "Evidence-backed publication, notes, community and administration",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "SEC-NO-WRITE-PROBING-008",
@@ -538,7 +550,7 @@
       "id": "T06-04",
       "phaseId": "P06",
       "title": "Multi-publication workspace and Creator OS",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "FEATURE-MULTI-PUBLICATION-007",
         "FEATURE-FIDELITY-008"
@@ -551,7 +563,7 @@
       "id": "T07-01",
       "phaseId": "P07",
       "title": "MCP v2 split SDK and stateless core",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -565,7 +577,7 @@
       "id": "T07-02",
       "phaseId": "P07",
       "title": "stdio, Streamable HTTP and authorization",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-MCP-V2-006",
         "MCP-STATELESS-001",
@@ -580,7 +592,7 @@
       "id": "T07-03",
       "phaseId": "P07",
       "title": "Tasks, MRTR and MCP Apps",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -596,7 +608,7 @@
       "id": "T07-04",
       "phaseId": "P07",
       "title": "MCP annotations, MCPB, OCI and client compatibility",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MCP-ANNOTATIONS-006",
         "MCP-PACKAGING-007"
@@ -609,7 +621,7 @@
       "id": "T08-01",
       "phaseId": "P08",
       "title": "Deterministic protocol simulator and failure laboratory",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "NET-OUTCOME-UNKNOWN-003",
@@ -625,7 +637,7 @@
       "id": "T08-02",
       "phaseId": "P08",
       "title": "Risk-weighted quality harness and verification receipt",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "GOV-REPOSITORY-STANDARDS-007",
@@ -645,7 +657,7 @@
       "id": "T08-03",
       "phaseId": "P08",
       "title": "Performance budgets and privacy-preserving observability",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-TYPESCRIPT-NEXT-005",
         "PERF-OBSERVABILITY-005"
@@ -658,7 +670,7 @@
       "id": "T08-04",
       "phaseId": "P08",
       "title": "Disposable-publication canary and compatibility matrix",
-      "status": "planned",
+      "status": "implemented",
       "contractIds": [
         "TEST-CANARY-004"
       ],
@@ -670,7 +682,7 @@
       "id": "T09-01",
       "phaseId": "P09",
       "title": "Required cross-platform CI and contract gates",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -680,13 +692,13 @@
       ],
       "requiredTaskCount": 4,
       "existingIssues": [],
-      "issue": null
+      "issue": 522
     },
     "T09-02": {
       "id": "T09-02",
       "phaseId": "P09",
       "title": "Security and supply-chain engineering",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-STRUCTURED-REDACTION-010",
         "SEC-THREAT-MODEL-011",
@@ -700,7 +712,7 @@
       "id": "T09-03",
       "phaseId": "P09",
       "title": "Reproducible release, trusted publishing and rollback",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-COHERENCE-007",
@@ -833,7 +845,7 @@
       "title": "Record default-branch SHA, dirty state, tags, releases, open issues/PRs/branches, current Conductor state, package graph, lockfile hash, workflows, protections, registries, and baseline checks.",
       "trackId": "T00-01",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-EXISTING-WORK-004",
@@ -854,7 +866,7 @@
       "title": "Audit the latest edithatogo/repository-standards profile and managed files for this repository.",
       "trackId": "T00-01",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-EXISTING-WORK-004",
@@ -875,7 +887,7 @@
       "title": "Inventory every existing feature, safety class, endpoint evidence level, and stale documentation claim.",
       "trackId": "T00-01",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-EXISTING-WORK-004",
@@ -896,7 +908,7 @@
       "title": "Produce a risk-ranked gap report and initial maturity scorecard.",
       "trackId": "T00-01",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-EXISTING-WORK-004",
@@ -917,7 +929,7 @@
       "title": "Compute and record this prompt's SHA-256.",
       "trackId": "T00-02",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-CONTRACT-002",
@@ -936,7 +948,7 @@
       "title": "Create the canonical maturity contract and embedded status/evidence schema.",
       "trackId": "T00-02",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-CONTRACT-002",
@@ -955,7 +967,7 @@
       "title": "Create a deterministic validator and zero-gap traceability report.",
       "trackId": "T00-02",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-CONTRACT-002",
@@ -974,7 +986,7 @@
       "title": "Create exception, decision, verification-receipt, and prompt-retirement schemas.",
       "trackId": "T00-02",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-CONTRACT-002",
@@ -993,7 +1005,7 @@
       "title": "Install or update the current Conductor plugin/extension and run brownfield setup without overwriting valid context.",
       "trackId": "T00-03",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-NESTED-ISSUES-003",
@@ -1012,7 +1024,7 @@
       "title": "Refresh conductor/product.md, product-guidelines.md, tech-stack.md, workflow.md, code style guides, and tracks.md.",
       "trackId": "T00-03",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-NESTED-ISSUES-003",
@@ -1031,7 +1043,7 @@
       "title": "Create one Conductor track directory per track in this prompt with spec.md, plan.md, metadata.json, contracts, dependencies, risks, and verification.",
       "trackId": "T00-03",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-NESTED-ISSUES-003",
@@ -1050,7 +1062,7 @@
       "title": "Create the programme issue, phase subissues, track subissues, and task subissues; reuse existing issues.",
       "trackId": "T00-03",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-NESTED-ISSUES-003",
@@ -1069,7 +1081,7 @@
       "title": "Create or update a GitHub Project with Phase, Track, Contract IDs, Priority, Risk, Status, Evidence, Release, and Blocker fields.",
       "trackId": "T00-03",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-NESTED-ISSUES-003",
@@ -1088,7 +1100,7 @@
       "title": "Create a dedicated planning branch and commit only planning/governance artefacts.",
       "trackId": "T00-04",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-APPROVAL-GATE-005"
@@ -1105,7 +1117,7 @@
       "title": "Open the planning PR with contract coverage and issue hierarchy counts.",
       "trackId": "T00-04",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-APPROVAL-GATE-005"
@@ -1122,7 +1134,7 @@
       "title": "Watch GitHub Actions to completion and fix planning artefact failures only.",
       "trackId": "T00-04",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-APPROVAL-GATE-005"
@@ -1139,7 +1151,7 @@
       "title": "Emit the canonical plan hash, PR URL, check results, zero-gap report, and explicit implementation-not-started statement.",
       "trackId": "T00-04",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-APPROVAL-GATE-005"
@@ -1156,7 +1168,7 @@
       "title": "Stop and await the exact approval phrase defined by this prompt.",
       "trackId": "T00-04",
       "phaseId": "P00",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-PLAN-FIRST-001",
         "GOV-APPROVAL-GATE-005"
@@ -1173,7 +1185,7 @@
       "title": "Audit merged revise/unschedule code and all guessed write probes.",
       "trackId": "T01-01",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "SEC-NO-WRITE-PROBING-008",
@@ -1194,7 +1206,7 @@
       "title": "Disable, revert, or reclassify unsafe writes until exact evidence and common mutation contracts exist.",
       "trackId": "T01-01",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "SEC-NO-WRITE-PROBING-008",
@@ -1215,7 +1227,7 @@
       "title": "Audit domain, team, refund, moderation, subscriber, publication-setting, note, publish, revise, and unschedule mutations.",
       "trackId": "T01-01",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "SEC-NO-WRITE-PROBING-008",
@@ -1236,7 +1248,7 @@
       "title": "Create first-party capture requirements and endpoint evidence records.",
       "trackId": "T01-01",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "SEC-NO-WRITE-PROBING-008",
@@ -1257,7 +1269,7 @@
       "title": "Fix strict YAML/boolean parsing and no-resend defaults.",
       "trackId": "T01-02",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "NET-DISCRIMINATED-RESULT-002"
@@ -1274,7 +1286,7 @@
       "title": "Introduce discriminated transport results and operation-specific success schemas.",
       "trackId": "T01-02",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "NET-DISCRIMINATED-RESULT-002"
@@ -1291,7 +1303,7 @@
       "title": "Implement outcome-unknown and reconciliation-before-replay.",
       "trackId": "T01-02",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "NET-DISCRIMINATED-RESULT-002"
@@ -1308,7 +1320,7 @@
       "title": "Unify Retry-After, clock, RNG, cancellation, timeout, and structured error handling.",
       "trackId": "T01-02",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "NET-DISCRIMINATED-RESULT-002"
@@ -1325,7 +1337,7 @@
       "title": "Implement per-origin cookie scoping, redirect policy, trusted origins, and SSRF protections.",
       "trackId": "T01-03",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -1348,7 +1360,7 @@
       "title": "Introduce AuthorizedPublicationSession with publication ID and role.",
       "trackId": "T01-03",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -1371,7 +1383,7 @@
       "title": "Implement WorkspaceGuard across CLI/MCP/media/fixtures.",
       "trackId": "T01-03",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -1394,7 +1406,7 @@
       "title": "Separate and protect credential/config/state/cache locations.",
       "trackId": "T01-03",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -1417,7 +1429,7 @@
       "title": "Centralize structured redaction and minimal audit logging.",
       "trackId": "T01-03",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -1440,7 +1452,7 @@
       "title": "Create/update the threat model.",
       "trackId": "T01-03",
       "phaseId": "P01",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -1463,7 +1475,7 @@
       "title": "Resolve and pin the newest supported Node Current and compatible npm.",
       "trackId": "T02-01",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-NO-EXPERIMENTAL-LANE-001",
         "DEP-RUNTIME-CURRENT-004"
@@ -1480,7 +1492,7 @@
       "title": "Adopt relevant Node experimental/current features in the main required runtime.",
       "trackId": "T02-01",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-NO-EXPERIMENTAL-LANE-001",
         "DEP-RUNTIME-CURRENT-004"
@@ -1497,7 +1509,7 @@
       "title": "Remove legacy Node support and all experimental-lane scripts/workflows/docs.",
       "trackId": "T02-01",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-NO-EXPERIMENTAL-LANE-001",
         "DEP-RUNTIME-CURRENT-004"
@@ -1514,7 +1526,7 @@
       "title": "Update local toolchain files and cross-platform CI.",
       "trackId": "T02-01",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-NO-EXPERIMENTAL-LANE-001",
         "DEP-RUNTIME-CURRENT-004"
@@ -1531,7 +1543,7 @@
       "title": "Query dist-tags and upstream release notes for every direct dependency.",
       "trackId": "T02-02",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "DEP-NO-EXPERIMENTAL-LANE-001",
@@ -1556,7 +1568,7 @@
       "title": "Select and exact-pin the newest maintained prerelease channel where available.",
       "trackId": "T02-02",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "DEP-NO-EXPERIMENTAL-LANE-001",
@@ -1581,7 +1593,7 @@
       "title": "Create the frontier adoption/provenance/rollback manifest.",
       "trackId": "T02-02",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "DEP-NO-EXPERIMENTAL-LANE-001",
@@ -1606,7 +1618,7 @@
       "title": "Align dependency families, dedupe, fix vulnerabilities and licences.",
       "trackId": "T02-02",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "DEP-NO-EXPERIMENTAL-LANE-001",
@@ -1631,7 +1643,7 @@
       "title": "Configure Renovate for prerelease mainline updates and supersede stale dependency PRs.",
       "trackId": "T02-02",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-EXISTING-WORK-004",
         "DEP-NO-EXPERIMENTAL-LANE-001",
@@ -1656,7 +1668,7 @@
       "title": "Make TypeScript next the primary compiler.",
       "trackId": "T02-03",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-TYPESCRIPT-NEXT-005"
@@ -1673,7 +1685,7 @@
       "title": "Resolve TS7 incompatibilities and legacy options.",
       "trackId": "T02-03",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-TYPESCRIPT-NEXT-005"
@@ -1690,7 +1702,7 @@
       "title": "Benchmark and configure checkers/builders.",
       "trackId": "T02-03",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-TYPESCRIPT-NEXT-005"
@@ -1707,7 +1719,7 @@
       "title": "Use TS6 compatibility only for tools that demonstrably need the legacy API.",
       "trackId": "T02-03",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-TYPESCRIPT-NEXT-005"
@@ -1724,7 +1736,7 @@
       "title": "Remove the public file: vendored dependency.",
       "trackId": "T02-04",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-PUBLIC-PACKAGE-008",
@@ -1743,7 +1755,7 @@
       "title": "Introduce internal workspaces or ordinary internal modules with explicit exports.",
       "trackId": "T02-04",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-PUBLIC-PACKAGE-008",
@@ -1762,7 +1774,7 @@
       "title": "Lazy-load optional browser/AI stacks and measure startup.",
       "trackId": "T02-04",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-PUBLIC-PACKAGE-008",
@@ -1781,7 +1793,7 @@
       "title": "Verify clean npm tarball installation and public API consumption.",
       "trackId": "T02-04",
       "phaseId": "P02",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-PUBLIC-PACKAGE-008",
@@ -1800,7 +1812,7 @@
       "title": "Split CLI registration from application use cases and domain logic.",
       "trackId": "T03-01",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "ARCH-MODULAR-001"
       ],
@@ -1815,7 +1827,7 @@
       "title": "Create ports/adapters boundaries for transport, state, clock, RNG, filesystem, credentials, logging, and policy.",
       "trackId": "T03-01",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "ARCH-MODULAR-001"
       ],
@@ -1830,7 +1842,7 @@
       "title": "Enforce dependency direction and cyclic-dependency checks.",
       "trackId": "T03-01",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "ARCH-MODULAR-001"
       ],
@@ -1845,7 +1857,7 @@
       "title": "Profile startup and lazy loading.",
       "trackId": "T03-01",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "ARCH-MODULAR-001"
       ],
@@ -1860,7 +1872,7 @@
       "title": "Define command/capability specifications with Standard Schema.",
       "trackId": "T03-02",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "ARCH-CAPABILITY-REGISTRY-002",
@@ -1881,7 +1893,7 @@
       "title": "Generate CLI, MCP tools, schemas, docs, completions, safety annotations, and coverage metadata.",
       "trackId": "T03-02",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "ARCH-CAPABILITY-REGISTRY-002",
@@ -1902,7 +1914,7 @@
       "title": "Add deterministic ordering and drift checks.",
       "trackId": "T03-02",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "ARCH-CAPABILITY-REGISTRY-002",
@@ -1923,7 +1935,7 @@
       "title": "Generate traceability from capability IDs to contracts and tests.",
       "trackId": "T03-02",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "ARCH-CAPABILITY-REGISTRY-002",
@@ -1944,7 +1956,7 @@
       "title": "Create explicit official API, internal API, browser, and simulator adapters.",
       "trackId": "T03-03",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-NO-WRITE-PROBING-008",
@@ -1963,7 +1975,7 @@
       "title": "Build endpoint evidence and support-status registries.",
       "trackId": "T03-03",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-NO-WRITE-PROBING-008",
@@ -1982,7 +1994,7 @@
       "title": "Remove write probing and implicit transport coupling.",
       "trackId": "T03-03",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-NO-WRITE-PROBING-008",
@@ -2001,7 +2013,7 @@
       "title": "Document compliance and independent-project boundaries.",
       "trackId": "T03-03",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-ORIGIN-005",
         "SEC-NO-WRITE-PROBING-008",
@@ -2020,7 +2032,7 @@
       "title": "Create explicit package exports and compatibility reports.",
       "trackId": "T03-04",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "SEC-SECRET-STORAGE-009",
@@ -2041,7 +2053,7 @@
       "title": "Implement stable JSON/JSONL outputs, exit codes, config explain, cancellation, timeouts, and help.",
       "trackId": "T03-04",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "SEC-SECRET-STORAGE-009",
@@ -2062,7 +2074,7 @@
       "title": "Generate and test contextual completions for bash, zsh, fish, and PowerShell.",
       "trackId": "T03-04",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "SEC-SECRET-STORAGE-009",
@@ -2083,7 +2095,7 @@
       "title": "Standardize safe structured errors across CLI, MCP, logs, and API.",
       "trackId": "T03-04",
       "phaseId": "P03",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "SEC-SECRET-STORAGE-009",
@@ -2104,7 +2116,7 @@
       "title": "Implement canonical plan schemas and serialization.",
       "trackId": "T04-01",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-IDEMPOTENCY-004",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -2125,7 +2137,7 @@
       "title": "Implement independent signed/HMAC/persisted approval with expiry and single use.",
       "trackId": "T04-01",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-IDEMPOTENCY-004",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -2146,7 +2158,7 @@
       "title": "Bind plan to authority, before-state, content, endpoint contract, and risk.",
       "trackId": "T04-01",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-IDEMPOTENCY-004",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -2167,7 +2179,7 @@
       "title": "Prove replay, drift, wrong-publication, expired, and unauthorized rejection.",
       "trackId": "T04-01",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-IDEMPOTENCY-004",
         "SEC-PUBLICATION-AUTHORITY-006",
@@ -2188,7 +2200,7 @@
       "title": "Define external catalogue and publication identity schemas.",
       "trackId": "T04-02",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PLAN-FREEZE-003",
         "MUT-RECONCILE-004",
@@ -2207,7 +2219,7 @@
       "title": "Implement fail-closed freeze policy.",
       "trackId": "T04-02",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PLAN-FREEZE-003",
         "MUT-RECONCILE-004",
@@ -2226,7 +2238,7 @@
       "title": "Implement local-to-remote reconciliation with stable JSON output.",
       "trackId": "T04-02",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PLAN-FREEZE-003",
         "MUT-RECONCILE-004",
@@ -2245,7 +2257,7 @@
       "title": "Prove frozen/unapproved flows perform zero writes.",
       "trackId": "T04-02",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PLAN-FREEZE-003",
         "MUT-RECONCILE-004",
@@ -2264,7 +2276,7 @@
       "title": "Implement calendar, queue, horizon, spacing and collision policy.",
       "trackId": "T04-03",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SCHEDULE-POLICY-007"
       ],
@@ -2279,7 +2291,7 @@
       "title": "Use strict IANA timezones and DST semantics.",
       "trackId": "T04-03",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SCHEDULE-POLICY-007"
       ],
@@ -2294,7 +2306,7 @@
       "title": "Unify post and note scheduling.",
       "trackId": "T04-03",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SCHEDULE-POLICY-007"
       ],
@@ -2309,7 +2321,7 @@
       "title": "Add property/model tests and remote-precision reconciliation.",
       "trackId": "T04-03",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SCHEDULE-POLICY-007"
       ],
@@ -2324,7 +2336,7 @@
       "title": "Implement the guarded executor consuming approved plans.",
       "trackId": "T04-04",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-OUTCOME-UNKNOWN-003",
         "MUT-RECONCILE-004",
@@ -2345,7 +2357,7 @@
       "title": "Implement outcome-unknown recovery and after-state reconciliation.",
       "trackId": "T04-04",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-OUTCOME-UNKNOWN-003",
         "MUT-RECONCILE-004",
@@ -2366,7 +2378,7 @@
       "title": "Implement compensating plans and irreversible-operation classification.",
       "trackId": "T04-04",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-OUTCOME-UNKNOWN-003",
         "MUT-RECONCILE-004",
@@ -2387,7 +2399,7 @@
       "title": "Rebuild revise/unschedule with exact capture evidence, URL preservation, and no resend.",
       "trackId": "T04-04",
       "phaseId": "P04",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-OUTCOME-UNKNOWN-003",
         "MUT-RECONCILE-004",
@@ -2408,7 +2420,7 @@
       "title": "Implement the Node SQLite-backed state port with WAL and migrations.",
       "trackId": "T05-01",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "STATE-SQLITE-001",
         "STATE-AUDIT-002",
@@ -2427,7 +2439,7 @@
       "title": "Persist plans, approvals, tasks, mappings, events, cooldowns, and receipts transactionally.",
       "trackId": "T05-01",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "STATE-SQLITE-001",
         "STATE-AUDIT-002",
@@ -2446,7 +2458,7 @@
       "title": "Add concurrency, corruption, crash and migration tests.",
       "trackId": "T05-01",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "STATE-SQLITE-001",
         "STATE-AUDIT-002",
@@ -2465,7 +2477,7 @@
       "title": "Keep portable JSON export/import.",
       "trackId": "T05-01",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "STATE-SQLITE-001",
         "STATE-AUDIT-002",
@@ -2484,7 +2496,7 @@
       "title": "Integrate platform credential storage or an equivalent encrypted design.",
       "trackId": "T05-02",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-WORKSPACE-007",
         "SEC-SECRET-STORAGE-009",
@@ -2505,7 +2517,7 @@
       "title": "Implement privacy classes and retention policies.",
       "trackId": "T05-02",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-WORKSPACE-007",
         "SEC-SECRET-STORAGE-009",
@@ -2526,7 +2538,7 @@
       "title": "Implement a hash-chained minimal event ledger.",
       "trackId": "T05-02",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-WORKSPACE-007",
         "SEC-SECRET-STORAGE-009",
@@ -2547,7 +2559,7 @@
       "title": "Verify file permissions and redaction across platforms.",
       "trackId": "T05-02",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-WORKSPACE-007",
         "SEC-SECRET-STORAGE-009",
@@ -2568,7 +2580,7 @@
       "title": "Implement content-hash media staging and recovery.",
       "trackId": "T05-03",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "MEDIA-TRANSACTION-003",
@@ -2591,7 +2603,7 @@
       "title": "Implement allowlisted settings patches and compensation.",
       "trackId": "T05-03",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "MEDIA-TRANSACTION-003",
@@ -2614,7 +2626,7 @@
       "title": "Migrate mappings to stable content/publication IDs.",
       "trackId": "T05-03",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "MEDIA-TRANSACTION-003",
@@ -2637,7 +2649,7 @@
       "title": "Make rate-limit receipts monotonic and provenance-bound.",
       "trackId": "T05-03",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "MEDIA-TRANSACTION-003",
@@ -2660,7 +2672,7 @@
       "title": "Create lossless portable backup formats and schemas.",
       "trackId": "T05-04",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "STATE-SQLITE-001",
@@ -2681,7 +2693,7 @@
       "title": "Implement clean-room restore and integrity verification.",
       "trackId": "T05-04",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "STATE-SQLITE-001",
@@ -2702,7 +2714,7 @@
       "title": "Implement draft/content recovery and compensating rollback plans.",
       "trackId": "T05-04",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "STATE-SQLITE-001",
@@ -2723,7 +2735,7 @@
       "title": "Automate disaster-recovery drills.",
       "trackId": "T05-04",
       "phaseId": "P05",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MUT-COMPENSATION-005",
         "STATE-SQLITE-001",
@@ -2744,7 +2756,7 @@
       "title": "Adopt the newest relevant unified/remark/micromark or equivalent frontier stack.",
       "trackId": "T06-01",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006"
       ],
@@ -2759,7 +2771,7 @@
       "title": "Map source-positioned AST directly to validated ProseMirror.",
       "trackId": "T06-01",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006"
       ],
@@ -2774,7 +2786,7 @@
       "title": "Implement strict YAML frontmatter and diagnostics.",
       "trackId": "T06-01",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006"
       ],
@@ -2789,7 +2801,7 @@
       "title": "Add golden, round-trip, differential and fuzz fixtures.",
       "trackId": "T06-01",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006"
       ],
@@ -2804,7 +2816,7 @@
       "title": "Mature captions, alt text, embeds, tables, paywall, subscribe, code, callouts, galleries, audio/video and unsupported-feature reporting.",
       "trackId": "T06-02",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MEDIA-TRANSACTION-003",
         "PARSER-AST-006",
@@ -2823,7 +2835,7 @@
       "title": "Sanitize untrusted HTML and external URLs.",
       "trackId": "T06-02",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MEDIA-TRANSACTION-003",
         "PARSER-AST-006",
@@ -2842,7 +2854,7 @@
       "title": "Implement deterministic media planning and upload receipts.",
       "trackId": "T06-02",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MEDIA-TRANSACTION-003",
         "PARSER-AST-006",
@@ -2861,7 +2873,7 @@
       "title": "Test real long-form article corpora without secrets.",
       "trackId": "T06-02",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MEDIA-TRANSACTION-003",
         "PARSER-AST-006",
@@ -2880,7 +2892,7 @@
       "title": "Mature draft/create/update/publish/schedule/revise/unschedule semantics.",
       "trackId": "T06-03",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "SEC-NO-WRITE-PROBING-008",
@@ -2907,7 +2919,7 @@
       "title": "Mature notes, comments, community, settings, domain, team, subscriber, billing and analytics surfaces only where exact evidence exists.",
       "trackId": "T06-03",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "SEC-NO-WRITE-PROBING-008",
@@ -2934,7 +2946,7 @@
       "title": "Return successful empty lists correctly.",
       "trackId": "T06-03",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "SEC-NO-WRITE-PROBING-008",
@@ -2961,7 +2973,7 @@
       "title": "Separate official, internal and browser support status.",
       "trackId": "T06-03",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "COR-BOOLEAN-001",
         "SEC-NO-WRITE-PROBING-008",
@@ -2988,7 +3000,7 @@
       "title": "Implement stable workspace/publication/content/campaign IDs.",
       "trackId": "T06-04",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "FEATURE-MULTI-PUBLICATION-007",
         "FEATURE-FIDELITY-008"
@@ -3005,7 +3017,7 @@
       "title": "Implement catalogues, calendars, campaigns, analytics snapshots, warehouse exports, attribution and backup.",
       "trackId": "T06-04",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "FEATURE-MULTI-PUBLICATION-007",
         "FEATURE-FIDELITY-008"
@@ -3022,7 +3034,7 @@
       "title": "Make batch operations selector-bound, resumable and reconciled.",
       "trackId": "T06-04",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "FEATURE-MULTI-PUBLICATION-007",
         "FEATURE-FIDELITY-008"
@@ -3039,7 +3051,7 @@
       "title": "Add multi-publication simulator scenarios.",
       "trackId": "T06-04",
       "phaseId": "P06",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "FEATURE-MULTI-PUBLICATION-007",
         "FEATURE-FIDELITY-008"
@@ -3056,7 +3068,7 @@
       "title": "Run the current official v1-to-v2 codemod and finish migration.",
       "trackId": "T07-01",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3075,7 +3087,7 @@
       "title": "Adopt 2026-07-28 explicitly.",
       "trackId": "T07-01",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3094,7 +3106,7 @@
       "title": "Implement deterministic/cacheable catalogue results, request metadata and header routing.",
       "trackId": "T07-01",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3113,7 +3125,7 @@
       "title": "Remove deprecated new-use roots/sampling/logging patterns.",
       "trackId": "T07-01",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3132,7 +3144,7 @@
       "title": "Serve stdio and stateless Streamable HTTP from one registry.",
       "trackId": "T07-02",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-MCP-V2-006",
         "MCP-STATELESS-001",
@@ -3153,7 +3165,7 @@
       "title": "Implement current Node/Hono middleware and host-header protection.",
       "trackId": "T07-02",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-MCP-V2-006",
         "MCP-STATELESS-001",
@@ -3174,7 +3186,7 @@
       "title": "Implement issuer validation, credential isolation, scope step-up, CIMD and TLS.",
       "trackId": "T07-02",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-MCP-V2-006",
         "MCP-STATELESS-001",
@@ -3195,7 +3207,7 @@
       "title": "Maintain deliberate legacy-era compatibility where clients require it.",
       "trackId": "T07-02",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-MCP-V2-006",
         "MCP-STATELESS-001",
@@ -3216,7 +3228,7 @@
       "title": "Implement durable Tasks extension lifecycle.",
       "trackId": "T07-03",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3239,7 +3251,7 @@
       "title": "Implement MRTR/input-required flows where appropriate.",
       "trackId": "T07-03",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3262,7 +3274,7 @@
       "title": "Implement MCP Apps review interfaces.",
       "trackId": "T07-03",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3285,7 +3297,7 @@
       "title": "Test capability negotiation, cancellation and clients without extension support.",
       "trackId": "T07-03",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-EXPERIMENTAL-FEATURE-AUDIT-003",
         "DEP-MCP-V2-006",
@@ -3308,7 +3320,7 @@
       "title": "Generate accurate annotations and high-quality descriptions.",
       "trackId": "T07-04",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MCP-ANNOTATIONS-006",
         "MCP-PACKAGING-007"
@@ -3325,7 +3337,7 @@
       "title": "Build MCPB, npm and OCI distributions.",
       "trackId": "T07-04",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MCP-ANNOTATIONS-006",
         "MCP-PACKAGING-007"
@@ -3342,7 +3354,7 @@
       "title": "Test with official Inspector and a current client matrix.",
       "trackId": "T07-04",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MCP-ANNOTATIONS-006",
         "MCP-PACKAGING-007"
@@ -3359,7 +3371,7 @@
       "title": "Generate registry metadata from the same capability source.",
       "trackId": "T07-04",
       "phaseId": "P07",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MCP-ANNOTATIONS-006",
         "MCP-PACKAGING-007"
@@ -3376,7 +3388,7 @@
       "title": "Build the fixture server, fake clock/RNG and request ledger.",
       "trackId": "T08-01",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "NET-OUTCOME-UNKNOWN-003",
@@ -3399,7 +3411,7 @@
       "title": "Cover auth, rate limit, conflicts, partial failures, schema drift, redirects, lost responses and duplicate prevention.",
       "trackId": "T08-01",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "NET-OUTCOME-UNKNOWN-003",
@@ -3422,7 +3434,7 @@
       "title": "Record zero-mutation assertions for every blocked flow.",
       "trackId": "T08-01",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "NET-OUTCOME-UNKNOWN-003",
@@ -3445,7 +3457,7 @@
       "title": "Create sanitized capture-to-fixture tooling.",
       "trackId": "T08-01",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "NET-DISCRIMINATED-RESULT-002",
         "NET-OUTCOME-UNKNOWN-003",
@@ -3468,7 +3480,7 @@
       "title": "Define the risk-to-assurance matrix.",
       "trackId": "T08-02",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "GOV-REPOSITORY-STANDARDS-007",
@@ -3495,7 +3507,7 @@
       "title": "Add property, model, fuzz, mutation, differential, metamorphic, contract and concurrency tests.",
       "trackId": "T08-02",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "GOV-REPOSITORY-STANDARDS-007",
@@ -3522,7 +3534,7 @@
       "title": "Remove unjustified coverage exclusions and set risk-specific thresholds.",
       "trackId": "T08-02",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "GOV-REPOSITORY-STANDARDS-007",
@@ -3549,7 +3561,7 @@
       "title": "Implement one-command verification and repository-standards receipt.",
       "trackId": "T08-02",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "GOV-REPOSITORY-STANDARDS-007",
@@ -3576,7 +3588,7 @@
       "title": "Instrument structured logs, metrics and traces with no-export default.",
       "trackId": "T08-03",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-TYPESCRIPT-NEXT-005",
         "PERF-OBSERVABILITY-005"
@@ -3593,7 +3605,7 @@
       "title": "Benchmark TypeScript parallelism, startup, parser, state, plan, simulator and MCP catalogue.",
       "trackId": "T08-03",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-TYPESCRIPT-NEXT-005",
         "PERF-OBSERVABILITY-005"
@@ -3610,7 +3622,7 @@
       "title": "Set blocking performance budgets and trend reports.",
       "trackId": "T08-03",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-TYPESCRIPT-NEXT-005",
         "PERF-OBSERVABILITY-005"
@@ -3627,7 +3639,7 @@
       "title": "Profile CPU, heap and package size.",
       "trackId": "T08-03",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-TYPESCRIPT-NEXT-005",
         "PERF-OBSERVABILITY-005"
@@ -3644,7 +3656,7 @@
       "title": "Create guarded canary workflows and cleanup.",
       "trackId": "T08-04",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "TEST-CANARY-004"
       ],
@@ -3659,7 +3671,7 @@
       "title": "Test current Node, clients, operating systems and distribution formats.",
       "trackId": "T08-04",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "TEST-CANARY-004"
       ],
@@ -3674,7 +3686,7 @@
       "title": "Record canary, production-observed and client-support maturity separately.",
       "trackId": "T08-04",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "TEST-CANARY-004"
       ],
@@ -3689,7 +3701,7 @@
       "title": "Never run canaries on ordinary PR events.",
       "trackId": "T08-04",
       "phaseId": "P08",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "TEST-CANARY-004"
       ],
@@ -3704,7 +3716,7 @@
       "title": "Create Linux/macOS/Windows required matrices on Node Current.",
       "trackId": "T09-01",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3712,7 +3724,7 @@
         "CI-ONE-COMMAND-006",
         "CI-CROSS-PLATFORM-007"
       ],
-      "issue": null,
+      "issue": 523,
       "mustContractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3727,7 +3739,7 @@
       "title": "Run generation, contracts, types, tests, coverage, mutation, package install and MCP conformance.",
       "trackId": "T09-01",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3735,7 +3747,7 @@
         "CI-ONE-COMMAND-006",
         "CI-CROSS-PLATFORM-007"
       ],
-      "issue": null,
+      "issue": 524,
       "mustContractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3750,7 +3762,7 @@
       "title": "Use concurrency, least privilege, bounded timeouts and artefact retention.",
       "trackId": "T09-01",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3758,7 +3770,7 @@
         "CI-ONE-COMMAND-006",
         "CI-CROSS-PLATFORM-007"
       ],
-      "issue": null,
+      "issue": 525,
       "mustContractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3773,7 +3785,7 @@
       "title": "Keep expensive checks bounded but blocking where risk requires.",
       "trackId": "T09-01",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3781,7 +3793,7 @@
         "CI-ONE-COMMAND-006",
         "CI-CROSS-PLATFORM-007"
       ],
-      "issue": null,
+      "issue": 526,
       "mustContractIds": [
         "GOV-CONTRACT-002",
         "DEP-RUNTIME-CURRENT-004",
@@ -3796,7 +3808,7 @@
       "title": "Pin action SHAs and add actionlint/zizmor.",
       "trackId": "T09-02",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-STRUCTURED-REDACTION-010",
         "SEC-THREAT-MODEL-011",
@@ -3815,7 +3827,7 @@
       "title": "Add CodeQL, dependency review, Scorecard, secret and OSV scanning.",
       "trackId": "T09-02",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-STRUCTURED-REDACTION-010",
         "SEC-THREAT-MODEL-011",
@@ -3834,7 +3846,7 @@
       "title": "Generate/validate SPDX and CycloneDX SBOMs, licences and attestations.",
       "trackId": "T09-02",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-STRUCTURED-REDACTION-010",
         "SEC-THREAT-MODEL-011",
@@ -3853,7 +3865,7 @@
       "title": "Implement private vulnerability reporting and update SECURITY.md.",
       "trackId": "T09-02",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "SEC-STRUCTURED-REDACTION-010",
         "SEC-THREAT-MODEL-011",
@@ -3872,7 +3884,7 @@
       "title": "Use npm OIDC trusted publishing and remove long-lived token dependence.",
       "trackId": "T09-03",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-COHERENCE-007",
@@ -3899,7 +3911,7 @@
       "title": "Build once, test exact artefacts, sign/attest and publish.",
       "trackId": "T09-03",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-COHERENCE-007",
@@ -3926,7 +3938,7 @@
       "title": "Synchronize all versions and generate release notes.",
       "trackId": "T09-03",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-COHERENCE-007",
@@ -3953,7 +3965,7 @@
       "title": "Test rollback and clean-room installation.",
       "trackId": "T09-03",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "DEP-FRONTIER-MAINLINE-002",
         "DEP-COHERENCE-007",
@@ -4845,5 +4857,6 @@
       "T11-03-TASK-03": 460,
       "T11-03-TASK-04": 461
     }
-  }
+  },
+  "programmeState": "./programme-state.json"
 }
