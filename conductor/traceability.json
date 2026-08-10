@@ -160,7 +160,7 @@
         "T18-01",
         "T18-02"
       ],
-      "status": "in_progress"
+      "status": "contract_verified"
     }
   },
   "tracks": {
@@ -868,7 +868,7 @@
       "id": "T18-02",
       "phaseId": "P18",
       "title": "Metadata duplication transport regression matrix",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006",
         "FEATURE-FIDELITY-008",
@@ -4706,7 +4706,7 @@
       "title": "Add table-driven preparation regression matrix",
       "trackId": "T18-02",
       "phaseId": "P18",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006",
         "FEATURE-FIDELITY-008",
@@ -4723,7 +4723,7 @@
       "title": "Assert transport payload preserves metadata/body separation",
       "trackId": "T18-02",
       "phaseId": "P18",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006",
         "FEATURE-FIDELITY-008",
@@ -4740,7 +4740,7 @@
       "title": "Run and record deterministic regression verification",
       "trackId": "T18-02",
       "phaseId": "P18",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "PARSER-AST-006",
         "FEATURE-FIDELITY-008",

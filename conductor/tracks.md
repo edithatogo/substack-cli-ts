@@ -90,4 +90,4 @@ Canonical status is evidence-gated by [programme-state.json](./programme-state.j
 
 ## P18 Metadata/body de-duplication correctness
 - [x] **T18-01 Metadata/body de-duplication correctness** ([#537](https://github.com/edithatogo/substack-cli-ts/issues/537)) ([evidence](./archive/T18-01/index.md))
-- [ ] **T18-02 Metadata duplication transport regression matrix** ([#544](https://github.com/edithatogo/substack-cli-ts/issues/544))
+- [x] **T18-02 Metadata duplication transport regression matrix** ([#544](https://github.com/edithatogo/substack-cli-ts/issues/544)) ([evidence](./archive/T18-02/index.md))
