@@ -1,0 +1,1 @@
+Fixed actionable PR #534 drift-check failure by replacing 263 concurrent REST issue reads with four paginated GraphQL reads, avoiding GitHub secondary rate limits.
