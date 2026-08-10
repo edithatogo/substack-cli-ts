@@ -7,7 +7,8 @@
 - [x] Full Vitest suite passes: 117 files, 924 tests.
 - [x] Strict TypeScript, Biome, secrets, audit, signatures, licences, SPDX and CycloneDX checks pass.
 - [x] Registry metadata, client integrations, and package dry-run pass.
-- [ ] PR checks, comments, and post-merge workflows pending.
+- [x] PR #527 checks and comments passed with no actionable review threads.
+- [x] Post-merge workflows passed for `a843a1136e2b6d27bd6b006ce2bb794748afb82b`.
 
 - [ ] Contract generated and validated
 - [ ] Traceability map generated
