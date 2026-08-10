@@ -1,0 +1,1 @@
+T05-05: implemented bounded local persistence retries, typed terminal errors, no HTTP replay, preserved observed status, regression coverage, and Conductor/GitHub issue receipts. Local gates: npm run ci; npm run scan:secrets; npm run typecheck; focused Vitest 29/29.
