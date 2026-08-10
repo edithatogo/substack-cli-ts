@@ -7,4 +7,5 @@
 - Kept incomplete: P08/T08-04, P09/T09-04, P10, and P11.
 - Historical redirects: #403-#407 to #522-#526.
 - Verification continuations: #531, #532, #533.
-- Hosted PR/check/merge evidence: pending this focused reconciliation PR.
+- Hosted PR: #534. All available required checks passed, including the live programme drift gate, CodeQL, security, cross-platform Node 26.5.1, quality, deterministic assurance, smoke, Codecov, and mutation. The immutable merge SHA is recorded on PR #534 and programme issue #184 after merge.
+
