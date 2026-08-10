@@ -88,8 +88,8 @@
     {
       "id": "P18",
       "issue": 538,
-      "state": "CLOSED",
-      "status": "Done"
+      "state": "OPEN",
+      "status": "In Progress"
     }
   ],
   "tracks": [
@@ -468,6 +468,13 @@
       "state": "CLOSED",
       "status": "Done",
       "evidence": "conductor/archive/T18-01/verification.md"
+    },
+    {
+      "id": "T18-02",
+      "phase": "P18",
+      "issue": 544,
+      "state": "OPEN",
+      "status": "Todo"
     }
   ],
   "tasks": [
@@ -2022,6 +2029,27 @@
       "state": "CLOSED",
       "status": "Done",
       "evidence": "conductor/archive/T18-01/verification.md"
+    },
+    {
+      "id": "T18-02-TASK-01",
+      "track": "T18-02",
+      "issue": 545,
+      "state": "OPEN",
+      "status": "Todo"
+    },
+    {
+      "id": "T18-02-TASK-02",
+      "track": "T18-02",
+      "issue": 546,
+      "state": "OPEN",
+      "status": "Todo"
+    },
+    {
+      "id": "T18-02-TASK-03",
+      "track": "T18-02",
+      "issue": 547,
+      "state": "OPEN",
+      "status": "Todo"
     }
   ],
   "supplemental": [

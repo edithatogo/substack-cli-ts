@@ -6,6 +6,116 @@ import { describe, it } from "vitest";
 import { preparePost } from "./prepare.js";
 
 describe("preparePost", () => {
+  const metadataCases = [
+    {
+      name: "plain title and subtitle paragraphs",
+      source: `---
+title: Post Title
+subtitle: Post subtitle
+---
+Post Title
+
+Post subtitle
+
+Body.
+`,
+      expectedBody: "Body.",
+    },
+    {
+      name: "formatted title and subtitle paragraphs",
+      source: `---
+title: Formatted title
+subtitle: Formatted subtitle
+---
+**Formatted title**
+
+*Formatted subtitle*
+
+Body.
+`,
+      expectedBody: "Body.",
+    },
+    {
+      name: "heading title and subtitle",
+      source: `---
+title: Heading title
+subtitle: Heading subtitle
+---
+# Heading title
+
+## Heading subtitle
+
+Body.
+`,
+      expectedBody: "Body.",
+    },
+    {
+      name: "mismatched metadata remains in the body",
+      source: `---
+title: Header title
+subtitle: Header subtitle
+---
+# Different title
+
+Different subtitle
+
+Body.
+`,
+      expectedBody: "# Different title\n\nDifferent subtitle\n\nBody.",
+    },
+    {
+      name: "matching text later in the body remains",
+      source: `---
+title: Header title
+subtitle: Header subtitle
+---
+Introductory text
+
+Header title
+
+Header subtitle
+`,
+      expectedBody: "Introductory text\n\nHeader title\n\nHeader subtitle",
+    },
+    {
+      name: "heading fallback becomes metadata without duplication",
+      source: `# Heading fallback
+
+Body.
+`,
+      expectedBody: "Body.",
+    },
+  ] as const;
+
+  it.each(metadataCases)(
+    "keeps metadata and body representations consistent: $name",
+    async (testCase) => {
+      const file = await writeTempMarkdown(testCase.source);
+
+      try {
+        const prepared = await preparePost(file);
+        const bodyText = prepared.post.document.content
+          ?.flatMap((node) => node.content ?? [])
+          .map((node) => node.text ?? "")
+          .filter(Boolean)
+          .join("\n");
+
+        assert.equal(prepared.post.markdown.trim(), testCase.expectedBody);
+        assert.doesNotMatch(
+          prepared.post.html,
+          /<h1>(Post Title|Formatted title|Heading title|Heading fallback)<\/h1>/,
+        );
+        assert.doesNotMatch(
+          prepared.post.html,
+          /Post subtitle|Formatted subtitle|Heading subtitle/,
+        );
+        assert.equal(bodyText.includes("Body.") || bodyText.includes("Header subtitle"), true);
+      } finally {
+        await cleanup(file);
+      }
+    },
+  );
+
   it("defaults to draft mode and frontmatter scheduleAt", async () => {
     const file = await writeTempMarkdown(`---
 title: Draft

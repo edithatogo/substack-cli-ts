@@ -2600,6 +2600,26 @@
         "url": "https://github.com/edithatogo/substack-cli-ts/issues/537",
         "title": "Prevent title and subtitle duplication in published post bodies"
       }
+    },
+    {
+      "id": "T18-02",
+      "phaseId": "P18",
+      "title": "Metadata duplication transport regression matrix",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "requiredTaskCount": 3,
+      "existingIssues": [
+        544
+      ],
+      "issue": {
+        "number": 544,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/544",
+        "title": "T18-02 Metadata duplication transport regression matrix"
+      }
     }
   ],
   "tasks": [
@@ -7193,6 +7213,57 @@
         "UX-CLI-CONTRACT-005"
       ],
       "release": "next patch"
+    },
+    {
+      "id": "T18-02-TASK-01",
+      "title": "Add table-driven preparation regression matrix",
+      "trackId": "T18-02",
+      "phaseId": "P18",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": {
+        "number": 545,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/545",
+        "title": "T18-02 Add table-driven preparation regression matrix"
+      }
+    },
+    {
+      "id": "T18-02-TASK-02",
+      "title": "Assert transport payload preserves metadata/body separation",
+      "trackId": "T18-02",
+      "phaseId": "P18",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": {
+        "number": 546,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/546",
+        "title": "T18-02 Assert transport payload preserves metadata/body separation"
+      }
+    },
+    {
+      "id": "T18-02-TASK-03",
+      "title": "Run and record deterministic regression verification",
+      "trackId": "T18-02",
+      "phaseId": "P18",
+      "status": "planned",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": {
+        "number": 547,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/547",
+        "title": "T18-02 Run and record deterministic regression verification"
+      }
     }
   ],
   "issueMap": {
