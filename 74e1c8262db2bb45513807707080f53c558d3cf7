@@ -1,0 +1,1 @@
+T09-02 Codecov remediation: cover null, sensitive-key, array, Error, Date, non-plain, URL, primitive, null-prototype and circular sanitizer boundaries. Local coverage: 117 files/927 tests, 98.23% statements, 95.16% branches, 98.34% lines; redact.ts fully covered.
