@@ -54,4 +54,35 @@ describe("sanitizeStructured", () => {
     diagnostic.self = diagnostic;
     assert.deepEqual(sanitizeStructured(diagnostic), { self: "[CIRCULAR]" });
   });
+
+  it("handles every structured diagnostic boundary without leaking", () => {
+    assert.equal(sanitizeStructured(undefined), undefined);
+    assert.equal(sanitizeStructured(null), null);
+    assert.equal(sanitizeStructured("visible", "token"), "[REDACTED]");
+    assert.deepEqual(sanitizeStructured([{ password: "live" }, 7]), [
+      { password: "[REDACTED]" },
+      7,
+    ]);
+    assert.deepEqual(sanitizeStructured(new Error("Bearer live-token")), {
+      name: "Error",
+      message: "Bearer [REDACTED]",
+    });
+    assert.equal(
+      sanitizeStructured(new Date("2026-08-10T00:00:00.000Z")),
+      "2026-08-10T00:00:00.000Z",
+    );
+    assert.equal(sanitizeStructured(new Map([["token", "live"]])), "[REDACTED OBJECT]");
+    assert.equal(
+      sanitizeStructured(
+        "https://example.com/session/123e4567-e89b-12d3-a456-426614174000?q=secret",
+        "url",
+      ),
+      "https://example.com/session/[REDACTED]",
+    );
+    assert.equal(sanitizeStructured(true), true);
+
+    const nullPrototype = Object.create(null) as Record<string, unknown>;
+    nullPrototype.cookie = "live";
+    assert.deepEqual(sanitizeStructured(nullPrototype), { cookie: "[REDACTED]" });
+  });
 });
