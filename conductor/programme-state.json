@@ -1,0 +1,2059 @@
+{
+  "schemaVersion": 1,
+  "repository": "edithatogo/substack-cli-ts",
+  "programmeIssue": 184,
+  "project": {
+    "owner": "edithatogo",
+    "number": 38
+  },
+  "reconciledAt": "2026-08-10",
+  "policies": {
+    "completeRequiresEvidence": true,
+    "incompleteVerificationRemainsOpen": true,
+    "preserveHistoricalRedirects": true
+  },
+  "phases": [
+    {
+      "id": "P00",
+      "issue": 185,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P01",
+      "issue": 227,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P02",
+      "issue": 253,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P03",
+      "issue": 275,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P04",
+      "issue": 296,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P05",
+      "issue": 318,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P06",
+      "issue": 339,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P07",
+      "issue": 360,
+      "state": "CLOSED",
+      "status": "Done"
+    },
+    {
+      "id": "P08",
+      "issue": 381,
+      "state": "OPEN",
+      "status": "Todo"
+    },
+    {
+      "id": "P09",
+      "issue": 402,
+      "state": "OPEN",
+      "status": "Todo"
+    },
+    {
+      "id": "P10",
+      "issue": 423,
+      "state": "OPEN",
+      "status": "Todo"
+    },
+    {
+      "id": "P11",
+      "issue": 446,
+      "state": "OPEN",
+      "status": "Todo"
+    }
+  ],
+  "tracks": [
+    {
+      "id": "T00-01",
+      "phase": "P00",
+      "issue": 186,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-01/verification.md"
+    },
+    {
+      "id": "T00-02",
+      "phase": "P00",
+      "issue": 193,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-02/verification.md"
+    },
+    {
+      "id": "T00-03",
+      "phase": "P00",
+      "issue": 203,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-03/verification.md"
+    },
+    {
+      "id": "T00-04",
+      "phase": "P00",
+      "issue": 215,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-04/verification.md"
+    },
+    {
+      "id": "T01-01",
+      "phase": "P01",
+      "issue": 229,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-01/verification.md"
+    },
+    {
+      "id": "T01-02",
+      "phase": "P01",
+      "issue": 239,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-02/verification.md"
+    },
+    {
+      "id": "T01-03",
+      "phase": "P01",
+      "issue": 246,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-03/verification.md"
+    },
+    {
+      "id": "T02-01",
+      "phase": "P02",
+      "issue": 254,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-01/verification.md"
+    },
+    {
+      "id": "T02-02",
+      "phase": "P02",
+      "issue": 259,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-02/verification.md"
+    },
+    {
+      "id": "T02-03",
+      "phase": "P02",
+      "issue": 265,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-03/verification.md"
+    },
+    {
+      "id": "T02-04",
+      "phase": "P02",
+      "issue": 270,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-04/verification.md"
+    },
+    {
+      "id": "T03-01",
+      "phase": "P03",
+      "issue": 276,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-01/verification.md"
+    },
+    {
+      "id": "T03-02",
+      "phase": "P03",
+      "issue": 281,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-02/verification.md"
+    },
+    {
+      "id": "T03-03",
+      "phase": "P03",
+      "issue": 286,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-03/verification.md"
+    },
+    {
+      "id": "T03-04",
+      "phase": "P03",
+      "issue": 291,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-04/verification.md"
+    },
+    {
+      "id": "T04-01",
+      "phase": "P04",
+      "issue": 297,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-01/verification.md"
+    },
+    {
+      "id": "T04-02",
+      "phase": "P04",
+      "issue": 302,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-02/verification.md"
+    },
+    {
+      "id": "T04-03",
+      "phase": "P04",
+      "issue": 307,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-03/verification.md"
+    },
+    {
+      "id": "T04-04",
+      "phase": "P04",
+      "issue": 313,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-04/verification.md"
+    },
+    {
+      "id": "T05-01",
+      "phase": "P05",
+      "issue": 319,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-01/verification.md"
+    },
+    {
+      "id": "T05-02",
+      "phase": "P05",
+      "issue": 324,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-02/verification.md"
+    },
+    {
+      "id": "T05-03",
+      "phase": "P05",
+      "issue": 329,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-03/verification.md"
+    },
+    {
+      "id": "T05-04",
+      "phase": "P05",
+      "issue": 334,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-04/verification.md"
+    },
+    {
+      "id": "T06-01",
+      "phase": "P06",
+      "issue": 340,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-01/verification.md"
+    },
+    {
+      "id": "T06-02",
+      "phase": "P06",
+      "issue": 345,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-02/verification.md"
+    },
+    {
+      "id": "T06-03",
+      "phase": "P06",
+      "issue": 350,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-03/verification.md"
+    },
+    {
+      "id": "T06-04",
+      "phase": "P06",
+      "issue": 355,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-04/verification.md"
+    },
+    {
+      "id": "T07-01",
+      "phase": "P07",
+      "issue": 361,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-01/verification.md"
+    },
+    {
+      "id": "T07-02",
+      "phase": "P07",
+      "issue": 366,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-02/verification.md"
+    },
+    {
+      "id": "T07-03",
+      "phase": "P07",
+      "issue": 371,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-03/verification.md"
+    },
+    {
+      "id": "T07-04",
+      "phase": "P07",
+      "issue": 376,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-04/verification.md"
+    },
+    {
+      "id": "T08-01",
+      "phase": "P08",
+      "issue": 382,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-01/verification.md"
+    },
+    {
+      "id": "T08-02",
+      "phase": "P08",
+      "issue": 387,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-02/verification.md"
+    },
+    {
+      "id": "T08-03",
+      "phase": "P08",
+      "issue": 392,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-03/verification.md"
+    },
+    {
+      "id": "T08-04",
+      "phase": "P08",
+      "issue": 397,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T08-04/verification.md"
+    },
+    {
+      "id": "T09-01",
+      "phase": "P09",
+      "issue": 522,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-01/verification.md"
+    },
+    {
+      "id": "T09-02",
+      "phase": "P09",
+      "issue": 408,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-02/verification.md"
+    },
+    {
+      "id": "T09-03",
+      "phase": "P09",
+      "issue": 413,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-03/verification.md"
+    },
+    {
+      "id": "T09-04",
+      "phase": "P09",
+      "issue": 418,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T09-04/verification.md"
+    },
+    {
+      "id": "T10-01",
+      "phase": "P10",
+      "issue": 424,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-01/verification.md"
+    },
+    {
+      "id": "T10-02",
+      "phase": "P10",
+      "issue": 429,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-02/verification.md"
+    },
+    {
+      "id": "T10-03",
+      "phase": "P10",
+      "issue": 435,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-03/verification.md"
+    },
+    {
+      "id": "T10-04",
+      "phase": "P10",
+      "issue": 441,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-04/verification.md"
+    },
+    {
+      "id": "T11-01",
+      "phase": "P11",
+      "issue": 447,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-01/verification.md"
+    },
+    {
+      "id": "T11-02",
+      "phase": "P11",
+      "issue": 452,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-02/verification.md"
+    },
+    {
+      "id": "T11-03",
+      "phase": "P11",
+      "issue": 457,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-03/verification.md"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T00-01-TASK-01",
+      "track": "T00-01",
+      "issue": 187,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-01/verification.md"
+    },
+    {
+      "id": "T00-01-TASK-02",
+      "track": "T00-01",
+      "issue": 188,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-01/verification.md"
+    },
+    {
+      "id": "T00-01-TASK-03",
+      "track": "T00-01",
+      "issue": 189,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-01/verification.md"
+    },
+    {
+      "id": "T00-01-TASK-04",
+      "track": "T00-01",
+      "issue": 190,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-01/verification.md"
+    },
+    {
+      "id": "T00-02-TASK-01",
+      "track": "T00-02",
+      "issue": 195,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-02/verification.md"
+    },
+    {
+      "id": "T00-02-TASK-02",
+      "track": "T00-02",
+      "issue": 197,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-02/verification.md"
+    },
+    {
+      "id": "T00-02-TASK-03",
+      "track": "T00-02",
+      "issue": 199,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-02/verification.md"
+    },
+    {
+      "id": "T00-02-TASK-04",
+      "track": "T00-02",
+      "issue": 201,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-02/verification.md"
+    },
+    {
+      "id": "T00-03-TASK-01",
+      "track": "T00-03",
+      "issue": 205,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-03/verification.md"
+    },
+    {
+      "id": "T00-03-TASK-02",
+      "track": "T00-03",
+      "issue": 207,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-03/verification.md"
+    },
+    {
+      "id": "T00-03-TASK-03",
+      "track": "T00-03",
+      "issue": 209,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-03/verification.md"
+    },
+    {
+      "id": "T00-03-TASK-04",
+      "track": "T00-03",
+      "issue": 210,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-03/verification.md"
+    },
+    {
+      "id": "T00-03-TASK-05",
+      "track": "T00-03",
+      "issue": 212,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-03/verification.md"
+    },
+    {
+      "id": "T00-04-TASK-01",
+      "track": "T00-04",
+      "issue": 217,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-04/verification.md"
+    },
+    {
+      "id": "T00-04-TASK-02",
+      "track": "T00-04",
+      "issue": 219,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-04/verification.md"
+    },
+    {
+      "id": "T00-04-TASK-03",
+      "track": "T00-04",
+      "issue": 221,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-04/verification.md"
+    },
+    {
+      "id": "T00-04-TASK-04",
+      "track": "T00-04",
+      "issue": 223,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-04/verification.md"
+    },
+    {
+      "id": "T00-04-TASK-05",
+      "track": "T00-04",
+      "issue": 225,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T00-04/verification.md"
+    },
+    {
+      "id": "T01-01-TASK-01",
+      "track": "T01-01",
+      "issue": 231,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-01/verification.md"
+    },
+    {
+      "id": "T01-01-TASK-02",
+      "track": "T01-01",
+      "issue": 233,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-01/verification.md"
+    },
+    {
+      "id": "T01-01-TASK-03",
+      "track": "T01-01",
+      "issue": 235,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-01/verification.md"
+    },
+    {
+      "id": "T01-01-TASK-04",
+      "track": "T01-01",
+      "issue": 237,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-01/verification.md"
+    },
+    {
+      "id": "T01-02-TASK-01",
+      "track": "T01-02",
+      "issue": 241,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-02/verification.md"
+    },
+    {
+      "id": "T01-02-TASK-02",
+      "track": "T01-02",
+      "issue": 243,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-02/verification.md"
+    },
+    {
+      "id": "T01-02-TASK-03",
+      "track": "T01-02",
+      "issue": 244,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-02/verification.md"
+    },
+    {
+      "id": "T01-02-TASK-04",
+      "track": "T01-02",
+      "issue": 245,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-02/verification.md"
+    },
+    {
+      "id": "T01-03-TASK-01",
+      "track": "T01-03",
+      "issue": 247,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-03/verification.md"
+    },
+    {
+      "id": "T01-03-TASK-02",
+      "track": "T01-03",
+      "issue": 248,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-03/verification.md"
+    },
+    {
+      "id": "T01-03-TASK-03",
+      "track": "T01-03",
+      "issue": 249,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-03/verification.md"
+    },
+    {
+      "id": "T01-03-TASK-04",
+      "track": "T01-03",
+      "issue": 250,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-03/verification.md"
+    },
+    {
+      "id": "T01-03-TASK-05",
+      "track": "T01-03",
+      "issue": 251,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-03/verification.md"
+    },
+    {
+      "id": "T01-03-TASK-06",
+      "track": "T01-03",
+      "issue": 252,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T01-03/verification.md"
+    },
+    {
+      "id": "T02-01-TASK-01",
+      "track": "T02-01",
+      "issue": 255,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-01/verification.md"
+    },
+    {
+      "id": "T02-01-TASK-02",
+      "track": "T02-01",
+      "issue": 256,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-01/verification.md"
+    },
+    {
+      "id": "T02-01-TASK-03",
+      "track": "T02-01",
+      "issue": 257,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-01/verification.md"
+    },
+    {
+      "id": "T02-01-TASK-04",
+      "track": "T02-01",
+      "issue": 258,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-01/verification.md"
+    },
+    {
+      "id": "T02-02-TASK-01",
+      "track": "T02-02",
+      "issue": 260,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-02/verification.md"
+    },
+    {
+      "id": "T02-02-TASK-02",
+      "track": "T02-02",
+      "issue": 261,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-02/verification.md"
+    },
+    {
+      "id": "T02-02-TASK-03",
+      "track": "T02-02",
+      "issue": 262,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-02/verification.md"
+    },
+    {
+      "id": "T02-02-TASK-04",
+      "track": "T02-02",
+      "issue": 263,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-02/verification.md"
+    },
+    {
+      "id": "T02-02-TASK-05",
+      "track": "T02-02",
+      "issue": 264,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-02/verification.md"
+    },
+    {
+      "id": "T02-03-TASK-01",
+      "track": "T02-03",
+      "issue": 266,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-03/verification.md"
+    },
+    {
+      "id": "T02-03-TASK-02",
+      "track": "T02-03",
+      "issue": 267,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-03/verification.md"
+    },
+    {
+      "id": "T02-03-TASK-03",
+      "track": "T02-03",
+      "issue": 268,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-03/verification.md"
+    },
+    {
+      "id": "T02-03-TASK-04",
+      "track": "T02-03",
+      "issue": 269,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-03/verification.md"
+    },
+    {
+      "id": "T02-04-TASK-01",
+      "track": "T02-04",
+      "issue": 271,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-04/verification.md"
+    },
+    {
+      "id": "T02-04-TASK-02",
+      "track": "T02-04",
+      "issue": 272,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-04/verification.md"
+    },
+    {
+      "id": "T02-04-TASK-03",
+      "track": "T02-04",
+      "issue": 273,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-04/verification.md"
+    },
+    {
+      "id": "T02-04-TASK-04",
+      "track": "T02-04",
+      "issue": 274,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T02-04/verification.md"
+    },
+    {
+      "id": "T03-01-TASK-01",
+      "track": "T03-01",
+      "issue": 277,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-01/verification.md"
+    },
+    {
+      "id": "T03-01-TASK-02",
+      "track": "T03-01",
+      "issue": 278,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-01/verification.md"
+    },
+    {
+      "id": "T03-01-TASK-03",
+      "track": "T03-01",
+      "issue": 279,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-01/verification.md"
+    },
+    {
+      "id": "T03-01-TASK-04",
+      "track": "T03-01",
+      "issue": 280,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-01/verification.md"
+    },
+    {
+      "id": "T03-02-TASK-01",
+      "track": "T03-02",
+      "issue": 282,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-02/verification.md"
+    },
+    {
+      "id": "T03-02-TASK-02",
+      "track": "T03-02",
+      "issue": 283,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-02/verification.md"
+    },
+    {
+      "id": "T03-02-TASK-03",
+      "track": "T03-02",
+      "issue": 284,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-02/verification.md"
+    },
+    {
+      "id": "T03-02-TASK-04",
+      "track": "T03-02",
+      "issue": 285,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-02/verification.md"
+    },
+    {
+      "id": "T03-03-TASK-01",
+      "track": "T03-03",
+      "issue": 287,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-03/verification.md"
+    },
+    {
+      "id": "T03-03-TASK-02",
+      "track": "T03-03",
+      "issue": 288,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-03/verification.md"
+    },
+    {
+      "id": "T03-03-TASK-03",
+      "track": "T03-03",
+      "issue": 289,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-03/verification.md"
+    },
+    {
+      "id": "T03-03-TASK-04",
+      "track": "T03-03",
+      "issue": 290,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-03/verification.md"
+    },
+    {
+      "id": "T03-04-TASK-01",
+      "track": "T03-04",
+      "issue": 292,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-04/verification.md"
+    },
+    {
+      "id": "T03-04-TASK-02",
+      "track": "T03-04",
+      "issue": 293,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-04/verification.md"
+    },
+    {
+      "id": "T03-04-TASK-03",
+      "track": "T03-04",
+      "issue": 294,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-04/verification.md"
+    },
+    {
+      "id": "T03-04-TASK-04",
+      "track": "T03-04",
+      "issue": 295,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T03-04/verification.md"
+    },
+    {
+      "id": "T04-01-TASK-01",
+      "track": "T04-01",
+      "issue": 298,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-01/verification.md"
+    },
+    {
+      "id": "T04-01-TASK-02",
+      "track": "T04-01",
+      "issue": 299,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-01/verification.md"
+    },
+    {
+      "id": "T04-01-TASK-03",
+      "track": "T04-01",
+      "issue": 300,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-01/verification.md"
+    },
+    {
+      "id": "T04-01-TASK-04",
+      "track": "T04-01",
+      "issue": 301,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-01/verification.md"
+    },
+    {
+      "id": "T04-02-TASK-01",
+      "track": "T04-02",
+      "issue": 303,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-02/verification.md"
+    },
+    {
+      "id": "T04-02-TASK-02",
+      "track": "T04-02",
+      "issue": 304,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-02/verification.md"
+    },
+    {
+      "id": "T04-02-TASK-03",
+      "track": "T04-02",
+      "issue": 305,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-02/verification.md"
+    },
+    {
+      "id": "T04-02-TASK-04",
+      "track": "T04-02",
+      "issue": 306,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-02/verification.md"
+    },
+    {
+      "id": "T04-03-TASK-01",
+      "track": "T04-03",
+      "issue": 308,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-03/verification.md"
+    },
+    {
+      "id": "T04-03-TASK-02",
+      "track": "T04-03",
+      "issue": 309,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-03/verification.md"
+    },
+    {
+      "id": "T04-03-TASK-03",
+      "track": "T04-03",
+      "issue": 310,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-03/verification.md"
+    },
+    {
+      "id": "T04-03-TASK-04",
+      "track": "T04-03",
+      "issue": 311,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-03/verification.md"
+    },
+    {
+      "id": "T04-04-TASK-01",
+      "track": "T04-04",
+      "issue": 314,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-04/verification.md"
+    },
+    {
+      "id": "T04-04-TASK-02",
+      "track": "T04-04",
+      "issue": 315,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-04/verification.md"
+    },
+    {
+      "id": "T04-04-TASK-03",
+      "track": "T04-04",
+      "issue": 316,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-04/verification.md"
+    },
+    {
+      "id": "T04-04-TASK-04",
+      "track": "T04-04",
+      "issue": 317,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T04-04/verification.md"
+    },
+    {
+      "id": "T05-01-TASK-01",
+      "track": "T05-01",
+      "issue": 320,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-01/verification.md"
+    },
+    {
+      "id": "T05-01-TASK-02",
+      "track": "T05-01",
+      "issue": 321,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-01/verification.md"
+    },
+    {
+      "id": "T05-01-TASK-03",
+      "track": "T05-01",
+      "issue": 322,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-01/verification.md"
+    },
+    {
+      "id": "T05-01-TASK-04",
+      "track": "T05-01",
+      "issue": 323,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-01/verification.md"
+    },
+    {
+      "id": "T05-02-TASK-01",
+      "track": "T05-02",
+      "issue": 325,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-02/verification.md"
+    },
+    {
+      "id": "T05-02-TASK-02",
+      "track": "T05-02",
+      "issue": 326,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-02/verification.md"
+    },
+    {
+      "id": "T05-02-TASK-03",
+      "track": "T05-02",
+      "issue": 327,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-02/verification.md"
+    },
+    {
+      "id": "T05-02-TASK-04",
+      "track": "T05-02",
+      "issue": 328,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-02/verification.md"
+    },
+    {
+      "id": "T05-03-TASK-01",
+      "track": "T05-03",
+      "issue": 330,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-03/verification.md"
+    },
+    {
+      "id": "T05-03-TASK-02",
+      "track": "T05-03",
+      "issue": 331,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-03/verification.md"
+    },
+    {
+      "id": "T05-03-TASK-03",
+      "track": "T05-03",
+      "issue": 332,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-03/verification.md"
+    },
+    {
+      "id": "T05-03-TASK-04",
+      "track": "T05-03",
+      "issue": 333,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-03/verification.md"
+    },
+    {
+      "id": "T05-04-TASK-01",
+      "track": "T05-04",
+      "issue": 335,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-04/verification.md"
+    },
+    {
+      "id": "T05-04-TASK-02",
+      "track": "T05-04",
+      "issue": 336,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-04/verification.md"
+    },
+    {
+      "id": "T05-04-TASK-03",
+      "track": "T05-04",
+      "issue": 337,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-04/verification.md"
+    },
+    {
+      "id": "T05-04-TASK-04",
+      "track": "T05-04",
+      "issue": 338,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T05-04/verification.md"
+    },
+    {
+      "id": "T06-01-TASK-01",
+      "track": "T06-01",
+      "issue": 341,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-01/verification.md"
+    },
+    {
+      "id": "T06-01-TASK-02",
+      "track": "T06-01",
+      "issue": 342,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-01/verification.md"
+    },
+    {
+      "id": "T06-01-TASK-03",
+      "track": "T06-01",
+      "issue": 343,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-01/verification.md"
+    },
+    {
+      "id": "T06-01-TASK-04",
+      "track": "T06-01",
+      "issue": 344,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-01/verification.md"
+    },
+    {
+      "id": "T06-02-TASK-01",
+      "track": "T06-02",
+      "issue": 346,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-02/verification.md"
+    },
+    {
+      "id": "T06-02-TASK-02",
+      "track": "T06-02",
+      "issue": 347,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-02/verification.md"
+    },
+    {
+      "id": "T06-02-TASK-03",
+      "track": "T06-02",
+      "issue": 348,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-02/verification.md"
+    },
+    {
+      "id": "T06-02-TASK-04",
+      "track": "T06-02",
+      "issue": 349,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-02/verification.md"
+    },
+    {
+      "id": "T06-03-TASK-01",
+      "track": "T06-03",
+      "issue": 351,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-03/verification.md"
+    },
+    {
+      "id": "T06-03-TASK-02",
+      "track": "T06-03",
+      "issue": 352,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-03/verification.md"
+    },
+    {
+      "id": "T06-03-TASK-03",
+      "track": "T06-03",
+      "issue": 353,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-03/verification.md"
+    },
+    {
+      "id": "T06-03-TASK-04",
+      "track": "T06-03",
+      "issue": 354,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-03/verification.md"
+    },
+    {
+      "id": "T06-04-TASK-01",
+      "track": "T06-04",
+      "issue": 356,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-04/verification.md"
+    },
+    {
+      "id": "T06-04-TASK-02",
+      "track": "T06-04",
+      "issue": 357,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-04/verification.md"
+    },
+    {
+      "id": "T06-04-TASK-03",
+      "track": "T06-04",
+      "issue": 358,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-04/verification.md"
+    },
+    {
+      "id": "T06-04-TASK-04",
+      "track": "T06-04",
+      "issue": 359,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T06-04/verification.md"
+    },
+    {
+      "id": "T07-01-TASK-01",
+      "track": "T07-01",
+      "issue": 362,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-01/verification.md"
+    },
+    {
+      "id": "T07-01-TASK-02",
+      "track": "T07-01",
+      "issue": 363,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-01/verification.md"
+    },
+    {
+      "id": "T07-01-TASK-03",
+      "track": "T07-01",
+      "issue": 364,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-01/verification.md"
+    },
+    {
+      "id": "T07-01-TASK-04",
+      "track": "T07-01",
+      "issue": 365,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-01/verification.md"
+    },
+    {
+      "id": "T07-02-TASK-01",
+      "track": "T07-02",
+      "issue": 367,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-02/verification.md"
+    },
+    {
+      "id": "T07-02-TASK-02",
+      "track": "T07-02",
+      "issue": 368,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-02/verification.md"
+    },
+    {
+      "id": "T07-02-TASK-03",
+      "track": "T07-02",
+      "issue": 369,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-02/verification.md"
+    },
+    {
+      "id": "T07-02-TASK-04",
+      "track": "T07-02",
+      "issue": 370,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-02/verification.md"
+    },
+    {
+      "id": "T07-03-TASK-01",
+      "track": "T07-03",
+      "issue": 372,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-03/verification.md"
+    },
+    {
+      "id": "T07-03-TASK-02",
+      "track": "T07-03",
+      "issue": 373,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-03/verification.md"
+    },
+    {
+      "id": "T07-03-TASK-03",
+      "track": "T07-03",
+      "issue": 374,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-03/verification.md"
+    },
+    {
+      "id": "T07-03-TASK-04",
+      "track": "T07-03",
+      "issue": 375,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-03/verification.md"
+    },
+    {
+      "id": "T07-04-TASK-01",
+      "track": "T07-04",
+      "issue": 377,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-04/verification.md"
+    },
+    {
+      "id": "T07-04-TASK-02",
+      "track": "T07-04",
+      "issue": 378,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-04/verification.md"
+    },
+    {
+      "id": "T07-04-TASK-03",
+      "track": "T07-04",
+      "issue": 379,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-04/verification.md"
+    },
+    {
+      "id": "T07-04-TASK-04",
+      "track": "T07-04",
+      "issue": 380,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T07-04/verification.md"
+    },
+    {
+      "id": "T08-01-TASK-01",
+      "track": "T08-01",
+      "issue": 383,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-01/verification.md"
+    },
+    {
+      "id": "T08-01-TASK-02",
+      "track": "T08-01",
+      "issue": 384,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-01/verification.md"
+    },
+    {
+      "id": "T08-01-TASK-03",
+      "track": "T08-01",
+      "issue": 385,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-01/verification.md"
+    },
+    {
+      "id": "T08-01-TASK-04",
+      "track": "T08-01",
+      "issue": 386,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-01/verification.md"
+    },
+    {
+      "id": "T08-02-TASK-01",
+      "track": "T08-02",
+      "issue": 388,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-02/verification.md"
+    },
+    {
+      "id": "T08-02-TASK-02",
+      "track": "T08-02",
+      "issue": 389,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-02/verification.md"
+    },
+    {
+      "id": "T08-02-TASK-03",
+      "track": "T08-02",
+      "issue": 390,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-02/verification.md"
+    },
+    {
+      "id": "T08-02-TASK-04",
+      "track": "T08-02",
+      "issue": 391,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-02/verification.md"
+    },
+    {
+      "id": "T08-03-TASK-01",
+      "track": "T08-03",
+      "issue": 393,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-03/verification.md"
+    },
+    {
+      "id": "T08-03-TASK-02",
+      "track": "T08-03",
+      "issue": 394,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-03/verification.md"
+    },
+    {
+      "id": "T08-03-TASK-03",
+      "track": "T08-03",
+      "issue": 395,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-03/verification.md"
+    },
+    {
+      "id": "T08-03-TASK-04",
+      "track": "T08-03",
+      "issue": 396,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-03/verification.md"
+    },
+    {
+      "id": "T08-04-TASK-01",
+      "track": "T08-04",
+      "issue": 398,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-04/verification.md"
+    },
+    {
+      "id": "T08-04-TASK-02",
+      "track": "T08-04",
+      "issue": 399,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-04/verification.md"
+    },
+    {
+      "id": "T08-04-TASK-03",
+      "track": "T08-04",
+      "issue": 400,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-04/verification.md"
+    },
+    {
+      "id": "T08-04-TASK-04",
+      "track": "T08-04",
+      "issue": 401,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T08-04/verification.md"
+    },
+    {
+      "id": "T09-01-TASK-01",
+      "track": "T09-01",
+      "issue": 523,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-01/verification.md"
+    },
+    {
+      "id": "T09-01-TASK-02",
+      "track": "T09-01",
+      "issue": 524,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-01/verification.md"
+    },
+    {
+      "id": "T09-01-TASK-03",
+      "track": "T09-01",
+      "issue": 525,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-01/verification.md"
+    },
+    {
+      "id": "T09-01-TASK-04",
+      "track": "T09-01",
+      "issue": 526,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-01/verification.md"
+    },
+    {
+      "id": "T09-02-TASK-01",
+      "track": "T09-02",
+      "issue": 409,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-02/verification.md"
+    },
+    {
+      "id": "T09-02-TASK-02",
+      "track": "T09-02",
+      "issue": 410,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-02/verification.md"
+    },
+    {
+      "id": "T09-02-TASK-03",
+      "track": "T09-02",
+      "issue": 411,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-02/verification.md"
+    },
+    {
+      "id": "T09-02-TASK-04",
+      "track": "T09-02",
+      "issue": 412,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-02/verification.md"
+    },
+    {
+      "id": "T09-03-TASK-01",
+      "track": "T09-03",
+      "issue": 414,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-03/verification.md"
+    },
+    {
+      "id": "T09-03-TASK-02",
+      "track": "T09-03",
+      "issue": 415,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-03/verification.md"
+    },
+    {
+      "id": "T09-03-TASK-03",
+      "track": "T09-03",
+      "issue": 416,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-03/verification.md"
+    },
+    {
+      "id": "T09-03-TASK-04",
+      "track": "T09-03",
+      "issue": 417,
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-03/verification.md"
+    },
+    {
+      "id": "T09-04-TASK-01",
+      "track": "T09-04",
+      "issue": 419,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T09-04/verification.md"
+    },
+    {
+      "id": "T09-04-TASK-02",
+      "track": "T09-04",
+      "issue": 420,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T09-04/verification.md"
+    },
+    {
+      "id": "T09-04-TASK-03",
+      "track": "T09-04",
+      "issue": 421,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T09-04/verification.md"
+    },
+    {
+      "id": "T09-04-TASK-04",
+      "track": "T09-04",
+      "issue": 422,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T09-04/verification.md"
+    },
+    {
+      "id": "T10-01-TASK-01",
+      "track": "T10-01",
+      "issue": 425,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-01/verification.md"
+    },
+    {
+      "id": "T10-01-TASK-02",
+      "track": "T10-01",
+      "issue": 426,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-01/verification.md"
+    },
+    {
+      "id": "T10-01-TASK-03",
+      "track": "T10-01",
+      "issue": 427,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-01/verification.md"
+    },
+    {
+      "id": "T10-01-TASK-04",
+      "track": "T10-01",
+      "issue": 428,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-01/verification.md"
+    },
+    {
+      "id": "T10-02-TASK-01",
+      "track": "T10-02",
+      "issue": 430,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-02/verification.md"
+    },
+    {
+      "id": "T10-02-TASK-02",
+      "track": "T10-02",
+      "issue": 431,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-02/verification.md"
+    },
+    {
+      "id": "T10-02-TASK-03",
+      "track": "T10-02",
+      "issue": 432,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-02/verification.md"
+    },
+    {
+      "id": "T10-02-TASK-04",
+      "track": "T10-02",
+      "issue": 433,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-02/verification.md"
+    },
+    {
+      "id": "T10-02-TASK-05",
+      "track": "T10-02",
+      "issue": 434,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-02/verification.md"
+    },
+    {
+      "id": "T10-03-TASK-01",
+      "track": "T10-03",
+      "issue": 436,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-03/verification.md"
+    },
+    {
+      "id": "T10-03-TASK-02",
+      "track": "T10-03",
+      "issue": 437,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-03/verification.md"
+    },
+    {
+      "id": "T10-03-TASK-03",
+      "track": "T10-03",
+      "issue": 438,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-03/verification.md"
+    },
+    {
+      "id": "T10-03-TASK-04",
+      "track": "T10-03",
+      "issue": 439,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-03/verification.md"
+    },
+    {
+      "id": "T10-03-TASK-05",
+      "track": "T10-03",
+      "issue": 440,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-03/verification.md"
+    },
+    {
+      "id": "T10-04-TASK-01",
+      "track": "T10-04",
+      "issue": 442,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-04/verification.md"
+    },
+    {
+      "id": "T10-04-TASK-02",
+      "track": "T10-04",
+      "issue": 443,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-04/verification.md"
+    },
+    {
+      "id": "T10-04-TASK-03",
+      "track": "T10-04",
+      "issue": 444,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-04/verification.md"
+    },
+    {
+      "id": "T10-04-TASK-04",
+      "track": "T10-04",
+      "issue": 445,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T10-04/verification.md"
+    },
+    {
+      "id": "T11-01-TASK-01",
+      "track": "T11-01",
+      "issue": 448,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-01/verification.md"
+    },
+    {
+      "id": "T11-01-TASK-02",
+      "track": "T11-01",
+      "issue": 449,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-01/verification.md"
+    },
+    {
+      "id": "T11-01-TASK-03",
+      "track": "T11-01",
+      "issue": 450,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-01/verification.md"
+    },
+    {
+      "id": "T11-01-TASK-04",
+      "track": "T11-01",
+      "issue": 451,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-01/verification.md"
+    },
+    {
+      "id": "T11-02-TASK-01",
+      "track": "T11-02",
+      "issue": 453,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-02/verification.md"
+    },
+    {
+      "id": "T11-02-TASK-02",
+      "track": "T11-02",
+      "issue": 454,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-02/verification.md"
+    },
+    {
+      "id": "T11-02-TASK-03",
+      "track": "T11-02",
+      "issue": 455,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-02/verification.md"
+    },
+    {
+      "id": "T11-02-TASK-04",
+      "track": "T11-02",
+      "issue": 456,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-02/verification.md"
+    },
+    {
+      "id": "T11-03-TASK-01",
+      "track": "T11-03",
+      "issue": 458,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-03/verification.md"
+    },
+    {
+      "id": "T11-03-TASK-02",
+      "track": "T11-03",
+      "issue": 459,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-03/verification.md"
+    },
+    {
+      "id": "T11-03-TASK-03",
+      "track": "T11-03",
+      "issue": 460,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-03/verification.md"
+    },
+    {
+      "id": "T11-03-TASK-04",
+      "track": "T11-03",
+      "issue": 461,
+      "state": "OPEN",
+      "status": "Todo",
+      "evidence": "conductor/tracks/T11-03/verification.md"
+    }
+  ],
+  "supplemental": [
+    {
+      "phase": "P13",
+      "phaseIssue": 483,
+      "track": "T13-01",
+      "trackIssue": 484,
+      "state": "CLOSED",
+      "verificationIssue": null
+    },
+    {
+      "phase": "P14",
+      "phaseIssue": 465,
+      "track": "T14-01",
+      "trackIssue": 466,
+      "state": "OPEN",
+      "verificationIssue": 532
+    },
+    {
+      "phase": "P15",
+      "phaseIssue": 468,
+      "track": "T15-01",
+      "trackIssue": 469,
+      "state": "OPEN",
+      "verificationIssue": 533
+    },
+    {
+      "phase": "P16",
+      "phaseIssue": 473,
+      "track": "T16-01",
+      "trackIssue": 474,
+      "state": "CLOSED",
+      "verificationIssue": null
+    },
+    {
+      "phase": "P17",
+      "phaseIssue": 497,
+      "track": "T17-01",
+      "trackIssue": 498,
+      "state": "CLOSED",
+      "verificationIssue": null
+    },
+    {
+      "phase": "P05",
+      "phaseIssue": 318,
+      "track": "T05-05",
+      "trackIssue": 479,
+      "state": "CLOSED",
+      "verificationIssue": null
+    },
+    {
+      "phase": "P08",
+      "phaseIssue": 381,
+      "track": "T08-04",
+      "trackIssue": 397,
+      "state": "OPEN",
+      "verificationIssue": 531
+    }
+  ],
+  "redirects": {
+    "403": 522,
+    "404": 523,
+    "405": 524,
+    "406": 525,
+    "407": 526
+  },
+  "verificationContinuations": {
+    "T08-04": 531,
+    "T14-01": 532,
+    "T15-01": 533
+  }
+}
