@@ -1,0 +1,1 @@
+T09-01: Node 26.5.1 cross-platform baseline, npm 11.17.0 pin, strict verification command/receipt, CI policy regression tests, bounded artifact retention, experimental lane removal, and registry assertion repair. Local: 117 files/924 tests; contract, strict type, Biome, secrets, audits, signatures, licences, SBOM, registry, integrations, package dry-run passed.
