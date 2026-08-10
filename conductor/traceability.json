@@ -730,7 +730,7 @@
       "id": "T09-04",
       "phaseId": "P09",
       "title": "Rulesets, Renovate, templates and solo-maintainer governance",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-REPOSITORY-STANDARDS-007",
         "DEP-RENOVATE-009",
@@ -3992,7 +3992,7 @@
       "title": "Activate a default-branch ruleset without mandatory human review.",
       "trackId": "T09-04",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-REPOSITORY-STANDARDS-007",
         "DEP-RENOVATE-009",
@@ -4011,7 +4011,7 @@
       "title": "Verify Renovate and complete the Dependabot transition.",
       "trackId": "T09-04",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-REPOSITORY-STANDARDS-007",
         "DEP-RENOVATE-009",
@@ -4030,7 +4030,7 @@
       "title": "Add issue/PR/security templates and contribution context.",
       "trackId": "T09-04",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-REPOSITORY-STANDARDS-007",
         "DEP-RENOVATE-009",
@@ -4049,7 +4049,7 @@
       "title": "Export governance configuration and drift receipts.",
       "trackId": "T09-04",
       "phaseId": "P09",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-REPOSITORY-STANDARDS-007",
         "DEP-RENOVATE-009",

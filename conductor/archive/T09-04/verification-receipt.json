@@ -54,5 +54,21 @@
       "path": "docs/governance/managed-files.json",
       "sha256": "a5dde87f7b59d886c61f424e001cbbb48d1c0f53b114e7c9bb601edad16d4a2c"
     }
-  ]
+  ],
+  "status": "archived",
+  "hosted_verification": {
+    "result": "passed",
+    "renovate_pull_request": 535,
+    "renovate_actor": "renovate[bot]",
+    "dependabot_automated_security_fixes": "disabled-after-renovate-proof",
+    "app_repository_access": [
+      "edithatogo/substack-cli-ts",
+      "edithatogo/renovate-config"
+    ]
+  },
+  "review": {
+    "mandatory_human_approvals": 0,
+    "solo_maintainer_recovery_preserved": true
+  },
+  "evidence": "conductor/archive/T09-04/hosted-renovate-evidence.json"
 }
