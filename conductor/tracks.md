@@ -6,6 +6,7 @@
 ## P03 Contract-first architecture and generated surfaces
 ## P04 Common policy, planning, approval and reconciliation kernel
 ## P05 Transactional state, privacy, media and recovery
+- [x] **Track: Distinguish rate-limit persistence from network failure** ([#479](https://github.com/edithatogo/substack-cli-ts/issues/479)) ([T05-05](./tracks/T05-05/index.md))
 ## P06 Content fidelity, publishing workflows and Creator OS maturity
 ## P07 MCP v2, 2026-07-28, extensions and distributable transports
 ## P08 Assurance harness, context and observability

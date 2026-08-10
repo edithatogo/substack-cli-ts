@@ -6,7 +6,14 @@ import {
   classifyFailure,
   requestJson,
   requestJsonWithBrowserFallback,
+  withRateLimit,
 } from "./client.js";
+import {
+  defaultRateLimitRuntimeState,
+  RateLimitGovernor,
+  RateLimitStatePersistenceError,
+  type RateLimitController,
+} from "./rate-limit.js";
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -17,6 +24,39 @@ afterEach(() => {
 });
 
 describe("substack-api client helpers", () => {
+  it("does not relabel persistence failure as network failure or replay fetch", async () => {
+    const state = defaultRateLimitRuntimeState();
+    state.read.minIntervalMs = 0;
+    const persistError = new RateLimitStatePersistenceError(
+      "read",
+      200,
+      3,
+      "rate-limit.json",
+      new Error("locked"),
+    );
+    const controller: RateLimitController = {
+      state,
+      readGovernor: new RateLimitGovernor(state, "read"),
+      writeGovernor: new RateLimitGovernor(state, "write"),
+      persist: vi.fn(async () => Promise.reject(persistError)),
+    };
+    const fetchImpl = vi.fn(fakeFetch(200, JSON.stringify({ ok: true })));
+
+    await assert.rejects(
+      () =>
+        withRateLimit(
+          fetchImpl,
+          "https://substack.com/api/v1/test",
+          {},
+          "read",
+          async (r) => r,
+          controller,
+        ),
+      (error: unknown) => error === persistError,
+    );
+    assert.equal(fetchImpl.mock.calls.length, 1);
+    assert.equal(state.read.runtime.lastStatus, 200);
+  });
   it("builds browser-like headers from auth material", () => {
     const material = materialFromCookieHeader(
       "substack.sid=fake-long-secret-value",

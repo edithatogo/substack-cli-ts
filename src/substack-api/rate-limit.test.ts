@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it, vi } from "vitest";
 import {
   applyRateLimitReceipt,
+  createRateLimitController,
   defaultRateLimitRuntimeState,
   parseRateLimitReceipt,
   parseRetryAfterHeader,
   RateLimiter,
   RateLimitGovernor,
+  RateLimitStatePersistenceError,
 } from "./rate-limit.js";
 
 describe("RateLimiter", () => {
@@ -44,6 +46,52 @@ describe("RateLimiter", () => {
     await pending;
 
     assert.equal(acquired, true);
+  });
+});
+
+describe("rate-limit state persistence", () => {
+  it("retries only persistence and succeeds after transient failures", async () => {
+    const save = vi
+      .fn<(state: ReturnType<typeof defaultRateLimitRuntimeState>, path: string) => Promise<void>>()
+      .mockRejectedValueOnce(new Error("locked"))
+      .mockRejectedValueOnce(new Error("locked"))
+      .mockResolvedValueOnce();
+    const sleep = vi.fn(async () => undefined);
+    const controller = await createRateLimitController("rate-limit-test.json", {
+      maxRetries: 2,
+      baseDelayMs: 5,
+      save,
+      sleep,
+    });
+
+    await controller.persist({ channel: "read", observedStatus: 200 });
+
+    assert.equal(save.mock.calls.length, 3);
+    assert.deepEqual(
+      sleep.mock.calls.map(([ms]) => ms),
+      [5, 10],
+    );
+  });
+
+  it("throws a typed terminal error retaining observed status", async () => {
+    const failure = new Error("disk unavailable");
+    const controller = await createRateLimitController("rate-limit-test.json", {
+      maxRetries: 1,
+      save: async () => Promise.reject(failure),
+      sleep: async () => undefined,
+    });
+
+    await assert.rejects(
+      () => controller.persist({ channel: "write", observedStatus: 429 }),
+      (error: unknown) => {
+        assert.ok(error instanceof RateLimitStatePersistenceError);
+        assert.equal(error.channel, "write");
+        assert.equal(error.observedStatus, 429);
+        assert.equal(error.attempts, 2);
+        assert.equal(error.cause, failure);
+        return true;
+      },
+    );
   });
 });
 
