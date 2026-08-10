@@ -3,7 +3,7 @@
   "phaseId": "P09",
   "phaseTitle": "CI/CD, security, supply chain and repository governance",
   "title": "Required cross-platform CI and contract gates",
-  "status": "planned",
+  "status": "completed",
   "contractIds": [
     "GOV-CONTRACT-002",
     "DEP-RUNTIME-CURRENT-004",
@@ -12,7 +12,7 @@
     "CI-CROSS-PLATFORM-007"
   ],
   "requiredTaskCount": 4,
-  "existingIssues": [],
+  "existingIssues": [522, 523, 524, 525, 526],
   "riskLevel": "high",
-  "issue": null
+  "issue": 522
 }

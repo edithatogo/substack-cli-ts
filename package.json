@@ -25,7 +25,7 @@
   "type": "module",
   "main": "dist/cli.js",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   },
   "bin": {
     "substack-publisher": "dist/cli.js"
@@ -118,12 +118,13 @@
     "integrations:validate": "node scripts/validate-client-integrations.mjs",
     "governance:github-programme": "node scripts/github-programme.mjs check",
     "frontier:drift": "npm run build && node scripts/frontier-coverage-drift.mjs",
-    "experimental:deps": "node scripts/experimental-dependency-lane.mjs",
     "version:check": "node scripts/version-check.mjs check",
     "version:sync": "node scripts/version-check.mjs sync",
     "version:release": "node scripts/version-check.mjs release",
     "release:prepare": "node scripts/release-artifact.mjs prepare",
-    "release:rollback:dry-run": "node scripts/release-rollback.mjs"
+    "release:rollback:dry-run": "node scripts/release-rollback.mjs",
+    "ci:policy": "node --test scripts/ci-contract-policy.test.mjs && node scripts/ci-contract-policy.mjs",
+    "verify": "npm run contracts:check && npm run ci:policy && npm run quality && npm run audit:signatures && npm run licenses:check && npm run sbom && npm run registry:validate && npm run integrations:validate && npm pack --dry-run && node scripts/verification-receipt.mjs"
   },
   "dependencies": {
     "@browserbasehq/stagehand": "^3.6.0",
@@ -211,5 +212,6 @@
     "typescript": "7.1.0-dev.20260809.1",
     "typescript-eslint": "^8.63.0",
     "vitest": "^4.1.10"
-  }
+  },
+  "packageManager": "npm@11.17.0"
 }

@@ -14,7 +14,7 @@
 - [x] **Track: Disposable-publication canary and compatibility matrix** ([#397](https://github.com/edithatogo/substack-cli-ts/issues/397)) *Archived: [T08-04](./archive/T08-04/index.md)*
 
 ## P09 CI/CD, security, supply chain and repository governance
-- T09-01
+- [x] **Track: Required cross-platform CI and contract gates** ([#522](https://github.com/edithatogo/substack-cli-ts/issues/522)) ([T09-01](./tracks/T09-01/index.md))
 - T09-02
 - [x] **Track: Reproducible release, trusted publishing and rollback** ([#413](https://github.com/edithatogo/substack-cli-ts/issues/413)) *Archived: [T09-03](./archive/T09-03/index.md)*
 - T09-04
