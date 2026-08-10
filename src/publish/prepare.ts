@@ -47,6 +47,7 @@ function normalizeLeadingMetadata(post: ParsedPost): ParsedPost {
     normalized = removeLeadingBlock(
       normalized,
       post.metadata.title ? post.metadata : { ...post.metadata, title },
+      firstBlock,
     );
   }
 
@@ -57,16 +58,17 @@ function normalizeLeadingMetadata(post: ParsedPost): ParsedPost {
     (nextBlock?.type === "paragraph" || nextBlock?.type === "heading") &&
     collectText(nextBlock).trim() === subtitle
   ) {
-    normalized = removeLeadingBlock(normalized, normalized.metadata);
+    normalized = removeLeadingBlock(normalized, normalized.metadata, nextBlock);
   }
 
   return normalized;
 }
 
-function removeLeadingBlock(post: ParsedPost, metadata: ParsedPost["metadata"]): ParsedPost {
-  const firstBlock = post.document.content?.[0];
-  if (!firstBlock) return post;
-
+function removeLeadingBlock(
+  post: ParsedPost,
+  metadata: ParsedPost["metadata"],
+  firstBlock: ProseMirrorNode,
+): ParsedPost {
   return {
     ...post,
     metadata,
