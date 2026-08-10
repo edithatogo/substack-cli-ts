@@ -60,7 +60,7 @@ Canonical status is evidence-gated by [programme-state.json](./programme-state.j
 - [x] **T09-01 Required cross-platform CI and contract gates** ([#522](https://github.com/edithatogo/substack-cli-ts/issues/522)) ([evidence](./archive/T09-01/index.md))
 - [x] **T09-02 Security and supply-chain engineering** ([#408](https://github.com/edithatogo/substack-cli-ts/issues/408)) ([evidence](./archive/T09-02/index.md))
 - [x] **T09-03 Reproducible release, trusted publishing and rollback** ([#413](https://github.com/edithatogo/substack-cli-ts/issues/413)) ([evidence](./archive/T09-03/index.md))
-- [ ] **T09-04 Rulesets, Renovate, templates and solo-maintainer governance** ([#418](https://github.com/edithatogo/substack-cli-ts/issues/418)) ([evidence](./tracks/T09-04/index.md))
+- [x] **T09-04 Rulesets, Renovate, templates and solo-maintainer governance** ([#418](https://github.com/edithatogo/substack-cli-ts/issues/418)) ([evidence](./archive/T09-04/index.md))
 
 ## P10 Documentation, registry publication and launch
 - [ ] **T10-01 Generated documentation, context, architecture and website** ([#424](https://github.com/edithatogo/substack-cli-ts/issues/424)) ([evidence](./tracks/T10-01/index.md))

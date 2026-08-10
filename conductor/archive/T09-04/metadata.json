@@ -3,7 +3,7 @@
   "phaseId": "P09",
   "phaseTitle": "CI/CD, security, supply chain and repository governance",
   "title": "Rulesets, Renovate, templates and solo-maintainer governance",
-  "status": "in_progress",
+  "status": "archived",
   "contractIds": [
     "GOV-REPOSITORY-STANDARDS-007",
     "DEP-RENOVATE-009",

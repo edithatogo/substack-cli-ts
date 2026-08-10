@@ -70,8 +70,8 @@
     {
       "id": "P09",
       "issue": 402,
-      "state": "OPEN",
-      "status": "Todo"
+      "state": "CLOSED",
+      "status": "Done"
     },
     {
       "id": "P10",
@@ -395,9 +395,9 @@
       "id": "T09-04",
       "phase": "P09",
       "issue": 418,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T09-04/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-04/verification.md"
     },
     {
       "id": "T10-01",
@@ -1717,33 +1717,33 @@
       "id": "T09-04-TASK-01",
       "track": "T09-04",
       "issue": 419,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T09-04/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-04/verification.md"
     },
     {
       "id": "T09-04-TASK-02",
       "track": "T09-04",
       "issue": 420,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T09-04/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-04/verification.md"
     },
     {
       "id": "T09-04-TASK-03",
       "track": "T09-04",
       "issue": 421,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T09-04/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-04/verification.md"
     },
     {
       "id": "T09-04-TASK-04",
       "track": "T09-04",
       "issue": 422,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T09-04/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T09-04/verification.md"
     },
     {
       "id": "T10-01-TASK-01",
