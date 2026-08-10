@@ -1,0 +1,3 @@
+T18-01-TASK-01: metadata-prefix regressions pass (14 focused, 933 total).
+T18-01-TASK-02: exact explicit title/subtitle prefixes normalized at preparePost.
+T18-01-TASK-03: examples and agent/user authoring guidance corrected.
