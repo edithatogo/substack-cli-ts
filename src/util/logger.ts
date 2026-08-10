@@ -19,6 +19,7 @@ import { fileURLToPath } from "node:url";
 import pino, { type Logger, type LoggerOptions } from "pino";
 
 import { PACKAGE_VERSION } from "../version.js";
+import { sanitizeStructured } from "./redact.js";
 
 const moduleFile = fileURLToPath(import.meta.url);
 const projectRoot = resolve(dirname(moduleFile), "..");
@@ -82,6 +83,14 @@ function buildBaseOptions(options: CreateLoggerOptions): LoggerOptions {
     redact: {
       paths: redactPaths,
       censor: "[REDACTED]",
+    },
+    formatters: {
+      bindings(bindings) {
+        return sanitizeStructured(bindings) as Record<string, unknown>;
+      },
+      log(object) {
+        return sanitizeStructured(object) as Record<string, unknown>;
+      },
     },
     // Crucial for MCP safety: never write logs to stdout.
     timestamp: pino.stdTimeFunctions.isoTime,

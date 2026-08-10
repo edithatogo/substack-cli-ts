@@ -313,7 +313,7 @@ describe("run log artifacts", () => {
 
     assert.equal(updateArtifact.actionType, "draft.update");
     assert.equal(updateArtifact.title, "Example");
-    assert.equal(updateArtifact.draftUrl, "not-...-url");
+    assert.equal(updateArtifact.draftUrl, "[REDACTED]");
     assert.equal(updateArtifact.sectionName, "Updates");
 
     const failedArtifact = buildBrowserWorkflowRunLog({

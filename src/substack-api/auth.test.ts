@@ -23,7 +23,7 @@ describe("API auth material", () => {
     assert.equal(summary.hasLikelySessionCookie, true);
     assert.equal(material.cookieHeader.includes("long-secret-value"), true);
     assert.equal(
-      summary.cookies.some((cookie) => cookie.value === "fake...alue"),
+      summary.cookies.some((cookie) => cookie.value === "[REDACTED]"),
       true,
     );
   });

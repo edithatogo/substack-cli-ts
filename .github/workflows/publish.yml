@@ -28,11 +28,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 24
+          node-version: 26.5.1
           package-manager-cache: false
       - name: Verify trusted-publishing npm support
         run: |
-          minimum=11.5.1
+          minimum=11.17.0
           current=$(npm --version)
           test "$(printf '%s\n' "$minimum" "$current" | sort -V | head -n1)" = "$minimum"
       - name: Install exact dependency graph
@@ -86,12 +86,12 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 24
+          node-version: 26.5.1
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       - name: Verify trusted-publishing npm support
         run: |
-          minimum=11.5.1
+          minimum=11.17.0
           current=$(npm --version)
           test "$(printf '%s\n' "$minimum" "$current" | sort -V | head -n1)" = "$minimum"
       - name: Download verified release candidate
