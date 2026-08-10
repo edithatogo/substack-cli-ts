@@ -97,5 +97,8 @@ function stripLeadingMarkdownHeading(markdown: string): string {
 }
 
 function stripLeadingMarkdownParagraph(markdown: string): string {
-  return markdown.replace(/^(?:[ \t]*\r?\n)*(?:[^\r\n]+(?:\r?\n(?![ \t]*\r?$))?)+(?:(?:\r?\n)?[ \t]*\r?\n)?/, "");
+  return markdown.replace(
+    /^(?:[ \t]*\r?\n)*(?:[^\r\n]+(?:\r?\n(?![ \t]*\r?$))?)+(?:(?:\r?\n)?[ \t]*\r?\n)?/,
+    "",
+  );
 }
