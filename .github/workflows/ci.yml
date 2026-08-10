@@ -24,7 +24,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 26
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - run: npm run bench:test
@@ -53,7 +53,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
 
       - name: Engines Check
@@ -61,6 +61,9 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      - name: CI Contract Policy
+        run: npm run ci:policy
 
       - name: Biome (Lint & Format)
         run: npm run ci
@@ -103,7 +106,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci && npm run build
       - run: node dist/cli.js inspect examples/basic.md
@@ -120,7 +123,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 26
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - name: Validate and run deterministic assurance taxonomy
@@ -138,7 +141,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - name: Mutation Test
@@ -151,6 +154,7 @@ jobs:
           path: reports/mutation
           archive: true
           if-no-files-found: ignore
+          retention-days: 30
 
   e2e:
     name: E2E
@@ -164,7 +168,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - run: npx playwright install chromium

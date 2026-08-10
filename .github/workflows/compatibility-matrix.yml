@@ -16,12 +16,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, node: 20 }
           - { os: ubuntu-latest, node: 22 }
           - { os: ubuntu-latest, node: 24 }
-          - { os: ubuntu-latest, node: 26 }
-          - { os: windows-latest, node: 20 }
-          - { os: macos-latest, node: 20 }
+          - { os: ubuntu-latest, node: 26.5.1 }
+          - { os: windows-latest, node: 26.5.1 }
+          - { os: macos-latest, node: 26.5.1 }
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:

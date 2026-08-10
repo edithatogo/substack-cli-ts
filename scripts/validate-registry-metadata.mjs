@@ -21,7 +21,7 @@ function assert(condition, message) {
 const packageJson = readJson("package.json");
 const registry = readJson("registry.server.json");
 
-assert(registry.name === "io.github.edithatogo/substack-cli", "Registry name is incorrect.");
+assert(registry.name === packageJson.mcpName, "Registry name must match package.json mcpName.");
 assert(registry.transport === "stdio", "Registry transport must be stdio.");
 assert(Array.isArray(registry.packages), "Registry must define a packages array.");
 assert(registry.packages.length === 1, "Registry must define exactly one package.");
@@ -29,7 +29,6 @@ assert(
   registry.packages[0].identifier === packageJson.name,
   "Registry package identifier must match package.json name.",
 );
-assert(packageJson.mcpName === registry.name, "package.json mcpName must match registry name.");
 assert(
   registry.packages[0].mcpName === registry.name,
   "Registry package mcpName must match registry name.",

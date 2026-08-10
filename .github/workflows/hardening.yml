@@ -26,7 +26,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - run: npm run typecheck:strictest
@@ -41,7 +41,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - name: Run advisory dependency typecheck
@@ -79,7 +79,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - name: Run advisory index signature typecheck
@@ -117,7 +117,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - run: npm run audit:prod
@@ -132,7 +132,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22, 24]
+        node-version: [22, 24, 26.5.1]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -156,7 +156,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - run: npm run sbom
@@ -165,34 +165,6 @@ jobs:
           name: package-sbom
           path: reports/sbom
           if-no-files-found: error
-
-  experimental-dependencies:
-    name: Experimental Dependency Lane
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    continue-on-error: true
-    strategy:
-      fail-fast: false
-      matrix:
-        lane:
-          - playwright-next
-          - stagehand-alpha
-          - typescript-rc
-          - typescript-next
-          - vitest-beta
-          - zod-canary
-          - prettier-alpha
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: node scripts/experimental-dependency-lane.mjs ${{ matrix.lane }}
 
   frontier-drift:
     name: Frontier Drift Monitor
@@ -208,7 +180,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: 22
+          node-version: 26.5.1
           cache: npm
       - run: npm ci
       - run: npm run build
