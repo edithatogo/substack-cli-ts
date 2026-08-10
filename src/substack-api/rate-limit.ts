@@ -117,14 +117,14 @@ export interface RateLimitPersistenceOptions {
 }
 
 export class RateLimitStatePersistenceError extends Error {
-  readonly name = "RateLimitStatePersistenceError";
+  override readonly name = "RateLimitStatePersistenceError";
 
   constructor(
     readonly channel: RateLimitChannel,
     readonly observedStatus: number,
     readonly attempts: number,
     readonly statePath: string,
-    readonly cause: unknown,
+    override readonly cause: unknown,
   ) {
     super(
       `Failed to persist ${channel} rate-limit state after ${attempts} attempts; observed HTTP status ${observedStatus}.`,
