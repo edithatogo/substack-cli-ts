@@ -1,0 +1,1 @@
+T09-02: full structural masking, recursive/cycle-safe logger sanitization, trusted-publishing Node/npm alignment, SECURITY version policy, and completed supply-chain receipts. Local: 117 files/925 tests; focused 37 tests; strict types, Biome, secrets, audits, 578 signatures, 156 attestations, licences and dual SBOM validation passed.
