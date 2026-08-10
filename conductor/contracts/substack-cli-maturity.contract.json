@@ -1701,6 +1701,15 @@
         "T11-03"
       ],
       "status": "planned"
+    },
+    {
+      "phaseId": "P18",
+      "title": "Metadata/body de-duplication correctness",
+      "releaseTarget": "next patch",
+      "tracks": [
+        "T18-01"
+      ],
+      "status": "contract_verified"
     }
   ],
   "tracks": [
@@ -2570,6 +2579,26 @@
         "number": 457,
         "url": "https://github.com/edithatogo/substack-cli-ts/issues/457",
         "title": "T11-03 Prompt retirement and canonical-system handover"
+      }
+    },
+    {
+      "id": "T18-01",
+      "phaseId": "P18",
+      "title": "Metadata/body de-duplication correctness",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "requiredTaskCount": 3,
+      "existingIssues": [
+        537
+      ],
+      "issue": {
+        "number": 537,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/537",
+        "title": "Prevent title and subtitle duplication in published post bodies"
       }
     }
   ],
@@ -7095,6 +7124,75 @@
         "GOV-PROMPT-RETIREMENT-006"
       ],
       "release": "1.0 and beyond"
+    },
+    {
+      "id": "T18-01-TASK-01",
+      "title": "Add metadata-prefix regression coverage",
+      "trackId": "T18-01",
+      "phaseId": "P18",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": {
+        "number": 539,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/539",
+        "title": "Add metadata-prefix regression coverage"
+      },
+      "mustContractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "next patch"
+    },
+    {
+      "id": "T18-01-TASK-02",
+      "title": "Normalize exact title and subtitle prefixes",
+      "trackId": "T18-01",
+      "phaseId": "P18",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": {
+        "number": 540,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/540",
+        "title": "Normalize exact title and subtitle prefixes"
+      },
+      "mustContractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "next patch"
+    },
+    {
+      "id": "T18-01-TASK-03",
+      "title": "Correct examples and agent authoring guidance",
+      "trackId": "T18-01",
+      "phaseId": "P18",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": {
+        "number": 541,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/541",
+        "title": "Correct examples and agent authoring guidance"
+      },
+      "mustContractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "next patch"
     }
   ],
   "issueMap": {
@@ -7175,6 +7273,11 @@
         "url": "https://github.com/edithatogo/substack-cli-ts/issues/446",
         "title": "P11 1.0 governance and post-1.0 roadmap",
         "parentPhaseLink": "already"
+      },
+      "P18": {
+        "number": 538,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/538",
+        "title": "P18 Metadata/body de-duplication correctness"
       }
     },
     "trackIssues": {
@@ -7452,6 +7555,12 @@
         "number": 457,
         "url": "https://github.com/edithatogo/substack-cli-ts/issues/457",
         "title": "T11-03 Prompt retirement and canonical-system handover",
+        "parentTrackLink": "already"
+      },
+      "T18-01": {
+        "number": 537,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/537",
+        "title": "Prevent title and subtitle duplication in published post bodies",
         "parentTrackLink": "already"
       }
     },
@@ -8600,6 +8709,24 @@
         "number": 461,
         "url": "https://github.com/edithatogo/substack-cli-ts/issues/461",
         "title": "T11-03 T11-03-TASK-04",
+        "parentTaskLink": "already"
+      },
+      "T18-01-TASK-01": {
+        "number": 539,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/539",
+        "title": "Add metadata-prefix regression coverage",
+        "parentTaskLink": "already"
+      },
+      "T18-01-TASK-02": {
+        "number": 540,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/540",
+        "title": "Normalize exact title and subtitle prefixes",
+        "parentTaskLink": "already"
+      },
+      "T18-01-TASK-03": {
+        "number": 541,
+        "url": "https://github.com/edithatogo/substack-cli-ts/issues/541",
+        "title": "Correct examples and agent authoring guidance",
         "parentTaskLink": "already"
       }
     }

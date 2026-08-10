@@ -151,6 +151,15 @@
         "T11-03"
       ],
       "status": "planned"
+    },
+    "P18": {
+      "phaseId": "P18",
+      "title": "Metadata/body de-duplication correctness",
+      "releaseTarget": "next patch",
+      "tracks": [
+        "T18-01"
+      ],
+      "status": "contract_verified"
     }
   },
   "tracks": {
@@ -836,6 +845,22 @@
       ],
       "requiredTaskCount": 4,
       "existingIssues": [],
+      "issue": null
+    },
+    "T18-01": {
+      "id": "T18-01",
+      "phaseId": "P18",
+      "title": "Metadata/body de-duplication correctness",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "requiredTaskCount": 3,
+      "existingIssues": [
+        537
+      ],
       "issue": null
     }
   },
@@ -4597,6 +4622,63 @@
         "GOV-PROMPT-RETIREMENT-006"
       ],
       "release": "1.0 and beyond"
+    },
+    "T18-01-TASK-01": {
+      "id": "T18-01-TASK-01",
+      "title": "Add metadata-prefix regression coverage",
+      "trackId": "T18-01",
+      "phaseId": "P18",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "next patch"
+    },
+    "T18-01-TASK-02": {
+      "id": "T18-01-TASK-02",
+      "title": "Normalize exact title and subtitle prefixes",
+      "trackId": "T18-01",
+      "phaseId": "P18",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "next patch"
+    },
+    "T18-01-TASK-03": {
+      "id": "T18-01-TASK-03",
+      "title": "Correct examples and agent authoring guidance",
+      "trackId": "T18-01",
+      "phaseId": "P18",
+      "status": "contract_verified",
+      "contractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "issue": null,
+      "mustContractIds": [
+        "PARSER-AST-006",
+        "FEATURE-FIDELITY-008",
+        "UX-CLI-CONTRACT-005"
+      ],
+      "release": "next patch"
     }
   },
   "contractMap": {},
