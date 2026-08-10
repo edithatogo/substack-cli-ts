@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fc from "fast-check";
 import { describe, it } from "vitest";
 import { parseMarkdownString } from "../parser/markdown.js";
+import { preparePost } from "../publish/prepare.js";
 import type { ProseMirrorNode } from "../types.js";
 import {
   buildDraftWriteRequestBody,
@@ -10,6 +11,35 @@ import {
 } from "./payload.js";
 
 describe("buildSubstackDraftPayload", () => {
+  it("does not reintroduce metadata duplication in the serialized draft body", async () => {
+    const file = await (async () => {
+      const { mkdtemp, rm, writeFile } = await import("node:fs/promises");
+      const { tmpdir } = await import("node:os");
+      const { join } = await import("node:path");
+      const dir = await mkdtemp(join(tmpdir(), "substack-cli-payload-"));
+      const path = join(dir, "post.md");
+      await writeFile(
+        path,
+        `---\ntitle: Transport title\nsubtitle: Transport subtitle\n---\n# Transport title\n\nTransport subtitle\n\nBody.\n`,
+        "utf8",
+      );
+      return { dir, path, rm };
+    })();
+
+    try {
+      const prepared = await preparePost(file.path);
+      const payload = buildSubstackDraftPayload(prepared.post);
+      const serializedBody = JSON.stringify(payload.body);
+
+      assert.equal(payload.title, "Transport title");
+      assert.equal(payload.subtitle, "Transport subtitle");
+      assert.doesNotMatch(serializedBody, /Transport title|Transport subtitle/);
+      assert.match(serializedBody, /Body\./);
+    } finally {
+      await file.rm(file.dir, { recursive: true, force: true });
+    }
+  });
+
   it("normalizes metadata and supported ProseMirror content", async () => {
     const post = await parseMarkdownString(`---
 title: "API Draft"
