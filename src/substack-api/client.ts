@@ -5,6 +5,7 @@ import type { RateLimiter } from "./rate-limit.js";
 import {
   type RateLimitChannel,
   type RateLimitController,
+  RateLimitStatePersistenceError,
   createRateLimitController,
 } from "./rate-limit.js";
 import type { RetryOptions } from "./retry.js";
@@ -31,6 +32,8 @@ export interface JsonReadResponse {
   body: unknown;
   challenge?: UpstreamChallenge | undefined;
   browserFallback?: BrowserFallbackState | undefined;
+  rateLimitPersistence?: "degraded" | undefined;
+  message?: string | undefined;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,7 +59,7 @@ function selectGovernor(
   return channel === "read" ? controller.readGovernor : controller.writeGovernor;
 }
 
-async function withRateLimit<
+export async function withRateLimit<
   T extends Pick<Response, "status" | "text"> & Partial<Pick<Response, "headers">>,
 >(
   fetchImpl: FetchLike,
@@ -64,28 +67,30 @@ async function withRateLimit<
   init: FetchInit,
   channel: RateLimitChannel,
   transform: (response: T) => Promise<T>,
+  controllerOverride?: RateLimitController,
 ): Promise<T> {
-  if (!shouldUseRateLimitController()) {
+  if (!controllerOverride && !shouldUseRateLimitController()) {
     return transform((await fetchImpl(input, init)) as T);
   }
 
-  const controller = await getRateLimitController();
+  const controller = controllerOverride ?? (await getRateLimitController());
   const governor = selectGovernor(controller, channel);
   await governor.acquire();
+  let response: T;
   try {
-    const response = (await fetchImpl(input, init)) as T;
-    await governor.noteResponse({
-      status: response.status,
-      headers: response.headers,
-      endpointClass: channel,
-    });
-    await controller.persist();
-    return transform(response);
+    response = (await fetchImpl(input, init)) as T;
   } catch (error) {
     await governor.noteResponse({ status: 0, endpointClass: channel });
-    await controller.persist();
+    await controller.persist({ channel, observedStatus: 0 });
     throw error;
   }
+  await governor.noteResponse({
+    status: response.status,
+    headers: response.headers,
+    endpointClass: channel,
+  });
+  await controller.persist({ channel, observedStatus: response.status });
+  return transform(response);
 }
 
 export type FetchLike = (
@@ -148,7 +153,15 @@ export async function requestJson(
     } catch {
       return { status: response.status, body: null };
     }
-  } catch {
+  } catch (error) {
+    if (error instanceof RateLimitStatePersistenceError) {
+      return {
+        status: error.observedStatus,
+        body: null,
+        rateLimitPersistence: "degraded",
+        message: error.message,
+      };
+    }
     return { status: 0, body: null };
   }
 }
@@ -219,13 +232,15 @@ export interface WriteResponse {
   draftUrl?: string | undefined;
   retryAttempts?: number | undefined;
   outcome?: "known" | "unknown" | undefined;
+  rateLimitPersistence?: "degraded" | undefined;
+  message?: string | undefined;
 }
 
 export async function requestDelete(
   fetchImpl: FetchLike,
   url: string,
   headers: Record<string, string>,
-): Promise<{ status: number; body: unknown }> {
+): Promise<WriteResponse> {
   try {
     const response = await withRateLimit(
       fetchImpl,
@@ -243,7 +258,16 @@ export async function requestDelete(
     } catch {
       return { status: response.status, body: null };
     }
-  } catch {
+  } catch (error) {
+    if (error instanceof RateLimitStatePersistenceError) {
+      return {
+        status: error.observedStatus,
+        body: null,
+        outcome: "unknown",
+        rateLimitPersistence: "degraded",
+        message: error.message,
+      };
+    }
     return { status: 0, body: null };
   }
 }
@@ -320,7 +344,17 @@ export async function requestWrite(
         retryAttempts,
         outcome: "known",
       };
-    } catch {
+    } catch (error) {
+      if (error instanceof RateLimitStatePersistenceError) {
+        return {
+          status: error.observedStatus,
+          body: null,
+          retryAttempts,
+          outcome: "unknown",
+          rateLimitPersistence: "degraded",
+          message: error.message,
+        };
+      }
       return { status: 0, body: null, retryAttempts, outcome: "unknown" };
     }
   }

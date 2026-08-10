@@ -101,7 +101,35 @@ export interface RateLimitController {
   readonly state: RateLimitRuntimeState;
   readonly readGovernor: RateLimitGovernor;
   readonly writeGovernor: RateLimitGovernor;
-  persist(): Promise<void>;
+  persist(context: RateLimitPersistenceContext): Promise<void>;
+}
+
+export interface RateLimitPersistenceContext {
+  channel: RateLimitChannel;
+  observedStatus: number;
+}
+
+export interface RateLimitPersistenceOptions {
+  maxRetries?: number | undefined;
+  baseDelayMs?: number | undefined;
+  save?: ((state: RateLimitRuntimeState, path: string) => Promise<void>) | undefined;
+  sleep?: ((ms: number) => Promise<void>) | undefined;
+}
+
+export class RateLimitStatePersistenceError extends Error {
+  readonly name = "RateLimitStatePersistenceError";
+
+  constructor(
+    readonly channel: RateLimitChannel,
+    readonly observedStatus: number,
+    readonly attempts: number,
+    readonly statePath: string,
+    readonly cause: unknown,
+  ) {
+    super(
+      `Failed to persist ${channel} rate-limit state after ${attempts} attempts; observed HTTP status ${observedStatus}.`,
+    );
+  }
 }
 
 export interface RateLimitReceiptEntry {
@@ -184,19 +212,46 @@ export function defaultRateLimitRuntimeState(): RateLimitRuntimeState {
   };
 }
 
-export async function createRateLimitController(statePath?: string): Promise<RateLimitController> {
+export async function createRateLimitController(
+  statePath?: string,
+  options: RateLimitPersistenceOptions = {},
+): Promise<RateLimitController> {
   const filePath = statePath ?? rateLimitStatePath();
   const state = await loadRateLimitState(filePath);
   const readGovernor = new RateLimitGovernor(state, "read");
   const writeGovernor = new RateLimitGovernor(state, "write");
+  const maxRetries = options.maxRetries ?? 2;
+  const baseDelayMs = options.baseDelayMs ?? 25;
+  const save = options.save ?? saveRateLimitState;
+  const sleep = options.sleep ?? delayPersistenceRetry;
   return {
     state,
     readGovernor,
     writeGovernor,
-    async persist() {
-      await saveRateLimitState(state, filePath);
+    async persist(context) {
+      let lastError: unknown;
+      for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
+        try {
+          await save(state, filePath);
+          return;
+        } catch (error) {
+          lastError = error;
+          if (attempt < maxRetries) await sleep(baseDelayMs * 2 ** attempt);
+        }
+      }
+      throw new RateLimitStatePersistenceError(
+        context.channel,
+        context.observedStatus,
+        maxRetries + 1,
+        filePath,
+        lastError,
+      );
     },
   };
+}
+
+async function delayPersistenceRetry(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function toRateLimitStatusReport(state: RateLimitRuntimeState): RateLimitStatusReport {

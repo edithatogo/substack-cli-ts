@@ -1,0 +1,13 @@
+{
+  "id": "T05-05",
+  "phaseId": "P05",
+  "phaseTitle": "Transactional state, privacy, media and recovery",
+  "title": "Distinguish rate-limit persistence from network failure",
+  "type": "bug",
+  "status": "completed",
+  "contractIds": ["RATE-LIMIT-PERSISTENCE-012"],
+  "requiredTaskCount": 4,
+  "existingIssues": [479, 516, 517, 518, 519],
+  "riskLevel": "high",
+  "issue": 479
+}
