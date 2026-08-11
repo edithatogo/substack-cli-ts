@@ -687,8 +687,14 @@ program
   .option("--mode <mode>", "publish or schedule", "publish")
   .option("--at <iso-date>", "ISO timestamp for scheduled publication")
   .option("--schedule-file <file>", "Expected schedule file used to detect timestamp collisions")
-  .option("--catalogue <file>", "Optional external publication catalogue used as the complete calendar")
-  .option("--schedule-policy <file>", "Optional JSON schedule-policy file for horizon, queue cap, and spacing")
+  .option(
+    "--catalogue <file>",
+    "Optional external publication catalogue used as the complete calendar",
+  )
+  .option(
+    "--schedule-policy <file>",
+    "Optional JSON schedule-policy file for horizon, queue cap, and spacing",
+  )
   .option("--draft-id <id>", "Current draft ID to ignore as a self-collision")
   .option("--strict", "Escalate optional workflow checks to blocking errors", false)
   .action(
@@ -722,7 +728,10 @@ program
             options.scheduleFile,
           )
         : undefined;
-      const calendar = await loadOptionalScheduleCalendar(options.catalogue, options.schedulePolicy);
+      const calendar = await loadOptionalScheduleCalendar(
+        options.catalogue,
+        options.schedulePolicy,
+      );
       const report = buildPreflightReport(prepared, {
         publicationUrl: effective.publicationUrl,
         draftId: options.draftId,
@@ -2269,7 +2278,11 @@ note
         operation: "note.schedule",
         freezePolicyPath: options.freezePolicy,
         cataloguePath: options.catalogue,
-        candidate: { scheduledAt: options.scheduledAt, sourceFile: options.textFile, source: "note" },
+        candidate: {
+          scheduledAt: options.scheduledAt,
+          sourceFile: options.textFile,
+          source: "note",
+        },
       });
       if (!policyAllows) return;
 
@@ -7126,7 +7139,10 @@ async function enforceSchedulingFreezePolicy(options: {
 async function loadOptionalScheduleCalendar(
   cataloguePath: string | undefined,
   policyPath: string | undefined,
-): Promise<{ items?: ScheduleCalendarItem[]; limits?: Awaited<ReturnType<typeof loadScheduleLimits>> }> {
+): Promise<{
+  items?: ScheduleCalendarItem[];
+  limits?: Awaited<ReturnType<typeof loadScheduleLimits>>;
+}> {
   const resolvedPolicy = resolveSchedulingFreezePolicyPath(policyPath) ?? policyPath;
   if (!cataloguePath && !resolvedPolicy) return {};
   return {
