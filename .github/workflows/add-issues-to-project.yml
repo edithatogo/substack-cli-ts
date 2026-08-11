@@ -35,6 +35,8 @@ jobs:
           if [ -z "${ISSUE_NODE_ID:-}" ]; then
             ISSUE_NODE_ID="$(gh issue view "$ISSUE_URL" --json id --jq .id)"
           fi
+          # GraphQL variables are for gh, not the shell.
+          # shellcheck disable=SC2016
           gh api graphql \
             -f query='mutation($project:ID!,$content:ID!){addProjectV2ItemById(input:{projectId:$project,contentId:$content}){item{id}}}' \
             -f project="$PROJECT_ID" \
