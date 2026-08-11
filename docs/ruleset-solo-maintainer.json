@@ -1,0 +1,47 @@
+{
+  "id": 20603600,
+  "name": "Solo maintainer default branch",
+  "target": "branch",
+  "source": "edithatogo/substack-cli-ts",
+  "enforcement": "active",
+  "capturedAt": "2026-08-11T09:45:00Z",
+  "notes": [
+    "required_approving_review_count is 0 on purpose.",
+    "require_code_owner_review is false. Do not add CODEOWNERS.",
+    "codecov/patch and codecov/project are intentionally not required so SKIPPED Codecov cannot block automerge.",
+    "Fuzz and OpenSSF Scorecard are not required merge gates."
+  ],
+  "pull_request": {
+    "required_approving_review_count": 0,
+    "require_code_owner_review": false,
+    "require_last_push_approval": false,
+    "required_review_thread_resolution": true,
+    "allowed_merge_methods": ["squash"]
+  },
+  "restrictions": {
+    "allow_force_pushes": false,
+    "allow_deletions": false,
+    "required_linear_history": true,
+    "required_signatures": false,
+    "enforce_admins": true
+  },
+  "required_status_checks": [
+    "Analyze (actions)",
+    "Analyze (javascript-typescript)",
+    "Dependency Declaration Strictness",
+    "Index Signature Strictness",
+    "Node Compatibility (22)",
+    "Node Compatibility (24)",
+    "Node Compatibility (26.5.1)",
+    "Quality",
+    "Required Audit And Secret Scan",
+    "SBOM Evidence",
+    "Strictest TypeScript",
+    "Smoke",
+    "Deterministic Assurance Taxonomy",
+    "Mutation",
+    "ubuntu-latest / Node 26.5.1",
+    "windows-latest / Node 26.5.1",
+    "macos-latest / Node 26.5.1"
+  ]
+}

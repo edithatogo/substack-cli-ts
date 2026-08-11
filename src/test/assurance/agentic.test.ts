@@ -1,6 +1,23 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, it } from "vitest";
 import { runAutonomousAgentScenario, type AgentTool } from "../harness/agent-runner.js";
+
+const root = resolve(import.meta.dirname, "../../..");
+const recipes = JSON.parse(
+  readFileSync(resolve(root, "tests/agentic/cli-recipes.json"), "utf8"),
+) as {
+  paidLlm: boolean;
+  recipes: Array<{
+    id: string;
+    argv: string[];
+    expectExit: number;
+    documentType?: string;
+    title?: string;
+    status?: string;
+  }>;
+};
 
 describe("autonomous agentic assurance", () => {
   it("executes a bounded read-review sequence", async () => {
@@ -54,5 +71,15 @@ describe("autonomous agentic assurance", () => {
     assert.equal(result.status, "blocked");
     assert.equal(executed, false);
     assert.match(result.reason ?? "", /not allowed/);
+  });
+
+  it("accepts only bounded documented recipes without a paid model", () => {
+    assert.equal(recipes.paidLlm, false);
+    assert.ok(recipes.recipes.length > 0);
+    assert.equal(new Set(recipes.recipes.map((recipe) => recipe.id)).size, recipes.recipes.length);
+    assert.ok(recipes.recipes.every((recipe) => recipe.expectExit === 0));
+    assert.ok(
+      recipes.recipes.every((recipe) => ["inspect", "prepublish"].includes(recipe.argv[0] ?? "")),
+    );
   });
 });

@@ -24,6 +24,11 @@ body:
       options: [Local read-only, Local mutation, Browser or authentication, Live publication write, Security or privacy, Release or registry]
     validations:
       required: true
+  - type: input
+    id: conductor
+    attributes:
+      label: Conductor track or issue
+      description: Track ID (for example T10-01) or existing issue number. Leave blank for unplanned requests.
   - type: textarea
     id: alternatives
     attributes:

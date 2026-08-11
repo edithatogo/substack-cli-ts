@@ -142,6 +142,7 @@
 | C3.1 | E2E tests with live Substack | Manual workflow_dispatch |
 | C3.2 | Coverage badges | Present in README |
 | C3.3 | Load/stress testing | Future consideration |
+| C3.4 | Parser/config fuzz + OpenSSF Scorecard | `npm run test:fuzz`; Security Scorecard job |
 
 ---
 
@@ -172,5 +173,5 @@
 | **Secrets Management** | Redacted output, env vars + local Chrome profile, `.gitignore` exclusion |
 | **Dual Transport** | `--transport browser|api|auto` on draft/publish/schedule commands |
 | **Observability** | Workflow traces, draft capture artifacts, analytics snapshots |
-| **Dependency Management** | Renovate + Dependabot for automated PRs; production audit |
+| **Dependency Management** | Renovate for automated PRs (Dependabot PRs disabled); production audit |
 | **Quality Gates** | Format → Lint → TypeScript → Build → Test with enforced baseline coverage and incremental movement toward 91% → Mutation (break ≥ 50) |

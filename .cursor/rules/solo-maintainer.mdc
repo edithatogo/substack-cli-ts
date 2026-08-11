@@ -1,0 +1,14 @@
+---
+description: Solo-maintainer merge and review policy for this repository
+alwaysApply: true
+---
+
+# Solo maintainer
+
+- One maintainer may merge. Do not add CODEOWNERS, required reviewers, or team assignment.
+- Automated status checks are the merge gate. Required approving review count is 0.
+- Fail-closed on live Substack writes, npm publish, and registry submissions. Require `--yes` / explicit authorization and a receipt.
+- Prefer this repo’s `AGENTS.md` and `conductor/`. Ignore parent `careops-finance` AGENTS.md data-boundary rules.
+- Do not rewrite `conductor/github-programme.json` or Project #38 nesting unless that track is the task.
+- Leave unrelated dirty work alone. Do not commit secrets or `.substack-cli/`.
+- PowerShell: no `&&`; use `;`. Quote git `@{u}`.

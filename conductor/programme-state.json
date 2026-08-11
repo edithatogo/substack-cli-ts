@@ -6,7 +6,7 @@
     "owner": "edithatogo",
     "number": 38
   },
-  "reconciledAt": "2026-08-10",
+  "reconciledAt": "2026-08-11",
   "policies": {
     "completeRequiresEvidence": true,
     "incompleteVerificationRemainsOpen": true,
@@ -2112,6 +2112,14 @@
       "trackIssue": 397,
       "state": "OPEN",
       "verificationIssue": 531
+    },
+    {
+      "phase": "P19",
+      "phaseIssue": 554,
+      "track": "T19-01",
+      "trackIssue": 550,
+      "state": "OPEN",
+      "verificationIssue": null
     }
   ],
   "redirects": {

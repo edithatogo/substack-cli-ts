@@ -10,7 +10,14 @@ import {
   saveSession,
 } from "../auth/session-store.js";
 import { configFilePath, sessionFilePath, stateDir } from "./paths.js";
-import { buildOperatorPolicy, loadConfig, loadEffectiveConfig, updateConfig } from "./store.js";
+import {
+  buildOperatorPolicy,
+  loadConfig,
+  loadEffectiveConfig,
+  parseAppConfig,
+  safeParseAppConfig,
+  updateConfig,
+} from "./store.js";
 
 describe("config store", () => {
   it("loads defaults when no config file exists", async () => {
@@ -45,6 +52,11 @@ describe("config store", () => {
       assert.equal(config.operatorMode, "agency");
       assert.match(raw, /"operatorMode": "agency"/);
     });
+  });
+
+  it("parses and rejects config JSON without touching disk", () => {
+    assert.equal(parseAppConfig({}).browserRuntime, "browserbase");
+    assert.equal(safeParseAppConfig({ browserRuntime: "netscape" }).success, false);
   });
 
   it("rejects invalid operator modes", async () => {

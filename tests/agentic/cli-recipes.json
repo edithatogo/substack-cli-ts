@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "paidLlm": false,
+  "recipes": [
+    {
+      "id": "inspect-basic",
+      "argv": ["inspect", "examples/basic.md"],
+      "expectExit": 0,
+      "documentType": "doc",
+      "title": "Example Substack Draft"
+    },
+    {
+      "id": "prepublish-basic",
+      "argv": ["prepublish", "examples/basic.md"],
+      "expectExit": 0,
+      "status": "ready"
+    }
+  ]
+}

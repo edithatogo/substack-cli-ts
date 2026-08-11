@@ -2,6 +2,10 @@
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "npm",
   "testRunner": "vitest",
+  "vitest": {
+    "configFile": "vitest.mutation.config.ts",
+    "related": true
+  },
   "reporters": ["clear-text", "progress", "html"],
   "concurrency": 1,
   "mutate": [
