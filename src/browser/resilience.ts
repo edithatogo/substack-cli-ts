@@ -26,9 +26,10 @@ export function detectUpstreamChallenge(
   evidence: ChallengeResponseEvidence,
 ): UpstreamChallenge | undefined {
   const body = evidence.bodyText.toLowerCase();
-  const server = evidence.headers?.get("server")?.toLowerCase() ?? "";
-  const isCloudflare =
-    server.includes("cloudflare") || CLOUDFLARE_MARKERS.some((marker) => body.includes(marker));
+  // Cloudflare commonly serves successful JSON API responses. Treat only
+  // challenge content as a challenge; the server header alone is not evidence
+  // that a valid authenticated response is unusable.
+  const isCloudflare = CLOUDFLARE_MARKERS.some((marker) => body.includes(marker));
 
   if (isCloudflare) {
     return {

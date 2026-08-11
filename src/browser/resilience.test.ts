@@ -14,6 +14,17 @@ describe("upstream challenge detection", () => {
     assert.match(challenge?.action ?? "", /auth refresh-state/);
   });
 
+  it("does not reject a successful JSON response merely because Cloudflare served it", () => {
+    assert.equal(
+      detectUpstreamChallenge({
+        status: 200,
+        bodyText: JSON.stringify({ potentialHandles: [] }),
+        headers: new Headers({ server: "cloudflare", "content-type": "application/json" }),
+      }),
+      undefined,
+    );
+  });
+
   it("classifies a plain forbidden response and ignores ordinary failures", () => {
     assert.equal(
       detectUpstreamChallenge({ status: 403, bodyText: "forbidden" })?.kind,
