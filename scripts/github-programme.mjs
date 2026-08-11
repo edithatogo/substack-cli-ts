@@ -70,6 +70,19 @@ for (const item of state.supplemental) {
   hierarchyChecks.push([state.programmeIssue, item.phaseIssue, item.phase], [item.phaseIssue, item.trackIssue, item.track]);
   if (item.verificationIssue) hierarchyChecks.push([item.trackIssue, item.verificationIssue, `${item.track}-VERIFY-01`]);
 }
+const supplementalPhaseIssues = new Set();
+for (const [phaseId, phase] of Object.entries(programme.supplementalPhases ?? {})) {
+  hierarchyChecks.push([state.programmeIssue, phase.number, phaseId]);
+  supplementalPhaseIssues.add(phase.number);
+  for (const [trackId, track] of Object.entries(phase.tracks ?? {})) {
+    hierarchyChecks.push([phase.number, track.number, trackId]);
+    supplementalPhaseIssues.add(track.number);
+    for (const [phaseName, child] of Object.entries(track.phases ?? {})) {
+      hierarchyChecks.push([track.number, child.number, `${trackId} ${phaseName}`]);
+      supplementalPhaseIssues.add(child.number);
+    }
+  }
+}
 for (let offset = 0; offset < hierarchyChecks.length; offset += 25) {
   await Promise.all(hierarchyChecks.slice(offset, offset + 25).map(([parent, child, label]) => expectChild(parent, child, label)));
 }
@@ -96,6 +109,9 @@ for (const expected of issueEntries) {
   const fields = Object.fromEntries(item.fieldValues.nodes.filter((x) => x.field?.name).map((x) => [x.field.name, x.name ?? x.text]));
   if (fields.Status !== expected.status) errors.push(`Project issue #${expected.issue}: expected Status=${expected.status}, got ${fields.Status ?? "<unset>"}`);
   if (expected.status === "Done" && (!fields.Evidence || fields.Evidence === "planned")) errors.push(`Project issue #${expected.issue}: Done requires non-planned Evidence`);
+}
+for (const number of supplementalPhaseIssues) {
+  if (!projectByIssue.has(number)) errors.push(`supplemental hierarchy issue #${number} missing from Project #${state.project.number}`);
 }
 
 const contractTrack = new Map(contract.tracks.map((x) => [x.id, x]));

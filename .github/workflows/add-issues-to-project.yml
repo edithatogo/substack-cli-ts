@@ -1,0 +1,43 @@
+name: Add issues to programme project
+
+on:
+  issues:
+    types: [opened, transferred, reopened]
+  workflow_dispatch:
+    inputs:
+      issue_url:
+        description: Issue URL to add to Project 38
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  add-to-project:
+    name: Add to Project 38
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Add issue to Project 38
+        env:
+          GH_TOKEN: ${{ secrets.PROGRAMME_PROJECT_TOKEN }}
+          ISSUE_NODE_ID: ${{ github.event.issue.node_id || '' }}
+          ISSUE_URL: ${{ github.event.issue.html_url || github.event.inputs.issue_url || '' }}
+          PROJECT_ID: PVT_kwHOAOYc4M4BfukQ
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "PROGRAMME_PROJECT_TOKEN is required to add items to the user-owned Project."
+            exit 1
+          fi
+          if [ -z "${ISSUE_NODE_ID:-}" ]; then
+            ISSUE_NODE_ID="$(gh issue view "$ISSUE_URL" --json id --jq .id)"
+          fi
+          # GraphQL variables are for gh, not the shell.
+          # shellcheck disable=SC2016
+          gh api graphql \
+            -f query='mutation($project:ID!,$content:ID!){addProjectV2ItemById(input:{projectId:$project,contentId:$content}){item{id}}}' \
+            -f project="$PROJECT_ID" \
+            -f content="$ISSUE_NODE_ID"
