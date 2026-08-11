@@ -4,10 +4,14 @@ This repo separates stable merge gates from experimental hardening lanes so feat
 
 ## Required Gates
 
-- `CI / Quality`: Biome, Knip, typecheck, build, coverage, production audit, and secret scan.
+- `CI / Quality`: Biome, Knip, typecheck, build, coverage, Codecov upload, production audit, and secret scan.
 - `CI / Smoke`: build plus `node dist/cli.js inspect examples/basic.md`.
+- `CI / Deterministic Assurance Taxonomy`: unit-adjacent taxonomy including property, DST, contract, metamorphic, agentic, edge, VCR, and schema fuzz.
+- `CI / Fuzz`: bounded `npm run test:fuzz` (not a required merge check).
 - `Hardening / Required Audit And Secret Scan`: production dependency audit and secret-pattern scan without advisory `continue-on-error`.
-- `Hardening / Node Compatibility`: build and smoke tests across the supported Node line.
+- `Hardening / Node Compatibility`: build and smoke tests on Node 22, 24, and 26.5.1.
+- `Hardening / Extended Fuzz`: longer `FUZZ_RUNS` on schedule or `workflow_dispatch`.
+- `Security / OpenSSF Scorecard`: SARIF + `publish_results` on non-PR events.
 
 ## Strictness Lanes
 
@@ -65,4 +69,6 @@ Require these checks for feature and dependency PRs after the generated API cont
 - generated contract check
 - frontier drift check
 
-Keep index-signature strictness, dependency declaration strictness, E2E, and experimental dependency checks advisory until their false-positive, upstream declaration, and fixture requirements are resolved. Treat mutation as review-required and CI-visible; raise module thresholds gradually rather than using one global jump.
+Index-signature and dependency-declaration lanes are required today even though they exit 0 on advisory diagnostics. Keep E2E and Extended Fuzz advisory. Mutation is already a required check with Stryker break 60. Do not require Codecov status checks.
+
+See `docs/quality-frontier.md` for the full test matrix, Codecov/Renovate status, and OpenSSF exceptions.

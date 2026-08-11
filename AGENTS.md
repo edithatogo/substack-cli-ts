@@ -1,52 +1,80 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+This is `edithatogo/substack-cli-ts`, a solo-maintainer TypeScript CLI and MCP server for publishing local Markdown to a user-owned Substack publication.
 
-This repository contains a TypeScript CLI scaffold for publishing local Markdown files to a user-owned Substack publication.
+**Context conflict:** `OneDrive - Flinders/AGENTS.md` belongs to a different repository (`careops-finance`). Do not apply that file’s data-boundary, review, or finance-track rules here. Prefer this file, `conductor/index.md`, and verifiable evidence in this repo.
 
-- `conductor.json` declares the setup and run entrypoints used by Conductor.
-- `bin/conductor-setup` prepares a workspace by linking shared secrets and installing Ruby and Node dependencies.
-- `script/server` configures runtime ports and Redis isolation, then starts the app through `bin/dev`.
-- `src/cli.ts` defines the command surface.
-- `src/parser/` contains front matter, Markdown, and Tiptap/ProseMirror conversion.
-- `src/browser/` and `src/publish/` hold browser-session and publishing workflow code.
-- `examples/` contains sample Markdown inputs.
+## Solo-maintainer contract
 
-## Build, Test, and Development Commands
+- One person may create, review, merge, and release.
+- Do **not** add CODEOWNERS, required approving reviews, team assignment, or mandatory human gates.
+- Automated checks replace reviewers. Required status checks stay on; review count stays `0`.
+- Fail-closed on unconfirmed Substack writes. Never claim a live draft, publish, schedule, npm publish, or registry submission without a hosted receipt.
+- Do not commit `.env`, tokens, `.substack-cli/`, cookies, storage-state, traces, screenshots, or private publication content.
 
-- `npm install --omit=optional`: installs the core CLI dependencies without optional Camoufox packages.
-- `npm run build`: compiles TypeScript to `dist/`.
-- `npm run typecheck`: runs TypeScript checks without emitting files.
-- `npm test`: builds and runs the parser tests.
-- `node dist/cli.js inspect examples/basic.md`: prints generated HTML and ProseMirror JSON.
-- `node dist/cli.js config show`: shows effective non-secret configuration.
-- `node dist/cli.js config set-runtime local`: uses a local persistent Chrome profile under `.substack-cli/chrome-profile`.
-- `node dist/cli.js auth status`: shows Browserbase and session readiness.
-- `node dist/cli.js schema capture examples/basic.md --out fixtures/prosemirror/basic.json`: writes a parser fixture.
-- `bin/conductor-setup`: links shared secrets when present, then runs dependency installation.
+## Read before writing
 
-Run scripts from the repository root. On Windows, use a Bash-compatible shell for these scripts.
+1. This file.
+2. `conductor/index.md` and the active track under `conductor/tracks/` (or `conductor/tracks.md`).
+3. `git status`, remotes, and the existing diff. Do not clobber unrelated dirty work.
+4. `docs/quality-frontier.md` when changing tests, CI, Codecov, Renovate, or Scorecard.
 
-## Coding Style & Naming Conventions
+## Project structure
 
-Use strict TypeScript, ESM imports, and explicit module boundaries. Keep command handlers thin and delegate parsing, config, browser, and publishing logic to separate modules. Shell scripts should use clear environment variable names, quote variable expansions, and prefer small, explicit setup steps.
+- `src/cli.ts` — command surface. Keep handlers thin.
+- `src/parser/` — front matter, Markdown, Tiptap/ProseMirror.
+- `src/browser/` and `src/publish/` — browser session and publish workflow.
+- `src/substack-api/` — HTTP transport. Mock or fixture in tests; no live network in default CI.
+- `src/config/` — local non-secret config. Secrets come from env.
+- `src/mcp/` — MCP server. Shared behavior lives in `src/` once.
+- `src/test/assurance/` — taxonomy suites (property, DST, contract, metamorphic, agentic, fuzz).
+- `examples/` and `fixtures/prosemirror/` — sample Markdown and frozen parser contracts.
+- `conductor/` — product context, tracks, contracts. `conductor/github-programme.json` is owned by the GitHub programme track; do not rewrite it unless that track asks.
 
-## Testing Guidelines
+## Commands
 
-Tests are written with Vitest. Name tests `*.test.ts` and keep them close to the module under test.
+Run from the repository root. In PowerShell do not chain with `&&`; use `;`. npm scripts may still use `&&` (npm translates them on Windows).
 
-Before changing parser or runtime behavior, verify:
+| Intent | Command |
+| --- | --- |
+| Install (no Camoufox) | `npm install --omit=optional` or `npm ci` |
+| Agent PR gate | `npm run verify:agent` |
+| Typecheck | `npm run typecheck` |
+| Unit + default Vitest | `npm test` / `npm run test:unit` |
+| Coverage | `npm run test:coverage` |
+| Inspect example | `node dist/cli.js inspect examples/basic.md` |
+| Taxonomy / assurance | `npm run test:assurance` |
+| Fuzz (bounded) | `npm run test:fuzz` |
+| Mutation | `npm run test:mutation` |
+| Full local quality | `npm run quality` |
+| Lint / format | `npm run ci` |
 
-- `npm run typecheck`
-- `npm test`
-- `node dist/cli.js inspect examples/basic.md`
+Do not start optional Camoufox or live Substack logins unless the user explicitly asks.
 
-## Commit & Pull Request Guidelines
+## Coding style
 
-This directory does not currently include Git history, so no local commit convention can be inferred. Use short, imperative commit subjects such as `Add Conductor server hook` or `Document workspace setup`.
+Strict TypeScript, ESM only, explicit module boundaries. Parser, config, browser, and publish stay separate. Command handlers delegate. Redact secrets on every output path.
 
-Pull requests should include a concise summary, commands run to validate the change, any required environment variables, and notes about changes to browser automation, generated payloads, or secret handling.
+## Testing
 
-## Security & Configuration Tips
+Tests are Vitest `*.test.ts` next to modules, plus `src/test/assurance/` for the taxonomy. Each modality has an npm script and CI wiring. See `test/testing-taxonomy.json` and `docs/quality-frontier.md`.
 
-Do not commit `.env`, `config/master.key`, `.substack-cli/`, browser storage-state files, credentials, traces, screenshots, or generated dependency directories. `SUBSTACK_EMAIL` and `SUBSTACK_PASSWORD` are supported for `auth login --auto-login`, but must remain in ignored local config only. Use `.env.example` for documented variables only.
+Before changing parser or runtime behavior:
+
+1. `npm run typecheck`
+2. `npm test`
+3. `node dist/cli.js inspect examples/basic.md`
+
+Or `npm run verify:agent`.
+
+## Conductor
+
+Use Conductor tracks for planned work. Start at `conductor/index.md`. Implementation marks the active task `[~]`, follows `conductor/workflow.md`, and marks `[x]` only with evidence. Do not invent a parallel planning system. Do not fight in-flight GitHub Project #38 / issue-nesting work.
+
+## Commits and pull requests
+
+Short imperative subjects. PRs need a summary, exact validation commands, contract/track IDs when applicable, and a secrets/live-write checkbox. Human approval is not required.
+
+## Security
+
+`SUBSTACK_EMAIL`, `SUBSTACK_PASSWORD`, `SUBSTACK_COOKIE`, and Browserbase keys stay in ignored local config. Use `.env.example` for documented names only. Live publish/schedule requires `--yes` after `--dry-run`. Default CI must not hit Substack.

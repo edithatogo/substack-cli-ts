@@ -10,6 +10,7 @@ const requiredIds = new Set([
   "property-based", "deterministic-simulation", "consumer-driven-contract", "metamorphic",
   "autonomous-agentic", "semantic-llm-judge", "network-replay-vcr", "tui-cli-integration",
   "zod-schema-fuzz",
+  "parser-fuzz",
 ]);
 const seen = new Set();
 

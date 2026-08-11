@@ -1,0 +1,28 @@
+codecov:
+  require_ci_to_pass: false
+  notify:
+    wait_for_ci: false
+
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+        target: auto
+        threshold: 2%
+    patch:
+      default:
+        informational: true
+        target: auto
+        threshold: 2%
+
+comment:
+  layout: "header, diff, flags, files"
+  behavior: default
+  require_changes: false
+
+ignore:
+  - "src/**/*.test.ts"
+  - "src/test/**"
+  - "scripts/**"
+  - "vendor/**"

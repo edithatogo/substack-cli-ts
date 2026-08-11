@@ -15,9 +15,17 @@ Describe the focused change and why it is needed.
 
 ## Validation
 
-List the exact commands and hosted checks used as evidence.
+List the exact commands and hosted checks used as evidence. Human approval is not required.
 
-- [ ] The one-command quality gate or a documented scoped equivalent passed.
+```powershell
+npm run verify:agent
+```
+
+Scoped alternative (say why the full gate was deferred):
+
+- [ ] `npm run verify:agent` or a documented scoped equivalent passed.
 - [ ] Tests cover the changed behavior and relevant regression risks.
 - [ ] Generated artifacts, contracts, and documentation are synchronized.
 - [ ] All actionable workflow, review, and issue comments have been addressed.
+
+Required reviewers: **0**. Do not add CODEOWNERS or a review count.
