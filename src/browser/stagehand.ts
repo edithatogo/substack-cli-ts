@@ -1,6 +1,6 @@
 import { mkdir } from "node:fs/promises";
-import type { Stagehand as StagehandClass } from "@browserbasehq/stagehand";
-import { cacheDir, localBrowserProfileDir } from "../config/paths.js";
+import type { Page, Stagehand as StagehandInstance } from "@browserbasehq/stagehand";
+import { localBrowserProfileDir } from "../config/paths.js";
 import {
   type EffectiveConfig,
   loadEffectiveConfig,
@@ -68,8 +68,7 @@ export async function withStagehandRetry<T>(
   throw classifyError(lastError);
 }
 
-type StagehandInstance = InstanceType<typeof StagehandClass>;
-type StagehandPage = ReturnType<StagehandInstance["context"]["pages"]>[number];
+type StagehandPage = Page;
 
 export interface StagehandSession {
   stagehand: StagehandInstance;
@@ -93,28 +92,28 @@ export async function createStagehandSession(
   const config = options.config ?? (await loadEffectiveConfig());
   const publicationUrl = requirePublicationUrl(config);
 
-  const { Stagehand } = await import("@browserbasehq/stagehand");
-  await mkdir(cacheDir(), { recursive: true });
+  const { Stagehand, browserbase, localBrowser } = await import("@browserbasehq/stagehand");
   await mkdir(localBrowserProfileDir(), { recursive: true });
 
-  const stagehand = new Stagehand(
+  const browser =
     config.browserRuntime === "local"
-      ? {
-          env: "LOCAL",
-          model: config.stagehandModel,
-          cacheDir: cacheDir(),
-          disablePino: true,
-          localBrowserLaunchOptions: {
-            headless: false,
-            userDataDir: localBrowserProfileDir(),
-            preserveUserDataDir: true,
-          },
-        }
-      : createBrowserbaseOptions(config, options),
-  );
-
-  await stagehand.init();
-  const [page] = stagehand.context.pages();
+      ? await localBrowser.launch({
+          headless: false,
+          userDataDir: localBrowserProfileDir(),
+          preserveUserDataDir: true,
+        })
+      : options.browserbaseSessionId
+        ? await browserbase.connect({
+            apiKey: requireBrowserbaseApiKey(config),
+            sessionId: options.browserbaseSessionId,
+          })
+        : await browserbase.launch(createBrowserbaseOptions(config, options.keepAlive));
+  const stagehand = await Stagehand.create({
+    browser,
+    model: { modelName: config.stagehandModel as never },
+    logging: { level: "off" },
+  });
+  const [page] = await stagehand.browser.context.pages();
 
   if (!page) {
     await stagehand.close();
@@ -125,28 +124,22 @@ export async function createStagehandSession(
     stagehand,
     page,
     publicationUrl,
-    browserbaseSessionId:
-      config.browserRuntime === "browserbase" ? stagehand.browserbaseSessionID : undefined,
-    browserbaseSessionUrl:
-      config.browserRuntime === "browserbase" ? stagehand.browserbaseSessionURL : undefined,
-    browserbaseDebugUrl:
-      config.browserRuntime === "browserbase" ? stagehand.browserbaseDebugURL : undefined,
+    browserbaseSessionId: config.browserRuntime === "browserbase" ? browser.sessionId : undefined,
     close: () => stagehand.close(),
   };
 }
 
-function createBrowserbaseOptions(config: EffectiveConfig, options: CreateStagehandSessionOptions) {
+function createBrowserbaseOptions(config: EffectiveConfig, keepAlive?: boolean) {
   requireBrowserbaseConfig(config);
 
   return {
-    env: "BROWSERBASE" as const,
     apiKey: config.browserbaseApiKey!,
     projectId: config.browserbaseProjectId!,
-    ...(options.browserbaseSessionId ? { browserbaseSessionID: options.browserbaseSessionId } : {}),
-    keepAlive: options.keepAlive ?? true,
-    model: config.stagehandModel,
-    cacheDir: cacheDir(),
-    waitForCaptchaSolves: false,
-    disablePino: true,
+    keepAlive: keepAlive ?? true,
   };
+}
+
+function requireBrowserbaseApiKey(config: EffectiveConfig): string {
+  requireBrowserbaseConfig(config);
+  return config.browserbaseApiKey!;
 }

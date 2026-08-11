@@ -40,7 +40,7 @@ export async function performSubstackLogin(
       status: "attempted",
       emailInserted: true,
       passwordInserted: false,
-      finalUrl: session.page.url(),
+      finalUrl: await session.page.url(),
       note: "Email was inserted, but no password field was available. Complete magic-link or verification flow manually.",
     };
   }
@@ -51,6 +51,6 @@ export async function performSubstackLogin(
     status: "attempted",
     emailInserted: true,
     passwordInserted: true,
-    finalUrl: session.page.url(),
+    finalUrl: await session.page.url(),
   };
 }
