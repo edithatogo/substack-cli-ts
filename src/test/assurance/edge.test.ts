@@ -21,9 +21,10 @@ describe("edge assurance", () => {
   });
 
   it("parses deeply nested headings without calling Substack", async () => {
-    const markdown = Array.from({ length: 8 }, (_, index) => `${"#".repeat((index % 6) + 1)} H${index}`).join(
-      "\n\n",
-    );
+    const markdown = Array.from(
+      { length: 8 },
+      (_, index) => `${"#".repeat((index % 6) + 1)} H${index}`,
+    ).join("\n\n");
     const parsed = await parseMarkdownString(markdown);
     assert.equal(parsed.document.type, "doc");
     assert.ok((parsed.document.content?.length ?? 0) >= 8);

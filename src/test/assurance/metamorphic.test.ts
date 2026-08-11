@@ -27,7 +27,9 @@ describe("metamorphic parser assurance", () => {
   });
 
   it("preserves heading text and link targets", async () => {
-    const parsed = await parseMarkdownString("# Release notes\n\nSee [docs](https://example.com/docs).");
+    const parsed = await parseMarkdownString(
+      "# Release notes\n\nSee [docs](https://example.com/docs).",
+    );
     const json = JSON.stringify(parsed.document);
     assert.match(json, /Release notes/);
     assert.match(json, /https:\/\/example.com\/docs/);

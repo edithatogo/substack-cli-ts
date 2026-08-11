@@ -39,13 +39,10 @@ describe("parser and config fuzzing", () => {
 
   it("produces a ProseMirror document or a structured failure for markdown", async () => {
     await fc.assert(
-      fc.asyncProperty(
-        fc.stringMatching(/^[#>*`\sA-Za-z0-9._-]{0,120}$/),
-        async (body) => {
-          const parsed = await parseMarkdownString(`---\ntitle: Fuzz\n---\n${body}`);
-          assert.equal(validateProseMirrorDocument(parsed.document).type, "doc");
-        },
-      ),
+      fc.asyncProperty(fc.stringMatching(/^[#>*`\sA-Za-z0-9._-]{0,120}$/), async (body) => {
+        const parsed = await parseMarkdownString(`---\ntitle: Fuzz\n---\n${body}`);
+        assert.equal(validateProseMirrorDocument(parsed.document).type, "doc");
+      }),
       { seed: 20_260_813, numRuns },
     );
   });

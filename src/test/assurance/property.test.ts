@@ -38,11 +38,15 @@ describe("property-based assurance", () => {
 
   it("always emits a doc node for heading-only markdown", async () => {
     await fc.assert(
-      fc.asyncProperty(fc.integer({ min: 1, max: 4 }), fc.stringMatching(/^[A-Za-z]{1,24}$/), async (depth, title) => {
-        const parsed = await parseMarkdownString(`${"#".repeat(depth)} ${title}\n`);
-        assert.equal(parsed.document.type, "doc");
-        assert.equal(parsed.document.content?.[0]?.type, "heading");
-      }),
+      fc.asyncProperty(
+        fc.integer({ min: 1, max: 4 }),
+        fc.stringMatching(/^[A-Za-z]{1,24}$/),
+        async (depth, title) => {
+          const parsed = await parseMarkdownString(`${"#".repeat(depth)} ${title}\n`);
+          assert.equal(parsed.document.type, "doc");
+          assert.equal(parsed.document.content?.[0]?.type, "heading");
+        },
+      ),
       { seed: 13_016, numRuns },
     );
   });
