@@ -1,0 +1,7 @@
+{
+  "timezone": "Australia/Adelaide",
+  "maxHorizonDays": 90,
+  "maxQueuedPosts": 20,
+  "minSpacingMinutes": 120,
+  "status": "inactive"
+}

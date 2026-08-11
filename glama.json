@@ -1,0 +1,11 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "io.github.edithatogo/substack-publisher",
+  "description": "Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.",
+  "url": "https://github.com/edithatogo/substack-cli-ts",
+  "package": "@edithatogo/substack-publisher",
+  "runtime": "node",
+  "transport": "stdio",
+  "command": "npx",
+  "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"]
+}

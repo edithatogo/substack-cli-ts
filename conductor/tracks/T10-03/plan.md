@@ -5,7 +5,7 @@
 - [ ] T10-03-TASK-02 Submit and verify Glama, Smithery and mcp.so.
 - [ ] T10-03-TASK-03 Submit where eligible to Cline, Docker MCP Catalog, awesome-mcp-servers, Cursor and Claude extension ecosystems.
 - [ ] T10-03-TASK-04 Verify PulseMCP, MCP Atlas and VS Code Gallery ingestion.
-- [ ] T10-03-TASK-05 Record external account gates honestly.
+- [x] T10-03-TASK-05 Record external account gates honestly.
 
 ## Contract IDs
 - REG-PUBLISH-002

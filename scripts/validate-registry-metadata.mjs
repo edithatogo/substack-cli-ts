@@ -20,6 +20,8 @@ function assert(condition, message) {
 
 const packageJson = readJson("package.json");
 const registry = readJson("registry.server.json");
+const wellKnown = readJson(".well-known/mcp/server.json");
+const glama = readJson("glama.json");
 
 assert(registry.name === packageJson.mcpName, "Registry name must match package.json mcpName.");
 assert(registry.transport === "stdio", "Registry transport must be stdio.");
@@ -35,6 +37,10 @@ assert(
 );
 assert(registry.packages[0].version === packageJson.version, "Registry package version must match package.json version.");
 assert(registry.packages[0].entrypoint === "dist/cli.js", "Registry entrypoint must be dist/cli.js.");
+assert(wellKnown.name === registry.name, "Well-known MCP server name must match registry.server.json.");
+assert(wellKnown.packages[0].identifier === packageJson.name, "Well-known package identifier must match package.json.");
+assert(glama.package === packageJson.name, "glama.json package must match package.json name.");
+assert(glama.transport === "stdio", "glama.json transport must be stdio.");
 
 const expectedServer = {
   command: "npx",
