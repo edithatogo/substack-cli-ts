@@ -34,6 +34,11 @@ See the [README](https://github.com/edithatogo/substack-cli-ts) for full setup i
 - [Branch Protection](branch-protection.md) — Required checks, advisory lanes, dependency PR policy, and release rules
 - [Creator OS Completion Roadmap](creator-os-completion-roadmap.md) — API versioning, evidence promotion, dependency, strictness, and CI/CD hardening roadmap
 - [API Contract Versioning](api/versioning.md) — Generated CLI/MCP/artifact contract policy and compatibility rules
+- [Privacy](security/privacy.md) — Local-first data classes, redaction, and telemetry opt-in
+- [Compliance posture](governance/compliance.md) — Honest scope; not a hosted-processor claim
+- [Deprecation policy](governance/deprecation.md) — SemVer notices and owner-gated npm deprecate
+- [Threat model](security/threat-model.md) — Credential, SSRF, mutation, and supply-chain threats
+- [Incident and rollback](operations/incident-and-rollback.md) — Local dry-run rollback; live deprecate remains gated
 - [Autonomous Implementation Record](integrations/autonomous-implementation-record.md) — Completed execution record and external gates for integration tracks
 - [AI Integration Readiness](integrations/ai-readiness-matrix.md) — MCP distribution status across AI clients and registries
 

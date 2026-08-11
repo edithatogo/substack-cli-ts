@@ -18,6 +18,7 @@ This is `edithatogo/substack-cli-ts`, a solo-maintainer TypeScript CLI and MCP s
 2. `conductor/index.md` and the active track under `conductor/tracks/` (or `conductor/tracks.md`).
 3. `git status`, remotes, and the existing diff. Do not clobber unrelated dirty work.
 4. `docs/quality-frontier.md` when changing tests, CI, Codecov, Renovate, or Scorecard.
+5. Context index: ADRs in `docs/decisions/` and `docs/adr/`; threat model `docs/security/threat-model.md`; privacy `docs/security/privacy.md`; compliance `docs/governance/compliance.md`; deprecation `docs/governance/deprecation.md`; runbooks under `docs/operations/`.
 
 ## Project structure
 
@@ -77,4 +78,4 @@ Short imperative subjects. PRs need a summary, exact validation commands, contra
 
 ## Security
 
-`SUBSTACK_EMAIL`, `SUBSTACK_PASSWORD`, `SUBSTACK_COOKIE`, and Browserbase keys stay in ignored local config. Use `.env.example` for documented names only. Live publish/schedule requires `--yes` after `--dry-run`. Default CI must not hit Substack.
+`SUBSTACK_EMAIL`, `SUBSTACK_PASSWORD`, `SUBSTACK_COOKIE`, and Browserbase keys stay in ignored local config. Use `.env.example` for documented names only. Live publish/schedule requires `--yes` after `--dry-run`. Default CI must not hit Substack. Privacy, compliance, and deprecation posture live in `docs/security/privacy.md`, `docs/governance/compliance.md`, and `docs/governance/deprecation.md`.

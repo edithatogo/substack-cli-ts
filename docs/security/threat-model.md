@@ -17,3 +17,5 @@ The CLI crosses local Markdown, browser automation, Substack APIs, MCP stdio/HTT
 | Malicious repository content | Secret scan, parser sanitization, bounded generated artifacts | Fuzz/property and scan receipts | Novel parser vulnerabilities |
 
 Each release must re-evaluate this table and record new controls or residual risk in its receipt.
+
+Related: [privacy](privacy.md), [P01 boundaries](p01-threat-model.md), [compliance](../governance/compliance.md).

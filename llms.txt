@@ -31,4 +31,7 @@ MCP name: `io.github.edithatogo/substack-publisher`
 - [CLI reference](docs/api/commands.md)
 - [Feature matrix](docs/feature-matrix.md)
 - [Threat model](docs/security/threat-model.md)
+- [Privacy](docs/security/privacy.md)
+- [Compliance](docs/governance/compliance.md)
+- [Deprecation](docs/governance/deprecation.md)
 - [1.0 scorecards](docs/governance/1.0-scorecards.md)

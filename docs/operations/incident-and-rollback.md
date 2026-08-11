@@ -20,3 +20,4 @@ This writes `reports/release/rollback-plan.json` and does not talk to npm.
 
 - [Trusted publishing](../release-trusted-publishing.md)
 - [Release checklist](../release-checklist.md)
+- [Deprecation policy](../governance/deprecation.md)
