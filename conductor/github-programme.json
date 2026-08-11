@@ -126,14 +126,51 @@
           }
         }
       }
+    },
+    "P19": {
+      "number": 554,
+      "title": "P19 Published-post editor compatibility",
+      "tracks": {
+        "T19-01": {
+          "number": 550,
+          "title": "T19-01 Published-post editor schema compatibility and crash containment",
+          "phases": {
+            "Phase 1": {
+              "number": 555,
+              "title": "T19-01 Phase 1: Reproduction contract and failing tests"
+            },
+            "Phase 2": {
+              "number": 556,
+              "title": "T19-01 Phase 2: Static compatibility analyzer"
+            },
+            "Phase 3": {
+              "number": 557,
+              "title": "T19-01 Phase 3: Transport and receipt integration"
+            },
+            "Phase 4": {
+              "number": 558,
+              "title": "T19-01 Phase 4: Authenticated canary and contingencies"
+            },
+            "Phase 5": {
+              "number": 559,
+              "title": "T19-01 Phase 5: Upstream escalation and release evidence"
+            }
+          }
+        }
+      }
     }
+  },
+  "knownCloseoutMappings": {
+    "T13-01": "Closed GitHub Phase 3 Hosted closeout covers plan Phases 3 and 4. A fourth native issue was not created after archive.",
+    "T18-01": "Canonical contract tasks #539-#541 are the native children for plan Phases 1-3.",
+    "T18-02": "Canonical contract tasks #545-#547 are the native children for the track plan."
   },
   "project": {
     "owner": "edithatogo",
     "number": 38,
     "id": "PVT_kwHOAOYc4M4BfukQ",
     "title": "Substack CLI frontier-mainline maturity programme to 1.0",
-    "itemCountAtReceipt": 316,
+    "itemCountAtReceipt": 332,
     "fields": [
       "Title",
       "Assignees",
@@ -184,11 +221,25 @@
         "number": 6,
         "name": "Item added to project"
       }
-    ]
+    ],
+    "linkedRepositories": [
+      "edithatogo/substack-cli-ts"
+    ],
+    "issueLabels": [
+      "conductor",
+      "conductor-phase",
+      "conductor-track",
+      "conductor-task"
+    ],
+    "repositoryAutoAddWorkflow": ".github/workflows/add-issues-to-project.yml",
+    "nativeAutoAddOnCreate": {
+      "status": "unavailable-via-api",
+      "reason": "ProjectV2 lists only the six built-in workflows. GraphQL can delete a ProjectV2 workflow but cannot create or enable Auto-add to project."
+    }
   },
   "receipt": {
-    "capturedAt": "2026-08-10T20:46:13+10:00",
-    "capturedBy": "gh project view, field-list, GraphQL ProjectV2 workflows and native issue hierarchy",
+    "capturedAt": "2026-08-11T19:55:00+10:00",
+    "capturedBy": "GraphQL addSubIssue, ProjectV2 workflows/fields, project link, and native issue hierarchy",
     "policy": "docs/governance/project-policy.md",
     "reconciliation": "conductor/verification/programme-state-reconciliation-2026-08-10.md"
   },
