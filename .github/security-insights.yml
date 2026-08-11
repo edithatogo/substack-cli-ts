@@ -1,0 +1,37 @@
+header:
+  schema-version: "1.0.0"
+  last-updated: "2026-08-11"
+  last-reviewed: "2026-08-11"
+  url: https://github.com/edithatogo/substack-cli-ts
+  comment: |
+    Solo-maintainer TypeScript CLI. Automated checks replace required human review.
+    Live Substack writes stay fail-closed.
+
+project:
+  name: substack-cli-ts
+  administrators:
+    - name: edithatogo
+      affiliation: maintainer
+      primary: true
+  repositories:
+    - name: edithatogo/substack-cli-ts
+      url: https://github.com/edithatogo/substack-cli-ts
+      comment: Canonical source
+
+vulnerability-reporting:
+  reports-accepted: true
+  bug-bounty-available: false
+  security-policy: https://github.com/edithatogo/substack-cli-ts/security/policy
+  comment: Use GitHub private vulnerability reporting. Do not file public issues.
+
+security-artifacts:
+  - type: security-policy
+    url: https://github.com/edithatogo/substack-cli-ts/blob/master/SECURITY.md
+  - type: license
+    url: https://github.com/edithatogo/substack-cli-ts/blob/master/LICENSE
+  - type: scorecard
+    url: https://github.com/edithatogo/substack-cli-ts/security/code-scanning
+
+dependencies:
+  third-party-packages: true
+  dependencies-comments: Renovate is the dependency-update bot. Dependabot PRs are disabled.

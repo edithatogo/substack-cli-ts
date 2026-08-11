@@ -30,6 +30,8 @@ You should receive a response within 48 hours. If the issue is confirmed, a fix 
 
 The repository includes `scripts/secret-scan.mjs` for automated secret scanning. Run `npm run scan:secrets` before committing to detect accidentally included secrets.
 
+GitHub secret scanning and push protection are enabled on `edithatogo/substack-cli-ts`. Non-provider-pattern and validity-check toggles may still need a repo-admin PAT. CodeQL uses GitHub default setup (do not add a second workflow). OpenSSF Scorecard runs from `.github/workflows/security.yml` and uploads SARIF. Dependency updates come from Renovate, not Dependabot PRs.
+
 ## Disclosure Policy
 
 - Vulnerabilities are coordinated through a private GitHub security advisory and released as a patch version.

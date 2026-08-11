@@ -1,0 +1,14 @@
+---
+description: TypeScript ESM conventions for the Substack CLI
+globs: "**/*.{ts,mts,js,mjs}"
+alwaysApply: false
+---
+
+# TypeScript ESM
+
+- `type: module`. Use `.js` specifiers in relative imports.
+- Keep `strict` TypeScript. Do not add `any` to silence parser or API types.
+- Command handlers in `src/cli.ts` stay thin; put logic in `src/parser`, `src/config`, `src/publish`, `src/substack-api`, or `src/browser`.
+- Tests are Vitest `*.test.ts` next to the module, or under `src/test/assurance/` for taxonomy suites.
+- After TypeScript changes run `npm run verify:agent` (typecheck, test, inspect `examples/basic.md`).
+- Do not add Camoufox/optional browser installs to default paths.
