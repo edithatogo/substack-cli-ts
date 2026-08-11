@@ -17,7 +17,7 @@ Configure your MCP client (Claude Code, VS Code, etc.) to spawn the server:
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"]
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"]
     }
   }
 }

@@ -14,7 +14,7 @@ Use the published package form when configuring a client outside this repository
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {}
     }
   }

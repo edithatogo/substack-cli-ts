@@ -12,6 +12,6 @@
 
 ## Principles
 
-- Prefer the published package launch contract: `npx -y @edithatogo/substack-cli mcp serve`.
+- Prefer the intended package launch contract: `npx -y @edithatogo/substack-publisher mcp serve`. Live npm/registry listing remains owner-gated.
 - Keep `SUBSTACK_PUBLICATION_URL` as a placeholder in examples; do not embed credentials.
 - Treat live publication, marketplace submission, and catalog review as external gates.

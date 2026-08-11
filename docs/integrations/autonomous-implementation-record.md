@@ -6,7 +6,7 @@ This record captures the completed execution queue for the final Conductor integ
 
 - Work in track order unless a dependency requires a different sequence.
 - Keep the MCP server read-only and redacted.
-- Prefer published-package launch commands for user/client docs: `npx -y @edithatogo/substack-cli mcp serve`.
+- Prefer the intended package launch command in user/client docs: `npx -y @edithatogo/substack-publisher mcp serve`. Do not claim a hosted npm listing from local metadata.
 - Treat registry submissions, marketplace submissions, npm publishing, and account-authenticated actions as external gates. Prepare the artifact and document the command, but do not fake completion.
 - Validate each completed slice with the narrowest useful command, then run the broader quality gate before marking a track complete.
 

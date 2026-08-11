@@ -38,5 +38,5 @@ npm run registry:publisher -- publish
 If publishing through a client or catalog that does not consume `registry.server.json` directly, use this launch contract instead:
 
 ```bash
-npx -y @edithatogo/substack-cli mcp serve
+npx -y @edithatogo/substack-publisher mcp serve
 ```

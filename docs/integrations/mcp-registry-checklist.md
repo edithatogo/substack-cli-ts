@@ -10,5 +10,5 @@
 - [ ] Authenticate with the MCP Registry: `mcp-publisher login github`
 - [ ] Submit `registry.server.json` to the MCP Registry: `npm run registry:publisher -- publish`
 - [ ] Submit/update the server in Smithery using the published npm package and MCP command
-- [ ] Verify Claude/Gemini/Codex/Copilot client configs launch `npx -y @edithatogo/substack-cli mcp serve`
+- [ ] Verify Claude/Gemini/Codex/Copilot client configs launch `npx -y @edithatogo/substack-publisher mcp serve`
 - [ ] Verify the registry entry resolves the package and launch command
