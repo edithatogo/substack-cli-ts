@@ -205,7 +205,7 @@ async function createDraftInBrowser(
     await recordStep(trace, "navigate-existing-draft", async () => {
       await session.page.goto(existingDraftUrl, {
         waitUntil: "domcontentloaded",
-        timeoutMs: 60000,
+        timeout: 60000,
       });
       await checkForCaptcha(session);
       return { draftUrl: existingDraftUrl };
@@ -214,7 +214,7 @@ async function createDraftInBrowser(
     await recordStep(trace, "navigate-publication", async () => {
       await session.page.goto(publicationUrl, {
         waitUntil: "domcontentloaded",
-        timeoutMs: 60000,
+        timeout: 60000,
       });
       await checkForCaptcha(session);
       return { url: publicationUrl };
@@ -321,7 +321,7 @@ async function createDraftInBrowser(
     const text = await getEditorText(session.page);
     return { text, length: text.length };
   });
-  const currentUrl = session.page.url();
+  const currentUrl = await session.page.url();
 
   const baseResult = {
     operation,
@@ -363,7 +363,7 @@ async function createDraftInBrowser(
   );
 
   if (prepared.mode === "publish" && shouldOpenPublishReview(options)) {
-    const finalUrl = session.page.url();
+    const finalUrl = await session.page.url();
     return {
       ...baseResult,
       status: "publish-review-opened",
@@ -401,7 +401,7 @@ async function createDraftInBrowser(
     }
 
     if (shouldOpenPublishReview(options)) {
-      const finalUrl = session.page.url();
+      const finalUrl = await session.page.url();
       return {
         ...baseResult,
         status: "schedule-review-opened",
@@ -422,7 +422,7 @@ async function createDraftInBrowser(
 
     await recordStep(trace, "wait-for-schedule-confirmation", async () => {
       await checkForCaptcha(session);
-      const url = session.page.url();
+      const url = await session.page.url();
       const hasConfirmation = await session.page
         .evaluate(() => {
           return document.body.innerText.toLowerCase().includes("scheduled");
@@ -431,7 +431,7 @@ async function createDraftInBrowser(
       return { url, hasConfirmation, scheduleAt: prepared.scheduleAt };
     });
 
-    const finalUrl = session.page.url();
+    const finalUrl = await session.page.url();
     return {
       ...baseResult,
       status: "scheduled",
@@ -444,7 +444,7 @@ async function createDraftInBrowser(
 
   await recordStep(trace, "verify-publish-review-screen", async () => {
     await checkForCaptcha(session);
-    const url = session.page.url();
+    const url = await session.page.url();
     const isReviewUrl = /\/publish\//.test(url) || /\/post\//.test(url);
     if (!isReviewUrl) {
       console.warn(
@@ -464,18 +464,18 @@ async function createDraftInBrowser(
 
   const publishUrl = await recordStep(trace, "wait-for-publish-navigation", async () => {
     await checkForCaptcha(session);
-    const beforeUrl = session.page.url();
+    const beforeUrl = await session.page.url();
     // Poll for URL change (Stagehand Page does not expose waitForURL)
     const deadline = Date.now() + 30000;
     let afterUrl = beforeUrl;
     while (Date.now() < deadline && afterUrl === beforeUrl) {
       await session.page.waitForTimeout(500);
-      afterUrl = session.page.url();
+      afterUrl = await session.page.url();
     }
     return { beforeUrl, afterUrl };
   });
 
-  const finalUrl = session.page.url();
+  const finalUrl = await session.page.url();
   return {
     ...baseResult,
     publishedUrl: publishUrl.afterUrl,
@@ -515,7 +515,7 @@ export function printPreparedPost(prepared: PreparedPost): void {
 }
 
 async function checkForCaptcha(session: StagehandSession): Promise<void> {
-  const url = session.page.url().toLowerCase();
+  const url = (await session.page.url()).toLowerCase();
 
   if (url.includes("challenge") || url.includes("captcha")) {
     throw new CaptchaDetectedError(session.browserbaseDebugUrl);
@@ -551,7 +551,7 @@ async function observedAct(
 
       return await withStagehandRetry(
         async () => {
-          const actions = await session.stagehand.observe(instruction, { timeout });
+          const { data: actions } = await session.stagehand.observe(instruction, { timeout });
           const [action] = actions;
 
           if (action) {
@@ -559,16 +559,16 @@ async function observedAct(
             return {
               observedActions: actions.length,
               actionDescription: action.description,
-              success: result.success,
-              message: result.message,
+              success: result.data.success,
+              message: result.data.message,
             };
           }
 
           const result = await session.stagehand.act(instruction, { timeout });
           return {
             observedActions: 0,
-            success: result.success,
-            message: result.message,
+            success: result.data.success,
+            message: result.data.message,
           };
         },
         { retries: 2, label: name },

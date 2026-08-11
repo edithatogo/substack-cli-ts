@@ -6816,7 +6816,7 @@ auth
       try {
         await session.page.goto(session.publicationUrl, {
           waitUntil: "domcontentloaded",
-          timeoutMs: 60000,
+          timeout: 60000,
         });
 
         if (session.browserbaseSessionId) {

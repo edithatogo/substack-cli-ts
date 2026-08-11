@@ -127,7 +127,7 @@
     "verify": "npm run contracts:check && npm run ci:policy && npm run quality && npm run audit:signatures && npm run licenses:check && npm run sbom && npm run registry:validate && npm run integrations:validate && npm pack --dry-run && node scripts/verification-receipt.mjs"
   },
   "dependencies": {
-    "@browserbasehq/stagehand": "^3.6.0",
+    "@browserbasehq/stagehand": "^4.0.0",
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@opentelemetry/api": "1.9.1",
     "@tiptap/core": "3.27.1",
