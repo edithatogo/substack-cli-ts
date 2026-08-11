@@ -15,6 +15,14 @@ const AppConfigSchema = z.object({
 export type AppConfig = z.infer<typeof AppConfigSchema>;
 export type OperatorMode = AppConfig["operatorMode"];
 
+export function parseAppConfig(input: unknown): AppConfig {
+  return AppConfigSchema.parse(input);
+}
+
+export function safeParseAppConfig(input: unknown) {
+  return AppConfigSchema.safeParse(input);
+}
+
 export interface OperatorPolicy {
   mode: OperatorMode;
   requiresExplicitConfirmation: boolean;

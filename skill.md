@@ -1,23 +1,19 @@
 # Repository Skill
 
-Use this repository as a draft-first Substack CLI and MCP project.
+Use this repository as a draft-first Substack CLI and MCP project. Full agent contract: `AGENTS.md`. Conductor entry: `conductor/index.md`. Quality map: `docs/quality-frontier.md`.
 
 ## How To Work
 
-- Keep CLI and MCP changes aligned. Shared behavior should live in `src/` once, then be exposed through the CLI, MCP server, and tests.
-- Update the relevant `tracks/*.md` file when scope changes or a milestone completes.
+- Keep CLI and MCP changes aligned. Shared behavior should live in `src/` once.
+- Update the relevant Conductor track when scope changes or a milestone completes.
 - Keep secrets, browser sessions, traces, and `.substack-cli/` out of Git.
-- Run `npm run quality` and `npm run scan:secrets` before committing changes.
+- After TypeScript changes run `npm run verify:agent`.
+- Fail-closed on live Substack writes. Do not add required reviewers or CODEOWNERS.
 
 ## Primary References
 
-- `workflow.md` for the high-level delivery strategy.
+- `conductor/workflow.md` for delivery rules.
 - `docs/workflows/cli.md` for command and track work.
 - `docs/workflows/mcp.md` for MCP surface changes.
 - `README.md` for user-facing command examples.
-
-## Editing Rules
-
-- Prefer small, typed modules over shared ad hoc helpers.
-- Keep redacted summaries redacted.
-- Treat direct browser/API probing as discovery input, not the default path.
+- `.cursor/skills/conductor/SKILL.md` to discover Conductor without re-vendoring the plugin.

@@ -12,6 +12,39 @@ export interface SimulationResult {
   events: SimulationEvent[];
 }
 
+export type PublishMode = "draft" | "publish" | "schedule";
+
+export interface PublishGateResult {
+  seed: number;
+  mode: PublishMode;
+  status: "allowed" | "blocked" | "dry-run";
+  reason?: string;
+}
+
+export function simulatePublishGate(options: {
+  seed: number;
+  mode: PublishMode;
+  confirmed: boolean;
+  dryRun: boolean;
+}): PublishGateResult {
+  const { seed, mode, confirmed, dryRun } = options;
+  if (!Number.isInteger(seed)) {
+    throw new Error("Publish-gate simulation requires an integer seed.");
+  }
+  if (dryRun) {
+    return { seed, mode, status: "dry-run", reason: "dry-run does not mutate Substack" };
+  }
+  if ((mode === "publish" || mode === "schedule") && !confirmed) {
+    return {
+      seed,
+      mode,
+      status: "blocked",
+      reason: "Publishing and scheduling require --yes. Run with --dry-run first.",
+    };
+  }
+  return { seed, mode, status: "allowed" };
+}
+
 export function simulateRetrySchedule(
   seed: number,
   statuses: readonly number[],

@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { parseFrontmatter } from "../../parser/frontmatter.js";
+import { parseMarkdownString } from "../../parser/markdown.js";
+import { simulatePublishGate } from "../harness/deterministic-simulator.js";
 
 describe("edge assurance", () => {
   it("handles empty, delimiter-like, Unicode and CRLF input deterministically", () => {
@@ -16,5 +18,25 @@ describe("edge assurance", () => {
 
   it("rejects invalid enum boundaries instead of coercing them", () => {
     assert.throws(() => parseFrontmatter("---\naudience: administrators\n---\nBody"));
+  });
+
+  it("parses deeply nested headings without calling Substack", async () => {
+    const markdown = Array.from({ length: 8 }, (_, index) => `${"#".repeat((index % 6) + 1)} H${index}`).join(
+      "\n\n",
+    );
+    const parsed = await parseMarkdownString(markdown);
+    assert.equal(parsed.document.type, "doc");
+    assert.ok((parsed.document.content?.length ?? 0) >= 8);
+  });
+
+  it("keeps unconfirmed publish fail-closed", () => {
+    const result = simulatePublishGate({
+      seed: 7,
+      mode: "publish",
+      confirmed: false,
+      dryRun: false,
+    });
+    assert.equal(result.status, "blocked");
+    assert.match(result.reason ?? "", /--yes/);
   });
 });

@@ -7,13 +7,17 @@
   ],
   "labels": ["dependencies", "renovate"],
   "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
   "dependencyDashboardLabels": ["dependencies", "renovate"],
   "rangeStrategy": "pin",
   "ignorePaths": ["vendor/**"],
   "rebaseWhen": "behind-base-branch",
   "prCreation": "immediate",
   "prConcurrentLimit": 5,
+  "automerge": true,
+  "automergeType": "pr",
   "platformAutomerge": true,
+  "ignoreTests": false,
   "packageRules": [
     {
       "description": "Follow selected mainline prerelease channels",

@@ -1,52 +1,57 @@
 # Branch Protection
 
-This policy separates required merge gates from advisory hardening lanes. It is intentionally stricter for release and dependency work than for day-to-day local planning because Substack live writes, npm publication, and registry submissions remain owner-approved gates.
+Solo-maintainer policy: **0 approving reviews**, no CODEOWNERS, no last-push approval. Automated checks are the merge gate. Force-push and default-branch deletion stay off. Linear history and resolved conversations stay on. Signed commits are **not** required.
+
+Live capture (2026-08-11): classic protection on `master` plus ruleset `20603600` (`Solo maintainer default branch`). Machine-readable copy: `docs/ruleset-solo-maintainer.json`.
 
 ## Required Pull Request Checks
 
-Require these checks before merging feature or dependency pull requests:
-
+- `Analyze (actions)`
+- `Analyze (javascript-typescript)`
 - `Quality`
 - `Smoke`
+- `Deterministic Assurance Taxonomy`
+- `Mutation`
 - `Required Audit And Secret Scan`
-- `Node Compatibility (20)`
+- `SBOM Evidence`
+- `Strictest TypeScript`
+- `Dependency Declaration Strictness`
+- `Index Signature Strictness`
 - `Node Compatibility (22)`
 - `Node Compatibility (24)`
-- `codecov/patch`
+- `Node Compatibility (26.5.1)`
+- `ubuntu-latest / Node 26.5.1`
+- `windows-latest / Node 26.5.1`
+- `macos-latest / Node 26.5.1`
 
-Treat the generated contract check as required when public CLI, MCP, schema, or run-log surfaces change. Treat frontier drift as required when safe-surface coverage, endpoint evidence, or launch/admin readiness changes.
+Do **not** require `codecov/patch`, `codecov/project`, `Fuzz`, or `OpenSSF Scorecard`. Codecov is informational on PRs so SKIPPED uploads cannot block Renovate automerge.
+
+Treat generated contract drift as required when public CLI, MCP, schema, or run-log surfaces change (covered today by Quality / Assurance / fixture tests).
 
 ## Advisory Checks
 
-Keep these checks visible but advisory until their runtime dependencies are stable enough for every pull request:
-
-- `Mutation`
-- `E2E`
-- `Strictest TypeScript`
-- `Experimental Dependency Lane`
+- `Fuzz` (bounded on PRs; longer on Hardening schedule)
+- `codecov/patch` / `codecov/project`
+- `OpenSSF Scorecard` (push to `master` and weekly)
+- `E2E` (manual `workflow_dispatch`, live credentials)
 - `Frontier Drift Monitor`
-- `Index Signature Strictness`
-- `Dependency Declaration Strictness`
-
-Mutation is already run and reviewed before track closeout, but it should not block emergency security fixes until module-level thresholds are stable. E2E stays manual because it needs live Substack credentials and a test publication.
+- `Extended Fuzz`
 
 ## Dependency Pull Requests
 
-Dependency PRs may be merged only after required checks pass and the change is reviewed for runtime risk.
+Renovate is the update bot. Dependabot PRs stay disabled.
 
-- Stable tooling bumps should pass `Quality`, `Smoke`, hardening Node compatibility, audit, and secret scan.
-- Parser, Markdown, Tiptap, or ProseMirror bumps should also run `npm test` and `node dist/cli.js inspect examples/basic.md`.
-- Browser, Playwright, Stagehand, or authentication-adjacent bumps should run smoke locally and use manual E2E before release.
-- Security updates should run `npm run audit:prod` and `npm run scan:secrets`.
-- Experimental dependency lanes must not automerge.
+- Non-major updates may automerge after **required** checks pass.
+- Majors stay labeled `breaking` and need dashboard approval.
+- Parser / Tiptap bumps should also run `npm test` and `node dist/cli.js inspect examples/basic.md`.
+- Do not automerge live-canary or credential-bearing workflow changes.
 
 ## Release Rules
 
 Before creating a release tag, verify:
 
-- Latest `master` commit is green for `CI`, `Hardening`, `Deploy GitHub Pages`, and `Release Drafter`.
+- Latest `master` is green for `CI`, `Hardening`, `Security`, `Deploy GitHub Pages`, and `Release Drafter`.
 - `npm run sbom` produces an SBOM artifact.
 - `node dist/cli.js coverage release-scorecard` reports `localStatus: "ready"`.
-- `.github/workflows/publish.yml` uses `npm publish --provenance --access public`.
-- `.github/workflows/publish.yml` grants `id-token: write` for npm provenance.
+- `.github/workflows/publish.yml` uses `npm publish --provenance --access public` and `id-token: write`.
 - External npm, GitHub release, MCP registry, marketplace, and Substack admin gates remain owner-approved.

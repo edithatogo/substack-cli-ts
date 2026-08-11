@@ -23,4 +23,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
+          # Waits for required status checks only. Codecov is informational and
+          # must not be required, or SKIPPED uploads block Renovate automerge.
           gh pr merge "$PR_URL" --auto --squash
