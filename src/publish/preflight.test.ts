@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { parseMarkdownString } from "../parser/markdown.js";
+import { parseScheduleLimits } from "../policy/schedule-calendar.js";
 import { buildPreflightReport, parsePreflightScheduleFile } from "./preflight.js";
 
 describe("buildPreflightReport", () => {
@@ -735,6 +736,40 @@ title: "Scheduled Post"
       report.checks.find((check) => check.code === "schedule-time-no-collision")?.message,
       "Schedule time collides with another item.",
     );
+  });
+
+  it("blocks horizon and cross-series collisions from a publication catalogue", async () => {
+    const prepared = {
+      mode: "schedule" as const,
+      scheduleAt: "2026-12-01T09:00:00Z",
+      post: await parseMarkdownString(
+        `---
+title: "Far Post"
+slug: far-post
+---
+# Far Post
+`,
+        "far.md",
+      ),
+    };
+
+    const report = buildPreflightReport(prepared, {
+      publicationUrl: "https://rareinsights.substack.com",
+      scheduleLimits: parseScheduleLimits({
+        timezone: "UTC",
+        maxHorizonDays: 30,
+        maxQueuedPosts: 10,
+        minSpacingMinutes: 60,
+      }),
+      calendarItems: [
+        { title: "Other series", series: "notes", scheduledAt: "2026-12-01T09:00:00Z" },
+      ],
+      now: new Date("2026-08-11T00:00:00Z"),
+    });
+
+    assert.equal(report.status, "blocked");
+    assert.equal(checkStatus(report, "schedule-horizon"), "fail");
+    assert.equal(checkStatus(report, "schedule-collision"), "fail");
   });
 });
 

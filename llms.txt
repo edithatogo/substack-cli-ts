@@ -1,0 +1,34 @@
+# substack-publisher
+
+> Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.
+
+Package: `@edithatogo/substack-publisher`
+Repo: https://github.com/edithatogo/substack-cli-ts
+MCP name: `io.github.edithatogo/substack-publisher`
+
+## Do
+
+- Prefer `inspect`, `preflight`, `doctor`, and `--dry-run` before any live mutation.
+- Treat `SUBSTACK_EMAIL`, `SUBSTACK_PASSWORD`, browser storage-state, and `.substack-cli/` as secrets.
+- Use `--catalogue` and a scheduling-freeze/policy file for whole-publication calendar checks.
+- Keep live Substack, Browserbase, npm publish, and registry submissions as human/owner gates.
+
+## Do not
+
+- Do not claim a hosted publish, npm release, or registry listing from local evidence alone.
+- Do not commit `.env`, `.substack-cli/`, traces with credentials, or storage-state files.
+
+## Key commands
+
+- `npx @edithatogo/substack-publisher inspect examples/basic.md`
+- `npx @edithatogo/substack-publisher preflight post.md --mode schedule --at <iso> --catalogue catalogue.json`
+- `npx @edithatogo/substack-publisher schedule reconcile --schedule-file schedule.json`
+- `npx @edithatogo/substack-publisher mcp serve`
+
+## Docs
+
+- [README](README.md)
+- [CLI reference](docs/api/commands.md)
+- [Feature matrix](docs/feature-matrix.md)
+- [Threat model](docs/security/threat-model.md)
+- [1.0 scorecards](docs/governance/1.0-scorecards.md)

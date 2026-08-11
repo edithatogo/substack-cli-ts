@@ -1,0 +1,19 @@
+name: io.github.edithatogo/substack-publisher
+description: Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.
+homepage: https://github.com/edithatogo/substack-cli-ts
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      SUBSTACK_PUBLICATION_URL:
+        type: string
+        description: User-owned Substack publication URL
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
+      env: {
+        SUBSTACK_PUBLICATION_URL: config.SUBSTACK_PUBLICATION_URL
+      }
+    })

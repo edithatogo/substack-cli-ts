@@ -1,3 +1,8 @@
+import {
+  evaluatePublicationSchedulePolicy,
+  type ScheduleCalendarItem,
+  type ScheduleCalendarLimits,
+} from "../policy/schedule-calendar.js";
 import type { ExpectedScheduleItem } from "../substack-api/schedule-reconcile.js";
 import { parseScheduleFileContent } from "../substack-api/schedule-reconcile.js";
 import type { PreparedPost } from "../types.js";
@@ -33,6 +38,9 @@ export interface BuildPreflightOptions {
   draftId?: string | undefined;
   strict?: boolean | undefined;
   scheduleItems?: ExpectedScheduleItem[] | undefined;
+  calendarItems?: ScheduleCalendarItem[] | undefined;
+  scheduleLimits?: ScheduleCalendarLimits | undefined;
+  now?: Date | undefined;
 }
 
 export function buildPreflightReport(
@@ -200,7 +208,13 @@ export function buildPreflightReport(
     ),
   ];
 
-  checks.push(...scheduleChecks(prepared, options.scheduleItems, options.draftId));
+  checks.push(
+    ...scheduleChecks(prepared, options.scheduleItems, options.draftId, {
+      calendarItems: options.calendarItems,
+      scheduleLimits: options.scheduleLimits,
+      now: options.now,
+    }),
+  );
 
   if (prepublish.status === "blocked") {
     checks.push({
@@ -248,6 +262,11 @@ function scheduleChecks(
   prepared: PreparedPost,
   scheduleItems: ExpectedScheduleItem[] | undefined,
   draftId: string | undefined,
+  calendar?: {
+    calendarItems?: ScheduleCalendarItem[] | undefined;
+    scheduleLimits?: ScheduleCalendarLimits | undefined;
+    now?: Date | undefined;
+  },
 ): PreflightCheck[] {
   if (prepared.mode !== "schedule") return [];
 
@@ -280,6 +299,28 @@ function scheduleChecks(
           : "Schedule time collides with another planned item.",
       ),
     );
+  }
+
+  if (calendar?.scheduleLimits && scheduleAt) {
+    const decision = evaluatePublicationSchedulePolicy({
+      candidate: {
+        draftId,
+        title: resolvePostTitle(prepared.post),
+        sourceFile: prepared.post.filePath,
+        scheduledAt: scheduleAt,
+      },
+      calendar: calendar.calendarItems ?? [],
+      limits: calendar.scheduleLimits,
+      now: calendar.now,
+    });
+    for (const violation of decision.violations) {
+      checks.push({
+        code: `schedule-${violation.code}`,
+        status: "fail",
+        severity: "error",
+        message: violation.message,
+      });
+    }
   }
 
   return checks;

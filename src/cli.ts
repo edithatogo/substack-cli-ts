@@ -122,6 +122,12 @@ import {
 import { summarizeMediaManifest } from "./parser/media.js";
 import { evaluateDistributionPolicy, summarizeDistributionPolicy } from "./policy/distribution.js";
 import {
+  evaluatePublicationSchedulePolicy,
+  loadPublicationCatalogue,
+  loadScheduleLimits,
+  type ScheduleCalendarItem,
+} from "./policy/schedule-calendar.js";
+import {
   buildSchedulingFreezeBlockReport,
   evaluateSchedulingFreezePolicy,
 } from "./policy/scheduling-freeze.js";
@@ -681,6 +687,14 @@ program
   .option("--mode <mode>", "publish or schedule", "publish")
   .option("--at <iso-date>", "ISO timestamp for scheduled publication")
   .option("--schedule-file <file>", "Expected schedule file used to detect timestamp collisions")
+  .option(
+    "--catalogue <file>",
+    "Optional external publication catalogue used as the complete calendar",
+  )
+  .option(
+    "--schedule-policy <file>",
+    "Optional JSON schedule-policy file for horizon, queue cap, and spacing",
+  )
   .option("--draft-id <id>", "Current draft ID to ignore as a self-collision")
   .option("--strict", "Escalate optional workflow checks to blocking errors", false)
   .action(
@@ -690,6 +704,8 @@ program
         mode: "publish" | "schedule";
         at?: string;
         scheduleFile?: string;
+        catalogue?: string;
+        schedulePolicy?: string;
         draftId?: string;
         strict: boolean;
       },
@@ -712,11 +728,17 @@ program
             options.scheduleFile,
           )
         : undefined;
+      const calendar = await loadOptionalScheduleCalendar(
+        options.catalogue,
+        options.schedulePolicy,
+      );
       const report = buildPreflightReport(prepared, {
         publicationUrl: effective.publicationUrl,
         draftId: options.draftId,
         strict: options.strict,
         scheduleItems,
+        calendarItems: calendar.items,
+        scheduleLimits: calendar.limits,
       });
 
       console.log(JSON.stringify(report, null, 2));
@@ -1583,6 +1605,7 @@ draft
         operation: "draft.schedule",
         freezePolicyPath: options.freezePolicy,
         cataloguePath: options.catalogue,
+        candidate: { scheduledAt: options.scheduledAt, draftId: options.draftId },
       });
       if (!policyAllows) return;
 
@@ -1853,7 +1876,13 @@ const scheduleCommand = program
             options.scheduleFile,
           )
         : undefined;
-      const preflight = buildPreflightReport(prepared, { publicationUrl, scheduleItems });
+      const calendar = await loadOptionalScheduleCalendar(options.catalogue, options.freezePolicy);
+      const preflight = buildPreflightReport(prepared, {
+        publicationUrl,
+        scheduleItems,
+        calendarItems: calendar.items,
+        scheduleLimits: calendar.limits,
+      });
       if (preflight.status === "blocked") {
         console.log(JSON.stringify(preflight, null, 2));
         process.exitCode = 1;
@@ -1909,6 +1938,7 @@ const scheduleCommand = program
           operation: "schedule",
           freezePolicyPath: options.freezePolicy,
           cataloguePath: options.catalogue,
+          candidate: { scheduledAt: options.at, sourceFile: file },
         });
         if (!policyAllows) return;
 
@@ -1984,6 +2014,7 @@ const scheduleCommand = program
         operation: "schedule",
         freezePolicyPath: options.freezePolicy,
         cataloguePath: options.catalogue,
+        candidate: { scheduledAt: options.at, sourceFile: file },
       });
       if (!policyAllows) return;
 
@@ -2247,6 +2278,11 @@ note
         operation: "note.schedule",
         freezePolicyPath: options.freezePolicy,
         cataloguePath: options.catalogue,
+        candidate: {
+          scheduledAt: options.scheduledAt,
+          sourceFile: options.textFile,
+          source: "note",
+        },
       });
       if (!policyAllows) return;
 
@@ -7038,9 +7074,11 @@ async function enforceSchedulingFreezePolicy(options: {
   operation: string;
   freezePolicyPath: string | undefined;
   cataloguePath: string | undefined;
+  candidate?: ScheduleCalendarItem | undefined;
 }): Promise<boolean> {
+  const freezePath = resolveSchedulingFreezePolicyPath(options.freezePolicyPath);
   const decision = await evaluateSchedulingFreezePolicy({
-    freezePolicyPath: resolveSchedulingFreezePolicyPath(options.freezePolicyPath),
+    freezePolicyPath: freezePath,
     cataloguePath: options.cataloguePath,
   });
 
@@ -7052,7 +7090,65 @@ async function enforceSchedulingFreezePolicy(options: {
     return false;
   }
 
+  if (options.candidate?.scheduledAt && (options.cataloguePath || freezePath)) {
+    try {
+      const calendar = await loadOptionalScheduleCalendar(options.cataloguePath, freezePath);
+      const calendarDecision = evaluatePublicationSchedulePolicy({
+        candidate: options.candidate,
+        calendar: calendar.items ?? [],
+        limits: calendar.limits ?? (await loadScheduleLimits(freezePath)),
+      });
+      if (!calendarDecision.allowed) {
+        console.log(
+          JSON.stringify(
+            {
+              status: "blocked",
+              operation: options.operation,
+              reason: calendarDecision.violations.map((violation) => violation.message).join(" "),
+              violations: calendarDecision.violations,
+              queuedCount: calendarDecision.queuedCount,
+              limits: calendarDecision.limits,
+            },
+            null,
+            2,
+          ),
+        );
+        process.exitCode = 1;
+        return false;
+      }
+    } catch (error) {
+      console.log(
+        JSON.stringify(
+          {
+            status: "blocked",
+            operation: options.operation,
+            reason: error instanceof Error ? error.message : String(error),
+          },
+          null,
+          2,
+        ),
+      );
+      process.exitCode = 1;
+      return false;
+    }
+  }
+
   return true;
+}
+
+async function loadOptionalScheduleCalendar(
+  cataloguePath: string | undefined,
+  policyPath: string | undefined,
+): Promise<{
+  items?: ScheduleCalendarItem[];
+  limits?: Awaited<ReturnType<typeof loadScheduleLimits>>;
+}> {
+  const resolvedPolicy = resolveSchedulingFreezePolicyPath(policyPath) ?? policyPath;
+  if (!cataloguePath && !resolvedPolicy) return {};
+  return {
+    items: cataloguePath ? await loadPublicationCatalogue(cataloguePath) : [],
+    limits: await loadScheduleLimits(resolvedPolicy),
+  };
 }
 
 function resolveSchedulingFreezePolicyPath(value?: string): string | undefined {
