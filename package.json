@@ -184,7 +184,6 @@
     "@tiptap/html": "3.27.1",
     "@tiptap/pm": "3.24.0",
     "@tiptap/starter-kit": "3.27.1",
-    "@ai-sdk/provider-utils": "4.0.29",
     "axios": "1.19.0",
     "body-parser": "2.3.0",
     "fast-uri": "3.1.5",
