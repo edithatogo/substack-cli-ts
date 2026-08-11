@@ -57,7 +57,8 @@ describe("scheduling freeze agentic assurance", () => {
 
       assert.equal(result.status, "completed");
       assert.equal(transportCalled, false);
-      assert.equal((result.history[1]?.output as { mutated?: boolean }).mutated, false);
+      const scheduleOutput = result.history[1]?.output as { mutated?: boolean } | undefined;
+      assert.equal(scheduleOutput?.mutated, false);
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }

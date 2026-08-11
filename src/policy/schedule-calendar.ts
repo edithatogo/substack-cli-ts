@@ -112,7 +112,7 @@ export function evaluatePublicationSchedulePolicy(params: {
   candidate: ScheduleCalendarItem;
   calendar: readonly ScheduleCalendarItem[];
   limits: ScheduleCalendarLimits;
-  now?: Date;
+  now?: Date | undefined;
 }): ScheduleCalendarDecision {
   const now = params.now ?? new Date();
   const violations: ScheduleViolation[] = [];
@@ -131,7 +131,10 @@ export function evaluatePublicationSchedulePolicy(params: {
     };
   }
 
-  const candidateResolved = resolveScheduledInstant(params.candidate.scheduledAt, params.limits.timezone);
+  const candidateResolved = resolveScheduledInstant(
+    params.candidate.scheduledAt,
+    params.limits.timezone,
+  );
   if (candidateResolved.status !== "ok") {
     return {
       allowed: false,
@@ -158,8 +161,7 @@ export function evaluatePublicationSchedulePolicy(params: {
   }));
 
   const futureOthers = resolvedOthers.filter(
-    (entry) =>
-      entry.resolved.status === "ok" && entry.resolved.instant.getTime() > now.getTime(),
+    (entry) => entry.resolved.status === "ok" && entry.resolved.instant.getTime() > now.getTime(),
   );
   const queuedCount = futureOthers.length + 1;
   if (queuedCount > params.limits.maxQueuedPosts) {
@@ -202,10 +204,7 @@ export type ResolvedScheduleInstant =
   | { status: "dst-skipped"; message: string }
   | { status: "dst-ambiguous"; message: string };
 
-export function resolveScheduledInstant(
-  value: string,
-  timeZone: string,
-): ResolvedScheduleInstant {
+export function resolveScheduledInstant(value: string, timeZone: string): ResolvedScheduleInstant {
   const trimmed = value.trim();
   if (!trimmed) {
     return { status: "invalid-timestamp", message: "Schedule time is missing." };
@@ -236,11 +235,7 @@ export function isValidTimeZone(timeZone: string): boolean {
   }
 }
 
-function parseCatalogueEntry(
-  raw: unknown,
-  index: number,
-  source: string,
-): ScheduleCalendarItem[] {
+function parseCatalogueEntry(raw: unknown, index: number, source: string): ScheduleCalendarItem[] {
   if (!raw || typeof raw !== "object") return [];
   const object = raw as Record<string, unknown>;
   const scheduledAt = firstString(
@@ -264,10 +259,7 @@ function parseCatalogueEntry(
   ];
 }
 
-function isSameCalendarIdentity(
-  left: ScheduleCalendarItem,
-  right: ScheduleCalendarItem,
-): boolean {
+function isSameCalendarIdentity(left: ScheduleCalendarItem, right: ScheduleCalendarItem): boolean {
   if (left.draftId && right.draftId && left.draftId === right.draftId) return true;
   if (left.sourceFile && right.sourceFile && left.sourceFile === right.sourceFile) return true;
   if (left.id && right.id && left.id === right.id) return true;
@@ -289,7 +281,9 @@ function countFutureItems(
   }).length;
 }
 
-function toResolutionViolation(resolved: Exclude<ResolvedScheduleInstant, { status: "ok" }>): ScheduleViolation {
+function toResolutionViolation(
+  resolved: Exclude<ResolvedScheduleInstant, { status: "ok" }>,
+): ScheduleViolation {
   if (resolved.status === "dst-skipped") {
     return { code: "dst-skipped", message: resolved.message };
   }
@@ -325,10 +319,7 @@ function parseCivilDateTime(value: string): CivilDateTime | undefined {
   };
 }
 
-function resolveCivilInTimeZone(
-  civil: CivilDateTime,
-  timeZone: string,
-): ResolvedScheduleInstant {
+function resolveCivilInTimeZone(civil: CivilDateTime, timeZone: string): ResolvedScheduleInstant {
   const utcGuess = Date.UTC(
     civil.year,
     civil.month - 1,
@@ -365,7 +356,10 @@ function resolveCivilInTimeZone(
 
   const instant = candidates[0];
   if (!instant) {
-    return { status: "invalid-timestamp", message: `Schedule time is not parseable: ${formatCivil(civil)}` };
+    return {
+      status: "invalid-timestamp",
+      message: `Schedule time is not parseable: ${formatCivil(civil)}`,
+    };
   }
   return { status: "ok", instant };
 }

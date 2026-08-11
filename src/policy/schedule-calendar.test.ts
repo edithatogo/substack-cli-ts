@@ -19,9 +19,7 @@ describe("publication schedule calendar policy", () => {
   it("accepts a well-spaced candidate inside the horizon", () => {
     const decision = evaluatePublicationSchedulePolicy({
       candidate: { title: "New", scheduledAt: "2026-08-20T09:00:00Z", series: "main" },
-      calendar: [
-        { title: "Existing", scheduledAt: "2026-08-18T09:00:00Z", series: "notes" },
-      ],
+      calendar: [{ title: "Existing", scheduledAt: "2026-08-18T09:00:00Z", series: "notes" }],
       limits,
       now,
     });
@@ -34,9 +32,7 @@ describe("publication schedule calendar policy", () => {
   it("blocks exact cross-series collisions", () => {
     const decision = evaluatePublicationSchedulePolicy({
       candidate: { title: "New", scheduledAt: "2026-08-20T09:00:00Z", series: "main" },
-      calendar: [
-        { title: "Existing", scheduledAt: "2026-08-20T09:00:00Z", series: "notes" },
-      ],
+      calendar: [{ title: "Existing", scheduledAt: "2026-08-20T09:00:00Z", series: "notes" }],
       limits,
       now,
     });
