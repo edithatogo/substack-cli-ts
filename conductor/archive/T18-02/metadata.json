@@ -1,0 +1,15 @@
+{
+  "trackId": "T18-02",
+  "title": "Metadata duplication transport regression matrix",
+  "type": "quality",
+  "status": "archived",
+  "parentIssue": 538,
+  "issue": 544,
+  "taskIssues": [545, 546, 547],
+  "project": 38,
+  "createdAt": "2026-08-11T00:10:00+10:00",
+  "updatedAt": "2026-08-11T05:20:00+10:00",
+  "archivedAt": "2026-08-11T05:20:00+10:00",
+  "mergeSha": "6c01495c6eede74baabbb4c7874ebbf3b64000c7",
+  "pullRequest": 548
+}
