@@ -14,7 +14,7 @@ agent outside the repository:
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {}
     }
   }

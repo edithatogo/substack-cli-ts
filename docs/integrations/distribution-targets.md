@@ -1,6 +1,6 @@
 # Distribution Targets
 
-This project publishes one core artifact, the npm package `@edithatogo/substack-cli`, plus registry metadata/configuration for MCP-capable clients.
+This project prepares one core artifact, the npm package `@edithatogo/substack-publisher`, plus registry metadata/configuration for MCP-capable clients. Live npm publish remains owner-gated.
 
 Most registry submissions require account ownership, API tokens, or manual review. Keep those steps explicit and do not automate them with local secrets committed to the repository. `prepublishOnly` runs `npm run quality` before npm publication.
 
@@ -15,10 +15,10 @@ Most registry submissions require account ownership, API tokens, or manual revie
 
 | Target | Artifact/config | Submission path | Credential required | Status |
 | --- | --- | --- | --- | --- |
-| Official MCP registry / GitHub MCP registry | `registry.server.json` | Submit/publish using the current MCP registry process for `io.github.edithatogo/substack-cli` | GitHub namespace ownership; registry publisher token if required | Metadata ready; external submission required |
+| Official MCP registry / GitHub MCP registry | `registry.server.json` | Submit/publish using the current MCP registry process for `io.github.edithatogo/substack-publisher` | GitHub namespace ownership; registry publisher token if required | Metadata ready; external submission required |
 | Smithery | `registry.server.json` plus npm package launch command | Register package/server through Smithery's publisher flow | Smithery account/API token | External submission required |
-| Claude Desktop / Claude Code | MCP config spawning `npx -y @edithatogo/substack-cli mcp serve` | User/client config, not a public package registry | None for local use | Config documented |
-| Gemini CLI extensions | MCP config spawning `npx -y @edithatogo/substack-cli mcp serve` | Gemini settings or extension/registry process when available | Gemini/Google publisher access if registry-backed | Config documented; external process required |
+| Claude Desktop / Claude Code | MCP config spawning `npx -y @edithatogo/substack-publisher mcp serve` | User/client config, not a public package registry | None for local use | Config documented |
+| Gemini CLI extensions | MCP config spawning `npx -y @edithatogo/substack-publisher mcp serve` | Gemini settings or extension/registry process when available | Gemini/Google publisher access if registry-backed | Config documented; external process required |
 | Codex / ChatGPT connectors | Codex local MCP config; ChatGPT requires remote MCP connector | Codex local config or ChatGPT connector flow | OpenAI account/admin access for ChatGPT connector publication | Codex documented; ChatGPT external productization required |
 | GitHub Copilot | VS Code MCP configuration or Copilot extension path | VS Code workspace/user config and marketplace docs | Marketplace publisher for extension package | Config documented |
 
@@ -42,7 +42,7 @@ The npm package includes `scripts/install-completions.sh` and `scripts/install-c
 5. Run `npm run test:coverage`.
 6. Run `npm run scan:secrets`.
 7. Run `npm pack --dry-run --json` and confirm only intended package files are included.
-8. Confirm `registry.server.json` references `@edithatogo/substack-cli` and `mcp serve`.
+8. Confirm `registry.server.json` references `@edithatogo/substack-publisher` and `mcp serve`.
 9. Tag a release (`vX.Y.Z`) only after CI is green.
 10. Publish to npm, then submit/update MCP registry and Smithery entries using the published package version.
 
@@ -53,7 +53,7 @@ The npm package includes `scripts/install-completions.sh` and `scripts/install-c
   "mcpServers": {
     "substack-cli": {
       "command": "npx",
-      "args": ["-y", "@edithatogo/substack-cli", "mcp", "serve"],
+      "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
       "env": {
         "SUBSTACK_PUBLICATION_URL": "https://your-publication.substack.com"
       }

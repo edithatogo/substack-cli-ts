@@ -113,4 +113,4 @@ Detailed track files live under `tracks/`:
 - `tracks/13-dependency-and-discovery-register.md`
 - `tracks/14-quality-ci-automation.md`
 
-Current implementation status: all local Conductor tracks in `conductor/tracks.md` are complete. Publication, marketplace, registry submission, and authenticated live-client checks are documented as external account or environment gates rather than open implementation tasks.
+Current implementation status: P00–P07, P09, P13, and P16–P18 are archived complete. Open local work remains on T08-04 live canary evidence, P10 launch/docs leftovers, P11 1.0 go/no-go, T14/T15 VERIFY receipts, and T19 planning. Publication, marketplace, registry submission, and authenticated live-client checks stay owner-gated.

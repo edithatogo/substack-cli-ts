@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Install: `npm install -g @edithatogo/substack-cli`
+- Install: local `npm install` then `node dist/cli.js` (intended package `@edithatogo/substack-publisher`; npm publish is owner-gated)
 - Configure: `substack-cli config set-publication https://your.substack.com`
 - Auth: `substack-cli auth login`
 

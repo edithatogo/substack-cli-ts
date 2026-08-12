@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Corrected user-facing package identity to `@edithatogo/substack-publisher` and removed npm badges that implied a hosted listing.
+
 ### Added
 
 - Package publishing setup (`package.json` metadata, `files`, `publishConfig`)
