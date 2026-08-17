@@ -18,6 +18,33 @@ describe("security boundaries", () => {
       "Untrusted HTTPS origin: https://evil.example",
     );
     expect(() => policy.assertTrusted("not-an-origin")).toThrow();
+
+    // Test URL objects
+    expect(policy.isTrusted(new URL("https://example.substack.com/publish"))).toBe(true);
+    expect(policy.isTrusted(new URL("https://evil.example/publish"))).toBe(false);
+
+    // Test successful assertTrusted
+    const validUrl = policy.assertTrusted("https://example.substack.com");
+    expect(validUrl).toBeInstanceOf(URL);
+    expect(validUrl.origin).toBe("https://example.substack.com");
+
+    const validUrlObj = policy.assertTrusted(new URL("https://example.substack.com"));
+    expect(validUrlObj).toBeInstanceOf(URL);
+
+    // Test successful assertRedirect
+    const redirectUrl = policy.assertRedirect(
+      "https://example.substack.com",
+      "https://substack.com/api/v1/user",
+    );
+    expect(redirectUrl).toBeInstanceOf(URL);
+    expect(redirectUrl.origin).toBe("https://substack.com");
+
+    const redirectUrlObj = policy.assertRedirect(
+      new URL("https://example.substack.com"),
+      new URL("https://substack.com/api/v1/user"),
+    );
+    expect(redirectUrlObj).toBeInstanceOf(URL);
+    expect(redirectUrlObj.origin).toBe("https://substack.com");
   });
 
   it("rejects non-origin trusted policy configuration", () => {
