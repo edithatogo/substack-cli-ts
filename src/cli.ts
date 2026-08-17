@@ -4581,12 +4581,12 @@ apiPublication
       let updates: Record<string, unknown> = {};
 
       if (options.fromJson) {
-        const { readFileSync } = await import("node:fs");
-        updates = JSON.parse(readFileSync(options.fromJson, "utf-8")) as Record<string, unknown>;
+        const { readFile } = await import("node:fs/promises");
+        updates = JSON.parse(await readFile(options.fromJson, "utf-8")) as Record<string, unknown>;
       } else if (options.fromYaml) {
-        const { readFileSync } = await import("node:fs");
+        const { readFile } = await import("node:fs/promises");
         const yaml = await import("js-yaml");
-        updates = yaml.load(readFileSync(options.fromYaml, "utf-8")) as Record<string, unknown>;
+        updates = yaml.load(await readFile(options.fromYaml, "utf-8")) as Record<string, unknown>;
       } else {
         if (options.name) updates.name = options.name;
         if (options.description) updates.description = options.description;
