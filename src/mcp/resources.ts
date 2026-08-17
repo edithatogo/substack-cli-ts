@@ -8,7 +8,7 @@ import {
 } from "../frontier-coverage/mcp-resources.js";
 import { buildMcpSummaryResource, buildMcpSurfaceManifest } from "./manifest.js";
 
-export function registerMcpResources(server: McpServer): void {
+function registerMcpSurfaceResource(server: McpServer): void {
   server.registerResource(
     "mcp.surface",
     "substack-cli://mcp/surface",
@@ -29,7 +29,9 @@ export function registerMcpResources(server: McpServer): void {
       };
     },
   );
+}
 
+function registerMcpSummaryResource(server: McpServer): void {
   server.registerResource(
     "mcp.summary",
     "substack-cli://mcp/summary",
@@ -50,7 +52,9 @@ export function registerMcpResources(server: McpServer): void {
       };
     },
   );
+}
 
+function registerCoverageMatrixResource(server: McpServer): void {
   server.registerResource(
     "coverage.matrix",
     "substack-cli://coverage/matrix",
@@ -68,7 +72,9 @@ export function registerMcpResources(server: McpServer): void {
       ],
     }),
   );
+}
 
+function registerCoverageRoadmapResource(server: McpServer): void {
   server.registerResource(
     "coverage.roadmap",
     "substack-cli://coverage/roadmap",
@@ -86,7 +92,9 @@ export function registerMcpResources(server: McpServer): void {
       ],
     }),
   );
+}
 
+function registerLaunchChecklistResource(server: McpServer): void {
   server.registerResource(
     "launch.checklist",
     "substack-cli://launch/checklist",
@@ -104,7 +112,9 @@ export function registerMcpResources(server: McpServer): void {
       ],
     }),
   );
+}
 
+function registerCoverageDecisionsResource(server: McpServer): void {
   server.registerResource(
     "coverage.decisions",
     "substack-cli://coverage/decisions",
@@ -122,7 +132,9 @@ export function registerMcpResources(server: McpServer): void {
       ],
     }),
   );
+}
 
+function registerCoverageSafeSurfacesResource(server: McpServer): void {
   server.registerResource(
     "coverage.safe-surfaces",
     "substack-cli://coverage/safe-surfaces",
@@ -140,4 +152,14 @@ export function registerMcpResources(server: McpServer): void {
       ],
     }),
   );
+}
+
+export function registerMcpResources(server: McpServer): void {
+  registerMcpSurfaceResource(server);
+  registerMcpSummaryResource(server);
+  registerCoverageMatrixResource(server);
+  registerCoverageRoadmapResource(server);
+  registerLaunchChecklistResource(server);
+  registerCoverageDecisionsResource(server);
+  registerCoverageSafeSurfacesResource(server);
 }
