@@ -129,6 +129,10 @@ export interface CaptureKitReport {
   message: string;
 }
 
+const VALID_SOURCES = new Set(["browser", "api", "manual"]);
+const BLOCKED_STATUSES = new Set(["probe-only", "planning-only", "manual-admin"]);
+const RETAINED_HEADERS = new Set(["accept", "content-type", "x-substack-version"]);
+
 const SENSITIVE_KEY_PATTERN =
   /cookie|authorization|password|token|secret|session|csrf|xsrf|stripe|card|payment|tax|payout|subscriber|customer|email|name|user[_-]?id|publication[_-]?id|account[_-]?id|id$/i;
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
@@ -155,7 +159,7 @@ export function parseCaptureEvidenceFixture(value: unknown): CaptureEvidenceFixt
   if (typeof record.capturedAt !== "string" || Number.isNaN(Date.parse(record.capturedAt))) {
     throw new Error("Capture fixture requires valid capturedAt.");
   }
-  if (!["browser", "api", "manual"].includes(String(record.source))) {
+  if (!VALID_SOURCES.has(String(record.source))) {
     throw new Error("Capture fixture source must be browser, api, or manual.");
   }
   if (typeof record.surface !== "string" || record.surface.length === 0) {
@@ -296,7 +300,7 @@ export function buildGraduationCheckReport(
   const inventoryCapabilities = new Set(inventory.entries.map((entry) => entry.capabilityId));
   const blockers = matrix.capabilities
     .filter((capability) =>
-      ["probe-only", "planning-only", "manual-admin"].includes(capability.status),
+      BLOCKED_STATUSES.has(capability.status),
     )
     .map((capability) => {
       const missing = missingGraduationEvidence(capability, inventoryCapabilities);
@@ -461,7 +465,7 @@ function minimizeHeaders(
   const kept: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(headers)) {
     const normalized = key.toLowerCase();
-    if (["accept", "content-type", "x-substack-version"].includes(normalized)) {
+    if (RETAINED_HEADERS.has(normalized)) {
       kept[normalized] = redactValueForKey(normalized, value);
     } else if (SENSITIVE_KEY_PATTERN.test(key)) {
       kept[normalized] = REDACTED;
