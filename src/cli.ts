@@ -5137,7 +5137,12 @@ apiSubscriber
     }
     const effective = await loadEffectiveConfig();
     const material = await resolveApiAuthMaterial(effective, options.source);
-    const csvInput = existsSync(csvData) ? readFileSync(csvData, "utf8") : csvData;
+    let csvInput = csvData;
+    try {
+      csvInput = await readFile(csvData, "utf8");
+    } catch {
+      // If it doesn't exist or isn't readable, assume csvData is the actual CSV content
+    }
     const result = await importSubscribers(material.publicationUrl, csvInput, material, fetch);
     console.log(JSON.stringify(result, null, 2));
     if (result.status !== "ok") {
