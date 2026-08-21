@@ -19,12 +19,15 @@ import type { PreparedPost } from "../types.js";
 import { resolveDraftEditorUrl } from "./draft-url.js";
 import { LocalWorkflowError, runLocalDraftWorkflow } from "./local-workflow.js";
 import { buildBrowserWorkflowRunLog, writeRunLog } from "./run-log.js";
+import { rootLogger } from "../util/logger.js";
 import { resolvePostTitle } from "./title.js";
 import {
   resolveTransport,
   type TransportPreference,
   type TransportResolution,
 } from "./transport.js";
+
+const log = rootLogger.child({ component: "browser-workflow" });
 
 export interface WorkflowStep {
   name: string;
@@ -127,13 +130,13 @@ export async function runBrowserWorkflow(
       );
       await maybeWriteTrace(result, options.traceOut);
       await maybeWriteWorkflowRunLog(options, requirePublicationUrl(config), prepared, result);
-      console.log(JSON.stringify(result, null, 2));
+      log.info({ result }, "browser workflow completed");
     } catch (error) {
       if (error instanceof LocalWorkflowError) {
         const result = buildFailedWorkflowResult(error, prepared, transport);
         await maybeWriteTrace(result, options.traceOut);
         await maybeWriteWorkflowRunLog(options, requirePublicationUrl(config), prepared, result);
-        console.error(JSON.stringify(result, null, 2));
+        log.error({ result }, "browser workflow failed");
       }
       throw error;
     }
@@ -163,7 +166,7 @@ export async function runBrowserWorkflow(
       const result = await createDraftInBrowser(session, prepared, options, transport);
       await maybeWriteTrace(result, options.traceOut);
       await maybeWriteWorkflowRunLog(options, session.publicationUrl, prepared, result);
-      console.log(JSON.stringify(result, null, 2));
+      log.info({ result }, "browser workflow completed");
     } catch (error) {
       if (error instanceof BrowserWorkflowError) {
         const result = {
@@ -176,7 +179,7 @@ export async function runBrowserWorkflow(
         };
         await maybeWriteTrace(result, options.traceOut);
         await maybeWriteWorkflowRunLog(options, session.publicationUrl, prepared, result);
-        console.error(JSON.stringify(result, null, 2));
+        log.error({ result }, "browser workflow failed");
       }
 
       throw error;
@@ -291,7 +294,7 @@ async function createDraftInBrowser(
   );
 
   if (options.experimentalInjectState) {
-    console.warn(
+    log.warn(
       "Experimental editor-state injection is planned but not yet implemented. Falling back to the paste-based default path.",
     );
   }
@@ -447,8 +450,9 @@ async function createDraftInBrowser(
     const url = await session.page.url();
     const isReviewUrl = /\/publish\//.test(url) || /\/post\//.test(url);
     if (!isReviewUrl) {
-      console.warn(
-        `Warning: Current URL "${url}" does not look like a publish review screen. Expected URL containing "/publish/" or "/post/".`,
+      log.warn(
+        { url },
+        'Current URL does not look like a publish review screen. Expected URL containing "/publish/" or "/post/".',
       );
     }
     return { url, looksLikeReviewScreen: isReviewUrl };
