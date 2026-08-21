@@ -1,0 +1,13 @@
+--- src/frontier-coverage/evidence-capture.ts
++++ src/frontier-coverage/evidence-capture.ts
+@@ -2,6 +2,10 @@
+ import { readFile } from "node:fs/promises";
+ import type { CoverageCapability, CoverageMatrix, CoverageStatus } from "./schema.js";
+
++const VALID_SOURCES = new Set(["browser", "api", "manual"]);
++const BLOCKED_STATUSES = new Set(["probe-only", "planning-only", "manual-admin"]);
++const ALLOWED_HEADERS = new Set(["accept", "content-type", "x-substack-version"]);
++
+ export interface CaptureEndpoint {
+   method: string;
+   url: string;

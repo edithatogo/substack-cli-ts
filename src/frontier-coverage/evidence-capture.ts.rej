@@ -1,0 +1,31 @@
+--- evidence-capture.ts
++++ evidence-capture.ts
+@@ -159,7 +163,7 @@
+   if (typeof record.capturedAt !== "string" || Number.isNaN(Date.parse(record.capturedAt))) {
+     throw new Error("Capture fixture requires valid capturedAt.");
+   }
+-  if (!["browser", "api", "manual"].includes(String(record.source))) {
++  if (!VALID_SOURCES.has(String(record.source))) {
+     throw new Error("Capture fixture source must be browser, api, or manual.");
+   }
+   if (typeof record.surface !== "string" || record.surface.length === 0) {
+@@ -299,9 +303,7 @@
+ ): GraduationCheckReport {
+   const inventoryCapabilities = new Set(inventory.entries.map((entry) => entry.capabilityId));
+   const blockers = matrix.capabilities
+-    .filter((capability) =>
+-      ["probe-only", "planning-only", "manual-admin"].includes(capability.status),
+-    )
++    .filter((capability) => BLOCKED_STATUSES.has(capability.status))
+     .map((capability) => {
+       const missing = missingGraduationEvidence(capability, inventoryCapabilities);
+       return { capabilityId: capability.id, status: capability.status, missing };
+@@ -465,7 +467,7 @@
+   const kept: Record<string, unknown> = {};
+   for (const [key, value] of Object.entries(headers)) {
+     const normalized = key.toLowerCase();
+-    if (["accept", "content-type", "x-substack-version"].includes(normalized)) {
++    if (ALLOWED_HEADERS.has(normalized)) {
+       kept[normalized] = redactValueForKey(normalized, value);
+     } else if (SENSITIVE_KEY_PATTERN.test(key)) {
+       kept[normalized] = REDACTED;
