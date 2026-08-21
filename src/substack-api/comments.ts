@@ -357,158 +357,168 @@ export async function banCommenter(
 
 // ── Parsers ──────────────────────────────────────────────────────────────
 
-function parseCommentList(body: unknown): CommentEntry[] | null {
-  let items: unknown[] | null = null;
-
+function extractCommentItems(body: unknown): unknown[] | null {
   if (Array.isArray(body)) {
-    items = body;
-  } else if (
-    body &&
-    typeof body === "object" &&
-    Array.isArray((body as Record<string, unknown>).comments)
-  ) {
-    items = (body as Record<string, unknown>).comments as unknown[];
-  } else if (
-    body &&
-    typeof body === "object" &&
-    Array.isArray((body as Record<string, unknown>).data)
-  ) {
-    items = (body as Record<string, unknown>).data as unknown[];
+    return body;
+  }
+  if (body && typeof body === "object") {
+    const record = body as Record<string, unknown>;
+    if (Array.isArray(record.comments)) {
+      return record.comments as unknown[];
+    }
+    if (Array.isArray(record.data)) {
+      return record.data as unknown[];
+    }
+  }
+  return null;
+}
+
+function parseCommentAuthor(record: Record<string, unknown>): CommentAuthor | null {
+  let author: CommentAuthor | null = null;
+  const authorRecord = record.author as Record<string, unknown> | undefined;
+  if (authorRecord && typeof authorRecord === "object") {
+    const authorId =
+      typeof authorRecord.id === "number"
+        ? authorRecord.id
+        : typeof authorRecord.id === "string"
+          ? Number(authorRecord.id)
+          : 0;
+    if (authorId) {
+      author = {
+        id: authorId,
+        name:
+          typeof authorRecord.name === "string"
+            ? authorRecord.name
+            : typeof authorRecord.display_name === "string"
+              ? authorRecord.display_name
+              : "",
+        handle:
+          typeof authorRecord.handle === "string"
+            ? authorRecord.handle
+            : typeof authorRecord.username === "string"
+              ? authorRecord.username
+              : "",
+        avatarUrl:
+          typeof authorRecord.photo_url === "string"
+            ? authorRecord.photo_url
+            : typeof authorRecord.avatar_url === "string"
+              ? authorRecord.avatar_url
+              : typeof authorRecord.avatarUrl === "string"
+                ? authorRecord.avatarUrl
+                : "",
+      };
+    }
   }
 
+  // Also support flat author fields
+  if (!author && typeof record.author_name === "string") {
+    author = {
+      id:
+        typeof record.author_id === "number"
+          ? record.author_id
+          : typeof record.user_id === "number"
+            ? record.user_id
+            : 0,
+      name: record.author_name as string,
+      handle: typeof record.author_handle === "string" ? (record.author_handle as string) : "",
+      avatarUrl:
+        typeof record.author_photo_url === "string" ? (record.author_photo_url as string) : "",
+    };
+  }
+  return author && author.id ? author : null;
+}
+
+function parseCommentEntry(item: unknown): CommentEntry | null {
+  if (!isRecord(item)) return null;
+  const record = item;
+  const id =
+    typeof record.id === "number"
+      ? record.id
+      : typeof record.id === "string"
+        ? Number(record.id)
+        : 0;
+  if (!id) return null;
+
+  const body = typeof record.body === "string" ? record.body : "";
+  const isAdmin =
+    typeof record.author_is_admin === "boolean"
+      ? record.author_is_admin
+      : typeof record.is_admin === "boolean"
+        ? record.is_admin
+        : false;
+  const isPinned =
+    typeof record.is_pinned === "boolean"
+      ? record.is_pinned
+      : typeof record.pinned === "boolean"
+        ? record.pinned
+        : false;
+  const isDeleted =
+    typeof record.is_deleted === "boolean"
+      ? record.is_deleted
+      : typeof record.deleted === "boolean"
+        ? record.deleted
+        : false;
+  const status =
+    typeof record.status === "string"
+      ? record.status
+      : typeof record.approval_status === "string"
+        ? record.approval_status
+        : "approved";
+  const parentId =
+    typeof record.parent_id === "number"
+      ? record.parent_id
+      : typeof record.parentId === "number"
+        ? record.parentId
+        : null;
+  const childCount =
+    typeof record.child_count === "number"
+      ? record.child_count
+      : typeof record.reply_count === "number"
+        ? record.reply_count
+        : 0;
+  const createdAt =
+    typeof record.created_at === "string"
+      ? record.created_at
+      : typeof record.createdAt === "string"
+        ? record.createdAt
+        : typeof record.date === "string"
+          ? record.date
+          : null;
+  const likesCount =
+    typeof record.likes_count === "number"
+      ? record.likes_count
+      : typeof record.likesCount === "number"
+        ? record.likesCount
+        : typeof record.reaction_count === "number"
+          ? record.reaction_count
+          : 0;
+
+  const author = parseCommentAuthor(record);
+
+  return {
+    id,
+    body,
+    author,
+    isAdmin,
+    isPinned,
+    isDeleted,
+    status,
+    parentId,
+    childCount,
+    createdAt,
+    likesCount,
+  };
+}
+
+
+function parseCommentList(body: unknown): CommentEntry[] | null {
+  const items = extractCommentItems(body);
   if (!items) return null;
 
   const comments: CommentEntry[] = [];
   for (const item of items) {
-    if (!isRecord(item)) continue;
-    const record = item;
-    const id =
-      typeof record.id === "number"
-        ? record.id
-        : typeof record.id === "string"
-          ? Number(record.id)
-          : 0;
-    if (!id) continue;
-
-    const body = typeof record.body === "string" ? record.body : "";
-    const isAdmin =
-      typeof record.author_is_admin === "boolean"
-        ? record.author_is_admin
-        : typeof record.is_admin === "boolean"
-          ? record.is_admin
-          : false;
-    const isPinned =
-      typeof record.is_pinned === "boolean"
-        ? record.is_pinned
-        : typeof record.pinned === "boolean"
-          ? record.pinned
-          : false;
-    const isDeleted =
-      typeof record.is_deleted === "boolean"
-        ? record.is_deleted
-        : typeof record.deleted === "boolean"
-          ? record.deleted
-          : false;
-    const status =
-      typeof record.status === "string"
-        ? record.status
-        : typeof record.approval_status === "string"
-          ? record.approval_status
-          : "approved";
-    const parentId =
-      typeof record.parent_id === "number"
-        ? record.parent_id
-        : typeof record.parentId === "number"
-          ? record.parentId
-          : null;
-    const childCount =
-      typeof record.child_count === "number"
-        ? record.child_count
-        : typeof record.reply_count === "number"
-          ? record.reply_count
-          : 0;
-    const createdAt =
-      typeof record.created_at === "string"
-        ? record.created_at
-        : typeof record.createdAt === "string"
-          ? record.createdAt
-          : typeof record.date === "string"
-            ? record.date
-            : null;
-    const likesCount =
-      typeof record.likes_count === "number"
-        ? record.likes_count
-        : typeof record.likesCount === "number"
-          ? record.likesCount
-          : typeof record.reaction_count === "number"
-            ? record.reaction_count
-            : 0;
-
-    let author: CommentAuthor | null = null;
-    const authorRecord = record.author as Record<string, unknown> | undefined;
-    if (authorRecord && typeof authorRecord === "object") {
-      const authorId =
-        typeof authorRecord.id === "number"
-          ? authorRecord.id
-          : typeof authorRecord.id === "string"
-            ? Number(authorRecord.id)
-            : 0;
-      if (authorId) {
-        author = {
-          id: authorId,
-          name:
-            typeof authorRecord.name === "string"
-              ? authorRecord.name
-              : typeof authorRecord.display_name === "string"
-                ? authorRecord.display_name
-                : "",
-          handle:
-            typeof authorRecord.handle === "string"
-              ? authorRecord.handle
-              : typeof authorRecord.username === "string"
-                ? authorRecord.username
-                : "",
-          avatarUrl:
-            typeof authorRecord.photo_url === "string"
-              ? authorRecord.photo_url
-              : typeof authorRecord.avatar_url === "string"
-                ? authorRecord.avatar_url
-                : typeof authorRecord.avatarUrl === "string"
-                  ? authorRecord.avatarUrl
-                  : "",
-        };
-      }
-    }
-
-    // Also support flat author fields
-    if (!author && typeof record.author_name === "string") {
-      author = {
-        id:
-          typeof record.author_id === "number"
-            ? record.author_id
-            : typeof record.user_id === "number"
-              ? record.user_id
-              : 0,
-        name: record.author_name as string,
-        handle: typeof record.author_handle === "string" ? (record.author_handle as string) : "",
-        avatarUrl:
-          typeof record.author_photo_url === "string" ? (record.author_photo_url as string) : "",
-      };
-    }
-
-    comments.push({
-      id,
-      body,
-      author: author && author.id ? author : null,
-      isAdmin,
-      isPinned,
-      isDeleted,
-      status,
-      parentId,
-      childCount,
-      createdAt,
-      likesCount,
-    });
+    const entry = parseCommentEntry(item);
+    if (entry) comments.push(entry);
   }
 
   return comments.length > 0 ? comments : null;
