@@ -14,6 +14,12 @@ import { resolveDraftEditorUrl } from "./draft-url.js";
 import { resolvePostTitle } from "./title.js";
 import type { TransportResolution } from "./transport.js";
 
+import createDOMPurify from "dompurify";
+import { Window } from "happy-dom";
+
+const window = new Window();
+const DOMPurify = createDOMPurify(window as any);
+
 export class LocalWorkflowError extends Error {
   constructor(
     message: string,
@@ -508,6 +514,7 @@ async function fillBody(page: Page, html: string, timeout: number): Promise<bool
   }
 
   await editor.click();
+  const sanitizedHtml = DOMPurify.sanitize(html);
   await page.evaluate((value) => {
     const target = document.activeElement?.closest("[contenteditable='true']");
     if (!target) {
@@ -516,7 +523,7 @@ async function fillBody(page: Page, html: string, timeout: number): Promise<bool
     document.execCommand("insertHTML", false, value);
     target.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertFromPaste" }));
     return true;
-  }, html);
+  }, sanitizedHtml);
   return true;
 }
 
