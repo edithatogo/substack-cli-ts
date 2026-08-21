@@ -323,6 +323,20 @@ export function getCoverageMatrix(): CoverageMatrix {
   return FRONTIER_COVERAGE_MATRIX;
 }
 
+const capabilityCache = new WeakMap<CoverageMatrix, Map<string, CoverageCapability>>();
+
+export function lookupCapability(
+  matrix: CoverageMatrix,
+  capabilityId: string,
+): CoverageCapability | undefined {
+  let cache = capabilityCache.get(matrix);
+  if (!cache) {
+    cache = new Map(matrix.capabilities.map((c) => [c.id, c]));
+    capabilityCache.set(matrix, cache);
+  }
+  return cache.get(capabilityId);
+}
+
 export function getCoverageCapabilitiesByDomain(domain: CapabilityDomain): CoverageCapability[] {
   return FRONTIER_COVERAGE_MATRIX.capabilities.filter((capability) => capability.domain === domain);
 }

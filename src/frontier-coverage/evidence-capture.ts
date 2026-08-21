@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import type { CoverageCapability, CoverageMatrix, CoverageStatus } from "./schema.js";
+import { lookupCapability } from "./matrix.js";
 
 export interface CaptureEndpoint {
   method: string;
@@ -320,7 +321,7 @@ export function buildCaptureKitReport(
     inventoryFile?: string | undefined;
   } = {},
 ): CaptureKitReport {
-  const capability = matrix.capabilities.find((candidate) => candidate.id === capabilityId);
+  const capability = lookupCapability(matrix, capabilityId);
   const generatedAt = (options.generatedAt ?? new Date()).toISOString();
   if (!capability) {
     return {
