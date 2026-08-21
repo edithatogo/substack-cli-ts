@@ -7070,7 +7070,7 @@ function buildScheduledQueue(
   return [...postItems, ...draftItems, ...broadcastItems];
 }
 
-async function enforceSchedulingFreezePolicy(options: {
+export async function enforceSchedulingFreezePolicy(options: {
   operation: string;
   freezePolicyPath: string | undefined;
   cataloguePath: string | undefined;
