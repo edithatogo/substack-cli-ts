@@ -135,6 +135,8 @@ const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
 const LONG_TOKEN_PATTERN = /\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+|\b[A-Za-z0-9_-]{24,}\b/g;
 const UUID_PATTERN = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
 const PRIVATE_NAME_PATTERN = /\b[A-Z][a-z]+ [A-Z][a-z]+\b/g;
+const KEPT_HEADERS = new Set(["accept", "content-type", "x-substack-version"]);
+
 const PRIVATE_NAME_KEYS = new Set(["first_name", "last_name", "full_name", "display_name", "name"]);
 const BODY_PREVIEW_LIMIT = 2_000;
 const REDACTED = "[REDACTED]";
@@ -461,7 +463,7 @@ function minimizeHeaders(
   const kept: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(headers)) {
     const normalized = key.toLowerCase();
-    if (["accept", "content-type", "x-substack-version"].includes(normalized)) {
+    if (KEPT_HEADERS.has(normalized)) {
       kept[normalized] = redactValueForKey(normalized, value);
     } else if (SENSITIVE_KEY_PATTERN.test(key)) {
       kept[normalized] = REDACTED;
