@@ -395,7 +395,7 @@ title: "Blocked Post"
 ---
 # Blocked Post
 
-TODO: finish this.
+TK: finish this.
 `,
         "blocked.md",
       ),
@@ -471,7 +471,7 @@ title: "Commented"
 ---
 # Commented
 
-<!-- TODO: rewrite this -->
+<!-- TK: rewrite this -->
 Body.
 `,
           "editorial.md",
