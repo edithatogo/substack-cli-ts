@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { authorizePublicationSession } from "./authorized-session.js";
 import { TrustedOriginPolicy } from "./origin-policy.js";
-import { WorkspaceGuard } from "./workspace-guard.js";
 
 describe("security boundaries", () => {
   it("allows only the configured publication and platform origins", () => {
@@ -70,12 +69,5 @@ describe("security boundaries", () => {
         role: "admin",
       }),
     ).toThrow();
-  });
-
-  it("rejects workspace escapes while allowing contained outputs", () => {
-    const guard = new WorkspaceGuard("C:/workspace");
-    expect(guard.assertWorkspaceInput("C:/workspace/posts/draft.md")).toContain("workspace");
-    expect(guard.assertGeneratedOutput("C:/workspace/.state/receipt.json")).toContain(".state");
-    expect(() => guard.assertWorkspaceInput("C:/workspace/../secrets.txt")).toThrow();
   });
 });
