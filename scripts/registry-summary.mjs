@@ -4,7 +4,7 @@ import {
   summarizeRegistryServerMetadata,
 } from "../dist/registry/metadata.js";
 
-const metadata = loadRegistryServerMetadata();
+const metadata = await loadRegistryServerMetadata();
 const summary = summarizeRegistryServerMetadata(metadata);
 const plan = buildRegistrySubmissionPlan(metadata);
 const mode = process.argv[2];

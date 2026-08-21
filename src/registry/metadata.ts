@@ -1,4 +1,4 @@
-﻿import { readFileSync } from "node:fs";
+﻿import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 export type RegistryServerMetadata = {
@@ -33,10 +33,10 @@ export type RegistrySubmissionPlan = {
   validationIssues: string[];
 };
 
-export function loadRegistryServerMetadata(
+export async function loadRegistryServerMetadata(
   filePath = resolve(process.cwd(), "registry.server.json"),
-): RegistryServerMetadata {
-  return JSON.parse(readFileSync(filePath, "utf8")) as RegistryServerMetadata;
+): Promise<RegistryServerMetadata> {
+  return JSON.parse(await readFile(filePath, "utf8")) as RegistryServerMetadata;
 }
 
 export function validateRegistryServerMetadata(metadata: RegistryServerMetadata): string[] {

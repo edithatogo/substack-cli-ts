@@ -7,8 +7,8 @@ import {
 } from "./metadata.js";
 
 describe("loadRegistryServerMetadata", () => {
-  it("loads the registry metadata", () => {
-    const metadata = loadRegistryServerMetadata();
+  it("loads the registry metadata", async () => {
+    const metadata = await loadRegistryServerMetadata();
     expect(metadata.name).toBe("io.github.edithatogo/substack-publisher");
     expect(metadata.packages[0]?.identifier).toBe("@edithatogo/substack-publisher");
     expect(metadata.packages[0]?.version).toBe("0.2.0");
@@ -16,8 +16,8 @@ describe("loadRegistryServerMetadata", () => {
 });
 
 describe("summarizeRegistryServerMetadata", () => {
-  it("redacts the full structure to a compact summary", () => {
-    const metadata = loadRegistryServerMetadata();
+  it("redacts the full structure to a compact summary", async () => {
+    const metadata = await loadRegistryServerMetadata();
     const summary = summarizeRegistryServerMetadata(metadata);
     expect(summary).toMatchObject({
       name: "io.github.edithatogo/substack-publisher",
@@ -28,15 +28,15 @@ describe("summarizeRegistryServerMetadata", () => {
 });
 
 describe("validateRegistryServerMetadata", () => {
-  it("accepts the checked-in registry metadata", () => {
-    const metadata = loadRegistryServerMetadata();
+  it("accepts the checked-in registry metadata", async () => {
+    const metadata = await loadRegistryServerMetadata();
     expect(validateRegistryServerMetadata(metadata)).toEqual([]);
   });
 });
 
 describe("buildRegistrySubmissionPlan", () => {
-  it("builds the manual publisher and launch commands", () => {
-    const metadata = loadRegistryServerMetadata();
+  it("builds the manual publisher and launch commands", async () => {
+    const metadata = await loadRegistryServerMetadata();
     const plan = buildRegistrySubmissionPlan(metadata);
 
     expect(plan.publisherCommand).toEqual([
@@ -56,8 +56,8 @@ describe("buildRegistrySubmissionPlan", () => {
 });
 
 describe("validateRegistryServerMetadata contract failures", () => {
-  it("reports metadata contract issues", () => {
-    const metadata = loadRegistryServerMetadata();
+  it("reports metadata contract issues", async () => {
+    const metadata = await loadRegistryServerMetadata();
     const invalid = {
       ...metadata,
       name: "",
@@ -87,8 +87,8 @@ describe("validateRegistryServerMetadata contract failures", () => {
     ]);
   });
 
-  it("reports missing package metadata", () => {
-    const metadata = loadRegistryServerMetadata();
+  it("reports missing package metadata", async () => {
+    const metadata = await loadRegistryServerMetadata();
     const withoutPackages = { ...metadata, packages: [] };
     expect(validateRegistryServerMetadata(withoutPackages)).toContain(
       "Missing npm package launch metadata.",
