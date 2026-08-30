@@ -21,14 +21,14 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
       - name: Setup Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 26.5.1
+          node-version: 26.8.1
           package-manager-cache: false
       - name: Verify trusted-publishing npm support
         run: |
@@ -64,7 +64,7 @@ jobs:
           RELEASE_SHA: ${{ github.sha }}
         run: npm run release:prepare
       - name: Upload exact release evidence
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-candidate
           path: |
@@ -84,9 +84,9 @@ jobs:
       id-token: write
     steps:
       - name: Setup Node
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 26.5.1
+          node-version: 26.8.1
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
       - name: Verify trusted-publishing npm support
