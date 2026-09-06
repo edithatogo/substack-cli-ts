@@ -1,5 +1,5 @@
 # Multi-stage Dockerfile for @edithatogo/substack-publisher
-FROM node:22-alpine AS builder
+FROM node:22.23.2-alpine AS builder
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY src/ ./src/
 COPY vendor/ ./vendor/
 RUN npm run build
 
-FROM node:22-alpine AS runner
+FROM node:22.23.2-alpine AS runner
 
 WORKDIR /app
 ENV NODE_ENV=production
