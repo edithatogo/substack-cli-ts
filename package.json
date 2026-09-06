@@ -197,6 +197,8 @@
     "ip-address": "10.4.0",
     "langsmith": "^0.7.2",
     "postcss": "8.5.25",
+    "browserslist": "^4.28.9",
+    "nanoid": "^3.3.18",
     "protobufjs": "8.7.1",
     "qs": "^6.16.0",
     "uuid": "^11.1.1"
