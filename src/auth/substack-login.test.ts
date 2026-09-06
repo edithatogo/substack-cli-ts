@@ -10,8 +10,8 @@ vi.mock("../browser/editor.js", () => ({
 
 describe("performSubstackLogin", () => {
   let mockSession: StagehandSession;
-  let actMock: any;
-  let urlMock: any;
+  let actMock: ReturnType<typeof vi.fn>;
+  let urlMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     actMock = vi.fn().mockResolvedValue(undefined);
