@@ -2,7 +2,7 @@
   "trackId": "T19-01",
   "title": "Published-post editor schema compatibility and crash containment",
   "type": "bug",
-  "status": "planned",
+  "status": "complete",
   "phase": "P19",
   "issue": 550,
   "phaseIssue": 554,
@@ -14,6 +14,6 @@
     "Phase 5": 559
   },
   "createdAt": "2026-08-11T12:43:22+10:00",
-  "updatedAt": "2026-08-11T19:55:00+10:00",
-  "implementationAuthorized": false
+  "updatedAt": "2026-09-06T22:55:00+10:00",
+  "implementationAuthorized": true
 }
