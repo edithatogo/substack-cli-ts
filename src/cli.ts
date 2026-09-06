@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { Command } from "commander";
 import { PACKAGE_VERSION } from "./version.js";
+import type { ProseMirrorNode } from "./types.js";
 import { runLocalLogin } from "./auth/local-login.js";
 import { refreshLocalStorageState } from "./auth/storage-state.js";
 import {
@@ -156,6 +157,12 @@ import {
   writeWorkflowTraceFixture,
 } from "./publish/workflow-trace.js";
 import { captureFixture, compareFixture, validateSchemaFile } from "./schema/fixtures.js";
+import {
+  analyzeEditorCompatibility,
+  evaluateEditorOperationalPolicy,
+  generateMinimalUpstreamReproductionPackage,
+  normalizeTablesToAccessibleLists,
+} from "./editor-compatibility/index.js";
 import {
   fetchAnalyticsInventory,
   fetchEmailPerformance,
@@ -2702,6 +2709,68 @@ schema
       process.exitCode = 1;
     }
   });
+
+schema
+  .command("compatibility")
+  .description("Assess ProseMirror document compatibility across Substack editor schemas.")
+  .argument("<file>", "JSON file or Markdown file to inspect")
+  .option(
+    "--normalize-tables",
+    "Apply table normalization contingency to convert tables to accessible lists",
+  )
+  .option("--upstream-repro <dir>", "Generate minimal upstream reproduction package to directory")
+  .action(
+    async (
+      file: string,
+      options: { normalizeTables?: boolean; upstreamRepro?: string | undefined },
+    ) => {
+      let document: ProseMirrorNode;
+      if (file.endsWith(".md")) {
+        const prepared = await preparePost(file, { mode: "draft" });
+        document = prepared.post.document;
+      } else {
+        const raw = await readCliTextFile(file, "schema compatibility file");
+        if (!raw) {
+          process.exitCode = 1;
+          return;
+        }
+        const json = JSON.parse(raw) as unknown;
+        if (typeof json === "object" && json !== null && "document" in json) {
+          document = (json as { document: ProseMirrorNode }).document;
+        } else {
+          document = json as ProseMirrorNode;
+        }
+      }
+
+      if (options.normalizeTables) {
+        document = normalizeTablesToAccessibleLists(document);
+      }
+
+      const assessment = analyzeEditorCompatibility(document);
+      const policy = evaluateEditorOperationalPolicy(assessment);
+
+      let upstreamReproResult: { packageDir: string; files: string[] } | undefined;
+      if (options.upstreamRepro) {
+        upstreamReproResult = await generateMinimalUpstreamReproductionPackage(
+          options.upstreamRepro,
+        );
+      }
+
+      const report = {
+        file,
+        normalizedTablesApplied: Boolean(options.normalizeTables),
+        assessment,
+        operationalPolicy: policy,
+        upstreamReproPackage: upstreamReproResult,
+      };
+
+      console.log(JSON.stringify(report, null, 2));
+
+      if (!policy.canProceedWithPrimaryWrite) {
+        process.exitCode = 1;
+      }
+    },
+  );
 
 const api = program
   .command("api")

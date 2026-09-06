@@ -135,4 +135,51 @@ title: "Scheduled Post"
     assert.equal(report.payload, undefined);
     assert.deepEqual(report.warnings, ["Parser warning"]);
   });
+
+  it("blocks prepublish when document contains tableHeader nodes", () => {
+    const prepared = {
+      mode: "draft" as const,
+      scheduleAt: undefined,
+      post: {
+        filePath: "table-post.md",
+        metadata: { title: "Table Post", tags: [] },
+        markdown: "",
+        html: "",
+        document: {
+          type: "doc",
+          content: [
+            {
+              type: "table",
+              content: [
+                {
+                  type: "tableRow",
+                  content: [
+                    {
+                      type: "tableHeader",
+                      content: [{ type: "paragraph", content: [{ type: "text", text: "Header" }] }],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        media: {
+          assets: [],
+          localCount: 0,
+          remoteCount: 0,
+          dataCount: 0,
+        },
+        warnings: [],
+      },
+    };
+
+    const report = prepublishPost(prepared);
+
+    assert.equal(report.status, "blocked");
+    assert.equal(report.editorCompatibility?.primaryEditor.ok, false);
+    assert.equal(report.editorCompatibility?.primaryEditor.tableHeaderCount, 1);
+    assert.match(report.message, /primary editor rejects tableHeader nodes/i);
+    assert.match(report.message, /table normalization/i);
+  });
 });

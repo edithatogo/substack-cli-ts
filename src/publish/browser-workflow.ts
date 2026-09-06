@@ -13,6 +13,7 @@ import {
   withStagehandRetry,
 } from "../browser/stagehand.js";
 import { loadEffectiveConfig, requirePublicationUrl } from "../config/store.js";
+import { analyzeEditorCompatibility } from "../editor-compatibility/analyzer.js";
 import type { DraftMapping } from "../substack-api/draft-mappings.js";
 import { validatePayloadCompatibility } from "../substack-api/payload.js";
 import type { PreparedPost } from "../types.js";
@@ -489,6 +490,7 @@ async function createDraftInBrowser(
 export function printPreparedPost(prepared: PreparedPost): void {
   const { post } = prepared;
   const compatibility = validatePayloadCompatibility(post.document);
+  const editorCompatibility = analyzeEditorCompatibility(post.document);
 
   console.log(
     JSON.stringify(
@@ -507,6 +509,7 @@ export function printPreparedPost(prepared: PreparedPost): void {
           supportedMarkTypes: compatibility.markTypes,
           unsupportedIssues: compatibility.issues.length > 0 ? compatibility.issues : undefined,
         },
+        editorCompatibility,
       },
       null,
       2,

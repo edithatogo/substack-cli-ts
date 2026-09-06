@@ -1,0 +1,59 @@
+{
+  "id": "210552674",
+  "title": "Season 1: Moral Economics Series Cover",
+  "description": "Paragraph-only passing cover control with no rich nodes or tables",
+  "document": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Season 1: Collected Essays on Moral Economics",
+            "marks": [
+              {
+                "type": "bold"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "A multi-part inquiry into institutional accountability, measurement drift, and publication safety."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "All essays in this series are scheduled for release throughout Autumn 2026."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {
+            "type": "text",
+            "text": "Read introduction and overview.",
+            "marks": [
+              {
+                "type": "link",
+                "attrs": {
+                  "href": "https://example.com/season-1"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
