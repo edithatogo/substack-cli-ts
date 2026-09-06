@@ -1,0 +1,13 @@
+{
+  "trackId": "T10-02",
+  "title": "Registry metadata and distribution artefacts",
+  "type": "distribution",
+  "status": "archived",
+  "parentIssue": 423,
+  "issue": 429,
+  "taskIssues": [430, 431, 432, 433, 434],
+  "project": 38,
+  "createdAt": "2026-08-08T01:46:03+00:00",
+  "updatedAt": "2026-09-06T11:48:00+00:00",
+  "archivedAt": "2026-09-06T11:48:00+00:00"
+}

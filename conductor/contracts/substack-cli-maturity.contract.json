@@ -2462,7 +2462,7 @@
       "id": "T10-01",
       "phaseId": "P10",
       "title": "Generated documentation, context, architecture and website",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-SCOPE-CONTROL-008",
         "SEC-THREAT-MODEL-011",
@@ -2482,7 +2482,7 @@
       "id": "T10-02",
       "phaseId": "P10",
       "title": "Registry metadata and distribution artefacts",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "MCP-AUTH-005",
         "MCP-PACKAGING-007",
@@ -2552,7 +2552,7 @@
       "id": "T11-02",
       "phaseId": "P11",
       "title": "Post-1.0 product and engineering roadmap",
-      "status": "planned",
+      "status": "contract_verified",
       "contractIds": [
         "GOV-SCOPE-CONTROL-008",
         "MATURITY-ROADMAP-004"

@@ -63,14 +63,14 @@ Canonical status is evidence-gated by [programme-state.json](./programme-state.j
 - [x] **T09-04 Rulesets, Renovate, templates and solo-maintainer governance** ([#418](https://github.com/edithatogo/substack-cli-ts/issues/418)) ([evidence](./archive/T09-04/index.md))
 
 ## P10 Documentation, registry publication and launch
-- [ ] **T10-01 Generated documentation, context, architecture and website** ([#424](https://github.com/edithatogo/substack-cli-ts/issues/424)) ([evidence](./tracks/T10-01/index.md))
-- [ ] **T10-02 Registry metadata and distribution artefacts** ([#429](https://github.com/edithatogo/substack-cli-ts/issues/429)) ([evidence](./tracks/T10-02/index.md))
+- [x] **T10-01 Generated documentation, context, architecture and website** ([#424](https://github.com/edithatogo/substack-cli-ts/issues/424)) ([evidence](./archive/T10-01/index.md))
+- [x] **T10-02 Registry metadata and distribution artefacts** ([#429](https://github.com/edithatogo/substack-cli-ts/issues/429)) ([evidence](./archive/T10-02/index.md))
 - [ ] **T10-03 Registry submissions** ([#435](https://github.com/edithatogo/substack-cli-ts/issues/435)) ([evidence](./tracks/T10-03/index.md))
 - [ ] **T10-04 Launch, health monitoring and registry drift** ([#441](https://github.com/edithatogo/substack-cli-ts/issues/441)) ([evidence](./tracks/T10-04/index.md))
 
 ## P11 1.0 governance and post-1.0 roadmap
 - [ ] **T11-01 Release train, scorecards and 1.0 go/no-go** ([#447](https://github.com/edithatogo/substack-cli-ts/issues/447)) ([evidence](./tracks/T11-01/index.md))
-- [ ] **T11-02 Post-1.0 product and engineering roadmap** ([#452](https://github.com/edithatogo/substack-cli-ts/issues/452)) ([evidence](./tracks/T11-02/index.md))
+- [x] **T11-02 Post-1.0 product and engineering roadmap** ([#452](https://github.com/edithatogo/substack-cli-ts/issues/452)) ([evidence](./archive/T11-02/index.md))
 - [ ] **T11-03 Prompt retirement and canonical-system handover** ([#457](https://github.com/edithatogo/substack-cli-ts/issues/457)) ([evidence](./tracks/T11-03/index.md))
 
 ## P13 Supplemental phase

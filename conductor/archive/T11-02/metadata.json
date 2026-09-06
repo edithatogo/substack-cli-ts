@@ -1,0 +1,13 @@
+{
+  "trackId": "T11-02",
+  "title": "Post-1.0 product and engineering roadmap",
+  "type": "governance",
+  "status": "archived",
+  "parentIssue": 446,
+  "issue": 452,
+  "taskIssues": [453, 454, 455, 456],
+  "project": 38,
+  "createdAt": "2026-08-08T01:46:18+00:00",
+  "updatedAt": "2026-09-06T11:45:00+00:00",
+  "archivedAt": "2026-09-06T11:45:00+00:00"
+}
