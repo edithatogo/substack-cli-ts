@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { resolve } from "node:path";
 import type { ProseMirrorNode } from "../types.js";
 import { analyzeEditorCompatibility } from "./analyzer.js";
 import type { BrowserVerificationStatus, EditorCompatibilityAssessment } from "./diagnostics.js";
