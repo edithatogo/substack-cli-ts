@@ -193,7 +193,7 @@
     "fast-uri": "3.1.6",
     "form-data": "4.0.6",
     "hono": "4.13.0",
-    "@hono/node-server": "2.1.0",
+    "@hono/node-server": "2.1.1",
     "ip-address": "10.4.0",
     "langsmith": "^0.7.2",
     "postcss": "8.5.25",
