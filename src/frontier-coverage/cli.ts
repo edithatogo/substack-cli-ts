@@ -9,7 +9,7 @@ import {
   renderEndpointInventory,
   type EndpointInventoryReport,
 } from "./evidence-capture.js";
-import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
+import { FRONTIER_COVERAGE_MATRIX, lookupCapability } from "./matrix.js";
 import { renderCoverageRoadmap } from "./roadmap.js";
 import {
   type CoverageCapability,
@@ -220,7 +220,7 @@ export function buildCoverageInspectOutput(
   matrix: CoverageMatrix,
   capabilityId: string,
 ): CoverageInspectOutput {
-  const capability = matrix.capabilities.find((candidate) => candidate.id === capabilityId);
+  const capability = lookupCapability(matrix, capabilityId);
   return {
     operation: "coverage.inspect",
     status: capability ? "ready" : "blocked",

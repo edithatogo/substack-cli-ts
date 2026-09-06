@@ -1,3 +1,9 @@
+const SCHEDULED_QUEUE_STATUSES = new Set(["scheduled", "queue", "queued"]);
+const PUBLISHED_QUEUE_STATUSES = new Set(["published", "publish", "live", "sent"]);
+const SCHEDULED_EXPECTED_STATUSES = new Set(["scheduled", "schedule", "queued", "queue"]);
+const PUBLISHED_EXPECTED_STATUSES = new Set(["published", "publish", "published_at", "live"]);
+const DRAFT_EXPECTED_STATUSES = new Set(["draft", "unscheduled", "drafted"]);
+
 export type ScheduleReconcileKey = "title" | "time" | "draft-id";
 
 type ReconciledQueueStatus = "scheduled" | "published" | "draft" | "other";
@@ -365,8 +371,8 @@ function normalizeQueueStatus(status: string | undefined): ReconciledQueueStatus
   if (!status) return "other";
 
   const normalized = status.trim().toLowerCase();
-  if (["scheduled", "queue", "queued"].includes(normalized)) return "scheduled";
-  if (["published", "publish", "live", "sent"].includes(normalized)) return "published";
+  if (SCHEDULED_QUEUE_STATUSES.has(normalized)) return "scheduled";
+  if (PUBLISHED_QUEUE_STATUSES.has(normalized)) return "published";
   if (normalized.includes("draft")) return "draft";
   return "other";
 }
@@ -383,9 +389,9 @@ function parseExpectedStatus(item: Record<string, unknown>, index: number, sourc
 
 function normalizeExpectedStatus(raw: string): "scheduled" | "published" | "draft" | undefined {
   const normalized = raw.trim().toLowerCase();
-  if (["scheduled", "schedule", "queued", "queue"].includes(normalized)) return "scheduled";
-  if (["published", "publish", "published_at", "live"].includes(normalized)) return "published";
-  if (["draft", "unscheduled", "drafted"].includes(normalized)) return "draft";
+  if (SCHEDULED_EXPECTED_STATUSES.has(normalized)) return "scheduled";
+  if (PUBLISHED_EXPECTED_STATUSES.has(normalized)) return "published";
+  if (DRAFT_EXPECTED_STATUSES.has(normalized)) return "draft";
   return undefined;
 }
 

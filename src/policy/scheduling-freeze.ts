@@ -95,59 +95,18 @@ export async function evaluateSchedulingFreezePolicy(params: {
     return decision;
   }
 
-  const policyText = await readTextFile(params.freezePolicyPath);
-  if (policyText === undefined) {
+  const loadResult = await loadFreezePolicy(params.freezePolicyPath);
+  if (!loadResult.success) {
     return {
       allowed: false,
       policyPath: params.freezePolicyPath,
       cataloguePath: params.cataloguePath,
-      reason: `Could not read freeze-policy file: ${params.freezePolicyPath}`,
-      status: "invalid",
+      reason: loadResult.reason,
+      status: loadResult.status,
       catalogueSummary,
     };
   }
-
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(policyText);
-  } catch {
-    return {
-      allowed: false,
-      policyPath: params.freezePolicyPath,
-      cataloguePath: params.cataloguePath,
-      reason: `Freeze-policy file is not valid JSON: ${params.freezePolicyPath}`,
-      status: "invalid",
-      catalogueSummary,
-    };
-  }
-
-  const parsedPolicy = PolicyEnvelopeSchema.safeParse(parsed);
-  if (!parsedPolicy.success) {
-    const firstIssue = parsedPolicy.error.issues[0];
-    const detail = firstIssue?.message ?? "unknown schema issue";
-    return {
-      allowed: false,
-      policyPath: params.freezePolicyPath,
-      cataloguePath: params.cataloguePath,
-      reason: `Freeze-policy schema validation failed (${params.freezePolicyPath}): ${detail}`,
-      status: "invalid",
-      catalogueSummary,
-    };
-  }
-
-  const policy: SchedulingFreezePolicy = {
-    schemaVersion: parsedPolicy.data.schemaVersion ?? 1,
-    status: parsedPolicy.data.status,
-    active: parsedPolicy.data.active,
-    reason: parsedPolicy.data.reason,
-    reasonCode: parsedPolicy.data.reasonCode,
-    freezeUntil: parsedPolicy.data.freezeUntil,
-    resumeAt: parsedPolicy.data.resumeAt,
-    until: parsedPolicy.data.until,
-    note: parsedPolicy.data.note,
-    source: parsedPolicy.data.source,
-    raw: parsed,
-  };
+  const policy = loadResult.policy;
 
   const active = isPolicyActive(policy, now);
   if (!active) {
@@ -310,4 +269,58 @@ function validateExternalCatalogue(cataloguePath: string | undefined): Promise<
 
 function extractArrayCount(value: unknown): number | undefined {
   return Array.isArray(value) ? value.length : undefined;
+}
+
+async function loadFreezePolicy(
+  policyPath: string,
+): Promise<
+  | { success: true; policy: SchedulingFreezePolicy }
+  | { success: false; reason: string; status: "invalid" }
+> {
+  const policyText = await readTextFile(policyPath);
+  if (policyText === undefined) {
+    return {
+      success: false,
+      reason: `Could not read freeze-policy file: ${policyPath}`,
+      status: "invalid",
+    };
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(policyText);
+  } catch {
+    return {
+      success: false,
+      reason: `Freeze-policy file is not valid JSON: ${policyPath}`,
+      status: "invalid",
+    };
+  }
+
+  const parsedPolicy = PolicyEnvelopeSchema.safeParse(parsed);
+  if (!parsedPolicy.success) {
+    const firstIssue = parsedPolicy.error.issues[0];
+    const detail = firstIssue?.message ?? "unknown schema issue";
+    return {
+      success: false,
+      reason: `Freeze-policy schema validation failed (${policyPath}): ${detail}`,
+      status: "invalid",
+    };
+  }
+
+  const policy: SchedulingFreezePolicy = {
+    schemaVersion: parsedPolicy.data.schemaVersion ?? 1,
+    status: parsedPolicy.data.status,
+    active: parsedPolicy.data.active,
+    reason: parsedPolicy.data.reason,
+    reasonCode: parsedPolicy.data.reasonCode,
+    freezeUntil: parsedPolicy.data.freezeUntil,
+    resumeAt: parsedPolicy.data.resumeAt,
+    until: parsedPolicy.data.until,
+    note: parsedPolicy.data.note,
+    source: parsedPolicy.data.source,
+    raw: parsed,
+  };
+
+  return { success: true, policy };
 }
