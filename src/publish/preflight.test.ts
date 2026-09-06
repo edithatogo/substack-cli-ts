@@ -471,7 +471,7 @@ title: "Commented"
 ---
 # Commented
 
-<!-- TK: rewrite this -->
+<!-- TODO: rewrite this -->
 Body.
 `,
           "editorial.md",
