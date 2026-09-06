@@ -409,17 +409,17 @@
       "id": "T10-01",
       "phase": "P10",
       "issue": 424,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-01/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-01/index.md"
     },
     {
       "id": "T10-02",
       "phase": "P10",
       "issue": 429,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-02/index.md"
     },
     {
       "id": "T10-03",
@@ -449,9 +449,9 @@
       "id": "T11-02",
       "phase": "P11",
       "issue": 452,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T11-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T11-02/index.md"
     },
     {
       "id": "T11-03",
@@ -1771,73 +1771,73 @@
       "id": "T10-01-TASK-01",
       "track": "T10-01",
       "issue": 425,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-01/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-01/verification.md"
     },
     {
       "id": "T10-01-TASK-02",
       "track": "T10-01",
       "issue": 426,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-01/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-01/verification.md"
     },
     {
       "id": "T10-01-TASK-03",
       "track": "T10-01",
       "issue": 427,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-01/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-01/verification.md"
     },
     {
       "id": "T10-01-TASK-04",
       "track": "T10-01",
       "issue": 428,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-01/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-01/verification.md"
     },
     {
       "id": "T10-02-TASK-01",
       "track": "T10-02",
       "issue": 430,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-02/verification.md"
     },
     {
       "id": "T10-02-TASK-02",
       "track": "T10-02",
       "issue": 431,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-02/verification.md"
     },
     {
       "id": "T10-02-TASK-03",
       "track": "T10-02",
       "issue": 432,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-02/verification.md"
     },
     {
       "id": "T10-02-TASK-04",
       "track": "T10-02",
       "issue": 433,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-02/verification.md"
     },
     {
       "id": "T10-02-TASK-05",
       "track": "T10-02",
       "issue": 434,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T10-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T10-02/verification.md"
     },
     {
       "id": "T10-03-TASK-01",
@@ -1875,8 +1875,8 @@
       "id": "T10-03-TASK-05",
       "track": "T10-03",
       "issue": 440,
-      "state": "OPEN",
-      "status": "Todo",
+      "state": "CLOSED",
+      "status": "Done",
       "evidence": "conductor/tracks/T10-03/verification.md"
     },
     {
@@ -1907,32 +1907,32 @@
       "id": "T10-04-TASK-04",
       "track": "T10-04",
       "issue": 445,
-      "state": "OPEN",
-      "status": "Todo",
+      "state": "CLOSED",
+      "status": "Done",
       "evidence": "conductor/tracks/T10-04/verification.md"
     },
     {
       "id": "T11-01-TASK-01",
       "track": "T11-01",
       "issue": 448,
-      "state": "OPEN",
-      "status": "Todo",
+      "state": "CLOSED",
+      "status": "Done",
       "evidence": "conductor/tracks/T11-01/verification.md"
     },
     {
       "id": "T11-01-TASK-02",
       "track": "T11-01",
       "issue": 449,
-      "state": "OPEN",
-      "status": "Todo",
+      "state": "CLOSED",
+      "status": "Done",
       "evidence": "conductor/tracks/T11-01/verification.md"
     },
     {
       "id": "T11-01-TASK-03",
       "track": "T11-01",
       "issue": 450,
-      "state": "OPEN",
-      "status": "Todo",
+      "state": "CLOSED",
+      "status": "Done",
       "evidence": "conductor/tracks/T11-01/verification.md"
     },
     {
@@ -1947,33 +1947,33 @@
       "id": "T11-02-TASK-01",
       "track": "T11-02",
       "issue": 453,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T11-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T11-02/verification.md"
     },
     {
       "id": "T11-02-TASK-02",
       "track": "T11-02",
       "issue": 454,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T11-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T11-02/verification.md"
     },
     {
       "id": "T11-02-TASK-03",
       "track": "T11-02",
       "issue": 455,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T11-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T11-02/verification.md"
     },
     {
       "id": "T11-02-TASK-04",
       "track": "T11-02",
       "issue": 456,
-      "state": "OPEN",
-      "status": "Todo",
-      "evidence": "conductor/tracks/T11-02/verification.md"
+      "state": "CLOSED",
+      "status": "Done",
+      "evidence": "conductor/archive/T11-02/verification.md"
     },
     {
       "id": "T11-03-TASK-01",

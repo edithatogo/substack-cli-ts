@@ -1,0 +1,15 @@
+{
+  "$schema": "https://mcp.so/schemas/server.json",
+  "name": "io.github.edithatogo/substack-publisher",
+  "description": "Local-first TypeScript CLI and MCP server for publishing Markdown to a user-owned Substack publication.",
+  "repository": "https://github.com/edithatogo/substack-cli-ts",
+  "version": "0.2.0",
+  "command": "npx",
+  "args": ["-y", "@edithatogo/substack-publisher", "mcp", "serve"],
+  "env": {
+    "SUBSTACK_PUBLICATION_URL": {
+      "description": "User-owned Substack publication URL",
+      "required": false
+    }
+  }
+}

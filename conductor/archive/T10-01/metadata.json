@@ -1,0 +1,13 @@
+{
+  "trackId": "T10-01",
+  "title": "Generated documentation, context, architecture and website",
+  "type": "documentation",
+  "status": "archived",
+  "parentIssue": 423,
+  "issue": 424,
+  "taskIssues": [425, 426, 427, 428],
+  "project": 38,
+  "createdAt": "2026-08-08T01:45:53+00:00",
+  "updatedAt": "2026-09-06T11:47:00+00:00",
+  "archivedAt": "2026-09-06T11:47:00+00:00"
+}
