@@ -93,4 +93,4 @@ Canonical status is evidence-gated by [programme-state.json](./programme-state.j
 - [x] **T18-02 Metadata duplication transport regression matrix** ([#544](https://github.com/edithatogo/substack-cli-ts/issues/544)) ([evidence](./archive/T18-02/index.md))
 
 ## P19 Published-post editor compatibility ([#554](https://github.com/edithatogo/substack-cli-ts/issues/554))
-- [x] **T19-01 Published-post editor schema compatibility and crash containment** ([#550](https://github.com/edithatogo/substack-cli-ts/issues/550)) ([evidence](./tracks/T19-01/index.md))
+- [x] **T19-01 Published-post editor schema compatibility and crash containment** ([#550](https://github.com/edithatogo/substack-cli-ts/issues/550)) ([evidence](./archive/T19-01/index.md))
