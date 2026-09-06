@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, readFileSync, realpathSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { PACKAGE_VERSION } from "./version.js";
 import type { ProseMirrorNode } from "./types.js";
@@ -4650,12 +4651,12 @@ apiPublication
       let updates: Record<string, unknown> = {};
 
       if (options.fromJson) {
-        const { readFileSync } = await import("node:fs");
-        updates = JSON.parse(readFileSync(options.fromJson, "utf-8")) as Record<string, unknown>;
+        const { readFile } = await import("node:fs/promises");
+        updates = JSON.parse(await readFile(options.fromJson, "utf-8")) as Record<string, unknown>;
       } else if (options.fromYaml) {
-        const { readFileSync } = await import("node:fs");
+        const { readFile } = await import("node:fs/promises");
         const yaml = await import("js-yaml");
-        updates = yaml.load(readFileSync(options.fromYaml, "utf-8")) as Record<string, unknown>;
+        updates = yaml.load(await readFile(options.fromYaml, "utf-8")) as Record<string, unknown>;
       } else {
         if (options.name) updates.name = options.name;
         if (options.description) updates.description = options.description;
@@ -7431,8 +7432,22 @@ function parseOperatorMode(value: string): OperatorMode {
   throw new Error(`Unsupported operator mode "${value}". Use solo, team, agency, or ci.`);
 }
 
-program.parseAsync().catch((error: unknown) => {
-  const message = error instanceof Error ? error.message : String(error);
-  console.error(`Error: ${message}`);
-  process.exitCode = 1;
-});
+function isMainModule(): boolean {
+  const entry = process.argv[1];
+  if (!entry) return false;
+  try {
+    const mainPath = realpathSync(entry);
+    const modulePath = realpathSync(fileURLToPath(import.meta.url));
+    return mainPath === modulePath;
+  } catch {
+    return false;
+  }
+}
+
+if (isMainModule()) {
+  program.parseAsync().catch((error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Error: ${message}`);
+    process.exitCode = 1;
+  });
+}

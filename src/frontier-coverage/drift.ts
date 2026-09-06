@@ -1,6 +1,13 @@
 import { FRONTIER_COVERAGE_MATRIX } from "./matrix.js";
 import type { CoverageCapability, CoverageMatrix } from "./schema.js";
 
+const DIAGNOSTIC_STATUSES = new Set<CoverageCapability["status"]>([
+  "probe-only",
+  "planning-only",
+  "manual-admin",
+  "unsupported",
+]);
+
 const BLOCKING_OFFICIAL_DOC_STATUSES = new Set<
   FrontierDriftReport["officialDocs"][number]["status"]
 >(["missing-snapshot", "stale", "changed", "unavailable"]);
@@ -87,9 +94,7 @@ export function buildFrontierDriftReport(
   );
 
   const endpointCaptureDiagnostics = matrix.capabilities
-    .filter((capability) =>
-      ["probe-only", "planning-only", "manual-admin", "unsupported"].includes(capability.status),
-    )
+    .filter((capability) => DIAGNOSTIC_STATUSES.has(capability.status))
     .map((capability) => ({
       capabilityId: capability.id,
       capability: capability.name,
