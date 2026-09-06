@@ -1,4 +1,4 @@
-import { resolve } from "node:path";
+import { resolve, sep } from "node:path";
 import { describe, expect, it } from "vitest";
 import { WorkspaceGuard } from "./workspace-guard.js";
 
@@ -11,58 +11,59 @@ describe("WorkspaceGuard", () => {
   });
 
   describe("assertInside", () => {
-    const guard = new WorkspaceGuard("/fake/workspace");
+    const root = resolve("/fake/workspace");
+    const guard = new WorkspaceGuard(root);
 
     it("allows paths inside the workspace", () => {
-      const validPath = "/fake/workspace/file.txt";
+      const validPath = resolve("/fake/workspace/file.txt");
       expect(guard.assertInside(validPath)).toBe(resolve(validPath));
     });
 
     it("allows the root path itself", () => {
-      const rootPath = "/fake/workspace";
+      const rootPath = resolve("/fake/workspace");
       expect(guard.assertInside(rootPath)).toBe(resolve(rootPath));
     });
 
     it("allows deeply nested paths", () => {
-      const nestedPath = "/fake/workspace/a/b/c/d/file.txt";
+      const nestedPath = resolve("/fake/workspace/a/b/c/d/file.txt");
       expect(guard.assertInside(nestedPath)).toBe(resolve(nestedPath));
     });
 
     it("allows relative paths that resolve inside", () => {
-      const relativeInside = "/fake/workspace/a/../file.txt";
+      const relativeInside = resolve("/fake/workspace/a/../file.txt");
       expect(guard.assertInside(relativeInside)).toBe(resolve(relativeInside));
     });
 
     it("rejects paths outside the workspace", () => {
-      const outsidePath = "/fake/outside/file.txt";
+      const outsidePath = resolve("/fake/outside/file.txt");
       expect(() => guard.assertInside(outsidePath)).toThrowError(
         `Refusing workspace path outside the workspace: ${outsidePath}`
       );
     });
 
     it("rejects parent directories", () => {
-      const parentDir = "/fake";
+      const parentDir = resolve("/fake");
       expect(() => guard.assertInside(parentDir)).toThrowError(
         `Refusing workspace path outside the workspace: ${parentDir}`
       );
     });
 
     it("rejects sibling directories", () => {
-      const siblingDir = "/fake/workspace2";
+      const siblingDir = resolve("/fake/workspace2");
       expect(() => guard.assertInside(siblingDir)).toThrowError(
         `Refusing workspace path outside the workspace: ${siblingDir}`
       );
     });
 
     it("rejects path traversal attempting to escape", () => {
-      const escapePath = "/fake/workspace/../outside.txt";
+      const escapePath = resolve("/fake/workspace/../outside.txt");
       expect(() => guard.assertInside(escapePath)).toThrowError(
         `Refusing workspace path outside the workspace: ${escapePath}`
       );
     });
 
     it("uses the provided kind in the error message", () => {
-      const outsidePath = "/fake/outside/file.txt";
+      const outsidePath = resolve("/fake/outside/file.txt");
       expect(() => guard.assertInside(outsidePath, "credential")).toThrowError(
         `Refusing credential path outside the workspace: ${outsidePath}`
       );
@@ -70,15 +71,15 @@ describe("WorkspaceGuard", () => {
   });
 
   describe("assertWorkspaceInput", () => {
-    const guard = new WorkspaceGuard("/fake/workspace");
+    const guard = new WorkspaceGuard(resolve("/fake/workspace"));
 
     it("allows valid workspace input", () => {
-      const validPath = "/fake/workspace/input.md";
+      const validPath = resolve("/fake/workspace/input.md");
       expect(guard.assertWorkspaceInput(validPath)).toBe(resolve(validPath));
     });
 
     it("rejects invalid workspace input with 'workspace' kind", () => {
-      const outsidePath = "/fake/outside.md";
+      const outsidePath = resolve("/fake/outside.md");
       expect(() => guard.assertWorkspaceInput(outsidePath)).toThrowError(
         `Refusing workspace path outside the workspace: ${outsidePath}`
       );
@@ -86,15 +87,15 @@ describe("WorkspaceGuard", () => {
   });
 
   describe("assertGeneratedOutput", () => {
-    const guard = new WorkspaceGuard("/fake/workspace");
+    const guard = new WorkspaceGuard(resolve("/fake/workspace"));
 
     it("allows valid generated output", () => {
-      const validPath = "/fake/workspace/output.json";
+      const validPath = resolve("/fake/workspace/output.json");
       expect(guard.assertGeneratedOutput(validPath)).toBe(resolve(validPath));
     });
 
     it("rejects invalid generated output with 'state' kind", () => {
-      const outsidePath = "/fake/outside.json";
+      const outsidePath = resolve("/fake/outside.json");
       expect(() => guard.assertGeneratedOutput(outsidePath)).toThrowError(
         `Refusing state path outside the workspace: ${outsidePath}`
       );
