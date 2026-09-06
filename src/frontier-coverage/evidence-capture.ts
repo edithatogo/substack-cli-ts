@@ -299,9 +299,7 @@ export function buildGraduationCheckReport(
 ): GraduationCheckReport {
   const inventoryCapabilities = new Set(inventory.entries.map((entry) => entry.capabilityId));
   const blockers = matrix.capabilities
-    .filter((capability) =>
-      BLOCKED_STATUSES.has(capability.status),
-    )
+    .filter((capability) => BLOCKED_STATUSES.has(capability.status))
     .map((capability) => {
       const missing = missingGraduationEvidence(capability, inventoryCapabilities);
       return { capabilityId: capability.id, status: capability.status, missing };
