@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "publisher": "edithatogo",
   "engines": {
-    "vscode": ">=1.90.0"
+    "vscode": "1.136.1"
   },
   "categories": [
     "Other"

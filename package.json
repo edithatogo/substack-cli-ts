@@ -25,7 +25,7 @@
   "type": "module",
   "main": "dist/cli.js",
   "engines": {
-    "node": ">=22.0.0"
+    "node": "v26.8.1"
   },
   "bin": {
     "substack-publisher": "dist/cli.js"
@@ -131,8 +131,8 @@
     "verify": "npm run contracts:check && npm run ci:policy && npm run quality && npm run audit:signatures && npm run licenses:check && npm run sbom && npm run registry:validate && npm run integrations:validate && npm pack --dry-run && node scripts/verification-receipt.mjs"
   },
   "dependencies": {
-    "@browserbasehq/stagehand": "^4.0.0",
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@browserbasehq/stagehand": "4.0.0",
+    "@modelcontextprotocol/sdk": "1.30.0",
     "@opentelemetry/api": "1.9.1",
     "@tiptap/core": "3.30.4",
     "@tiptap/extension-table": "3.27.1",
@@ -143,17 +143,17 @@
     "@tiptap/starter-kit": "3.27.1",
     "axios": "1.19.0",
     "axios-rate-limit": "1.9.0",
-    "chrome-launcher": "^1.2.1",
-    "commander": "^15.0.0",
-    "dotenv": "^17.0.0",
+    "chrome-launcher": "1.2.1",
+    "commander": "15.0.0",
+    "dotenv": "17.4.2",
     "fp-ts": "2.16.11",
     "happy-dom": "20.11.2",
     "io-ts": "2.2.22",
-    "js-yaml": "^5.2.3",
-    "marked": "^18.0.5",
-    "pino": "^10.0.0",
-    "playwright-core": "^1.61.1",
-    "zod": "^4.4.3"
+    "js-yaml": "5.2.3",
+    "marked": "18.0.5",
+    "pino": "10.3.1",
+    "playwright-core": "1.61.1",
+    "zod": "4.4.3"
   },
   "overrides": {
     "@babel/core": "7.29.7",
@@ -195,28 +195,28 @@
     "hono": "4.13.0",
     "@hono/node-server": "2.1.1",
     "ip-address": "10.4.0",
-    "langsmith": "^0.7.2",
+    "langsmith": "0.7.17",
     "postcss": "8.5.25",
-    "browserslist": "^4.28.9",
-    "nanoid": "^3.3.18",
+    "browserslist": "4.28.9",
+    "nanoid": "3.3.18",
     "protobufjs": "8.7.1",
-    "qs": "^6.16.0",
-    "uuid": "^11.1.1"
+    "qs": "6.16.0",
+    "uuid": "11.1.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.12",
-    "@eslint/js": "^10.0.1",
-    "@stryker-mutator/core": "^9.6.1",
-    "@stryker-mutator/vitest-runner": "^9.6.1",
-    "@types/node": "^26.1.1",
-    "@vitest/coverage-v8": "^4.1.10",
-    "eslint": "^10.7.0",
-    "fast-check": "^4.8.0",
-    "knip": "^6.26.0",
-    "prettier": "^3.9.5",
+    "@eslint/js": "10.0.1",
+    "@stryker-mutator/core": "9.6.1",
+    "@stryker-mutator/vitest-runner": "9.6.1",
+    "@types/node": "26.1.2",
+    "@vitest/coverage-v8": "4.1.10",
+    "eslint": "10.8.0",
+    "fast-check": "4.8.0",
+    "knip": "6.31.0",
+    "prettier": "3.9.6",
     "typescript": "7.1.0-dev.20260809.1",
-    "typescript-eslint": "^8.63.0",
-    "vitest": "^4.1.10"
+    "typescript-eslint": "8.66.0",
+    "vitest": "4.1.10"
   },
   "packageManager": "npm@11.17.0"
 }
