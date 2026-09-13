@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
+import { webcrypto } from "node:crypto";
 import { stateDir } from "../config/paths.js";
 
 export type RateLimitChannel = "read" | "write";
@@ -708,7 +709,11 @@ function isRateLimitState(value: unknown): value is RateLimitRuntimeState {
 
 function boundedJitter(baseDelayMs: number, maxDelayMs: number, attempt: number): number {
   const backoff = baseDelayMs * 2 ** attempt;
-  const jitter = Math.random() * baseDelayMs;
+  const array = new Uint32Array(1);
+  webcrypto.getRandomValues(array);
+  // array[0] is guaranteed to be a number because it's a typed array of size 1
+  const randomValue = array[0] as number;
+  const jitter = (randomValue / (0xffffffff + 1)) * baseDelayMs;
   return Math.min(backoff + jitter, maxDelayMs);
 }
 
