@@ -113,11 +113,13 @@ export async function writeWarehouseExport(
     files.push(file);
   }
   if (format === "csv" || format === "both") {
-    for (const [name, rows] of Object.entries(warehouse.tables)) {
-      const file = join(outDir, `${name}.csv`);
-      await writeFile(file, renderCsv(rows), "utf8");
-      files.push(file);
-    }
+    await Promise.all(
+      Object.entries(warehouse.tables).map(async ([name, rows]) => {
+        const file = join(outDir, `${name}.csv`);
+        await writeFile(file, renderCsv(rows), "utf8");
+        files.push(file);
+      }),
+    );
   }
   return { outputDir: outDir, files };
 }
