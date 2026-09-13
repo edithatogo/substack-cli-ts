@@ -2,7 +2,7 @@
 import * as fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import type { ProseMirrorNode } from "../types.js";
-import { parseMarkdownString } from "./markdown.js";
+import { parseMarkdownString, htmlToProseMirrorJson } from "./markdown.js";
 
 function findNodes(root: ProseMirrorNode, type: string): ProseMirrorNode[] {
   const found: ProseMirrorNode[] = [];
@@ -328,5 +328,43 @@ Caption paragraph.
 
       assert.deepEqual(parsed.warnings, []);
     });
+  });
+});
+
+describe("htmlToProseMirrorJson", () => {
+  it("converts basic HTML to ProseMirror nodes", () => {
+    const html = "<h1>Title</h1><p>Hello <strong>world</strong></p>";
+    const doc = htmlToProseMirrorJson(html);
+
+    assert.equal(doc.type, "doc");
+    assert.equal(doc.content?.length, 2);
+
+    const h1 = doc.content[0]!;
+    assert.equal(h1.type, "heading");
+    assert.equal(h1.attrs?.level, 1);
+    assert.equal(h1.content?.[0]?.text, "Title");
+
+    const p = doc.content[1]!;
+    assert.equal(p.type, "paragraph");
+    assert.equal(p.content?.length, 2);
+    assert.equal(p.content?.[0]?.text, "Hello ");
+    assert.equal(p.content?.[1]?.text, "world");
+    assert.equal(p.content?.[1]?.marks?.[0]?.type, "bold");
+  });
+
+  it("handles empty strings", () => {
+    const doc = htmlToProseMirrorJson("");
+    assert.equal(doc.type, "doc");
+    // typical tiptap empty doc has an empty paragraph
+    assert.equal(doc.content?.length, 1);
+    assert.equal(doc.content?.[0]?.type, "paragraph");
+  });
+
+  it("handles malformed HTML gracefully", () => {
+    const html = "<p>Unclosed paragraph";
+    const doc = htmlToProseMirrorJson(html);
+    assert.equal(doc.type, "doc");
+    assert.equal(doc.content?.[0]?.type, "paragraph");
+    assert.equal(doc.content?.[0]?.content?.[0]?.text, "Unclosed paragraph");
   });
 });
