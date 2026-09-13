@@ -327,20 +327,18 @@ export async function captureAnalyticsDiagnostics(
 
       const stats: Array<{ label: string; value: string | null }> = [];
 
-      for (const sel of statSelectors) {
-        for (const el of document.querySelectorAll(sel)) {
-          const text = clean(el.textContent);
-          if (text && /\d/.test(text) && text.length < 60) {
-            const label = clean(
-              el.getAttribute("aria-label") ??
-                el
-                  .closest("[class*='stat'], [class*='Stat'], [class*='metric'], [class*='Metric']")
-                  ?.getAttribute("aria-label") ??
-                "",
-            );
-            if (!stats.some((s) => s.value === text)) {
-              stats.push({ label, value: text });
-            }
+      for (const el of document.querySelectorAll(statSelectors.join(","))) {
+        const text = clean(el.textContent);
+        if (text && /\d/.test(text) && text.length < 60) {
+          const label = clean(
+            el.getAttribute("aria-label") ??
+              el
+                .closest("[class*='stat'], [class*='Stat'], [class*='metric'], [class*='Metric']")
+                ?.getAttribute("aria-label") ??
+              "",
+          );
+          if (!stats.some((s) => s.value === text)) {
+            stats.push({ label, value: text });
           }
         }
       }
