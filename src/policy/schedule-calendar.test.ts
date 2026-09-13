@@ -5,6 +5,7 @@ import {
   parsePublicationCatalogue,
   parseScheduleLimits,
   resolveScheduledInstant,
+  isValidTimeZone,
 } from "./schedule-calendar.js";
 
 describe("publication schedule calendar policy", () => {
@@ -113,5 +114,20 @@ describe("publication schedule calendar policy", () => {
   it("accepts explicit offsets through DST folds", () => {
     const resolved = resolveScheduledInstant("2026-11-01T01:30:00-05:00", "America/New_York");
     assert.equal(resolved.status, "ok");
+  });
+});
+
+describe("isValidTimeZone", () => {
+  it("accepts valid time zones", () => {
+    assert.equal(isValidTimeZone("UTC"), true);
+    assert.equal(isValidTimeZone("America/New_York"), true);
+    assert.equal(isValidTimeZone("Europe/London"), true);
+    assert.equal(isValidTimeZone("Asia/Tokyo"), true);
+  });
+
+  it("rejects invalid time zones", () => {
+    assert.equal(isValidTimeZone("Invalid/Zone"), false);
+    assert.equal(isValidTimeZone("UTC+1"), false);
+    assert.equal(isValidTimeZone(""), false);
   });
 });
