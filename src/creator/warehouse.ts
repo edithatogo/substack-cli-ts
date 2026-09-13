@@ -293,8 +293,14 @@ async function readAnalyticsSnapshots(
     return [];
   }
   const snapshots: CreatorAnalyticsSnapshot[] = [];
-  for (const file of files) {
-    const text = await readText(join(dir, file), diagnostics);
+  const texts = await Promise.all(
+    files.map(async (file) => {
+      const text = await readText(join(dir, file), diagnostics);
+      return { file, text };
+    }),
+  );
+
+  for (const { file, text } of texts) {
     if (!text) continue;
     try {
       if (file.endsWith(".jsonl")) {
@@ -327,8 +333,10 @@ async function readRunLogs(
     return [];
   }
   const runLogs: RunLogArtifact[] = [];
-  for (const file of files) {
-    const artifact = await readJson<RunLogArtifact>(join(dir, file), diagnostics);
+  const artifacts = await Promise.all(
+    files.map((file) => readJson<RunLogArtifact>(join(dir, file), diagnostics)),
+  );
+  for (const artifact of artifacts) {
     if (artifact?.schemaVersion === 1) runLogs.push(artifact);
   }
   return runLogs;
