@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
-import { describe, it } from "vitest";
+import { afterEach, describe, it, vi } from "vitest";
 import { parseMarkdownString } from "../parser/markdown.js";
-import { runBrowserWorkflow, shouldOpenPublishReview } from "./browser-workflow.js";
+import {
+  printPreparedPost,
+  runBrowserWorkflow,
+  shouldOpenPublishReview,
+} from "./browser-workflow.js";
 import { resolveDraftEditorUrl } from "./draft-url.js";
 
 describe("shouldOpenPublishReview", () => {
@@ -139,5 +143,47 @@ title: "Test"
     };
 
     await runBrowserWorkflow(prepared, { dryRun: true });
+  });
+});
+
+describe("printPreparedPost", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("prints a JSON representation of the prepared post", async () => {
+    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+    const prepared = {
+      mode: "publish" as const,
+      scheduleAt: "2026-06-01T09:00:00Z",
+      post: await parseMarkdownString(
+        `---
+title: "Test Output"
+---
+# Test Heading
+
+This is some content.`,
+        "test-output.md",
+      ),
+    };
+
+    printPreparedPost(prepared);
+
+    assert.equal(consoleSpy.mock.calls.length, 1);
+    const outputString = consoleSpy.mock.calls[0][0];
+    const output = JSON.parse(outputString);
+
+    assert.equal(output.mode, "publish");
+    assert.equal(output.scheduleAt, "2026-06-01T09:00:00Z");
+    assert.equal(output.filePath, "test-output.md");
+    assert.equal(output.metadata.title, "Test Output");
+
+    // Check compatibility object structure
+    assert.ok(output.compatibility);
+    assert.equal(output.compatibility.ok, true);
+
+    // Check editor compatibility object structure
+    assert.ok(output.editorCompatibility);
   });
 });
