@@ -75,6 +75,14 @@ title: Media test
     assert.equal(parsed.media.assets[1]?.caption, "B");
   });
 
+  it("classifies invalid URLs that throw during parsing as local", async () => {
+    // This will throw in `new URL(source)` because of the invalid format
+    const parsed = await parseMarkdownString("![](not://a://valid://url)");
+    assert.equal(parsed.media.assets.length, 1);
+    assert.equal(parsed.media.assets[0]?.kind, "local");
+    assert.equal(parsed.media.localCount, 1);
+  });
+
   it("redacts query strings from remote URLs in the summary", () => {
     const summary = summarizeMediaManifest({
       assets: [
