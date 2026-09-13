@@ -401,7 +401,11 @@ function extractInterestingFields(
 }
 
 function pickValue(record: Record<string, unknown>, keys: string[]): string | number | undefined {
-  for (const key of keys) {
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (key === undefined) {
+      continue;
+    }
     const value = record[key];
     if (typeof value === "string" || typeof value === "number") {
       return value;
@@ -412,7 +416,11 @@ function pickValue(record: Record<string, unknown>, keys: string[]): string | nu
 }
 
 function pickString(record: Record<string, unknown>, keys: string[]): string | undefined {
-  for (const key of keys) {
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (key === undefined) {
+      continue;
+    }
     const value = record[key];
     if (typeof value === "string" && value.length > 0) {
       return value;
