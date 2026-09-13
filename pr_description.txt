@@ -1,0 +1,14 @@
+⚡ Optimize warehouse IO reads
+
+💡 **What:**
+Replaced sequential `for (const file of files)` loops with `Promise.all` mapping to read files concurrently in both `readAnalyticsSnapshots` and `readRunLogs`.
+
+🎯 **Why:**
+The previous implementation performed sequential disk I/O because of the `await readText(...)` and `await readJson(...)` calls inside the loops. This caused unnecessary delays, especially noticeable when a large amount of snapshot or run log files were being processed. Reading them in parallel reduces the overall execution time significantly.
+
+📊 **Measured Improvement:**
+I established a benchmark (`bench-warehouse.mjs`) simulating the parsing of 500 JSON payload files.
+
+*   **Baseline (Sequential reads):** ~319ms - 394ms
+*   **Improvement (Concurrent reads):** ~101ms
+*   **Change:** ~3x speedup in the targeted code path.

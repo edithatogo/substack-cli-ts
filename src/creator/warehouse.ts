@@ -293,23 +293,30 @@ async function readAnalyticsSnapshots(
     return [];
   }
   const snapshots: CreatorAnalyticsSnapshot[] = [];
-  for (const file of files) {
-    const text = await readText(join(dir, file), diagnostics);
-    if (!text) continue;
-    try {
-      if (file.endsWith(".jsonl")) {
-        for (const line of text
-          .split(/\r?\n/)
-          .map((entry) => entry.trim())
-          .filter(Boolean)) {
-          addSnapshot(JSON.parse(line), snapshots);
+  const results = await Promise.all(
+    files.map(async (file) => {
+      const localSnapshots: CreatorAnalyticsSnapshot[] = [];
+      const text = await readText(join(dir, file), diagnostics);
+      if (!text) return localSnapshots;
+      try {
+        if (file.endsWith(".jsonl")) {
+          for (const line of text
+            .split(/\r?\n/)
+            .map((entry) => entry.trim())
+            .filter(Boolean)) {
+            addSnapshot(JSON.parse(line), localSnapshots);
+          }
+        } else {
+          addSnapshot(JSON.parse(text), localSnapshots);
         }
-      } else {
-        addSnapshot(JSON.parse(text), snapshots);
+      } catch (error) {
+        diagnostics.push(`analytics-snapshot-parse-failed: ${join(dir, file)}: ${message(error)}`);
       }
-    } catch (error) {
-      diagnostics.push(`analytics-snapshot-parse-failed: ${join(dir, file)}: ${message(error)}`);
-    }
+      return localSnapshots;
+    }),
+  );
+  for (const result of results) {
+    snapshots.push(...result);
   }
   return snapshots;
 }
@@ -327,9 +334,15 @@ async function readRunLogs(
     return [];
   }
   const runLogs: RunLogArtifact[] = [];
-  for (const file of files) {
-    const artifact = await readJson<RunLogArtifact>(join(dir, file), diagnostics);
-    if (artifact?.schemaVersion === 1) runLogs.push(artifact);
+  const results = await Promise.all(
+    files.map(async (file) => {
+      const artifact = await readJson<RunLogArtifact>(join(dir, file), diagnostics);
+      if (artifact?.schemaVersion === 1) return artifact;
+      return null;
+    }),
+  );
+  for (const artifact of results) {
+    if (artifact) runLogs.push(artifact);
   }
   return runLogs;
 }
