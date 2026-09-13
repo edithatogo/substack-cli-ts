@@ -111,22 +111,34 @@ export async function fetchPostAnalytics(
     `/api/v1/publication/analytics/posts/${postId}`,
   ];
 
-  for (const path of endpoints) {
-    const url = new URL(path, publicationUrl).toString();
-    const response = await requestJson(fetchFn, url, headers);
-    if (response.status === 200) {
-      const body = response.body as Record<string, unknown> | undefined;
-      if (body) {
-        return {
-          status: "ok",
-          analytics: mapPostAnalytics(postId, body),
-          message: `Post analytics retrieved from ${path}.`,
-        };
+  try {
+    return await Promise.any(
+      endpoints.map(async (path) => {
+        const url = new URL(path, publicationUrl).toString();
+        const response = await requestJson(fetchFn, url, headers);
+        if (response.status === 200) {
+          const body = response.body as Record<string, unknown> | undefined;
+          if (body) {
+            return {
+              status: "ok" as const,
+              analytics: mapPostAnalytics(postId, body),
+              message: `Post analytics retrieved from ${path}.`,
+            };
+          }
+        }
+        if (response.status !== 404) {
+          const failure = classifyFailure(response.status, url);
+          throw { isFailure: true, failure };
+        }
+        throw new Error("not-found");
+      })
+    );
+  } catch (err) {
+    if (err instanceof AggregateError) {
+      const firstFailure = err.errors.find((e) => e && typeof e === "object" && e.isFailure);
+      if (firstFailure) {
+        return { status: firstFailure.failure.status, message: firstFailure.failure.message };
       }
-    }
-    if (response.status !== 404) {
-      const failure = classifyFailure(response.status, url);
-      return { status: failure.status, message: failure.message };
     }
   }
 
@@ -149,26 +161,40 @@ export async function fetchSubscriberGrowth(
     "/api/v1/publication/subscribers/growth",
   ];
 
-  for (const path of endpoints) {
-    const url = new URL(path, publicationUrl);
-    if (options.period) {
-      url.searchParams.set("period", options.period);
-    }
-    const requestUrl = url.toString();
-    const response = await requestJson(fetchFn, requestUrl, headers);
-    if (response.status === 200) {
-      const body = response.body as Record<string, unknown> | undefined;
-      if (body) {
-        return {
-          status: "ok",
-          growth: mapSubscriberGrowth(body),
-          message: `Subscriber growth retrieved from ${path}.`,
-        };
+  try {
+    return await Promise.any(
+      endpoints.map(async (path) => {
+        const url = new URL(path, publicationUrl);
+        if (options.period) {
+          url.searchParams.set("period", options.period);
+        }
+        const requestUrl = url.toString();
+        const response = await requestJson(fetchFn, requestUrl, headers);
+        if (response.status === 200) {
+          const body = response.body as Record<string, unknown> | undefined;
+          if (body) {
+            return {
+              status: "ok" as const,
+              growth: mapSubscriberGrowth(body),
+              message: `Subscriber growth retrieved from ${path}.`,
+            };
+          }
+        }
+
+        if (response.status !== 404) {
+          const failure = classifyFailure(response.status, requestUrl);
+          throw { isFailure: true, failure };
+        }
+
+        throw new Error("not-found");
+      })
+    );
+  } catch (err) {
+    if (err instanceof AggregateError) {
+      const firstFailure = err.errors.find((e) => e && typeof e === "object" && e.isFailure);
+      if (firstFailure) {
+        return { status: firstFailure.failure.status, message: firstFailure.failure.message };
       }
-    }
-    if (response.status !== 404) {
-      const failure = classifyFailure(response.status, requestUrl);
-      return { status: failure.status, message: failure.message };
     }
   }
 
@@ -191,23 +217,35 @@ export async function fetchEmailPerformance(
     "/api/v1/publication/emails/performance",
   ];
 
-  for (const path of endpoints) {
-    const url = new URL(path, publicationUrl).toString();
-    const response = await requestJson(fetchFn, url, headers);
-    if (response.status === 200) {
-      const body = response.body;
-      const emails = parseEmailPerformance(body, limit);
-      if (emails) {
-        return {
-          status: "ok",
-          emails,
-          message: `Email performance retrieved from ${path}.`,
-        };
+  try {
+    return await Promise.any(
+      endpoints.map(async (path) => {
+        const url = new URL(path, publicationUrl).toString();
+        const response = await requestJson(fetchFn, url, headers);
+        if (response.status === 200) {
+          const body = response.body;
+          const emails = parseEmailPerformance(body, limit);
+          if (emails) {
+            return {
+              status: "ok" as const,
+              emails,
+              message: `Email performance retrieved from ${path}.`,
+            };
+          }
+        }
+        if (response.status !== 404) {
+          const failure = classifyFailure(response.status, url);
+          throw { isFailure: true, failure };
+        }
+        throw new Error("not-found");
+      })
+    );
+  } catch (err) {
+    if (err instanceof AggregateError) {
+      const firstFailure = err.errors.find((e) => e && typeof e === "object" && e.isFailure);
+      if (firstFailure) {
+        return { status: firstFailure.failure.status, message: firstFailure.failure.message };
       }
-    }
-    if (response.status !== 404) {
-      const failure = classifyFailure(response.status, url);
-      return { status: failure.status, message: failure.message };
     }
   }
 
@@ -229,22 +267,34 @@ export async function fetchRevenueAnalytics(
     "/api/v1/publication/revenue",
   ];
 
-  for (const path of endpoints) {
-    const url = new URL(path, publicationUrl).toString();
-    const response = await requestJson(fetchFn, url, headers);
-    if (response.status === 200) {
-      const body = response.body as Record<string, unknown> | undefined;
-      if (body) {
-        return {
-          status: "ok",
-          revenue: mapRevenueAnalytics(body),
-          message: `Revenue analytics retrieved from ${path}.`,
-        };
+  try {
+    return await Promise.any(
+      endpoints.map(async (path) => {
+        const url = new URL(path, publicationUrl).toString();
+        const response = await requestJson(fetchFn, url, headers);
+        if (response.status === 200) {
+          const body = response.body as Record<string, unknown> | undefined;
+          if (body) {
+            return {
+              status: "ok" as const,
+              revenue: mapRevenueAnalytics(body),
+              message: `Revenue analytics retrieved from ${path}.`,
+            };
+          }
+        }
+        if (response.status !== 404) {
+          const failure = classifyFailure(response.status, url);
+          throw { isFailure: true, failure };
+        }
+        throw new Error("not-found");
+      })
+    );
+  } catch (err) {
+    if (err instanceof AggregateError) {
+      const firstFailure = err.errors.find((e) => e && typeof e === "object" && e.isFailure);
+      if (firstFailure) {
+        return { status: firstFailure.failure.status, message: firstFailure.failure.message };
       }
-    }
-    if (response.status !== 404) {
-      const failure = classifyFailure(response.status, url);
-      return { status: failure.status, message: failure.message };
     }
   }
 
