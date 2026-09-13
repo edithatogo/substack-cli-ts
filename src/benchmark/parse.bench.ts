@@ -1,4 +1,4 @@
-﻿import { execSync } from "node:child_process";
+﻿import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -9,7 +9,7 @@ describe("benchmark", () => {
   for (const file of examples) {
     it(`parses ${file} under 1500ms`, () => {
       const start = performance.now();
-      execSync(`node dist/cli.js inspect examples/${file}`, {
+      execFileSync("node", ["dist/cli.js", "inspect", `examples/${file}`], {
         cwd: root,
         encoding: "utf8",
         timeout: 15000,
@@ -22,7 +22,7 @@ describe("benchmark", () => {
   it("inspect all 5 examples under 5s cumulative", () => {
     const start = performance.now();
     for (const file of examples) {
-      execSync(`node dist/cli.js inspect examples/${file}`, {
+      execFileSync("node", ["dist/cli.js", "inspect", `examples/${file}`], {
         cwd: root,
         encoding: "utf8",
         timeout: 15000,
