@@ -214,7 +214,7 @@
     "fast-check": "^4.8.0",
     "knip": "^6.26.0",
     "prettier": "^3.9.5",
-    "typescript": "7.1.0-dev.20260809.1",
+    "typescript": "7.1.0-dev.20261107.1",
     "typescript-eslint": "^8.63.0",
     "vitest": "^4.1.10"
   },
