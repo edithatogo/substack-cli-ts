@@ -471,7 +471,7 @@ title: "Commented"
 ---
 # Commented
 
-<!-- TODO: rewrite this -->
+<!-- TK: add an engaging introduction here -->
 Body.
 `,
           "editorial.md",
