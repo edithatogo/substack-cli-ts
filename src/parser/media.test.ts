@@ -76,8 +76,9 @@ title: Media test
   });
 
   it("classifies invalid URLs that throw during parsing as local", async () => {
-    // This will throw in `new URL(source)` because of the invalid format
-    const parsed = await parseMarkdownString("![](not://a://valid://url)");
+    const source = "http://[";
+    assert.throws(() => new URL(source), TypeError);
+    const parsed = await parseMarkdownString(`![](${source})`);
     assert.equal(parsed.media.assets.length, 1);
     assert.equal(parsed.media.assets[0]?.kind, "local");
     assert.equal(parsed.media.localCount, 1);
