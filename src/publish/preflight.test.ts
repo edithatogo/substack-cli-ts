@@ -472,7 +472,7 @@ title: "Commented"
 # Commented
 
 <!-- TK: add an engaging introduction here -->
-This is a placeholder for the main content of the post.
+Body.
 `,
           "editorial.md",
         ),
