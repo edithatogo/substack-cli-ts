@@ -18,6 +18,11 @@ jobs:
     timeout-minutes: 5
 
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Enable Auto-Merge After Required Checks
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
