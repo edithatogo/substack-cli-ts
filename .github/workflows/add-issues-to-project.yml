@@ -20,6 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Add issue to Project 38
         env:
           GH_TOKEN: ${{ secrets.PROGRAMME_PROJECT_TOKEN }}
