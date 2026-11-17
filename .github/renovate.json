@@ -6,9 +6,11 @@
     ":semanticCommits"
   ],
   "labels": ["dependencies", "renovate"],
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": "Renovate Dependency Dashboard",
-  "dependencyDashboardLabels": ["dependencies", "renovate"],
+  "dependencyDashboard": {
+    "enabled": true,
+    "title": "Renovate Dependency Dashboard",
+    "labels": ["dependencies", "renovate"]
+  },
   "rangeStrategy": "pin",
   "ignorePaths": ["vendor/**"],
   "rebaseWhen": "behind-base-branch",
